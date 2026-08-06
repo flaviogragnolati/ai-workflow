@@ -33,9 +33,14 @@ are deliberately established.
   reachable by owning agents without exposing a user invocation surface.
 - Active `$explore` routing for read-only, repository-grounded orientation over
   codebases, modules, features, and documents, with transient non-artifact output.
+- Active optional `$audit-docs` routing for evidence-backed QA of durable project
+  documentation, with read-only transient findings and owner-routed remediation.
 
 ### Changed
 
+- The planned, non-invocable `cleanup-docs` identifier was replaced before
+  activation by the clearer `audit-docs` name; no compatibility alias or
+  migration is required.
 - Removed an obsolete third-party provenance assertion and its corresponding
   package-validator requirement after ownership was confirmed.
 - Maintenance routing and validation now resolve the repository-root layout

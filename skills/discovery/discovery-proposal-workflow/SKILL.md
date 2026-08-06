@@ -41,6 +41,8 @@ Return scope, price, schedule, commitment, or source errors to `commercial-propo
 
 Never let a channel renderer silently modify canonical commercial meaning.
 
+`audit-docs` is optional. Route to it when the user requests extended documentation QA, when an upstream proposal change may have introduced drift, or before a high-risk baseline or release. Supply the active artifact IDs or explicit durable scope. Keep its diagnostic transient and unregistered; return approved remediation to the existing proposal or channel owner and record implemented changes through the workflow's applicable changelog or change-control record.
+
 ## Development handoff
 
 Only software or mixed engagements with applicable software scope may continue to `ai-coding-workflow`. Pass proposal object IDs, version, applicable commitments, assumptions, exclusions, unresolved references, and readiness. Do not imply technical confirmation where the proposal records only a preliminary assumption.

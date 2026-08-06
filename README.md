@@ -25,7 +25,7 @@ Invoke a stage directly only when standalone output is intentional. A standalone
 - Runtime truth: project `00-workflow-state.yaml` and `00-artifact-index.yaml`.
 - Explanatory views: this guide and its diagrams.
 
-The package supports `t3-core` for development and QA. A non-T3 project must stop or use a future adapter instead of receiving a false approval.
+Technical development and code QA support `t3-core`. A non-T3 project must stop or use a future adapter instead of receiving a false technical approval. Shared capabilities marked `stack_profile: any`, including `audit-docs`, may operate across stacks without certifying application quality.
 
 ## Main workflows
 
@@ -78,6 +78,12 @@ Development selects a high-level item, refines only as needed, optionally create
 
 `generate-quasar-deck` is the only active reporting capability in this version. Reporting is optional and does not change upstream acceptance criteria. `generate-report` and `reporting-workflow` are planned and non-invocable.
 
+### Documentation QA
+
+`audit-docs` optionally audits active durable project documentation for structural breakage, authority and lifecycle errors, traceability gaps, contradictions, and drift from authoritative sources or observable implementation. It returns a transient diagnostic in the conversation and never edits documents, creates an audit artifact, or writes workflow state or the artifact index. A separately approved remediation returns to the owning skill and is recorded in the applicable workflow changelog, change-control record, or authoritative version history.
+
+Use `maintain-ai-workflow`, not `audit-docs`, for documentation owned by this package.
+
 ### Package maintenance
 
 `maintain-ai-workflow` is the administrative entry point for adding, removing, renaming, reorganizing, auditing, or changing workflows, skills, governance, routing, metadata, schemas, fixtures, and validators. It builds an impact map, checks the proposal against package philosophy and anti-patterns, synchronizes connected surfaces, and runs structural and behavioral validation.
@@ -114,6 +120,7 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Execute a plan, ticket, or ready backlog item | `implement` |
 | Review one change | `code-review` plus `review-code-comments` |
 | Audit a T3 codebase or release candidate | `codebase-review` |
+| Audit durable project documentation | `audit-docs` |
 | Produce a Quasar presentation | `generate-quasar-deck` |
 | Change or audit the workflow package | `maintain-ai-workflow` |
 
@@ -126,19 +133,19 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 - Do not treat a visual render as semantic authority.
 - Do not rewrite accepted commercial scope from a channel renderer.
 - Do not run T3 QA as if it covered another stack.
+- Do not let a documentation audit rewrite its targets or create a parallel changelog.
 - Do not create empty folders for planned capabilities.
 - Do not commit or publish through a read-only or unapproved execution mode.
 - Do not embed package housekeeping in a client or project workflow run.
 
 ## Expected result
 
-A completed run leaves owned artifacts, traceable IDs, declared authority and lifecycle, a valid `stage_result`, reconciled runtime state when orchestrated, explicit blockers when incomplete, and one clear next action.
+A completed workflow stage leaves owned artifacts, traceable IDs, declared authority and lifecycle, a valid `stage_result`, reconciled runtime state when orchestrated, explicit blockers when incomplete, and one clear next action. A read-only shared tool such as `explore` or `audit-docs` returns only its declared transient output and does not claim stage completion.
 
 ## Planned capabilities
 
 These IDs are registered but cannot be invoked:
 
-- `cleanup-docs`
 - `generate-report`
 - `reporting-workflow`
 

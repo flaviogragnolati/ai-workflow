@@ -326,6 +326,13 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("coding/explore/SKILL.md", "Return the summary in the conversation as transient context"),
             ("app-flow/ai-coding-workflow/SKILL.md", "do not register it as an artifact"),
         ],
+        "S-19": [
+            ("quality/audit-docs/SKILL.md", "Return the diagnostic in the conversation as transient context"),
+            ("quality/audit-docs/SKILL.md", "Record any later implemented documentation change through the owning workflow"),
+            ("quality/audit-docs/SKILL.md", "stop and route the request to `maintain-ai-workflow`"),
+            ("app-flow/ai-coding-workflow/SKILL.md", "`audit-docs` is optional"),
+            ("discovery/discovery-proposal-workflow/SKILL.md", "`audit-docs` is optional"),
+        ],
     }
     errors: list[str] = []
     for scenario, requirements in checks.items():

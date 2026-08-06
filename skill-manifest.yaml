@@ -32,6 +32,22 @@ workflows:
     scope: package-administration
 
 skills:
+  audit-docs:
+    path: quality/audit-docs
+    status: active
+    kind: quality
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs: []
+    transient_outputs: [documentation-diagnostic]
+    side_effects: [none]
+    approval_policy: read-only-no-source-state-index-or-external-changes
+    fallback: explicit-durable-scope-with-coverage-limitations
+    stack_profile: any
+    contract_version: "1.0"
+
   ai-coding-workflow:
     path: app-flow/ai-coding-workflow
     status: active
@@ -619,9 +635,6 @@ skills:
     contract_version: "1.0"
 
 planned_capabilities:
-  cleanup-docs:
-    status: planned
-    invocable: false
   generate-report:
     status: planned
     invocable: false

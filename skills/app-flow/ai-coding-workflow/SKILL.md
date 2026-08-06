@@ -68,6 +68,8 @@ Run integral QA on a release candidate, not on each diff. Create or update:
 
 Cover architecture, integrations, critical flows, security, relevant NFRs, migrations, deployment, delivery documentation, and UAT or acceptance when applicable. Do not treat `codebase-review` alone as acceptance; reconcile all relevant evidence and blockers.
 
+`audit-docs` is optional. Route to it when the user requests extended documentation QA, when upstream change makes drift likely, or before a baseline or release whose risk warrants a documentation pass. Supply the active artifact IDs or explicit durable scope. Keep its diagnostic transient and unregistered; route any approved remediation to the owning skill and record the implemented change in the applicable workflow changelog or change-control record.
+
 After delivery, offer `generate-quasar-deck` as optional reporting. Upstream completion does not depend on reporting unless a project contract explicitly says so.
 
 ## Change control and recovery
