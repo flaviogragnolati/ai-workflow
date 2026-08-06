@@ -1,0 +1,23 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: Quasar workflow state
+type: object
+required: [schema_version, project_id, workflow, status, current_stage, stack_profile, stage_status, decisions, risks, blockers, next_action]
+additionalProperties: false
+properties:
+  schema_version: {const: "1.0"}
+  project_id: {type: string}
+  workflow: {type: string}
+  status: {enum: [not_started, working, blocked, completed, closed]}
+  current_stage: {type: [string, "null"]}
+  stack_profile: {type: string}
+  stage_status: {type: object}
+  decisions:
+    type: array
+    items: {type: string}
+  risks:
+    type: array
+    items: {type: string}
+  blockers:
+    type: array
+    items: {type: string}
+  next_action: {type: [string, "null"]}

@@ -1,0 +1,59 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: Quasar skill manifest
+type: object
+required: [schema_version, package, workflows, skills, planned_capabilities]
+additionalProperties: false
+properties:
+  schema_version:
+    const: "1.0"
+  package:
+    type: object
+    required: [id, description, stack_profile, compatibility, human_guide, cross_workflow_contract, validator]
+  workflows:
+    type: object
+  skills:
+    type: object
+    additionalProperties:
+      type: object
+      required: [path, status, kind, workflow, stage, invocable, execution_modes, persistent_outputs, transient_outputs, side_effects, approval_policy, fallback, stack_profile, contract_version]
+      properties:
+        path: {type: string}
+        status: {enum: [active, planned, deprecated, archived]}
+        kind: {enum: [orchestrator, stage, tool, renderer, quality]}
+        workflow: {type: string}
+        stage: {type: [string, "null"]}
+        invocable: {type: boolean}
+        execution_modes:
+          type: array
+          minItems: 1
+          items: {enum: [orchestrated, standalone]}
+        persistent_outputs:
+          type: array
+          items:
+            type: object
+            required: [type, lifecycle, creation_mode, semantic_authority, authority_scope]
+            properties:
+              type: {type: string}
+              lifecycle: {enum: [Working, Baselined, Released, Superseded, Archived]}
+              creation_mode: {enum: [authored, derived]}
+              semantic_authority: {enum: [canonical, supporting, none]}
+              authority_scope: {type: string}
+        transient_outputs:
+          type: array
+          items: {type: string}
+        side_effects:
+          type: array
+          minItems: 1
+          items: {type: string}
+        approval_policy: {type: string}
+        fallback: {type: string}
+        stack_profile: {enum: [t3-core, any]}
+        contract_version: {const: "1.0"}
+  planned_capabilities:
+    type: object
+    additionalProperties:
+      type: object
+      required: [status, invocable]
+      properties:
+        status: {const: planned}
+        invocable: {const: false}

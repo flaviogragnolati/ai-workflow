@@ -1,0 +1,21 @@
+schema_version: "1.0"
+stage_result:
+  skill_id: backlog-and-delivery-planning
+  mode: standalone
+  outcome: completed_with_warnings
+  authored_outputs: [06-backlog.yaml]
+  derived_outputs: [06-backlog.md]
+  updated_outputs: []
+  references_added: []
+  traceability_delta: []
+  decisions_added_or_updated: []
+  risks_added_or_updated: []
+  stale_artifacts: []
+  blockers: []
+  warnings: ["Global state not updated."]
+  required_user_actions: []
+  next_recommended_action: "Reconcile through ai-coding-workflow."
+orchestration:
+  mode: standalone
+  global_state_updated: false
+  reconciliation_required: true

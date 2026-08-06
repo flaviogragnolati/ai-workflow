@@ -1,0 +1,30 @@
+---
+name: design-grill
+description: "Run deep architectural alignment for a large or cross-cutting T3 change that affects multiple modules, domain boundaries, major trade-offs, or ADRs. Use to create a durable feature architecture document before feature-level execution planning."
+---
+
+# Design grill
+
+This is the deepest refinement level: `design-grill > feature-grill > simple-grill`. Read `GLOSSARY.md`; use `DESIGN-IT-TWICE.md` or `DEEPENING.md` only when the relevant decision needs them.
+
+## Boundary
+
+Use this skill when work changes boundaries, domain concepts, major interfaces, operational architecture, security model, or rollout strategy across modules. De-escalate when the work is bounded.
+
+Create a durable `Working` architecture document under `docs/architecture/features/` plus necessary ADRs. Do not create a low-level implementation plan or execution log.
+
+## Procedure
+
+1. Load current code, architecture, product context, decisions, and vocabulary.
+2. Clarify intent, scenarios, scope, non-goals, constraints, and must-not-break behavior.
+3. Resolve domain boundaries, ownership, interfaces, data, consistency, security, failures, operations, evolution, and rollout.
+4. Compare viable alternatives and make trade-offs explicit.
+5. Create ADRs only for durable decisions.
+6. Define high-level stages and the next slice that should enter `feature-grill`, `simple-grill`, or `implementation-plan`.
+7. Validate traceability, open questions, and consequences with the user.
+
+## Durable output
+
+Include status, sources, scope, current context, proposed architecture, data and contracts, security, operations, decisions and ADRs, alternatives, risks, assumptions, open questions, high-level rollout, and next skill.
+
+The document may later be baselined or superseded. `implement` must not use it as a work diary.

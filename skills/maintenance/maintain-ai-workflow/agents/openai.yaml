@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maintain AI Workflow"
+  short_description: "Safely evolve workflow governance and skills"
+  default_prompt: "Use $maintain-ai-workflow to assess and implement this workflow or skill update without breaking package contracts."

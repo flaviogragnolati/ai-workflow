@@ -1,0 +1,597 @@
+schema_version: "1.0"
+
+package:
+  id: quasar-ai-delivery-skills
+  description: "Coordinated skills for Quasar discovery, proposals, T3 delivery, QA, and optional reporting."
+  stack_profile: t3-core
+  compatibility: t3-only
+  human_guide: README.md
+  cross_workflow_contract: 00-cross-workflow-contract.md
+  validator: scripts/validate-skills-package.py
+
+workflows:
+  discovery-proposal:
+    status: active
+    entry_skill: discovery-proposal-workflow
+    stages: [proposal-discovery, commercial-proposal-design, interactive-web-proposal, commercial-proposal-document]
+    optional_next: [ai-coding, reporting, close]
+  ai-coding:
+    status: active
+    entry_skill: ai-coding-workflow
+    planning_stages: [product-core-definition, technical-foundation-definition, domain-data-modeling, high-level-architecture-standards, module-feature-decomposition, backlog-and-delivery-planning]
+    includes_execution_loop: true
+    includes_integral_qa: true
+    optional_next: [reporting, close]
+  reporting:
+    status: planned
+    entry_skill: null
+    current_tools: [generate-quasar-deck]
+
+skills:
+  ai-coding-workflow:
+    path: app-flow/ai-coding-workflow
+    status: active
+    kind: orchestrator
+    workflow: ai-coding
+    stage: orchestration
+    invocable: true
+    execution_modes: [orchestrated]
+    persistent_outputs:
+      - {type: workflow-state, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: workflow-runtime}
+      - {type: artifact-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: artifact-inventory}
+      - {type: release-candidate, lifecycle: Baselined, creation_mode: authored, semantic_authority: canonical, authority_scope: release-candidate}
+      - {type: integral-validation, lifecycle: Baselined, creation_mode: authored, semantic_authority: canonical, authority_scope: release-quality}
+      - {type: delivery-manifest, lifecycle: Released, creation_mode: authored, semantic_authority: canonical, authority_scope: delivery}
+    transient_outputs: [routing-plan, internal-delegation]
+    side_effects: [write-project-state, write-artifact-index, write-project-artifacts]
+    approval_policy: user-confirms-commercial-impact-priority-and-release
+    fallback: stop-on-non-t3-or-return-blocked-stage-result
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  backlog-and-delivery-planning:
+    path: app-flow/backlog-and-delivery-planning
+    status: active
+    kind: stage
+    workflow: ai-coding
+    stage: backlog
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: development-backlog, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: delivery-structure}
+      - {type: backlog-changelog, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: structural-change-history}
+      - {type: backlog-views, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
+    transient_outputs: []
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-priority-and-structural-replanning
+    fallback: standalone-without-global-state-update
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  domain-data-modeling:
+    path: app-flow/domain-data-modeling
+    status: active
+    kind: stage
+    workflow: ai-coding
+    stage: domain-data
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: domain-model, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: domain-semantics}
+      - {type: data-dictionary, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: entity-and-attribute-definitions}
+      - {type: erd-mermaid, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-representation}
+      - {type: erd-render, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
+    transient_outputs: []
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-domain-decisions-with-downstream-impact
+    fallback: standalone-without-global-state-update
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  high-level-architecture-standards:
+    path: app-flow/high-level-architecture-standards
+    status: active
+    kind: stage
+    workflow: ai-coding
+    stage: architecture
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: architecture-narrative, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: architecture}
+      - {type: architecture-adrs, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: decisions}
+      - {type: architecture-mermaid, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-representation}
+      - {type: architecture-render, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
+    transient_outputs: []
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-architecture-decisions-with-scope-or-cost-impact
+    fallback: standalone-without-global-state-update
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  module-feature-decomposition:
+    path: app-flow/module-feature-decomposition
+    status: active
+    kind: stage
+    workflow: ai-coding
+    stage: module-feature-decomposition
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: module-map, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: module-ownership}
+      - {type: feature-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: feature-definition}
+      - {type: technical-implementation-sequence, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: technical-ordering}
+    transient_outputs: []
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-boundary-or-scope-changes
+    fallback: standalone-without-global-state-update
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  product-core-definition:
+    path: app-flow/product-core-definition
+    status: active
+    kind: stage
+    workflow: ai-coding
+    stage: product-core
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: product-core, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: product-intent-and-scope}
+    transient_outputs: []
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-product-scope-and-unresolved-assumptions
+    fallback: standalone-without-global-state-update
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  technical-foundation-definition:
+    path: app-flow/technical-foundation-definition
+    status: active
+    kind: stage
+    workflow: ai-coding
+    stage: technical-foundation
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: technical-foundation, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: stack-nfr-and-operations}
+    transient_outputs: []
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-stack-and-architecture-driving-decisions
+    fallback: block-unsupported-stack
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  codebase-review:
+    path: coding/codebase-review
+    status: active
+    kind: quality
+    workflow: ai-coding
+    stage: integral-qa
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: codebase-audit, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: quality-assessment}
+    transient_outputs: [review-notes]
+    side_effects: [write-review-artifact]
+    approval_policy: no-code-change-or-external-publication
+    fallback: block-unsupported-stack
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  code-review:
+    path: coding/code-review
+    status: active
+    kind: quality
+    workflow: ai-coding
+    stage: mini-review
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs: []
+    transient_outputs: [standards-review, specification-review]
+    side_effects: [none]
+    approval_policy: read-only-unless-user-separately-authorizes-fixes
+    fallback: sequential-two-axis-review
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  debug:
+    path: coding/debug
+    status: active
+    kind: tool
+    workflow: ai-coding
+    stage: implementation
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs: []
+    transient_outputs: [hypotheses, reproduction-harness]
+    side_effects: [write-code, write-tests]
+    approval_policy: follow-requested-fix-scope-and-require-approval-for-external-effects
+    fallback: block-unsupported-stack
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  design-grill:
+    path: coding/design-grill
+    status: active
+    kind: tool
+    workflow: ai-coding
+    stage: refinement
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: architecture-feature-design, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: feature-architecture}
+    transient_outputs: [interview-notes]
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-major-tradeoffs-and-scope
+    fallback: deescalate-to-feature-grill
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  explain:
+    path: coding/explain
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [standalone]
+    persistent_outputs: []
+    transient_outputs: [rephrased-explanation]
+    side_effects: [none]
+    approval_policy: read-only
+    fallback: plain-language-summary
+    stack_profile: any
+    contract_version: "1.0"
+
+  feature-grill:
+    path: coding/feature-grill
+    status: active
+    kind: tool
+    workflow: ai-coding
+    stage: refinement
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: feature-implementation-plan, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: feature-execution}
+    transient_outputs: [interview-notes]
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-feature-scope-and-approach
+    fallback: escalate-or-deescalate-grill-depth
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  handoff:
+    path: coding/handoff
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [standalone]
+    persistent_outputs:
+      - {type: session-handoff, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: continuity}
+    transient_outputs: []
+    side_effects: [write-workspace-artifact]
+    approval_policy: redact-secrets-and-stay-inside-workspace
+    fallback: return-handoff-in-conversation
+    stack_profile: any
+    contract_version: "1.0"
+
+  implement:
+    path: coding/implement
+    status: active
+    kind: tool
+    workflow: ai-coding
+    stage: implementation
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs: []
+    transient_outputs: [internal-plan, scratchpad, internal-delegation]
+    side_effects: [write-code, write-tests, update-original-execution-record]
+    approval_policy: follow-authorized-scope-and-request-approval-for-external-effects
+    fallback: stop-and-return-to-refinement
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  implementation-plan:
+    path: coding/implementation-plan
+    status: active
+    kind: tool
+    workflow: ai-coding
+    stage: refinement
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: implementation-plan, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: planned-execution}
+    transient_outputs: [planning-notes]
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-scope-and-sequencing
+    fallback: return-to-design-grill
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  prototype:
+    path: coding/prototype
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [standalone]
+    persistent_outputs: []
+    transient_outputs: [prototype]
+    side_effects: [write-throwaway-artifacts]
+    approval_policy: no-production-or-external-effects
+    fallback: analysis-only
+    stack_profile: any
+    contract_version: "1.0"
+
+  research:
+    path: coding/research
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [standalone]
+    persistent_outputs:
+      - {type: research-report, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: cited-findings}
+    transient_outputs: [research-notes]
+    side_effects: [write-workspace-artifact, network-read]
+    approval_policy: no-external-write-or-publication
+    fallback: report-source-limitations
+    stack_profile: any
+    contract_version: "1.0"
+
+  resolve-merge-conflicts:
+    path: coding/resolve-merge-conflicts
+    status: active
+    kind: tool
+    workflow: ai-coding
+    stage: implementation
+    invocable: true
+    execution_modes: [standalone]
+    persistent_outputs: []
+    transient_outputs: [conflict-analysis]
+    side_effects: [write-code]
+    approval_policy: preserve-both-intents-and-stop-on-semantic-ambiguity
+    fallback: report-unresolved-conflicts
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  review-code-comments:
+    path: coding/review-code-comments
+    status: active
+    kind: quality
+    workflow: ai-coding
+    stage: mini-review
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs: []
+    transient_outputs: [comment-review]
+    side_effects: [none]
+    approval_policy: read-only-unless-user-separately-authorizes-fixes
+    fallback: workspace-copy-is-source-of-truth
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  simple-fix:
+    path: coding/simple-fix
+    status: active
+    kind: tool
+    workflow: ai-coding
+    stage: implementation
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs: []
+    transient_outputs: [fix-notes]
+    side_effects: [write-code, write-tests]
+    approval_policy: minimal-confirmed-fix-with-no-external-effects
+    fallback: escalate-to-debug
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  simple-grill:
+    path: coding/simple-grill
+    status: active
+    kind: tool
+    workflow: ai-coding
+    stage: refinement
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: simple-implementation-plan, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: small-change-execution}
+    transient_outputs: [interview-notes]
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-small-change-scope
+    fallback: escalate-grill-depth
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  tdd:
+    path: coding/tdd
+    status: active
+    kind: tool
+    workflow: ai-coding
+    stage: implementation
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs: []
+    transient_outputs: [red-green-notes]
+    side_effects: [write-tests, write-code]
+    approval_policy: opt-in-only
+    fallback: proportional-verification-without-tdd
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  to-tickets:
+    path: coding/to-tickets
+    status: active
+    kind: tool
+    workflow: ai-coding
+    stage: distribution
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: execution-ticket, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: ticket-execution}
+    transient_outputs: [ticket-draft]
+    side_effects: [write-tracker-or-markdown-tickets]
+    approval_policy: optional-and-user-confirms-publication-target
+    fallback: versioned-markdown-tickets
+    stack_profile: t3-core
+    contract_version: "1.0"
+
+  writing-for-agents:
+    path: coding/writing-for-agents
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [standalone]
+    persistent_outputs: []
+    transient_outputs: [editing-notes]
+    side_effects: [write-documentation]
+    approval_policy: follow-requested-document-scope
+    fallback: concise-in-place-edit
+    stack_profile: any
+    contract_version: "1.0"
+
+  zoom-out:
+    path: coding/zoom-out
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [standalone]
+    persistent_outputs: []
+    transient_outputs: [module-map-explanation]
+    side_effects: [none]
+    approval_policy: read-only
+    fallback: textual-call-map
+    stack_profile: any
+    contract_version: "1.0"
+
+  commercial-proposal-design:
+    path: discovery/commercial-proposal-design
+    status: active
+    kind: stage
+    workflow: discovery-proposal
+    stage: proposal-design
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: proposal-source, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: commercial-meaning}
+      - {type: proposal-narrative, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
+    transient_outputs: [alignment-notes]
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-scope-price-schedule-and-commitments
+    fallback: standalone-without-global-state-update
+    stack_profile: any
+    contract_version: "1.0"
+
+  commercial-proposal-document:
+    path: discovery/commercial-proposal-document
+    status: active
+    kind: stage
+    workflow: discovery-proposal
+    stage: document-channel
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: proposal-document-mapping, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: channel-mapping}
+      - {type: proposal-docx, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: document-presentation}
+      - {type: proposal-pdf, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: document-presentation}
+    transient_outputs: [render-preview]
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-release-and-manual-reconciliation
+    fallback: return-semantic-errors-to-proposal-design
+    stack_profile: any
+    contract_version: "1.0"
+
+  discovery-proposal-workflow:
+    path: discovery/discovery-proposal-workflow
+    status: active
+    kind: orchestrator
+    workflow: discovery-proposal
+    stage: orchestration
+    invocable: true
+    execution_modes: [orchestrated]
+    persistent_outputs:
+      - {type: workflow-state, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: workflow-runtime}
+      - {type: artifact-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: artifact-inventory}
+      - {type: commercial-release, lifecycle: Released, creation_mode: authored, semantic_authority: canonical, authority_scope: accepted-commercial-commitment}
+    transient_outputs: [routing-plan, internal-delegation]
+    side_effects: [write-project-state, write-artifact-index, write-project-artifacts]
+    approval_policy: user-confirms-commercial-release-and-client-disposition
+    fallback: close-or-route-non-development-engagement
+    stack_profile: any
+    contract_version: "1.0"
+
+  interactive-web-proposal:
+    path: discovery/interactive-web-proposal
+    status: active
+    kind: stage
+    workflow: discovery-proposal
+    stage: web-channel
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: web-proposal-source, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: web-presentation}
+      - {type: web-proposal-build, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: interactive-presentation}
+    transient_outputs: [visual-prototypes]
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-channel-design-and-publication-separately
+    fallback: return-semantic-errors-to-proposal-design
+    stack_profile: any
+    contract_version: "1.0"
+
+  proposal-discovery:
+    path: discovery/proposal-discovery
+    status: active
+    kind: stage
+    workflow: discovery-proposal
+    stage: discovery
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: discovery-brief, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: discovered-client-context}
+    transient_outputs: [follow-up-questions]
+    side_effects: [write-project-artifacts]
+    approval_policy: no-fabrication-and-user-confirms-blocking-assumptions
+    fallback: blocked-with-targeted-questions
+    stack_profile: any
+    contract_version: "1.0"
+
+  generate-quasar-deck:
+    path: reporting/generate-quasar-deck
+    status: active
+    kind: renderer
+    workflow: reporting
+    stage: deck
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: quasar-deck-plan, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: presentation-plan}
+      - {type: quasar-deck, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
+    transient_outputs: [render-previews]
+    side_effects: [write-project-artifacts]
+    approval_policy: explicit-plan-approval-before-generation-and-separate-publication-approval
+    fallback: plan-only
+    stack_profile: any
+    contract_version: "1.0"
+
+planned_capabilities:
+  cleanup-docs:
+    status: planned
+    invocable: false
+  explore:
+    status: planned
+    invocable: false
+  generate-report:
+    status: planned
+    invocable: false
+  reporting-workflow:
+    status: planned
+    invocable: false

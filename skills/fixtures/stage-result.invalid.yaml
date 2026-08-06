@@ -1,0 +1,21 @@
+schema_version: "1.0"
+stage_result:
+  skill_id: backlog-and-delivery-planning
+  mode: standalone
+  outcome: done
+  authored_outputs: []
+  derived_outputs: []
+  updated_outputs: []
+  references_added: []
+  traceability_delta: []
+  decisions_added_or_updated: []
+  risks_added_or_updated: []
+  stale_artifacts: []
+  blockers: []
+  warnings: []
+  required_user_actions: []
+  next_recommended_action: null
+orchestration:
+  mode: standalone
+  global_state_updated: true
+  reconciliation_required: false

@@ -1,0 +1,13 @@
+schema_version: "1.0"
+project_id: demo
+artifacts:
+  - artifact_id: ART-001
+    artifact_type: erd-render
+    path: docs/development-workflow/domain/03-erd.svg
+    owner_workflow: ai-coding
+    creation_mode: derived
+    semantic_authority: canonical
+    authority_scope: domain-semantics
+    lifecycle: Working
+    version: "0.1"
+    source_refs: []

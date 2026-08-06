@@ -1,0 +1,4 @@
+interface:
+  display_name: "Debug"
+  short_description: "Diagnose and fix evidence-backed T3 failures"
+  default_prompt: "Use $debug to reproduce, diagnose, and fix this T3 failure with regression coverage."

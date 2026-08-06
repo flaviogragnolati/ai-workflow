@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical Foundation Definition"
+  short_description: "Define the concrete T3 stack, NFRs, and operations"
+  default_prompt: "Use $technical-foundation-definition to define and validate the concrete T3 foundation."

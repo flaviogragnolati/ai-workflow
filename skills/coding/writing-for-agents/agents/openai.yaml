@@ -1,0 +1,4 @@
+interface:
+  display_name: "Writing for Agents"
+  short_description: "Write concise, discoverable instructions for coding agents"
+  default_prompt: "Use $writing-for-agents to make these agent instructions concise, discoverable, and actionable."
