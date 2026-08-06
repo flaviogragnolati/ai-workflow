@@ -87,7 +87,7 @@ Make one cohesive change across the impact map. Apply these maintenance chores w
 - **Provenance:** preserve applicable notices and update `LICENSE` or attribution only when the legal scope or incorporated material changes.
 - **Removal or rename:** remove stale references, provide a transition path when consumers may still use the old ID, and avoid silent aliases.
 
-Apply the package's `writing-for-agents` discipline to every agent-consumed document: sharpen context pointers, keep steps visible, co-locate rules, use checkable completion criteria, disclose branch-specific detail, and prune caches or no-ops.
+Load [`writing-for-agents`](../../coding/writing-for-agents/SKILL.md) before creating, restructuring, or materially editing an agent-consumed artifact. Apply its internal writing discipline inside this maintenance task's authority and write scope.
 
 Keep housekeeping artifacts outside skill directories unless they are required runtime resources for that skill. Never create a durable project execution diary for maintenance work.
 

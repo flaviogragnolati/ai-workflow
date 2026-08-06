@@ -26,7 +26,7 @@ properties:
         execution_modes:
           type: array
           minItems: 1
-          items: {enum: [orchestrated, standalone]}
+          items: {enum: [orchestrated, standalone, internal]}
         persistent_outputs:
           type: array
           items:

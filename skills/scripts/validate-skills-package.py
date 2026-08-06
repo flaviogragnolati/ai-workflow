@@ -171,6 +171,28 @@ def openai_errors(directory: Path, skill_id: str) -> list[str]:
     return errors
 
 
+def internal_skill_errors(directory: Path, skill_id: str, entry: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    if entry.get("execution_modes") != ["internal"]:
+        errors.append("%s: a non-invocable active skill must use only internal execution" % skill_id)
+    if entry.get("persistent_outputs"):
+        errors.append("%s: an internal companion cannot own persistent outputs" % skill_id)
+    interface = directory / "agents" / "openai.yaml"
+    if interface.exists():
+        errors.append("%s: an internal companion must not expose agents/openai.yaml" % skill_id)
+
+    pointer_paths = [REPO_ROOT / "AGENTS.md"]
+    pointer_paths.extend(
+        path for path in SKILLS_ROOT.rglob("SKILL.md") if path.parent.resolve() != directory.resolve()
+    )
+    if not any(
+        path.is_file() and skill_id in path.read_text(encoding="utf-8-sig")
+        for path in pointer_paths
+    ):
+        errors.append("%s: internal companion is unreachable from AGENTS.md or an owning skill" % skill_id)
+    return errors
+
+
 def artifact_semantics(data: Any, active: set[str]) -> list[str]:
     errors: list[str] = []
     seen: set[str] = set()
@@ -300,6 +322,10 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("00-cross-workflow-contract.md", "reconciliation_required: true"),
             ("00-cross-workflow-contract.md", "global_state_updated: false"),
         ],
+        "S-18": [
+            ("coding/explore/SKILL.md", "Return the summary in the conversation as transient context"),
+            ("app-flow/ai-coding-workflow/SKILL.md", "do not register it as an artifact"),
+        ],
     }
     errors: list[str] = []
     for scenario, requirements in checks.items():
@@ -309,6 +335,30 @@ def acceptance_errors() -> tuple[list[str], int]:
             if phrase not in text:
                 errors.append("%s: missing acceptance evidence %r in %s" % (scenario, phrase, relative))
     return errors, len(checks)
+
+
+def readme_planned_errors(planned: set[str]) -> list[str]:
+    path = REPO_ROOT / "README.md"
+    text = path.read_text(encoding="utf-8-sig")
+    section = re.search(r"(?ms)^## Planned capabilities\s*(.*?)(?=^## |\Z)", text)
+    if not section:
+        return ["README.md is missing the Planned capabilities section"]
+
+    listed = re.findall(r"(?m)^- `([a-z0-9-]+)`\s*$", section.group(1))
+    errors: list[str] = []
+    duplicates = sorted({skill_id for skill_id in listed if listed.count(skill_id) > 1})
+    if duplicates:
+        errors.append("README planned capabilities contain duplicates: %s" % ", ".join(duplicates))
+
+    listed_set = set(listed)
+    missing = sorted(planned - listed_set)
+    stale = sorted(listed_set - planned)
+    if missing:
+        errors.append("README omits planned capabilities: %s" % ", ".join(missing))
+    if stale:
+        errors.append("README lists non-planned capabilities: %s" % ", ".join(stale))
+    return errors
+
 
 def package_doc_errors() -> list[str]:
     errors: list[str] = []
@@ -400,7 +450,12 @@ def run() -> dict[str, Any]:
             errors.append("%s: frontmatter name is %r" % (skill_id, metadata.get("name")))
         if directory.name != skill_id:
             errors.append("%s: folder name is %r" % (skill_id, directory.name))
-        errors.extend(openai_errors(directory, skill_id))
+        if entry.get("invocable") is False:
+            errors.extend(internal_skill_errors(directory, skill_id, entry))
+        else:
+            if "internal" in entry.get("execution_modes", []):
+                errors.append("%s: a user-invocable skill cannot use internal execution" % skill_id)
+            errors.extend(openai_errors(directory, skill_id))
         outputs = entry.get("persistent_outputs", [])
         if isinstance(outputs, list):
             checked_artifacts += len(outputs)
@@ -477,6 +532,7 @@ def run() -> dict[str, Any]:
 
     current_acceptance_errors, checked_scenarios = acceptance_errors()
     errors.extend(current_acceptance_errors)
+    errors.extend(readme_planned_errors(set(planned)))
     errors.extend(package_doc_errors())
 
     return {

@@ -1,22 +1,24 @@
 # Skill mechanics
 
-The skill-specific branch of [`writing-for-agents`](SKILL.md): what changes when the document is a skill — frontmatter, the invocation choice, and router skills. Everything else about writing it is the universal reference in `SKILL.md`.
+Read this reference only when the target artifact is a skill. Apply the shared writing procedure in [`SKILL.md`](SKILL.md) first; use this file for skill packaging and reachability.
 
-## Invocation
+## Choose the invocation surface
 
-Two choices, trading the two loads:
+| Skill role | Manifest and interface |
+|---|---|
+| User entry point | Set `invocable: true`, use `orchestrated` or `standalone` execution as appropriate, and provide matching `agents/openai.yaml` metadata. |
+| Internal companion | Set `invocable: false` with `execution_modes: [internal]`, omit `agents/openai.yaml`, and add a strong pointer from `AGENTS.md` or every owning skill that must load it. |
 
-- A **model-invoked** skill keeps a `description`, so the agent can fire it autonomously — and other skills can reach it. You can still type its name: model-invocation always _includes_ user reach; a description only ever adds agent discovery, never removes the human's. The description is the skill's top-level context pointer, forced to stay loaded at all times — permanent context load in exchange for discoverability. A model-invoked skill whose content is all reference is also one home for shared reference: another skill can invoke it, so reference needed by several skills lives in one place. Mechanics: omit `disable-model-invocation`, and write a model-facing description carrying the trigger branches (the pointer-writing rules in `SKILL.md` apply in full).
-- A **user-invoked** skill strips the description from the agent's reach: only the human typing its name can invoke it, and no other skill can. Zero context load, but it spends cognitive load — you are the index that must remember it exists. Mechanics: set `disable-model-invocation: true`; the `description` becomes human-facing — a one-line summary, trigger lists stripped.
+An internal companion is not a direct target and inherits authority, side effects, and approval boundaries from its caller. Keep its persistent outputs empty; the owning task owns any durable artifact.
 
-Pick model-invocation only when the agent must reach the skill on its own, or another skill must. If it only ever fires by hand, make it user-invoked and pay no context load.
+Split out another skill only when it needs independent reach: it has a distinct trigger concept used in real prompts or another owner must load it directly. Otherwise keep the branch in the existing skill or disclose it as reference. The independent route must justify the context and pointer load it adds.
 
-Shared reference that two user-invoked skills both need can live in neither — with no descriptions, neither can fire the other. Push it to a plain file outside the skill system: external reference any skill can point at.
+## Write the context pointer
 
-## Splitting by invocation
+Treat frontmatter `description` as the skill's top-level context pointer and apply the pointer rules in [`SKILL.md`](SKILL.md#3-choose-the-narrowest-useful-artifact). Make `name` match the folder and manifest ID. For an internal companion, name its consumers and state that it is not a user entry point.
 
-The invocation cut of splitting (the sequence cut lives in `SKILL.md`): split off a model-invoked skill when you have a distinct leading word that should trigger it on its own — a trigger word you actually use in your prompts — or another skill must reach it. You pay context load for the new always-loaded description, so that independent reach has to be worth it.
+## Keep the body executable
 
-## Router skills
+Write the skill in imperative form. Keep the shared path in `SKILL.md`, move branch-only detail into directly linked references, and state when each reference must be read. Avoid nested reference chains and supplementary README or changelog files inside the skill directory.
 
-When user-invoked skills multiply past what you can remember, that piled-up cognitive load is cured by a **router skill**: one user-invoked skill that names the others and when to reach for each, so the human has one skill to remember instead of many. It can only hint, never fire them: user-invoked skills have no description, so nothing but the human can reach them.
+Complete the skill only when its manifest role, folder, frontmatter, pointers, invocation surface, side effects, output authority, and validation evidence agree.

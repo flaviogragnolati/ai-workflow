@@ -29,6 +29,10 @@ are deliberately established.
   `.agents/skills/maintain-ai-workflow`, linked to its canonical package source.
 - Shared maintenance instructions in `AGENTS.md`, with `CLAUDE.md` importing the
   same source for native Claude and Codex compatibility without duplicated rules.
+- Contract and validation support for active internal companion skills that are
+  reachable by owning agents without exposing a user invocation surface.
+- Active `$explore` routing for read-only, repository-grounded orientation over
+  codebases, modules, features, and documents, with transient non-artifact output.
 
 ### Changed
 
@@ -36,6 +40,11 @@ are deliberately established.
   package-validator requirement after ownership was confirmed.
 - Maintenance routing and validation now resolve the repository-root layout
   consistently, including the canonical manifest, shared contract, and validator.
+- `writing-for-agents` is now a non-user-invocable internal companion for skills,
+  agent instructions, durable intermediates, handoffs, temporary artifacts, and
+  generated references. Its artifact-contract workflow retains the original
+  context-pointer, information-hierarchy, completion, leading-word, and pruning
+  mechanics without restoring incompatible invocation behavior.
 - The AI coding workflow now coordinates six planning stages, selective
   refinement, optional tickets and TDD, implementation, change-scoped technical
   and comment review, release-candidate QA, and delivery.
@@ -51,3 +60,6 @@ are deliberately established.
 - Development and integral QA are currently limited to the `t3-core` stack
   profile. Unsupported stacks must produce an explicit coverage blocker rather
   than a false approval.
+- Direct user invocation of `$writing-for-agents` is no longer supported. Route
+  writing work through its owning task; repository instructions or the owning
+  skill load the internal companion when the target is agent-consumed.

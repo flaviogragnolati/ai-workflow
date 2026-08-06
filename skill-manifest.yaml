@@ -247,6 +247,22 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
+  explore:
+    path: coding/explore
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs: []
+    transient_outputs: [orientation-summary]
+    side_effects: [none]
+    approval_policy: read-only-and-no-artifact-creation
+    fallback: report-scope-and-evidence-limitations
+    stack_profile: any
+    contract_version: "1.0"
+
   feature-grill:
     path: coding/feature-grill
     status: active
@@ -451,13 +467,13 @@ skills:
     kind: tool
     workflow: shared
     stage: null
-    invocable: true
-    execution_modes: [standalone]
+    invocable: false
+    execution_modes: [internal]
     persistent_outputs: []
     transient_outputs: [editing-notes]
-    side_effects: [write-documentation]
-    approval_policy: follow-requested-document-scope
-    fallback: concise-in-place-edit
+    side_effects: [write-authorized-agent-artifacts]
+    approval_policy: inherit-authority-and-write-scope-from-owning-task
+    fallback: focused-draft-or-in-place-edit-without-secondary-authority
     stack_profile: any
     contract_version: "1.0"
 
@@ -604,9 +620,6 @@ skills:
 
 planned_capabilities:
   cleanup-docs:
-    status: planned
-    invocable: false
-  explore:
     status: planned
     invocable: false
   generate-report:

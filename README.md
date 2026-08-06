@@ -21,6 +21,7 @@ Invoke a stage directly only when standalone output is intentional. A standalone
 - Registry and routing: `skill-manifest.yaml`.
 - Shared governance: `skills/00-cross-workflow-contract.md`.
 - Stage procedure: the selected `SKILL.md`.
+- Internal agent-writing discipline: `skills/coding/writing-for-agents/SKILL.md`.
 - Runtime truth: project `00-workflow-state.yaml` and `00-artifact-index.yaml`.
 - Explanatory views: this guide and its diagrams.
 
@@ -83,6 +84,8 @@ Development selects a high-level item, refines only as needed, optionally create
 
 Maintenance is outside project runtime. It does not write project workflow state, update the project artifact index, return a project stage result, or participate in client delivery execution.
 
+`writing-for-agents` is an internal companion used by repository agents and owning skills when they create or materially edit agent-consumed artifacts. It is registered with `invocable: false`, has no user-facing skill interface, inherits the owning task's authority, and creates no independently authoritative project output.
+
 ## Artifact lifecycle
 
 | Record | Durable? | Authority |
@@ -103,6 +106,7 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 |---|---|
 | Start or resume a proposal | `discovery-proposal-workflow` |
 | Start or resume product planning or delivery | `ai-coding-workflow` |
+| Orient around a codebase, feature, module, or document | `explore` |
 | Deep architecture alignment | `design-grill` |
 | Feature alignment and plan | `feature-grill` |
 | Small scoped plan | `simple-grill` |
@@ -135,7 +139,6 @@ A completed run leaves owned artifacts, traceable IDs, declared authority and li
 These IDs are registered but cannot be invoked:
 
 - `cleanup-docs`
-- `explore`
 - `generate-report`
 - `reporting-workflow`
 

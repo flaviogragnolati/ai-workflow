@@ -29,6 +29,12 @@ Do not duplicate stage templates or domain procedure here. Validate each returne
 
 Stage 6 closes initial app-flow only when the high-level backlog contains milestones, epics, known features or workstreams, checkpoints, primary dependencies, readiness, and a selectable next front. Tickets and exhaustive task detail are not exit criteria.
 
+## Exploration and orientation
+
+Route to `explore` when the user asks for a high-level understanding of a codebase, module, feature, or document, or when a specific question requires repository-grounded orientation before another stage. Supply the current target and question as its lens. Treat its summary as transient context: do not register it as an artifact, use it as stage-completion evidence, or run it as routine ceremony when the needed context is already available.
+
+Use `zoom-out` instead for a map exactly one abstraction level above current code, `research` for external primary sources and durable cited findings, and `codebase-review` for a formal quality audit.
+
 ## Development loop
 
 For each selected backlog item:

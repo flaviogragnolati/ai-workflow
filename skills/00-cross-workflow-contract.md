@@ -24,6 +24,8 @@ Treat a stage name supplied with an orchestrator as `target_stage`, not as a sec
 
 A stage invoked directly runs in standalone mode. It may write its owned domain artifacts, but it must not mark a global workflow stage complete or silently update the workflow state or artifact index.
 
+An active skill with `invocable: false` and `execution_modes: [internal]` is an internal companion, not a direct user entry point. It must be reached through a strong context pointer in `AGENTS.md` or an owning skill, inherit the caller's authority and write scope, produce no independently authoritative project artifact, and expose no `agents/openai.yaml` invocation surface.
+
 ## Single-writer rule
 
 The workflow orchestrator is the only writer of:
@@ -154,7 +156,7 @@ Do not implement partial hashes or editable-field tracking in this version. When
 
 Before completing package work:
 
-1. Run `scripts/validate-skills-package.py`.
+1. Run `python3 skills/scripts/validate-skills-package.py` from the repository root.
 2. Run the official `quick_validate.py` for every active skill.
 3. Run affected script tests and `--help` checks.
 4. Verify local links and references.
