@@ -6,8 +6,8 @@ package:
   stack_profile: t3-core
   compatibility: t3-only
   human_guide: README.md
-  cross_workflow_contract: 00-cross-workflow-contract.md
-  validator: scripts/validate-skills-package.py
+  cross_workflow_contract: skills/00-cross-workflow-contract.md
+  validator: skills/scripts/validate-skills-package.py
 
 workflows:
   discovery-proposal:
@@ -26,6 +26,10 @@ workflows:
     status: planned
     entry_skill: null
     current_tools: [generate-quasar-deck]
+  maintenance:
+    status: active
+    entry_skill: maintain-ai-workflow
+    scope: package-administration
 
 skills:
   ai-coding-workflow:
@@ -561,6 +565,22 @@ skills:
     side_effects: [write-project-artifacts]
     approval_policy: no-fabrication-and-user-confirms-blocking-assumptions
     fallback: blocked-with-targeted-questions
+    stack_profile: any
+    contract_version: "1.0"
+
+  maintain-ai-workflow:
+    path: maintenance/maintain-ai-workflow
+    status: active
+    kind: tool
+    workflow: maintenance
+    stage: null
+    invocable: true
+    execution_modes: [standalone]
+    persistent_outputs: []
+    transient_outputs: [impact-map, validation-evidence]
+    side_effects: [write-package-files]
+    approval_policy: user-authorizes-package-maintenance-and-governance-changes-require-explicit-confirmation
+    fallback: read-only-audit-or-block-on-governance-change
     stack_profile: any
     contract_version: "1.0"
 

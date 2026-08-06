@@ -19,7 +19,7 @@ Invoke a stage directly only when standalone output is intentional. A standalone
 ## Operating model
 
 - Registry and routing: `skill-manifest.yaml`.
-- Shared governance: `00-cross-workflow-contract.md`.
+- Shared governance: `skills/00-cross-workflow-contract.md`.
 - Stage procedure: the selected `SKILL.md`.
 - Runtime truth: project `00-workflow-state.yaml` and `00-artifact-index.yaml`.
 - Explanatory views: this guide and its diagrams.
@@ -139,4 +139,4 @@ These IDs are registered but cannot be invoked:
 - `generate-report`
 - `reporting-workflow`
 
-Run `scripts/validate-skills-package.py` after any package change.
+Run `python3 skills/scripts/validate-skills-package.py` after any package change.

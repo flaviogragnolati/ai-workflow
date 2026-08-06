@@ -25,13 +25,17 @@ are deliberately established.
 - Administrative `$maintain-ai-workflow` housekeeping for impact analysis,
   philosophy and anti-pattern review, synchronized package updates, and
   regression validation outside project runtime.
+- Repo-scoped discovery for `$maintain-ai-workflow` through
+  `.agents/skills/maintain-ai-workflow`, linked to its canonical package source.
 - Shared maintenance instructions in `AGENTS.md`, with `CLAUDE.md` importing the
   same source for native Claude and Codex compatibility without duplicated rules.
-- MIT licensing with preserved attribution for material derived from
-  `mattpocock/skills`.
 
 ### Changed
 
+- Removed an obsolete third-party provenance assertion and its corresponding
+  package-validator requirement after ownership was confirmed.
+- Maintenance routing and validation now resolve the repository-root layout
+  consistently, including the canonical manifest, shared contract, and validator.
 - The AI coding workflow now coordinates six planning stages, selective
   refinement, optional tickets and TDD, implementation, change-scoped technical
   and comment review, release-candidate QA, and delivery.

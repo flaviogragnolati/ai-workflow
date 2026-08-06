@@ -24,14 +24,14 @@ Treat a proposal that changes one of these invariants as a governance change, no
 
 ## 1. Establish the baseline
 
-Read, in this order:
+Resolve these paths from the repository root and read, in this order:
 
-1. `../../AGENTS.md` and `../../CLAUDE.md` when present;
-2. `../../skill-manifest.yaml`;
-3. `../../00-cross-workflow-contract.md`;
-4. `../../README.md` and `../../CHANGELOG.md`;
+1. `AGENTS.md` and `CLAUDE.md` when present;
+2. `skill-manifest.yaml`;
+3. `skills/00-cross-workflow-contract.md`;
+4. `README.md` and `CHANGELOG.md`;
 5. the affected `SKILL.md`, `agents/openai.yaml`, schemas, fixtures, scripts, and neighboring owners;
-6. `../../scripts/validate-skills-package.py` and any affected executable tests or help output.
+6. `skills/scripts/validate-skills-package.py` and any affected executable tests or help output.
 
 Inspect repository status or create an explicit changed-file inventory when version control is unavailable. Preserve unrelated user work. Run the package validator before editing when possible so pre-existing failures remain distinguishable from regressions.
 
@@ -95,7 +95,7 @@ Keep housekeeping artifacts outside skill directories unless they are required r
 
 Run the strongest available checks in this order:
 
-1. Run `scripts/validate-skills-package.py` and require no new errors or warnings.
+1. Run `python3 skills/scripts/validate-skills-package.py` from the repository root and require no new errors or warnings.
 2. Run the official `quick_validate.py` for every active skill; at minimum run it for every added or changed skill when full-package execution is unavailable.
 3. Run affected script tests, schema fixtures, and `--help` smoke checks.
 4. Verify local links, renamed paths, IDs, metadata, routing, and references to planned or removed capabilities.

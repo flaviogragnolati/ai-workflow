@@ -9,7 +9,8 @@ from typing import Any
 
 sys.dont_write_bytecode = True
 
-ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SKILLS_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import yaml_subset as yaml  # noqa: E402
 
@@ -303,7 +304,7 @@ def acceptance_errors() -> tuple[list[str], int]:
     errors: list[str] = []
     for scenario, requirements in checks.items():
         for relative, phrase in requirements:
-            path = ROOT / relative
+            path = (REPO_ROOT / relative) if relative == "skill-manifest.yaml" else (SKILLS_ROOT / relative)
             text = path.read_text(encoding="utf-8-sig")
             if phrase not in text:
                 errors.append("%s: missing acceptance evidence %r in %s" % (scenario, phrase, relative))
@@ -313,32 +314,32 @@ def package_doc_errors() -> list[str]:
     errors: list[str] = []
     required = ('AGENTS.md', 'CLAUDE.md', 'CHANGELOG.md', 'LICENSE')
     for relative in required:
-        if not (ROOT / relative).is_file():
+        if not (REPO_ROOT / relative).is_file():
             errors.append('Missing package reference document: %s' % relative)
 
-    claude = ROOT / 'CLAUDE.md'
+    claude = REPO_ROOT / 'CLAUDE.md'
     if claude.is_file() and claude.read_text(encoding='utf-8-sig').strip() != '@AGENTS.md':
         errors.append('CLAUDE.md must import AGENTS.md as the shared instruction source')
 
-    agents = ROOT / 'AGENTS.md'
+    agents = REPO_ROOT / 'AGENTS.md'
     if agents.is_file():
         text = agents.read_text(encoding='utf-8-sig')
         for phrase in ('$maintain-ai-workflow', 'administrative housekeeping', 'CHANGELOG.md'):
             if phrase not in text:
                 errors.append('AGENTS.md is missing maintenance pointer %r' % phrase)
 
-    changelog = ROOT / 'CHANGELOG.md'
+    changelog = REPO_ROOT / 'CHANGELOG.md'
     if changelog.is_file() and '## [Unreleased]' not in changelog.read_text(encoding='utf-8-sig'):
         errors.append('CHANGELOG.md must contain an Unreleased section')
 
-    license_path = ROOT / 'LICENSE'
+    license_path = REPO_ROOT / 'LICENSE'
     if license_path.is_file():
         text = license_path.read_text(encoding='utf-8-sig')
-        for phrase in ('MIT License', 'Matt Pocock'):
+        for phrase in ('MIT License',):
             if phrase not in text:
                 errors.append('LICENSE is missing required notice %r' % phrase)
 
-    maintenance = ROOT / 'maintenance' / 'maintain-ai-workflow' / 'SKILL.md'
+    maintenance = SKILLS_ROOT / 'maintenance' / 'maintain-ai-workflow' / 'SKILL.md'
     if maintenance.is_file():
         text = maintenance.read_text(encoding='utf-8-sig')
         for phrase in (
@@ -348,6 +349,15 @@ def package_doc_errors() -> list[str]:
         ):
             if phrase not in text:
                 errors.append('maintain-ai-workflow is missing governance evidence %r' % phrase)
+
+    installed = REPO_ROOT / '.agents' / 'skills' / 'maintain-ai-workflow'
+    canonical = SKILLS_ROOT / 'maintenance' / 'maintain-ai-workflow'
+    if not installed.exists():
+        errors.append('maintain-ai-workflow is not installed in .agents/skills')
+    elif not installed.is_symlink():
+        errors.append('maintain-ai-workflow repo installation must link to its canonical package source')
+    elif installed.resolve() != canonical.resolve():
+        errors.append('maintain-ai-workflow repo installation points to the wrong source')
     return errors
 
 
@@ -355,8 +365,8 @@ def run() -> dict[str, Any]:
     errors: list[str] = []
     warnings: list[str] = []
     try:
-        manifest = load(ROOT / "skill-manifest.yaml")
-        schema = load(ROOT / "schemas" / "skill-manifest.schema.yaml")
+        manifest = load(REPO_ROOT / "skill-manifest.yaml")
+        schema = load(SKILLS_ROOT / "schemas" / "skill-manifest.schema.yaml")
     except Exception as exc:
         return {
             "status": "Failed",
@@ -370,7 +380,7 @@ def run() -> dict[str, Any]:
     skills = manifest.get("skills", {}) if isinstance(manifest, dict) else {}
     planned = manifest.get("planned_capabilities", {}) if isinstance(manifest, dict) else {}
     active = set(skills)
-    discovered = {p.parent.resolve() for p in ROOT.rglob("SKILL.md") if "_to_delete" not in p.parts}
+    discovered = {p.parent.resolve() for p in SKILLS_ROOT.rglob("SKILL.md") if "_to_delete" not in p.parts}
     registered: set[Path] = set()
     checked_artifacts = 0
 
@@ -378,7 +388,7 @@ def run() -> dict[str, Any]:
         if not isinstance(entry, dict):
             errors.append("%s: manifest entry must be a mapping" % skill_id)
             continue
-        directory = (ROOT / str(entry.get("path", ""))).resolve()
+        directory = (SKILLS_ROOT / str(entry.get("path", ""))).resolve()
         registered.add(directory)
         skill_file = directory / "SKILL.md"
         if not skill_file.is_file():
@@ -400,9 +410,9 @@ def run() -> dict[str, Any]:
                         errors.append("%s: derived output %r must have authority none" % (skill_id, output.get("type")))
 
     for directory in sorted(discovered - registered):
-        errors.append("Unregistered skill: %s" % directory.relative_to(ROOT))
+        errors.append("Unregistered skill: %s" % directory.relative_to(SKILLS_ROOT))
     for directory in sorted(registered - discovered):
-        errors.append("Manifest path has no skill: %s" % directory.relative_to(ROOT))
+        errors.append("Manifest path has no skill: %s" % directory.relative_to(SKILLS_ROOT))
 
     for skill_id, entry in planned.items():
         if not isinstance(entry, dict):
@@ -412,16 +422,16 @@ def run() -> dict[str, Any]:
         if skill_id in active:
             errors.append("%s: cannot be active and planned" % skill_id)
 
-    if any("_to_delete" in p.parts for p in ROOT.rglob("*")):
+    if any("_to_delete" in p.parts for p in SKILLS_ROOT.rglob("*")):
         errors.append("Deprecated _to_delete content remains inside SKILLS")
 
     known = active | set(planned)
-    readme = (ROOT / "README.md").read_text(encoding="utf-8-sig")
+    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8-sig")
     for ref in set(re.findall(r"\$([a-z0-9-]+)", readme)):
         if ref not in known:
             errors.append("README references unknown skill $%s" % ref)
 
-    current_links, checked_references = link_errors(ROOT)
+    current_links, checked_references = link_errors(REPO_ROOT)
     errors.extend(current_links)
 
     banned_patterns = {
@@ -430,7 +440,7 @@ def run() -> dict[str, Any]:
         r"(?<![a-z0-9-])05-implementation-roadmap\.md(?![a-z0-9-])": "05-technical-implementation-sequence.md",
         r"(?<![a-z0-9-])render_docx\.py(?![a-z0-9-])": "document_builder.py",
     }
-    for path in ROOT.rglob("*"):
+    for path in REPO_ROOT.rglob("*"):
         if path.resolve() == Path(__file__).resolve():
             continue
         if not path.is_file() or path.suffix.lower() not in {".md", ".yaml", ".yml", ".py", ".json"}:
@@ -441,8 +451,8 @@ def run() -> dict[str, Any]:
             if match:
                 errors.append("%s: obsolete reference %r; use %r" % (path, match.group(0), new))
 
-    schemas = ROOT / "schemas"
-    fixtures = ROOT / "fixtures"
+    schemas = SKILLS_ROOT / "schemas"
+    fixtures = SKILLS_ROOT / "fixtures"
     errors.extend(fixture_pair(
         schemas / "artifact-index.schema.yaml",
         fixtures / "artifact-index.valid.yaml",
