@@ -1,6 +1,6 @@
 ---
 name: module-feature-decomposition
-description: "Decompose validated T3 architecture into modules, features, vertical slices, behaviors, dependencies, and a supporting technical implementation sequence. Use for stage 5 before backlog planning; do not create delivery milestones, canonical epics, capacity plans, or product priorities."
+description: "Decompose validated architecture into modules, features, vertical slices, behaviors, dependencies, and a supporting technical implementation sequence. Use for stage 5 before backlog planning; do not create delivery milestones, canonical epics, capacity plans, or product priorities."
 ---
 
 # Module and feature decomposition
@@ -32,14 +32,14 @@ The technical sequence is supporting guidance for slicing and dependency order. 
 
 ## Procedure
 
-1. Load baselined architecture, application standards, domain model, and product requirements.
+1. Load baselined architecture, application standards, the referenced technical foundation version, domain model, and product requirements.
 2. Identify cohesive modules with one authoritative owner per responsibility.
 3. Map requirements and domain behaviors to bounded features.
 4. Specify happy paths, alternate paths, authorization, validation, persistence, events, failures, and test scope.
 5. Prefer vertical slices over horizontal technical task lists.
 6. Define dependencies and approximate technical order without assigning delivery priority.
 7. Verify every in-scope requirement is assigned or has an explicit exception.
-8. Return unresolved scope or boundary decisions to their owning stage.
+8. Return unresolved scope, boundary, or technology decisions to their owning stage; do not update the technical foundation directly.
 
 ## Gate
 

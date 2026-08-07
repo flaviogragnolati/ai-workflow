@@ -1,6 +1,6 @@
 ---
 name: design-grill
-description: "Run deep architectural alignment for a large or cross-cutting T3 change that affects multiple modules, domain boundaries, major trade-offs, or ADRs. Use to create a durable feature architecture document before feature-level execution planning."
+description: "Run deep architectural alignment for a large or cross-cutting change that affects multiple modules, domain boundaries, major trade-offs, or ADRs. Use to create a durable feature architecture document before feature-level execution planning."
 ---
 
 # Design grill
@@ -15,13 +15,13 @@ Create a durable `Working` architecture document under `docs/architecture/featur
 
 ## Procedure
 
-1. Load current code, architecture, product context, decisions, and vocabulary.
+1. Load current code, architecture, product context, the referenced technical foundation when available, decisions, and vocabulary.
 2. Clarify intent, scenarios, scope, non-goals, constraints, and must-not-break behavior.
 3. Resolve domain boundaries, ownership, interfaces, data, consistency, security, failures, operations, evolution, and rollout.
-4. Compare viable alternatives and make trade-offs explicit.
+4. Compare viable alternatives against product requirements, NFRs, and adopted technology guidance; make trade-offs explicit.
 5. Create ADRs only for durable decisions.
 6. Define high-level stages and the next slice that should enter `feature-grill`, `simple-grill`, or `implementation-plan`.
-7. Validate traceability, open questions, and consequences with the user.
+7. Validate traceability, open questions, and consequences with the user. Route a newly required stack choice to `technical-foundation-definition` rather than deciding it here.
 
 ## Durable output
 

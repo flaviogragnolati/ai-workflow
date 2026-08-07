@@ -4,6 +4,7 @@ workflow: ai-coding
 status: approved
 current_stage: backlog-and-delivery-planning
 stack_profile: t3-core
+technical_foundation_ref: null
 stage_status: {}
 decisions: []
 risks: []

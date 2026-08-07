@@ -9,6 +9,14 @@ properties:
   package:
     type: object
     required: [id, description, stack_profile, compatibility, human_guide, cross_workflow_contract, validator]
+    properties:
+      id: {type: string}
+      description: {type: string}
+      stack_profile: {enum: [project-defined, t3-core, any]}
+      compatibility: {enum: [profile-driven, t3-only]}
+      human_guide: {type: string}
+      cross_workflow_contract: {type: string}
+      validator: {type: string}
   workflows:
     type: object
     additionalProperties:
@@ -53,7 +61,7 @@ properties:
           items: {type: string}
         approval_policy: {type: string}
         fallback: {type: string}
-        stack_profile: {enum: [t3-core, any]}
+        stack_profile: {enum: [project-defined, t3-core, any]}
         contract_version: {const: "1.0"}
   planned_capabilities:
     type: object

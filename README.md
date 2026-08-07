@@ -1,6 +1,6 @@
 # Quasar AI delivery skills
 
-This package coordinates discovery, commercial proposals, product definition, T3 development, quality assurance, delivery, and optional reporting. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
+This package coordinates discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, and optional reporting. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
 
 ## Quick start
 
@@ -26,7 +26,7 @@ Invoke a stage directly only when standalone output is intentional. A standalone
 - Runtime truth: project `00-workflow-state.yaml` and `00-artifact-index.yaml`.
 - Explanatory views: this guide and its diagrams.
 
-Technical development and code QA support `t3-core`. A non-T3 project must stop or use a future adapter instead of receiving a false technical approval. Shared capabilities marked `stack_profile: any`, including `audit-docs`, may operate across stacks without certifying application quality.
+Technical development is stack-agnostic and profile-driven. Skills marked `stack_profile: project-defined` load the project's versioned technical foundation and repository evidence; skills marked `any` do not depend on a selected stack. `t3-core` remains a legacy project value during migration, not a package compatibility gate. Missing technology-specific evidence produces an explicit coverage gap rather than a false approval.
 
 ## Main workflows
 
@@ -74,6 +74,10 @@ Planning stages:
 
 Stage 6 produces the first complete high-level backlog: milestones, epics, known features or workstreams, checkpoints, dependencies, readiness, and a next selectable front. It does not require exhaustive tasks or tickets.
 
+`technical-foundation-definition` owns `02-technical-foundation.md`, the canonical project profile for stack selection, concrete versions, NFR and operational fit, adopted recommendations, pitfalls, antipatterns, and version-scoped external references. Workflow state carries its exact artifact ID and version as `technical_foundation_ref`. Later stages report contradictions and route reconciliation to the owner instead of editing the profile.
+
+For a suitable greenfield web application without a mandated stack, the workflow recommends T3 Core—TypeScript, Next.js App Router, and tRPC—as an advisory starting point. It evaluates Zod, Zustand, shadcn/ui, React Hook Form, and one of Drizzle or Prisma as secondary candidates only when their applicability conditions hold. Existing codebases, user proposals, other product shapes, and NFRs may lead to another stack; the user confirms every material selection.
+
 Development selects a high-level item, refines only as needed, optionally creates durable tickets, implements, verifies, performs a mini technical and comment review, then prepares a release candidate for separate integral QA and delivery.
 
 ### Reporting
@@ -103,6 +107,7 @@ Maintenance is outside project runtime. It does not write project workflow state
 | Record | Durable? | Authority |
 |---|---:|---|
 | Workflow state and artifact index | Yes | Canonical for runtime coordination |
+| Technical foundation | Yes | Canonical for selected stack, versioned technology guidance, NFR and operational fit |
 | Stage domain artifact | Yes | Declared per artifact |
 | Backlog and ticket | Yes | Canonical for their execution scope |
 | Implementer's scratchpad or internal delegation | No | None |
@@ -127,7 +132,7 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Convert settled work to distributed tickets | `to-tickets` |
 | Execute a plan, ticket, or ready backlog item | `implement` |
 | Review one change | `code-review` plus `review-code-comments` |
-| Audit a T3 codebase or release candidate | `codebase-review` |
+| Audit a codebase or release candidate | `codebase-review` |
 | Audit durable project documentation | `audit-docs` |
 | Produce a traced project report or report deck | `reporting-workflow` |
 | Render an approved report source as Markdown, DOCX, and PDF | `generate-report` |
@@ -142,7 +147,8 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 - Do not use an internal implementation scratchpad as a durable project plan.
 - Do not treat a visual render as semantic authority.
 - Do not rewrite accepted commercial scope from a channel renderer.
-- Do not run T3 QA as if it covered another stack.
+- Do not treat the preferred T3 web recommendation as a mandatory stack or flag unselected secondary libraries as missing.
+- Do not issue stack-specific QA approval from generic criteria or stale technology guidance.
 - Do not let a documentation audit rewrite its targets or create a parallel changelog.
 - Do not let a report renderer own report meaning or treat a rendered channel as upstream truth.
 - Do not let a delegated reporting subworkflow write global state or the artifact index.

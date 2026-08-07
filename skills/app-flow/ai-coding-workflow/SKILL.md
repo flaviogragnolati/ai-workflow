@@ -1,6 +1,6 @@
 ---
 name: ai-coding-workflow
-description: "Orchestrate Quasar product planning, T3 implementation, change-scoped review, integral QA, and delivery. Use to start, resume, route, or validate the full AI coding workflow, execute a named planning stage, coordinate development from a backlog item, or recover project state."
+description: "Orchestrate Quasar product planning, profile-driven implementation, change-scoped review, integral QA, and delivery. Use to start, resume, route, or validate the full AI coding workflow, execute a named planning stage, coordinate development from a backlog item, or recover project state."
 ---
 
 # AI coding workflow
@@ -11,8 +11,8 @@ Read the [skill manifest](../../../skill-manifest.yaml) and [cross-workflow cont
 
 1. Load project state, artifact index, baselines, decisions, risks, and open change requests.
 2. Accept either a product idea or a versioned proposal contract. Do not fabricate a commercial contract when work starts from an idea.
-3. Confirm `stack_profile: t3-core`. Record the concrete framework, ORM, runtime, and versions through `technical-foundation-definition`.
-4. Stop with an explicit coverage blocker for a non-T3 project.
+3. Load `technical_foundation_ref` and its exact artifact version when it exists. Treat a legacy `stack_profile: t3-core` as project data, not a package compatibility gate.
+4. Route missing or stale technical selections to `technical-foundation-definition`. Block only on an unresolved requirement, decision, execution capability, or evidence gap that makes the next action unsafe.
 
 ## Planning stages
 
@@ -27,6 +27,8 @@ Run only the stage needed by current state or `target_stage`:
 
 Do not duplicate stage templates or domain procedure here. Validate each returned `stage_result`, then apply its delta to state and index.
 
+After `technical-foundation-definition` completes, reconcile the returned artifact ID and version into `technical_foundation_ref`. If stages 3-6 discover a stack contradiction, mark the referenced version stale when appropriate and route `reconcile-and-update` to its owner; do not let another stage edit the technical foundation.
+
 Stage 6 closes initial app-flow only when the high-level backlog contains milestones, epics, known features or workstreams, checkpoints, primary dependencies, readiness, and a selectable next front. Tickets and exhaustive task detail are not exit criteria.
 
 ## Exploration and orientation
@@ -39,7 +41,7 @@ Use `zoom-out` instead for a map exactly one abstraction level above current cod
 
 For each selected backlog item:
 
-1. Check whether it is sufficiently defined.
+1. Check whether it is sufficiently defined and load the referenced technical foundation, application standards, and relevant ADRs.
 2. If refinement is needed, choose one depth:
    - `design-grill` for broad or cross-cutting architecture;
    - `feature-grill` for a bounded feature with meaningful complexity;
@@ -52,7 +54,7 @@ For each selected backlog item:
 8. Run a mini review:
    - `code-review` for technical and specification conformance;
    - `review-code-comments` for affected comments and docstrings.
-9. Correct failures and update the original durable record: ticket when present, otherwise the selected backlog item, issue, or explicit plan.
+9. Correct failures and update the original durable record: ticket when present, otherwise the selected backlog item, issue, or explicit plan. Route any newly required technology selection back to `technical-foundation-definition`.
 10. Integrate or continue. Do not create a parallel durable implementation diary.
 
 Backlog changes discovered during development return to `backlog-and-delivery-planning` in `targeted-refinement` or `replan-and-synchronize` mode.
@@ -66,7 +68,7 @@ Run integral QA on a release candidate, not on each diff. Create or update:
 - `08-delivery-manifest.yaml`;
 - `08-release-notes.md` when applicable.
 
-Cover architecture, integrations, critical flows, security, relevant NFRs, migrations, deployment, delivery documentation, and UAT or acceptance when applicable. Do not treat `codebase-review` alone as acceptance; reconcile all relevant evidence and blockers.
+Cover architecture, integrations, critical flows, security, relevant NFRs, migrations, deployment, delivery documentation, adopted technology guidance, and UAT or acceptance when applicable. Use the exact `technical_foundation_ref` reviewed and disclose generic-only or unverified stack coverage. Do not treat `codebase-review` alone as acceptance; reconcile all relevant evidence and blockers.
 
 `audit-docs` is optional. Route to it when the user requests extended documentation QA, when upstream change makes drift likely, or before a baseline or release whose risk warrants a documentation pass. Supply the active artifact IDs or explicit durable scope. Keep its diagnostic transient and unregistered; route any approved remediation to the owning skill and record the implemented change in the applicable workflow changelog or change-control record.
 
@@ -86,7 +88,7 @@ When technical work affects accepted commercial scope, price, schedule, or commi
 4. Block affected work until the required decision.
 5. Regenerate derivatives after approval.
 
-On resume, rebuild context from state, index, baselines, decisions, risks, blockers, and housekeeping. Do not reopen closed decisions without new evidence.
+On resume, rebuild context from state, index, baselines, decisions, risks, blockers, housekeeping, and the exact technical foundation version. Do not reopen closed decisions without new evidence.
 
 ## Completion response
 

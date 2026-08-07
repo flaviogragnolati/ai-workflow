@@ -1,6 +1,6 @@
 ---
 name: simple-grill
-description: "Run a short alignment for a small, well-contained T3 change and create a reduced durable implementation plan. Use for a component, page, function, or simple flow that needs no more than five material questions; escalate when scope spans modules or architecture."
+description: "Run a short alignment for a small, well-contained change and create a reduced durable implementation plan. Use for a component, page, function, or simple flow that needs no more than five material questions; escalate when scope spans modules or architecture."
 ---
 
 # Simple grill
@@ -9,7 +9,7 @@ This is the lightest refinement level.
 
 ## Procedure
 
-1. Inspect the relevant code and project context.
+1. Inspect the relevant code, project context, and applicable technical foundation or repository standards.
 2. Confirm objective, integration point, must-not-break behavior, scope, and acceptance.
 3. Ask at most five questions that cannot be answered from evidence and materially reduce risk.
 4. Cover important edge cases, validation, authorization, and testing.

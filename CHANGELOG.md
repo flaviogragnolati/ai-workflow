@@ -43,6 +43,13 @@ are deliberately established.
   DOCX, and PDF.
 - Report-source schema semantics and valid/invalid fixtures covering snapshot
   approval, source authority, stable IDs, and evidence eligibility.
+- A conditional web-stack recommendation owned by
+  `technical-foundation-definition`: T3 Core as the preferred starting point for
+  suitable greenfield web applications, with Zod, Zustand, shadcn/ui, React Hook
+  Form, and one of Drizzle or Prisma evaluated as secondary candidates.
+- A technical-foundation artifact template for versioned stack selections,
+  project commands, adopted recommendations, pitfalls, antipatterns, NFR fit,
+  and precise external-source provenance.
 
 ### Changed
 
@@ -77,12 +84,29 @@ are deliberately established.
   preserving one global writer for project state and the artifact index.
 - Manifest validation now verifies active workflow entry skills, stage and
   renderer ownership, and optional next routes in addition to skill registration.
+- Development and integral QA are now profile-driven rather than T3-only.
+  `technical-foundation-definition` owns the selected project profile and
+  downstream stages route contradictory evidence back to that owner.
+- Workflow state can carry `technical_foundation_ref` as an exact artifact ID and
+  version; downstream state requires it once technical foundation work is complete.
+- Planning, refinement, implementation, debugging, TDD, and review procedures now
+  discover project tooling and consume applicable profile guidance instead of
+  assuming TypeScript-specific commands.
+- `codebase-review` now combines generic software criteria, the selected project
+  profile, repository standards, and current official technology sources. The
+  previous project-specific T3 and library checklists were removed from shared
+  runtime context.
 
 ### Compatibility
 
-- Development and integral QA are currently limited to the `t3-core` stack
-  profile. Unsupported stacks must produce an explicit coverage blocker rather
-  than a false approval.
+- `project-defined` is the active development compatibility profile. Existing
+  runtime states using `stack_profile: t3-core` remain valid during migration;
+  after technical-foundation reconciliation they should add an exact
+  `technical_foundation_ref`. Baselined project artifacts are versioned or
+  superseded rather than rewritten in place.
+- Non-T3 projects may use the full development workflow. Missing stack-specific
+  evidence must be reported as a bounded coverage gap, and no skill may issue a
+  false technology-specific approval.
 - Direct user invocation of `$writing-for-agents` is no longer supported. Route
   writing work through its owning task; repository instructions or the owning
   skill load the internal companion when the target is agent-consumed.

@@ -1,6 +1,6 @@
 ---
 name: implementation-plan
-description: "Produce a concrete, repository-grounded T3 execution plan for settled work without writing code. Use to plan a feature, refactor, migration, integration, or fix after direction is known, with ordered file-level steps, acceptance criteria, testing, rollout, and rollback."
+description: "Produce a concrete, repository-grounded execution plan for settled work without writing code. Use to plan a feature, refactor, migration, integration, or fix after direction is known, with ordered file-level steps, acceptance criteria, testing, rollout, and rollback."
 ---
 
 # Implementation plan
@@ -13,12 +13,12 @@ Accept a backlog item, issue, ticket, architecture document, specification, or e
 
 ## Procedure
 
-1. Inspect repository instructions, relevant code, tests, schemas, migrations, and docs.
+1. Inspect repository instructions, the applicable technical foundation and adopted guidance, relevant code, tests, schemas, migrations, and docs.
 2. Lock objective, scope, non-goals, deferred work, and must-not-break behavior.
 3. Choose the implementation approach and strict sequence.
 4. Break work into phases and tasks grounded in exact files, functions, data, and dependencies.
 5. Identify pitfalls, compatibility concerns, migrations, observability, security, and rollback.
-6. Define acceptance criteria and proportional verification.
+6. Define acceptance criteria and proportional verification using commands discovered from the project rather than assumed tooling.
 7. Mark assumptions and blockers honestly.
 8. Write one durable `Working` plan.
 

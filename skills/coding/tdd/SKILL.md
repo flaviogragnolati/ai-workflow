@@ -9,7 +9,7 @@ TDD is the red → green loop. This skill is the reference that makes that loop 
 
 **Where this fits.** Inside `implement` this is the opt-in mode: the user turns it on at the start of the run, and from then on every task is built test-first. It also runs standalone whenever behavior is being built. It is not the skill for a bug: a failing test that captures a defect comes from `debug` or `simple-fix`, which own the regression-test rule. Here you are building new behavior, not proving an old one wrong.
 
-When exploring the codebase, read `CONTEXT.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
+When exploring the codebase, read `CONTEXT.md` (if it exists), the applicable technical foundation, and repository test configuration so test names, interface vocabulary, seams, and commands match the project. Respect ADRs in the area you're touching.
 
 ## What a good test is
 
@@ -46,4 +46,4 @@ When `implement` drives, the loop nests inside its task loop rather than replaci
 
 - **One task, one or a few slices.** The task's **acceptance criterion is the target** of the last test in the task — when it passes, the task is provable.
 - **Seams are the run's, not the task's.** They were agreed once at Load. A task that seems to need a new seam is either testing internals or a sign the plan's testing section missed something — surface it instead of quietly adding one.
-- **Green means the focused tests plus `{typecheck}`.** `implement` owns the commands and the phase gate; this loop owns the red and the green.
+- **Green means the focused tests plus the project's required fast static or compiler signal when one exists.** `implement` owns command discovery and the phase gate; this loop owns the red and the green.

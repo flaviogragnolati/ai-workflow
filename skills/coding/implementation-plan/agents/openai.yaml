@@ -1,4 +1,4 @@
 interface:
   display_name: "Implementation Plan"
-  short_description: "Create a repository-grounded T3 execution plan"
+  short_description: "Create a repository-grounded execution plan"
   default_prompt: "Use $implementation-plan to create a repository-grounded execution plan for this settled work."

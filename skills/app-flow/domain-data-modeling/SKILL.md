@@ -28,7 +28,7 @@ No critical relationship, invariant, or ownership rule may exist only in Mermaid
 2. Model aggregates or authority boundaries without prematurely imposing storage tables.
 3. Define relationships, cardinality, lifecycle, state transitions, invariants, history, retention, and deletion.
 4. Identify systems of record, derived data, sensitive fields, and access constraints.
-5. Reconcile the model with requirements and technical constraints.
+5. Reconcile the model with requirements and the referenced technical foundation. If persistence, consistency, retention, or scale evidence invalidates a technology choice, return the affected IDs to `technical-foundation-definition` rather than editing its artifact.
 6. Generate the Mermaid source from the documented model; render only after the source is valid.
 7. Validate traceability and mark unresolved semantic decisions.
 

@@ -14,15 +14,16 @@ Require:
 - a fixed comparison baseline;
 - the changed files or diff;
 - repository instructions and standards;
+- the exact technical foundation version and adopted guidance when they apply;
 - the originating backlog item, issue, ticket, plan, specification, or acceptance criteria.
 
-If the baseline or specification is missing, state the limitation instead of inventing it.
+If the baseline or specification is missing, state the limitation instead of inventing it. If the technical profile is missing or stale, keep generic findings separate and declare the stack-specific coverage gap.
 
 ## Two-axis review
 
 Keep results separate:
 
-1. **Standards axis:** correctness, security, data integrity, failure handling, maintainability, tests, architecture, and repository conventions.
+1. **Standards axis:** correctness, security, data integrity, failure handling, maintainability, tests, architecture, repository conventions, and applicable adopted technology guidance.
 2. **Specification axis:** requested behavior, scope, acceptance criteria, non-goals, migration, and unintended changes.
 
 Use independent reviewers or parallel passes when that capability is available. Otherwise run two sequential passes with separate notes and context. Do not require a particular tool or agent name.

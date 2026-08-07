@@ -15,8 +15,9 @@ Three to six sentences a lead can read in under a minute: what was reviewed, the
 ## 2. Scope & Methodology
 
 - **What was reviewed** — the exact files/folders/modules (list them). Note what was explicitly *out* of scope.
-- **How** — lenses applied (generic incl. ARCH / T3 / library), which reference checklists were used.
-- **Tooling signals** — commands actually run and their results (e.g. `pnpm typecheck` → 3 errors; `pnpm check` → 12 diagnostics; `pnpm test` → 2 failing). If tooling couldn't be run, say so and note the review is static-only.
+- **How** — generic, capability, project-profile, repository, and official-technology lenses applied; name the exact technical foundation version and reference sources used.
+- **Tooling signals** — commands discovered from project configuration and actually run, with their results. If tooling could not be run, say so and note which coverage remains static-only.
+- **Profile coverage** — selected technologies reviewed, guidance versions used, unselected recommendations skipped, and any generic-only or unverified technology coverage.
 - **Limitations** — sampling (for large codebases, including which hot spots the commit history pointed at), anything not verifiable, assumptions made.
 
 ## 3. Risk-Ranked Findings (Overview)
@@ -25,8 +26,8 @@ The triage table — sorted by **Risk score descending**. This is the "read this
 
 | # | Finding | Area (ID) | Location | Severity | Freq | Risk | ⚡ | Recommendation |
 |---|---------|-----------|----------|----------|------|------|----|----------------|
-| 1 | {short title} | {e.g. SEC-2} | `file.ts:42` | S4 | F4 | 🔴 Critical (16) |  | 🔴 Must-fix |
-| 2 | {short title} | {e.g. SEC-4} | `router.ts:83` | S4 | F1 | 🟡 Medium (4) | ⚡ | 🔴 Must-fix |
+| 1 | {short title} | {e.g. SEC-2} | `path/to/file:42` | S4 | F4 | 🔴 Critical (16) |  | 🔴 Must-fix |
+| 2 | {short title} | {e.g. project guidance ID} | `path/to/file:83` | S4 | F1 | 🟡 Medium (4) | ⚡ | 🔴 Must-fix |
 | … | | | | | | | | |
 
 ## 4. Findings by Recommendation Category
@@ -56,7 +57,7 @@ Ordered by risk score descending; secondary-grouped by area. Verifiable `ARCH` f
 
 **What** — the issue, with the offending snippet quoted if short:
 
-```ts
+```text
 // the actual code
 ```
 
@@ -64,7 +65,7 @@ Ordered by risk score descending; secondary-grouped by area. Verifiable `ARCH` f
 
 **Fix** — a specific change that fits the surrounding patterns; short code sketch if it clarifies. If the fix would contradict a repo ADR, say so explicitly ("contradicts ADR-00XX — worth reopening because …") or propose an ADR-compatible alternative:
 
-```ts
+```text
 // the suggested shape
 ```
 

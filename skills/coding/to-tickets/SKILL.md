@@ -1,6 +1,6 @@
 ---
 name: to-tickets
-description: "Optionally convert settled T3 work into durable, traceable tickets for multiple executors, sessions, or tracker coordination. Use when distribution adds value; a single executor may proceed directly from a ready backlog item, issue, or implementation plan."
+description: "Optionally convert settled work into durable, traceable tickets for multiple executors, sessions, or tracker coordination. Use when distribution adds value; a single executor may proceed directly from a ready backlog item, issue, or implementation plan."
 ---
 
 # To tickets

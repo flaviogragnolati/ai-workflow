@@ -1,5 +1,7 @@
 # When to Mock
 
+The snippets are illustrative pseudocode. Use the project's selected language, dependency mechanism, and test framework.
+
 Mock at **system boundaries** only:
 
 - External APIs (payment, email, etc.)
@@ -21,7 +23,7 @@ At system boundaries, design interfaces that are easy to mock:
 
 Pass external dependencies in rather than creating them internally:
 
-```typescript
+```text
 // Easy to mock
 function processPayment(order, paymentClient) {
   return paymentClient.charge(order.total);
@@ -29,7 +31,7 @@ function processPayment(order, paymentClient) {
 
 // Hard to mock
 function processPayment(order) {
-  const client = new StripeClient(process.env.STRIPE_KEY);
+  const client = new ExternalPaymentClient(runtimeSecret("PAYMENT_KEY"));
   return client.charge(order.total);
 }
 ```
@@ -38,7 +40,7 @@ function processPayment(order) {
 
 Create specific functions for each external operation instead of one generic function with conditional logic:
 
-```typescript
+```text
 // GOOD: Each function is independently mockable
 const api = {
   getUser: (id) => fetch(`/users/${id}`),

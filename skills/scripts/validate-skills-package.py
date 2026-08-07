@@ -227,6 +227,26 @@ def stage_semantics(data: Any) -> list[str]:
     return errors
 
 
+def workflow_state_semantics(data: Any) -> list[str]:
+    if not isinstance(data, dict):
+        return ["workflow state must be a mapping"]
+    errors: list[str] = []
+    downstream = {
+        "domain-data-modeling",
+        "high-level-architecture-standards",
+        "module-feature-decomposition",
+        "backlog-and-delivery-planning",
+    }
+    stage_status = data.get("stage_status", {})
+    foundation_completed = (
+        isinstance(stage_status, dict)
+        and stage_status.get("technical-foundation-definition") == "completed"
+    )
+    if (data.get("current_stage") in downstream or foundation_completed) and not data.get("technical_foundation_ref"):
+        errors.append("downstream workflow state requires technical_foundation_ref")
+    return errors
+
+
 def report_source_semantics(data: Any) -> list[str]:
     if not isinstance(data, dict):
         return ["report source must be a mapping"]
@@ -377,8 +397,8 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("coding/code-review/SKILL.md", "Keep results separate"),
         ],
         "S-12": [
-            ("app-flow/technical-foundation-definition/SKILL.md", "not T3-compatible"),
-            ("app-flow/technical-foundation-definition/SKILL.md", "false approval"),
+            ("app-flow/technical-foundation-definition/SKILL.md", "Never block solely because the selected stack is not T3"),
+            ("00-cross-workflow-contract.md", "profile-driven"),
         ],
         "S-13": [
             ("app-flow/ai-coding-workflow/SKILL.md", "On resume"),
@@ -426,6 +446,31 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("reporting/generate-report/SKILL.md", "Return semantic edits to `reporting-source-design`"),
             ("reporting/generate-quasar-deck/SKILL.md", "Return semantic edits to `reporting-source-design`"),
             ("reporting/generate-report/SKILL.md", "missing requested format"),
+        ],
+        "S-23": [
+            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "TypeScript"),
+            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "Next.js App Router"),
+            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "tRPC"),
+            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "Zod"),
+            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "Zustand"),
+            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "shadcn/ui"),
+            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "React Hook Form"),
+            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "Drizzle or Prisma"),
+        ],
+        "S-24": [
+            ("app-flow/technical-foundation-definition/SKILL.md", "Preserve an existing stack"),
+            ("app-flow/technical-foundation-definition/SKILL.md", "Evaluate an explicit user proposal"),
+            ("app-flow/technical-foundation-definition/SKILL.md", "current primary sources"),
+        ],
+        "S-25": [
+            ("00-cross-workflow-contract.md", "sole owner of the authored technical foundation"),
+            ("app-flow/ai-coding-workflow/SKILL.md", "technical_foundation_ref"),
+            ("app-flow/high-level-architecture-standards/SKILL.md", "never edit their owned artifacts directly"),
+        ],
+        "S-26": [
+            ("coding/codebase-review/SKILL.md", "A recommended but unselected library is not"),
+            ("coding/codebase-review/SKILL.md", "generic and repository-grounded criteria"),
+            ("coding/codebase-review/SKILL.md", "do not issue a full stack-specific approval"),
         ],
     }
     errors: list[str] = []
@@ -658,7 +703,7 @@ def run() -> dict[str, Any]:
         schemas / "workflow-state.schema.yaml",
         fixtures / "workflow-state.valid.yaml",
         fixtures / "workflow-state.invalid.yaml",
-        None,
+        workflow_state_semantics,
         active,
     ))
     errors.extend(fixture_pair(

@@ -2,9 +2,9 @@ schema_version: "1.0"
 
 package:
   id: quasar-ai-delivery-skills
-  description: "Coordinated skills for Quasar discovery, proposals, T3 delivery, QA, and optional reporting."
-  stack_profile: t3-core
-  compatibility: t3-only
+  description: "Coordinated skills for Quasar discovery, proposals, profile-driven software delivery, QA, and optional reporting."
+  stack_profile: project-defined
+  compatibility: profile-driven
   human_guide: README.md
   cross_workflow_contract: skills/00-cross-workflow-contract.md
   validator: skills/scripts/validate-skills-package.py
@@ -68,8 +68,8 @@ skills:
     transient_outputs: [routing-plan, internal-delegation]
     side_effects: [write-project-state, write-artifact-index, write-project-artifacts]
     approval_policy: user-confirms-commercial-impact-priority-and-release
-    fallback: stop-on-non-t3-or-return-blocked-stage-result
-    stack_profile: t3-core
+    fallback: block-on-unresolved-requirement-or-coverage-gap
+    stack_profile: project-defined
     contract_version: "1.0"
 
   backlog-and-delivery-planning:
@@ -88,7 +88,7 @@ skills:
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-priority-and-structural-replanning
     fallback: standalone-without-global-state-update
-    stack_profile: t3-core
+    stack_profile: any
     contract_version: "1.0"
 
   domain-data-modeling:
@@ -108,7 +108,7 @@ skills:
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-domain-decisions-with-downstream-impact
     fallback: standalone-without-global-state-update
-    stack_profile: t3-core
+    stack_profile: project-defined
     contract_version: "1.0"
 
   high-level-architecture-standards:
@@ -128,7 +128,7 @@ skills:
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-architecture-decisions-with-scope-or-cost-impact
     fallback: standalone-without-global-state-update
-    stack_profile: t3-core
+    stack_profile: project-defined
     contract_version: "1.0"
 
   module-feature-decomposition:
@@ -147,7 +147,7 @@ skills:
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-boundary-or-scope-changes
     fallback: standalone-without-global-state-update
-    stack_profile: t3-core
+    stack_profile: project-defined
     contract_version: "1.0"
 
   product-core-definition:
@@ -164,7 +164,7 @@ skills:
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-product-scope-and-unresolved-assumptions
     fallback: standalone-without-global-state-update
-    stack_profile: t3-core
+    stack_profile: any
     contract_version: "1.0"
 
   technical-foundation-definition:
@@ -176,12 +176,12 @@ skills:
     invocable: true
     execution_modes: [orchestrated, standalone]
     persistent_outputs:
-      - {type: technical-foundation, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: stack-nfr-and-operations}
-    transient_outputs: []
+      - {type: technical-foundation, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: stack-selection-versioned-guidance-nfr-and-operations}
+    transient_outputs: [stack-options-analysis]
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-stack-and-architecture-driving-decisions
-    fallback: block-unsupported-stack
-    stack_profile: t3-core
+    fallback: requirements-driven-recommendation-or-explicit-coverage-gap
+    stack_profile: project-defined
     contract_version: "1.0"
 
   codebase-review:
@@ -195,10 +195,10 @@ skills:
     persistent_outputs:
       - {type: codebase-audit, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: quality-assessment}
     transient_outputs: [review-notes]
-    side_effects: [write-review-artifact]
+    side_effects: [write-review-artifact, network-read]
     approval_policy: no-code-change-or-external-publication
-    fallback: block-unsupported-stack
-    stack_profile: t3-core
+    fallback: generic-review-with-explicit-stack-coverage-gaps
+    stack_profile: project-defined
     contract_version: "1.0"
 
   code-review:
@@ -214,7 +214,7 @@ skills:
     side_effects: [none]
     approval_policy: read-only-unless-user-separately-authorizes-fixes
     fallback: sequential-two-axis-review
-    stack_profile: t3-core
+    stack_profile: project-defined
     contract_version: "1.0"
 
   debug:
@@ -229,8 +229,8 @@ skills:
     transient_outputs: [hypotheses, reproduction-harness]
     side_effects: [write-code, write-tests]
     approval_policy: follow-requested-fix-scope-and-require-approval-for-external-effects
-    fallback: block-unsupported-stack
-    stack_profile: t3-core
+    fallback: report-missing-reproduction-or-project-tooling
+    stack_profile: project-defined
     contract_version: "1.0"
 
   design-grill:
@@ -247,7 +247,7 @@ skills:
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-major-tradeoffs-and-scope
     fallback: deescalate-to-feature-grill
-    stack_profile: t3-core
+    stack_profile: project-defined
     contract_version: "1.0"
 
   explain:
@@ -296,7 +296,7 @@ skills:
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-feature-scope-and-approach
     fallback: escalate-or-deescalate-grill-depth
-    stack_profile: t3-core
+    stack_profile: project-defined
     contract_version: "1.0"
 
   handoff:
@@ -329,7 +329,7 @@ skills:
     side_effects: [write-code, write-tests, update-original-execution-record]
     approval_policy: follow-authorized-scope-and-request-approval-for-external-effects
     fallback: stop-and-return-to-refinement
-    stack_profile: t3-core
+    stack_profile: project-defined
     contract_version: "1.0"
 
   implementation-plan:
@@ -346,7 +346,7 @@ skills:
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-scope-and-sequencing
     fallback: return-to-design-grill
-    stack_profile: t3-core
+    stack_profile: project-defined
     contract_version: "1.0"
 
   prototype:
@@ -395,7 +395,7 @@ skills:
     side_effects: [write-code]
     approval_policy: preserve-both-intents-and-stop-on-semantic-ambiguity
     fallback: report-unresolved-conflicts
-    stack_profile: t3-core
+    stack_profile: any
     contract_version: "1.0"
 
   review-code-comments:
@@ -411,7 +411,7 @@ skills:
     side_effects: [none]
     approval_policy: read-only-unless-user-separately-authorizes-fixes
     fallback: workspace-copy-is-source-of-truth
-    stack_profile: t3-core
+    stack_profile: any
     contract_version: "1.0"
 
   simple-fix:
@@ -427,7 +427,7 @@ skills:
     side_effects: [write-code, write-tests]
     approval_policy: minimal-confirmed-fix-with-no-external-effects
     fallback: escalate-to-debug
-    stack_profile: t3-core
+    stack_profile: project-defined
     contract_version: "1.0"
 
   simple-grill:
@@ -444,7 +444,7 @@ skills:
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-small-change-scope
     fallback: escalate-grill-depth
-    stack_profile: t3-core
+    stack_profile: project-defined
     contract_version: "1.0"
 
   tdd:
@@ -460,7 +460,7 @@ skills:
     side_effects: [write-tests, write-code]
     approval_policy: opt-in-only
     fallback: proportional-verification-without-tdd
-    stack_profile: t3-core
+    stack_profile: any
     contract_version: "1.0"
 
   to-tickets:
@@ -477,7 +477,7 @@ skills:
     side_effects: [write-tracker-or-markdown-tickets]
     approval_policy: optional-and-user-confirms-publication-target
     fallback: versioned-markdown-tickets
-    stack_profile: t3-core
+    stack_profile: any
     contract_version: "1.0"
 
   writing-for-agents:
