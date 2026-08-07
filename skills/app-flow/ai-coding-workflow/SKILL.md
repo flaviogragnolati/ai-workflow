@@ -5,7 +5,7 @@ description: "Orchestrate Quasar product planning, T3 implementation, change-sco
 
 # AI coding workflow
 
-Read `../../skill-manifest.yaml` and `../../00-cross-workflow-contract.md` before routing. Remain the single writer of `00-workflow-state.yaml` and `00-artifact-index.yaml`.
+Read the [skill manifest](../../../skill-manifest.yaml) and [cross-workflow contract](../../00-cross-workflow-contract.md) before routing. Remain the root orchestrator and single global state writer while delegating any subworkflow.
 
 ## Preconditions
 
@@ -70,7 +70,11 @@ Cover architecture, integrations, critical flows, security, relevant NFRs, migra
 
 `audit-docs` is optional. Route to it when the user requests extended documentation QA, when upstream change makes drift likely, or before a baseline or release whose risk warrants a documentation pass. Supply the active artifact IDs or explicit durable scope. Keep its diagnostic transient and unregistered; route any approved remediation to the owning skill and record the implemented change in the applicable workflow changelog or change-control record.
 
-After delivery, offer `generate-quasar-deck` as optional reporting. Upstream completion does not depend on reporting unless a project contract explicitly says so.
+## Reporting checkpoints
+
+At an explicit progress, feature, milestone, release, or completion reporting checkpoint, delegate to `reporting-workflow`. Pass the reporting request, candidate artifact IDs and versions, `root_orchestrator: ai-coding-workflow`, `global_state_writer: ai-coding-workflow`, and the exact `return_to` stage or action.
+
+Remain the global state writer, validate the composite reporting delta, and reconcile its approved artifacts after the subworkflow returns. Do not mark upstream completion from a report, and do not let reporting replace the active development stage. After delivery, reporting may instead run as the next root workflow. Reporting is optional unless a project contract explicitly requires it.
 
 ## Change control and recovery
 

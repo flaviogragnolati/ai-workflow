@@ -35,6 +35,14 @@ are deliberately established.
   codebases, modules, features, and documents, with transient non-artifact output.
 - Active optional `$audit-docs` routing for evidence-backed QA of durable project
   documentation, with read-only transient findings and owner-routed remediation.
+- Active `$reporting-workflow` orchestration for progress, feature, milestone,
+  release, completion, consulting, executive, and custom reporting from approved
+  versioned artifacts, with root-writer delegation and return routing.
+- Active `$reporting-source-design` ownership of the structured, schema-backed
+  semantic report source and active `$generate-report` rendering to Markdown,
+  DOCX, and PDF.
+- Report-source schema semantics and valid/invalid fixtures covering snapshot
+  approval, source authority, stable IDs, and evidence eligibility.
 
 ### Changed
 
@@ -59,6 +67,16 @@ are deliberately established.
   scratchpads, internal plans, and delegation messages.
 - Accepted commercial scope and released artifacts are changed through explicit
   change control instead of in-place rewrites.
+- Reporting now uses one approved semantic source for document and presentation
+  channels; Markdown, DOCX, PDF, and PPTX outputs remain derived with no semantic
+  authority and require regeneration after source changes.
+- `generate-quasar-deck` now distinguishes PPTX and PDF artifacts, requires a
+  baselined source for released reporting channels, and returns a structured
+  stage delta for orchestration.
+- Delegated subworkflows inherit a root orchestrator and return composite deltas,
+  preserving one global writer for project state and the artifact index.
+- Manifest validation now verifies active workflow entry skills, stage and
+  renderer ownership, and optional next routes in addition to skill registration.
 
 ### Compatibility
 
@@ -68,3 +86,6 @@ are deliberately established.
 - Direct user invocation of `$writing-for-agents` is no longer supported. Route
   writing work through its owning task; repository instructions or the owning
   skill load the internal companion when the target is agent-consumed.
+- DOCX and PDF report rendering requires a compatible document runtime. Missing
+  requested formats block full completion or require an explicitly approved
+  partial release; Markdown alone never implies unavailable binary coverage.

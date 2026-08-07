@@ -11,6 +11,12 @@ properties:
     required: [id, description, stack_profile, compatibility, human_guide, cross_workflow_contract, validator]
   workflows:
     type: object
+    additionalProperties:
+      type: object
+      required: [status, entry_skill]
+      properties:
+        status: {enum: [active, planned, deprecated, archived]}
+        entry_skill: {type: [string, "null"]}
   skills:
     type: object
     additionalProperties:

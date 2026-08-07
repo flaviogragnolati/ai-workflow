@@ -23,9 +23,12 @@ workflows:
     includes_integral_qa: true
     optional_next: [reporting, close]
   reporting:
-    status: planned
-    entry_skill: null
-    current_tools: [generate-quasar-deck]
+    status: active
+    entry_skill: reporting-workflow
+    stages: [reporting-source-design]
+    renderers: [generate-report, generate-quasar-deck]
+    report_types: [progress, feature, milestone, release, completion, consulting, executive, custom]
+    optional_next: [return-to-caller, close]
   maintenance:
     status: active
     entry_skill: maintain-ai-workflow
@@ -616,6 +619,62 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
+  reporting-workflow:
+    path: reporting/reporting-workflow
+    status: active
+    kind: orchestrator
+    workflow: reporting
+    stage: orchestration
+    invocable: true
+    execution_modes: [orchestrated]
+    persistent_outputs:
+      - {type: workflow-state, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: workflow-runtime}
+      - {type: artifact-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: artifact-inventory}
+      - {type: reporting-release, lifecycle: Released, creation_mode: authored, semantic_authority: canonical, authority_scope: approved-reporting-release}
+    transient_outputs: [routing-plan, source-bundle-candidates, internal-delegation]
+    side_effects: [write-project-state, write-artifact-index, write-project-artifacts]
+    approval_policy: user-confirms-source-snapshot-report-meaning-requested-channels-and-release-with-separate-publication-approval
+    fallback: source-gap-diagnostic-or-explicit-partial-release-when-a-renderer-is-unavailable
+    stack_profile: any
+    contract_version: "1.0"
+
+  reporting-source-design:
+    path: reporting/reporting-source-design
+    status: active
+    kind: stage
+    workflow: reporting
+    stage: content
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: report-source, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: reporting-narrative-selection-and-approved-interpretation}
+    transient_outputs: [source-gap-analysis, working-outline]
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-source-snapshot-and-semantic-baseline-with-upstream-changes-routed-to-the-owner
+    fallback: source-gap-diagnostic-without-rendering
+    stack_profile: any
+    contract_version: "1.0"
+
+  generate-report:
+    path: reporting/generate-report
+    status: active
+    kind: renderer
+    workflow: reporting
+    stage: document
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    persistent_outputs:
+      - {type: report-document-mapping, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: document-channel-mapping}
+      - {type: quasar-report-markdown, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: document-presentation}
+      - {type: quasar-report-docx, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: document-presentation}
+      - {type: quasar-report-pdf, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: document-presentation}
+    transient_outputs: [render-previews, document-validation]
+    side_effects: [write-project-artifacts]
+    approval_policy: baselined-source-with-explicit-document-plan-and-release-approval-and-separate-publication-approval
+    fallback: block-missing-requested-document-runtime-or-require-explicit-partial-release
+    stack_profile: any
+    contract_version: "1.0"
+
   generate-quasar-deck:
     path: reporting/generate-quasar-deck
     status: active
@@ -626,7 +685,8 @@ skills:
     execution_modes: [orchestrated, standalone]
     persistent_outputs:
       - {type: quasar-deck-plan, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: presentation-plan}
-      - {type: quasar-deck, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
+      - {type: quasar-deck-pptx, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
+      - {type: quasar-deck-pdf, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
     transient_outputs: [render-previews]
     side_effects: [write-project-artifacts]
     approval_policy: explicit-plan-approval-before-generation-and-separate-publication-approval
@@ -634,10 +694,4 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-planned_capabilities:
-  generate-report:
-    status: planned
-    invocable: false
-  reporting-workflow:
-    status: planned
-    invocable: false
+planned_capabilities: {}

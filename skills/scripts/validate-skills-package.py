@@ -227,6 +227,84 @@ def stage_semantics(data: Any) -> list[str]:
     return errors
 
 
+def report_source_semantics(data: Any) -> list[str]:
+    if not isinstance(data, dict):
+        return ["report source must be a mapping"]
+
+    errors: list[str] = []
+    report = data.get("report", {})
+    snapshot = data.get("source_snapshot", {})
+    sources = snapshot.get("sources", []) if isinstance(snapshot, dict) else []
+    known: dict[str, dict[str, Any]] = {}
+
+    for source in sources if isinstance(sources, list) else []:
+        if not isinstance(source, dict):
+            continue
+        artifact_id = source.get("artifact_id")
+        if isinstance(artifact_id, str):
+            if artifact_id in known:
+                errors.append("duplicate report source artifact_id %r" % artifact_id)
+            known[artifact_id] = source
+
+    if isinstance(report, dict) and report.get("lifecycle") == "Baselined":
+        if not isinstance(snapshot, dict) or snapshot.get("status") != "approved":
+            errors.append("a Baselined report requires an approved source snapshot")
+        if not isinstance(snapshot, dict) or not snapshot.get("approval_ref"):
+            errors.append("a Baselined report requires a source snapshot approval_ref")
+        if not data.get("approvals"):
+            errors.append("a Baselined report requires semantic approval evidence")
+    if isinstance(snapshot, dict) and snapshot.get("status") == "approved" and not snapshot.get("approved_at"):
+        errors.append("an approved source snapshot requires approved_at")
+
+    semantic_kinds = {"fact", "metric", "estimate", "interpretation", "recommendation", "projection"}
+    section_ids: set[str] = set()
+    block_ids: set[str] = set()
+    sections = data.get("sections", [])
+    for section in sections if isinstance(sections, list) else []:
+        if not isinstance(section, dict):
+            continue
+        section_id = section.get("section_id")
+        if isinstance(section_id, str):
+            if section_id in section_ids:
+                errors.append("duplicate report section_id %r" % section_id)
+            section_ids.add(section_id)
+        blocks = section.get("blocks", [])
+        for block in blocks if isinstance(blocks, list) else []:
+            if not isinstance(block, dict):
+                continue
+            block_id = block.get("block_id")
+            if isinstance(block_id, str):
+                if block_id in block_ids:
+                    errors.append("duplicate report block_id %r" % block_id)
+                block_ids.add(block_id)
+            refs = block.get("source_refs", [])
+            refs = refs if isinstance(refs, list) else []
+            for ref in refs:
+                if ref not in known:
+                    errors.append("report block %r references unknown source %r" % (block_id, ref))
+            if block.get("kind") in semantic_kinds:
+                if not refs:
+                    errors.append("report block %r requires source_refs" % block_id)
+                    continue
+                eligible = False
+                for ref in refs:
+                    source = known.get(ref, {})
+                    lifecycle = source.get("lifecycle")
+                    authority = source.get("semantic_authority")
+                    approved_working = lifecycle == "Working" and bool(source.get("reporting_approval_ref"))
+                    if authority in {"canonical", "supporting"} and (
+                        lifecycle in {"Baselined", "Released"} or approved_working
+                    ):
+                        eligible = True
+                if not eligible:
+                    errors.append("report block %r has no eligible authoritative source" % block_id)
+
+    channels = data.get("channels_requested", [])
+    if isinstance(channels, list) and len(channels) != len(set(channels)):
+        errors.append("report channels_requested contains duplicates")
+    return errors
+
+
 def fixture_pair(
     schema_path: Path,
     valid_path: Path,
@@ -311,7 +389,8 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("00-cross-workflow-contract.md", "SVG, PNG, or PDF rendered from Mermaid"),
         ],
         "S-15": [
-            ("reporting/generate-quasar-deck/SKILL.md", "approved, baselined"),
+            ("reporting/reporting-workflow/SKILL.md", "Reporting is optional"),
+            ("reporting/reporting-source-design/SKILL.md", "approved as a reporting snapshot"),
             ("discovery/discovery-proposal-workflow/SKILL.md", "Reporting is optional"),
         ],
         "S-16": [
@@ -332,6 +411,21 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("quality/audit-docs/SKILL.md", "stop and route the request to `maintain-ai-workflow`"),
             ("app-flow/ai-coding-workflow/SKILL.md", "`audit-docs` is optional"),
             ("discovery/discovery-proposal-workflow/SKILL.md", "`audit-docs` is optional"),
+        ],
+        "S-20": [
+            ("00-cross-workflow-contract.md", "root orchestrator"),
+            ("reporting/reporting-workflow/SKILL.md", "composite delta with `global_state_updated: false`"),
+            ("app-flow/ai-coding-workflow/SKILL.md", "Remain the global state writer"),
+        ],
+        "S-21": [
+            ("reporting/reporting-source-design/SKILL.md", "single semantic source"),
+            ("reporting/generate-report/SKILL.md", "semantic_authority: none"),
+            ("reporting/generate-quasar-deck/SKILL.md", "semantic_authority: none"),
+        ],
+        "S-22": [
+            ("reporting/generate-report/SKILL.md", "Return semantic edits to `reporting-source-design`"),
+            ("reporting/generate-quasar-deck/SKILL.md", "Return semantic edits to `reporting-source-design`"),
+            ("reporting/generate-report/SKILL.md", "missing requested format"),
         ],
     }
     errors: list[str] = []
@@ -437,9 +531,47 @@ def run() -> dict[str, Any]:
     skills = manifest.get("skills", {}) if isinstance(manifest, dict) else {}
     planned = manifest.get("planned_capabilities", {}) if isinstance(manifest, dict) else {}
     active = set(skills)
+    workflows = manifest.get("workflows", {}) if isinstance(manifest, dict) else {}
     discovered = {p.parent.resolve() for p in SKILLS_ROOT.rglob("SKILL.md") if "_to_delete" not in p.parts}
     registered: set[Path] = set()
     checked_artifacts = 0
+
+    if isinstance(workflows, dict):
+        terminal_routes = {"close", "return-to-caller"}
+        for workflow_id, workflow_entry in workflows.items():
+            if not isinstance(workflow_entry, dict):
+                errors.append("workflow %s must be a mapping" % workflow_id)
+                continue
+            entry_skill = workflow_entry.get("entry_skill")
+            if workflow_entry.get("status") == "active":
+                entry = skills.get(entry_skill) if isinstance(entry_skill, str) else None
+                if not isinstance(entry, dict):
+                    errors.append("active workflow %s has unknown entry_skill %r" % (workflow_id, entry_skill))
+                elif entry.get("workflow") != workflow_id:
+                    errors.append("workflow %s entry_skill %r has the wrong workflow owner" % (workflow_id, entry_skill))
+                elif workflow_entry.get("scope") == "package-administration":
+                    if entry.get("kind") != "tool":
+                        errors.append("administrative workflow %s entry_skill %r must be a tool" % (workflow_id, entry_skill))
+                elif entry.get("kind") != "orchestrator":
+                    errors.append("workflow %s entry_skill %r is not an orchestrator" % (workflow_id, entry_skill))
+            for route_key in ("stages", "planning_stages", "renderers", "current_tools"):
+                route = workflow_entry.get(route_key, [])
+                if not isinstance(route, list):
+                    errors.append("workflow %s.%s must be a list" % (workflow_id, route_key))
+                    continue
+                for skill_id in route:
+                    skill = skills.get(skill_id)
+                    if not isinstance(skill, dict):
+                        errors.append("workflow %s.%s references unknown skill %r" % (workflow_id, route_key, skill_id))
+                    elif skill.get("workflow") != workflow_id:
+                        errors.append("workflow %s.%s references cross-owned skill %r" % (workflow_id, route_key, skill_id))
+            optional_next = workflow_entry.get("optional_next", [])
+            if not isinstance(optional_next, list):
+                errors.append("workflow %s.optional_next must be a list" % workflow_id)
+            else:
+                for target in optional_next:
+                    if target not in workflows and target not in terminal_routes:
+                        errors.append("workflow %s.optional_next references unknown route %r" % (workflow_id, target))
 
     for skill_id, entry in skills.items():
         if not isinstance(entry, dict):
@@ -534,6 +666,13 @@ def run() -> dict[str, Any]:
         fixtures / "stage-result.valid.yaml",
         fixtures / "stage-result.invalid.yaml",
         stage_semantics,
+        active,
+    ))
+    errors.extend(fixture_pair(
+        schemas / "report-source.schema.yaml",
+        fixtures / "report-source.valid.yaml",
+        fixtures / "report-source.invalid.yaml",
+        report_source_semantics,
         active,
     ))
 

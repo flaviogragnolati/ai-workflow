@@ -5,13 +5,13 @@ description: "Plan, create, edit, or review branded Quasar presentations for rep
 
 # Generate a Quasar deck
 
-Use the installed presentation skill for PowerPoint inspection, generation, rendering, and visual QA. Use `references/identidad-visual.md` and the assets in this skill for Quasar narrative and brand rules.
+Use the installed presentation skill for PowerPoint inspection, generation, rendering, and visual QA. Read the [cross-workflow contract](../../00-cross-workflow-contract.md). Use `references/identidad-visual.md` and the assets in this skill for Quasar narrative and brand rules.
 
 ## Authority and inputs
 
-Consume only approved, baselined, or explicitly marked draft sources. Record their IDs, versions, and authority. Do not turn a chart, summary, simulation, or speaker note into a new upstream commitment.
+When running as a reporting channel, require one schema-valid, `Baselined` report source and consume the same version used by every requested channel. In broader standalone use, consume only approved or baselined sources. An explicitly marked draft may be used for planning, but not for a released PPTX or PDF. Record source IDs, versions, and authority. Do not turn a chart, summary, simulation, or speaker note into a new upstream commitment.
 
-The presentation plan is authored and supporting. The PPTX and exported PDF are derived with `semantic_authority: none`.
+The presentation plan is authored and supporting. The PPTX and exported PDF are separate derived artifacts with `semantic_authority: none`.
 
 ## Mandatory flow
 
@@ -47,4 +47,6 @@ Render every slide and inspect layout, overflow, contrast, consistency, data fid
 
 When invoked inside a project, register the deck and its provenance in the artifact index through the owning orchestrator. If a source inconsistency appears, report it or create a change request; do not rewrite upstream meaning.
 
-Return outputs, sources, validation evidence, known limitations, publication status, and one next action.
+Keep PPTX editable but not authoritative. Return semantic edits to `reporting-source-design` when the deck is a reporting channel, or to the applicable upstream owner in broader standalone use. Regenerate every affected channel after approval.
+
+Return a valid `stage_result` containing the plan, PPTX and PDF outputs, exact sources, validation evidence, known limitations, release and publication status, stale artifacts, blockers, and one next action. Standalone execution never updates global state or the artifact index.

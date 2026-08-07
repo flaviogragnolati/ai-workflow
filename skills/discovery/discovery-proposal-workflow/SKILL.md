@@ -5,7 +5,7 @@ description: "Orchestrate Quasar discovery and commercial proposals from initial
 
 # Discovery and proposal workflow
 
-Read `../../skill-manifest.yaml` and `../../00-cross-workflow-contract.md`. Remain the single writer of workflow state and artifact index.
+Read the [skill manifest](../../../skill-manifest.yaml) and [cross-workflow contract](../../00-cross-workflow-contract.md). Remain the root orchestrator and single global state writer while delegating any subworkflow.
 
 ## Stages
 
@@ -49,7 +49,9 @@ Only software or mixed engagements with applicable software scope may continue t
 
 ## Reporting
 
-Offer `generate-quasar-deck` after commercial close or delivery. Reporting is optional and does not determine discovery or proposal completion.
+At an approved proposal, commercial-close, consulting, or other reporting checkpoint, delegate to `reporting-workflow`. Pass the reporting request, relevant discovery and proposal artifact IDs and versions, `root_orchestrator: discovery-proposal-workflow`, `global_state_writer: discovery-proposal-workflow`, and the exact `return_to` disposition or action.
+
+Remain the global state writer and reconcile the composite reporting delta after it returns. Reporting is optional and does not determine discovery or proposal completion. After commercial close, reporting may instead run as the next root workflow.
 
 ## Change control and manual edits
 

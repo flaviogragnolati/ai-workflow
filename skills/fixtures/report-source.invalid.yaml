@@ -1,0 +1,51 @@
+schema_version: "1.0"
+report:
+  report_id: RPT-INVALID
+  version: "1.0"
+  lifecycle: Baselined
+  report_type: progress
+  project_id: demo
+  title: "Invalid report"
+  audience: "Project sponsors"
+  purpose: "Exercise semantic validation"
+  reporting_period:
+    from: "2026-07-01"
+    to: "2026-07-31"
+    as_of: "2026-07-31"
+  confidentiality: internal
+  language: en
+source_snapshot:
+  status: proposed
+  approved_at: null
+  approval_ref: null
+  sources:
+    - artifact_id: ART-DECK-001
+      version: "1.0"
+      owner_workflow: reporting
+      owner_skill: generate-quasar-deck
+      lifecycle: Released
+      semantic_authority: none
+      authority_scope: presentation
+      usage: unsupported-factual-source
+      reporting_approval_ref: null
+coverage:
+  included: [progress]
+  excluded: []
+  gaps: []
+sections:
+  - section_id: SEC-001
+    title: "Executive summary"
+    purpose: "Exercise invalid evidence"
+    blocks:
+      - block_id: CLM-001
+        kind: fact
+        statement: "A derived presentation is the only factual source."
+        source_refs: [ART-DECK-001]
+        qualifiers: []
+        visual_intent: null
+decisions_requested: []
+risks_referenced: []
+recommendations: []
+next_actions: []
+channels_requested: [document]
+approvals: []

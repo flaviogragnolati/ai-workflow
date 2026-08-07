@@ -22,20 +22,22 @@ Use $ai-coding-workflow to execute backlog-and-delivery-planning.
 
 Treat a stage name supplied with an orchestrator as `target_stage`, not as a second independent invocation. The orchestrator must load the manifest before routing.
 
+The user-invoked or project-owning orchestrator is the **root orchestrator**. It may delegate a registered subworkflow while remaining the only global state writer. Pass `root_orchestrator`, `global_state_writer`, and `return_to` in the orchestration context. A delegated subworkflow routes its owned stages, validates their results, and returns one composite delta with `global_state_updated: false`; it does not replace the caller's active workflow state. When a workflow such as reporting is invoked directly for the project, its entry skill is the root orchestrator.
+
 A stage invoked directly runs in standalone mode. It may write its owned domain artifacts, but it must not mark a global workflow stage complete or silently update the workflow state or artifact index.
 
 An active skill with `invocable: false` and `execution_modes: [internal]` is an internal companion, not a direct user entry point. It must be reached through a strong context pointer in `AGENTS.md` or an owning skill, inherit the caller's authority and write scope, produce no independently authoritative project artifact, and expose no `agents/openai.yaml` invocation surface.
 
 ## Single-writer rule
 
-The workflow orchestrator is the only writer of:
+The root orchestrator is the only writer of:
 
 - `00-workflow-state.yaml`;
 - `00-artifact-index.yaml`;
 - cross-workflow stage completion and recovery status;
 - reconciled traceability, decision, and risk deltas when those registers are managed centrally.
 
-A stage owns its domain artifacts and returns a structured delta. The orchestrator validates that delta, reconciles IDs and dependencies, then updates state and index.
+A stage owns its domain artifacts and returns a structured delta. A delegated subworkflow may aggregate owned stage deltas but cannot apply them globally. The root orchestrator validates the resulting delta, reconciles IDs and dependencies, then updates state and index.
 
 Research, prototype, review, rendering, and other tools must not commit, publish, message external systems, or change remote state unless the manifest policy and the current user authorization allow that side effect.
 
@@ -146,7 +148,13 @@ The package development profile is `t3-core`. `technical-foundation-definition` 
 
 ## Reporting
 
-Reporting is optional and separate from upstream completion. The active renderer is `generate-quasar-deck`. It consumes approved or baselined sources, registers its output when used inside a project, and reports inconsistencies without rewriting upstream meaning. `generate-report` and a reporting orchestrator remain planned and non-invocable.
+Reporting is optional and does not change upstream completion criteria. `reporting-workflow` accepts explicit, versioned artifact references from discovery, proposal, planning, implementation, validation, delivery, consulting, or another registered workflow. Resolve them through the artifact index and load only the approved reporting scope.
+
+`reporting-source-design` owns the single semantic source for a reporting run. It is canonical only for report selection, narrative, and approved interpretation; upstream artifacts retain authority over their facts, commitments, decisions, risks, and delivery status. A `Working` artifact may support planning, but its exact version must be baselined, released, or explicitly approved as a reporting snapshot before the report source is baselined.
+
+`generate-report` and `generate-quasar-deck` consume the same baselined report source when they run as reporting channels. Their Markdown, DOCX, PDF, and PPTX outputs are derived with no semantic authority. A manual semantic edit returns to `reporting-source-design`, creates a new approved source version, and makes affected channels stale. Generation or release approval never authorizes publication or external sending.
+
+When another workflow delegates progress, feature, milestone, release, completion, or other reporting, that workflow remains root orchestrator and reconciles the composite reporting delta. Direct standalone renderers never write workflow state or the artifact index.
 
 ## Manual DOCX reconciliation
 

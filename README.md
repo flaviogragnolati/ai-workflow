@@ -9,6 +9,7 @@ Invoke one orchestrator and name the objective or target stage:
 ```text
 Use $discovery-proposal-workflow to prepare a commercial proposal from these meeting notes.
 Use $ai-coding-workflow to execute backlog-and-delivery-planning.
+Use $reporting-workflow to create a progress report and deck from approved project artifacts.
 Use $maintain-ai-workflow to update a workflow or related skill safely.
 ```
 
@@ -45,10 +46,11 @@ flowchart TB
 
     D -. "optional" .-> R["Reporting"]
     S -. "optional" .-> R
+    X -. "checkpoint" .-> R
     E -. "optional" .-> R
 ```
 
-Feedback and change control: any gate may return work to its owning stage. Record the return in workflow state, a decision/risk register, or a change request. The diagram omits individual loops for readability.
+Feedback and change control: any gate may return work to its owning stage. A delegated reporting run resumes at its supplied return target. Record the return in workflow state, a decision/risk register, or a change request. The diagram omits individual loops for readability.
 
 ### Discovery and proposal
 
@@ -76,7 +78,11 @@ Development selects a high-level item, refines only as needed, optionally create
 
 ### Reporting
 
-`generate-quasar-deck` is the only active reporting capability in this version. Reporting is optional and does not change upstream acceptance criteria. `generate-report` and `reporting-workflow` are planned and non-invocable.
+`reporting-workflow` coordinates optional progress, feature, milestone, release, completion, consulting, executive, and custom reporting from explicit artifact IDs and versions produced by prior workflows. It delegates semantic synthesis to `reporting-source-design`, then renders the approved source through `generate-report` for Markdown, DOCX, and PDF, `generate-quasar-deck` for PPTX and PDF, or both sequentially.
+
+The report source is canonical only for reporting narrative and approved interpretation. Upstream artifacts retain authority over their facts and commitments; every rendered channel is derived with no semantic authority. A report may use an explicitly approved snapshot of in-progress work, but must show its reporting period and `as_of` and must not imply upstream completion.
+
+When discovery or AI coding delegates reporting, the calling workflow remains root orchestrator and global state writer. Reporting returns a composite delta and resumes at the supplied return target. When reporting is invoked directly for the project, `reporting-workflow` is the root orchestrator. Release approval remains separate from publication or external sending.
 
 ### Documentation QA
 
@@ -102,6 +108,8 @@ Maintenance is outside project runtime. It does not write project workflow state
 | Implementer's scratchpad or internal delegation | No | None |
 | Domain/architecture Mermaid source | Yes | Supporting; canonical only for the visual representation |
 | Rendered SVG/PNG/PDF | Yes when delivered | None; derived from its source |
+| Baselined report source | Yes | Canonical only for reporting selection, narrative, and approved interpretation |
+| Report Markdown/DOCX/PDF or deck PPTX/PDF | Yes when delivered | None; derived from the baselined report source |
 | Release candidate, integral validation, delivery manifest | Yes | Canonical for release/delivery scope |
 
 Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient` as defined in the shared contract.
@@ -121,7 +129,9 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Review one change | `code-review` plus `review-code-comments` |
 | Audit a T3 codebase or release candidate | `codebase-review` |
 | Audit durable project documentation | `audit-docs` |
-| Produce a Quasar presentation | `generate-quasar-deck` |
+| Produce a traced project report or report deck | `reporting-workflow` |
+| Render an approved report source as Markdown, DOCX, and PDF | `generate-report` |
+| Produce a standalone Quasar presentation | `generate-quasar-deck` |
 | Change or audit the workflow package | `maintain-ai-workflow` |
 
 ## Anti-patterns
@@ -134,6 +144,8 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 - Do not rewrite accepted commercial scope from a channel renderer.
 - Do not run T3 QA as if it covered another stack.
 - Do not let a documentation audit rewrite its targets or create a parallel changelog.
+- Do not let a report renderer own report meaning or treat a rendered channel as upstream truth.
+- Do not let a delegated reporting subworkflow write global state or the artifact index.
 - Do not create empty folders for planned capabilities.
 - Do not commit or publish through a read-only or unapproved execution mode.
 - Do not embed package housekeeping in a client or project workflow run.
@@ -144,9 +156,6 @@ A completed workflow stage leaves owned artifacts, traceable IDs, declared autho
 
 ## Planned capabilities
 
-These IDs are registered but cannot be invoked:
-
-- `generate-report`
-- `reporting-workflow`
+No capabilities are currently registered as planned.
 
 Run `python3 skills/scripts/validate-skills-package.py` after any package change.

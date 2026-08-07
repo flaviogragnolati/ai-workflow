@@ -1,0 +1,66 @@
+schema_version: "1.0"
+report:
+  report_id: RPT-001
+  version: "1.0"
+  lifecycle: Baselined
+  report_type: progress
+  project_id: demo
+  title: "Progress report"
+  audience: "Project sponsors"
+  purpose: "Communicate verified progress and decisions"
+  reporting_period:
+    from: "2026-07-01"
+    to: "2026-07-31"
+    as_of: "2026-07-31"
+  confidentiality: internal
+  language: en
+source_snapshot:
+  status: approved
+  approved_at: "2026-08-01"
+  approval_ref: APR-REPORT-001
+  sources:
+    - artifact_id: ART-BACKLOG-001
+      version: "1.2"
+      owner_workflow: ai-coding
+      owner_skill: backlog-and-delivery-planning
+      lifecycle: Baselined
+      semantic_authority: canonical
+      authority_scope: delivery-structure
+      usage: progress
+      reporting_approval_ref: null
+    - artifact_id: ART-VALIDATION-001
+      version: "0.4"
+      owner_workflow: ai-coding
+      owner_skill: ai-coding-workflow
+      lifecycle: Working
+      semantic_authority: canonical
+      authority_scope: release-quality
+      usage: current-validation-snapshot
+      reporting_approval_ref: APR-SNAPSHOT-002
+coverage:
+  included: [verified-progress, current-risks]
+  excluded: [unstarted-features]
+  gaps: []
+sections:
+  - section_id: SEC-001
+    title: "Executive summary"
+    purpose: "State current progress and its evidence"
+    blocks:
+      - block_id: CLM-001
+        kind: fact
+        statement: "The selected milestone has verified completed work."
+        source_refs: [ART-BACKLOG-001, ART-VALIDATION-001]
+        qualifiers: ["Status as of the reporting cutoff."]
+        visual_intent: "Show completed and pending scope as a labeled comparison."
+      - block_id: CLM-002
+        kind: recommendation
+        statement: "Prioritize resolution of the current release blocker."
+        source_refs: [ART-VALIDATION-001]
+        qualifiers: []
+        visual_intent: null
+decisions_requested: [DEC-REPORT-001]
+risks_referenced: [RSK-001]
+recommendations: [CLM-002]
+next_actions: ["Resolve the blocker before release."]
+channels_requested: [document, deck]
+approvals: [APR-REPORT-001]
