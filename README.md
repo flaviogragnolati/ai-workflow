@@ -68,6 +68,52 @@ flowchart TB
 
 Feedback and change control: any gate may return work to its owning stage. A delegated reporting run resumes at its supplied return target. Record the return in workflow state, a decision/risk register, or a change request. The diagram omits individual loops for readability.
 
+### Quick skill guide by workflow step
+
+Use this section as a routing aid, not as a second registry. `skill-manifest.yaml` remains authoritative for skill status, ownership, execution modes, side effects, and dependencies. Start or resume an end-to-end flow with its orchestrator; invoke a stage directly only when standalone output is intentional.
+
+```mermaid
+flowchart LR
+    P["Propose<br/>q-proposal-workflow<br/>discovery → design → web or document"] --> G{"Accepted<br/>software scope?"}
+    G -->|"yes"| A["Plan<br/>q-delivery-workflow<br/>product → tech → domain → architecture → features → backlog"]
+    G -->|"no"| C["Commercial close or<br/>non-development execution"]
+    A --> I["Iterate<br/>explore → refine → tickets? → implement → mini review"]
+    I --> Q["Release<br/>integral QA → delivery"]
+    I -->|"next backlog item"| I
+    P -. "optional checkpoint" .-> R["Report<br/>q-report-workflow<br/>source → document or deck"]
+    I -. "optional checkpoint" .-> R
+    Q -. "optional checkpoint" .-> R
+```
+
+| Workflow step | Primary skill or choice | Use it when |
+|---|---|---|
+| Route discovery and proposal | `q-proposal-workflow` | Starting, resuming, or reconciling the commercial flow; name a target stage when only one stage is needed. |
+| Proposal 1 — discover | `q-proposal-discovery` | Turning client evidence into a traceable brief, open questions, risks, and proposal-readiness assessment. |
+| Proposal 2 — design | `q-proposal-design` | Defining canonical scope, solution, deliverables, schedule, investment, terms, and commitments. |
+| Proposal 3 — web channel (optional) | `q-proposal-web` | Rendering an interactive proposal from approved commercial meaning; publication remains a separate approval. |
+| Proposal 4 — document channel (optional) | `q-proposal-document` | Generating, visually validating, reconciling, and releasing proposal DOCX/PDF files without changing commercial meaning. |
+| Route planning through delivery | `q-delivery-workflow` | Starting or resuming product planning, selecting a backlog item, coordinating the development loop, integral QA, delivery, or state recovery. |
+| Planning 1 — product core | `q-plan-product-core` | Establishing product intent, actors, journeys, requirements, rules, scope, exclusions, and pending decisions. |
+| Planning 2 — technical foundation | `q-plan-tech-foundation` | Selecting or reconciling stack, concrete versions, NFRs, security, testing, deployment, and operations. Return here when later evidence invalidates a technical choice. |
+| Planning 3 — domain and data | `q-plan-domain-model` | Defining domain concepts, relationships, ownership, lifecycles, invariants, retention, and the supporting ERD. |
+| Planning 4 — architecture | `q-plan-architecture` | Defining system architecture, ADRs, application standards, boundaries, and supporting diagrams. |
+| Planning 5 — modules and features | `q-plan-features` | Decomposing architecture into modules, vertical slices, behaviors, dependencies, and technical sequence. |
+| Planning 6 — backlog | `q-plan-backlog` | Creating the first high-level rolling-wave backlog, refining the next front, or synchronizing an approved replan. |
+| Orient before changing code | `q-code-explore` for evidence-grounded orientation; `q-code-zoom-out` for one abstraction level above the current code | Context is missing before planning, implementation, review, or explanation. Skip this step when the needed context is already available. |
+| Refine selected work | Choose one: `q-code-grill-simple`, `q-code-grill-feature`, or `q-code-grill-design`; use `q-code-implementation-plan` when direction is settled but file-level execution still needs planning | Match the depth to a small change, bounded feature, or cross-cutting architectural change. Skip refinement when the durable work item is already execution-ready. |
+| Distribute work | `q-code-tickets` | Multiple executors, sessions, or a tracker justify durable tickets. It is optional for a single executor. |
+| Implement and verify | `q-code-implement`; optionally `q-code-tdd` | Executing a ready backlog item, issue, ticket, or plan. Select TDD only when requested or explicitly chosen; proportional verification is always required. |
+| Handle implementation trouble | `q-code-fix` for a confirmed narrow correction; `q-code-debug` when the cause is unknown; `q-code-merge-conflicts` for an active merge or rebase conflict | The main implementation path encounters a defect or source-control conflict. |
+| Mini review of one change | `q-review-code` plus `q-review-comments` | Checking technical/specification conformance and the accuracy of affected comments or docstrings after implementation. These skills report findings rather than silently fixing them. |
+| Integral QA and delivery | `q-review-codebase` supplies the formal codebase audit; `q-delivery-workflow` reconciles all release evidence and owns delivery | A release candidate is ready for architecture, integration, critical-flow, security, NFR, migration, deployment, documentation, and acceptance checks. The audit alone is not release acceptance. |
+| Route a report | `q-report-workflow` | Producing a progress, feature, milestone, release, completion, consulting, executive, or custom report from approved artifact versions. |
+| Define report meaning | `q-report-source` | Synthesizing the approved source bundle into one traceable reporting narrative before rendering. |
+| Render report channels | `q-report-document` for Markdown/DOCX/PDF; `q-report-deck` for PPTX/deck PDF | Rendering the same baselined report-source version into the requested written or presentation channels. |
+
+Use supporting skills only when their trigger appears: `q-code-research` for durable findings from primary external sources, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question.
+
+Two companions are not user entry points: coordinated workflows load `q-core-contract` for shared governance, and package maintenance loads the internal `q-maint-writing-for-agents` when agent-consumed artifacts change. Use `q-maint-ai-workflow` outside project runtime whenever this package, its skills, routing, contracts, metadata, fixtures, validators, or explanatory documentation must be changed or audited.
+
 ### Discovery and proposal
 
 1. `q-proposal-discovery` creates a traceable discovery brief and readiness assessment.

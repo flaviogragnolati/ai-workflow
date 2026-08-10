@@ -13,6 +13,11 @@ are deliberately established.
 
 ### Added
 
+- A README quick skill guide that maps proposal, the six planning stages,
+  iterative development, mini review, integral QA, delivery, reporting,
+  cross-cutting support, and package maintenance to the relevant skills. Its
+  Mermaid overview and decision table are explicitly derived routing aids;
+  `skill-manifest.yaml` remains the authoritative registry.
 - `q-core-contract`, the shared governance companion. The cross-workflow
   contract moved from `skills/00-cross-workflow-contract.md` into
   `skills/core/q-core-contract/SKILL.md`, and the `stage-result` and
