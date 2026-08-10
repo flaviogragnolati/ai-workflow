@@ -1,4 +1,0 @@
-interface:
-  display_name: "Product Core Definition"
-  short_description: "Define canonical product intent, scope, and requirements"
-  default_prompt: "Use $product-core-definition to establish the canonical product core from these sources."

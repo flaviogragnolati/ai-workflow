@@ -5,7 +5,7 @@ artifacts:
     artifact_type: domain-model
     path: docs/development-workflow/domain/03-domain-model.md
     owner_workflow: ai-coding
-    owner_skill: domain-data-modeling
+    owner_skill: q-plan-domain-model
     creation_mode: authored
     semantic_authority: canonical
     authority_scope: domain-semantics

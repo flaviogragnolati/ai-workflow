@@ -22,7 +22,7 @@ source_snapshot:
     - artifact_id: ART-DECK-001
       version: "1.0"
       owner_workflow: reporting
-      owner_skill: generate-quasar-deck
+      owner_skill: q-report-deck
       lifecycle: Released
       semantic_authority: none
       authority_scope: presentation

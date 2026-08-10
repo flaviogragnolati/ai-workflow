@@ -2,7 +2,7 @@ schema_version: "1.0"
 project_id: demo
 workflow: ai-coding
 status: approved
-current_stage: backlog-and-delivery-planning
+current_stage: q-plan-backlog
 stack_profile: t3-core
 technical_foundation_ref: null
 stage_status: {}

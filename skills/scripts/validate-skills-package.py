@@ -24,6 +24,17 @@ TYPE_MAP = {
     "null": type(None),
 }
 
+# Agent Skills specification: 1-64 lowercase alphanumerics and hyphens, no
+# leading, trailing, or consecutive hyphen.
+SKILL_NAME_PATTERN = re.compile(r"(?!-)(?!.*--)[a-z0-9-]{1,64}(?<!-)")
+
+RELATIVE_REFERENCE_PATTERN = re.compile(r"(?:\.\./)+[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*")
+
+SKILLS_SH_SCHEMA_URL = "https://skills.sh/schemas/skills.sh.schema.json"
+
+CORE_CONTRACT = SKILLS_ROOT / "core" / "q-core-contract"
+ROUTING_DIGEST = CORE_CONTRACT / "references" / "routing.md"
+
 
 def load(path: Path) -> Any:
     return yaml.load(path)
@@ -90,11 +101,13 @@ def frontmatter(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     errors: list[str] = []
     if not isinstance(data, dict):
         return None, ["%s: frontmatter must be a mapping" % path]
-    if set(data) != {"name", "description"}:
-        errors.append("%s: frontmatter keys must be exactly name and description" % path)
+    if set(data) - {"metadata"} != {"name", "description"}:
+        errors.append("%s: frontmatter keys must be name, description, and optional metadata" % path)
+    if "metadata" in data and data["metadata"] != {"internal": True}:
+        errors.append("%s: frontmatter metadata must be exactly {internal: true}" % path)
     name = data.get("name")
     desc = data.get("description")
-    if not isinstance(name, str) or not re.fullmatch(r"[a-z0-9-]{1,63}", name):
+    if not isinstance(name, str) or not SKILL_NAME_PATTERN.fullmatch(name):
         errors.append("%s: invalid name %r" % (path, name))
     if not isinstance(desc, str) or not desc.strip():
         errors.append("%s: description must be non-empty" % path)
@@ -193,6 +206,213 @@ def internal_skill_errors(directory: Path, skill_id: str, entry: dict[str, Any])
     return errors
 
 
+def distribution_errors(skill_id: str, entry: dict[str, Any], metadata: dict[str, Any] | None) -> list[str]:
+    errors: list[str] = []
+    declared = entry.get("distribution", "public")
+    marked = isinstance(metadata, dict) and metadata.get("metadata") == {"internal": True}
+    if declared == "internal" and not marked:
+        errors.append("%s: internal distribution requires frontmatter metadata.internal true" % skill_id)
+    if declared != "internal" and marked:
+        errors.append("%s: frontmatter hides a skill the manifest distributes publicly" % skill_id)
+    return errors
+
+
+def identity_errors(skill_id: str, directory: Path, entry: dict[str, Any],
+                    metadata: dict[str, Any] | None) -> list[str]:
+    """`group` is authoritative: the name, both folders, and attribution derive from it."""
+    errors: list[str] = []
+    group = entry.get("group")
+    if not isinstance(group, str):
+        return errors
+    prefix = "q-%s-" % group
+    if not skill_id.startswith(prefix) or len(skill_id) <= len(prefix):
+        errors.append("%s: name must be q-%s-<leaf>" % (skill_id, group))
+    if directory.name != skill_id:
+        errors.append("%s: folder name is %r" % (skill_id, directory.name))
+    if directory.parent.name != group:
+        errors.append("%s: category folder is %r, not the group %r"
+                      % (skill_id, directory.parent.name, group))
+    description = metadata.get("description", "") if isinstance(metadata, dict) else ""
+    if entry.get("distribution", "public") != "internal" and "Quasar" not in description:
+        errors.append("%s: a publicly distributed skill must name Quasar in its description" % skill_id)
+    return errors
+
+
+def outside_references(directory: Path) -> list[tuple[Path, str]]:
+    """(file, raw) for every relative reference that leaves the skill directory."""
+    found: list[tuple[Path, str]] = []
+    seen: set[str] = set()
+    for path in sorted(directory.rglob("*")):
+        if not path.is_file() or path.suffix.lower() not in {".md", ".yaml", ".yml"}:
+            continue
+        for raw in RELATIVE_REFERENCE_PATTERN.findall(path.read_text(encoding="utf-8-sig")):
+            if raw in seen:
+                continue
+            try:
+                (path.parent / raw).resolve().relative_to(directory)
+            except ValueError:
+                seen.add(raw)
+                found.append((path, raw))
+    return found
+
+
+def sibling_owner(directory: Path, source: Path, raw: str, folders: dict[Path, str]) -> str | None:
+    """The registered skill that owns a one-level `../<sibling>/…` reference.
+
+    Skills are siblings both in this repository and in an installed agent
+    directory, so exactly one level up still resolves for a consumer. Two or
+    more levels leave the installed catalog and never resolve.
+    """
+    if not raw.startswith("../") or raw.startswith("../../"):
+        return None
+    target = (source.parent / raw).resolve()
+    for candidate in (target, *target.parents):
+        name = folders.get(candidate)
+        if name:
+            return name if candidate.parent == directory.parent else None
+    return None
+
+
+def reference_errors(
+    skill_id: str,
+    directory: Path,
+    entry: dict[str, Any],
+    skills: dict[str, Any],
+    folders: dict[Path, str],
+) -> list[str]:
+    """Every reference leaving the skill must be a declared, one-level sibling."""
+    errors: list[str] = []
+    declared = entry.get("requires") or []
+    public = entry.get("distribution", "public") != "internal"
+    escapes: list[str] = []
+
+    for source, raw in outside_references(directory):
+        owner = sibling_owner(directory, source, raw, folders)
+        if owner is None:
+            escapes.append(raw)
+        elif owner not in declared:
+            errors.append("%s: sibling reference %r is not declared in requires" % (skill_id, raw))
+
+    if public and escapes:
+        errors.append("%s: reference escapes the skill directory and breaks on install: %s"
+                      % (skill_id, ", ".join(sorted(escapes))))
+
+    body = "".join(
+        path.read_text(encoding="utf-8-sig")
+        for path in sorted(directory.rglob("*"))
+        if path.is_file() and path.suffix.lower() in {".md", ".yaml", ".yml"}
+    )
+    for name in declared:
+        if name == skill_id:
+            errors.append("%s: cannot require itself" % skill_id)
+        elif name not in skills:
+            errors.append("%s: requires unregistered skill %r" % (skill_id, name))
+        elif public and skills[name].get("distribution", "public") == "internal":
+            errors.append("%s: a publicly distributed skill cannot require the internal skill %r"
+                          % (skill_id, name))
+        if name not in body:
+            errors.append("%s: requires %r but never references it" % (skill_id, name))
+        elif public and "--skill %s" % name not in body:
+            errors.append("%s: requires %r without an integrity check naming the install command"
+                          % (skill_id, name))
+    return errors
+
+
+def routing_digest_body(workflows: dict[str, Any]) -> str:
+    """The routing view an installed orchestrator gets instead of the manifest."""
+    lines: list[str] = []
+    for workflow_id, entry in workflows.items():
+        if not isinstance(entry, dict) or entry.get("status") != "active":
+            continue
+        lines.append("%s:" % workflow_id)
+        lines.append("  entry_skill: %s" % entry.get("entry_skill"))
+        for key in ("stages", "planning_stages", "renderers", "current_tools"):
+            route = entry.get(key)
+            if route:
+                lines.append("  %s: [%s]" % (key, ", ".join(route)))
+        if entry.get("scope"):
+            lines.append("  scope: %s" % entry["scope"])
+        if entry.get("optional_next"):
+            lines.append("  optional_next: [%s]" % ", ".join(entry["optional_next"]))
+    return "\n".join(lines)
+
+
+def routing_digest_errors(workflows: dict[str, Any]) -> list[str]:
+    """The digest is derived; drift between it and the manifest is an error."""
+    if not ROUTING_DIGEST.is_file():
+        return ["Missing routing digest %s" % ROUTING_DIGEST.relative_to(REPO_ROOT)]
+    block = re.search(r"(?ms)^```yaml\n(.*?)^```", ROUTING_DIGEST.read_text(encoding="utf-8-sig"))
+    if not block:
+        return ["routing digest is missing its generated ```yaml block"]
+    if block.group(1).strip("\n") != routing_digest_body(workflows):
+        return ["routing digest is stale; regenerate it from skill-manifest.yaml"]
+    return []
+
+
+def skills_sh_errors(skills: dict[str, Any]) -> list[str]:
+    path = REPO_ROOT / "skills.sh.json"
+    if not path.is_file():
+        return ["Missing skills.sh.json repository page configuration"]
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except Exception as exc:
+        return ["skills.sh.json: invalid JSON (%s)" % exc]
+
+    errors: list[str] = []
+    if data.get("$schema") != SKILLS_SH_SCHEMA_URL:
+        errors.append("skills.sh.json: $schema must be %s" % SKILLS_SH_SCHEMA_URL)
+    if data.get("notGrouped") not in {"top", "bottom"}:
+        errors.append("skills.sh.json: notGrouped must be top or bottom")
+
+    groupings = data.get("groupings")
+    if not isinstance(groupings, list) or not groupings:
+        return errors + ["skills.sh.json: groupings must be a non-empty list"]
+    if len(groupings) > 50:
+        errors.append("skills.sh.json: only the first 50 groups are used")
+
+    listed: list[str] = []
+    for index, group in enumerate(groupings):
+        if not isinstance(group, dict):
+            errors.append("skills.sh.json: grouping %d must be a mapping" % index)
+            continue
+        title = group.get("title")
+        if not isinstance(title, str) or not title.strip():
+            errors.append("skills.sh.json: grouping %d requires a title" % index)
+        members = group.get("skills")
+        if not isinstance(members, list) or not members:
+            errors.append("skills.sh.json: group %r requires a non-empty skills list" % title)
+            continue
+        if len(members) > 500:
+            errors.append("skills.sh.json: only the first 500 skills of group %r are used" % title)
+        listed.extend(members)
+
+    internal = {
+        skill_id
+        for skill_id, entry in skills.items()
+        if isinstance(entry, dict) and entry.get("distribution") == "internal"
+    }
+    duplicates = sorted({skill_id for skill_id in listed if listed.count(skill_id) > 1})
+    if duplicates:
+        errors.append("skills.sh.json groups duplicate skills: %s" % ", ".join(duplicates))
+    listed_set = set(listed)
+    for label, difference in (
+        ("omits public skills", sorted(set(skills) - internal - listed_set)),
+        ("lists unknown skills", sorted(listed_set - set(skills))),
+        ("lists internal skills", sorted(listed_set & internal)),
+    ):
+        if difference:
+            errors.append("skills.sh.json %s: %s" % (label, ", ".join(difference)))
+    return errors
+
+
+def stray_file_errors() -> list[str]:
+    return [
+        "%s: Windows alternate-data-stream artifact must not ship inside a skill" % path.relative_to(REPO_ROOT)
+        for path in sorted(SKILLS_ROOT.rglob("*"))
+        if path.is_file() and path.name.endswith(":Zone.Identifier")
+    ]
+
+
 def artifact_semantics(data: Any, active: set[str]) -> list[str]:
     errors: list[str] = []
     seen: set[str] = set()
@@ -232,15 +452,15 @@ def workflow_state_semantics(data: Any) -> list[str]:
         return ["workflow state must be a mapping"]
     errors: list[str] = []
     downstream = {
-        "domain-data-modeling",
-        "high-level-architecture-standards",
-        "module-feature-decomposition",
-        "backlog-and-delivery-planning",
+        "q-plan-domain-model",
+        "q-plan-architecture",
+        "q-plan-features",
+        "q-plan-backlog",
     }
     stage_status = data.get("stage_status", {})
     foundation_completed = (
         isinstance(stage_status, dict)
-        and stage_status.get("technical-foundation-definition") == "completed"
+        and stage_status.get("q-plan-tech-foundation") == "completed"
     )
     if (data.get("current_stage") in downstream or foundation_completed) and not data.get("technical_foundation_ref"):
         errors.append("downstream workflow state requires technical_foundation_ref")
@@ -354,123 +574,123 @@ def fixture_pair(
 def acceptance_errors() -> tuple[list[str], int]:
     checks = {
         "S-01": [
-            ("discovery/discovery-proposal-workflow/SKILL.md", "accepted_without_development"),
-            ("discovery/discovery-proposal-workflow/SKILL.md", "future/manual execution"),
+            ("proposal/q-proposal-workflow/SKILL.md", "accepted_without_development"),
+            ("proposal/q-proposal-workflow/SKILL.md", "future/manual execution"),
         ],
         "S-02": [
-            ("discovery/discovery-proposal-workflow/SKILL.md", "proposal object IDs"),
-            ("discovery/proposal-discovery/SKILL.md", "assumptions"),
+            ("proposal/q-proposal-workflow/SKILL.md", "proposal object IDs"),
+            ("proposal/q-proposal-discovery/SKILL.md", "assumptions"),
         ],
         "S-03": [
-            ("app-flow/product-core-definition/SKILL.md", "started without a proposal"),
+            ("plan/q-plan-product-core/SKILL.md", "started without a proposal"),
         ],
         "S-04": [
-            ("app-flow/backlog-and-delivery-planning/SKILL.md", "initial-generation"),
-            ("app-flow/backlog-and-delivery-planning/SKILL.md", "Do not require all stories"),
+            ("plan/q-plan-backlog/SKILL.md", "initial-generation"),
+            ("plan/q-plan-backlog/SKILL.md", "Do not require all stories"),
         ],
         "S-05": [
-            ("app-flow/backlog-and-delivery-planning/SKILL.md", "replan-and-synchronize"),
-            ("app-flow/backlog-and-delivery-planning/SKILL.md", "required approval"),
+            ("plan/q-plan-backlog/SKILL.md", "replan-and-synchronize"),
+            ("plan/q-plan-backlog/SKILL.md", "required approval"),
         ],
         "S-06": [
-            ("app-flow/ai-coding-workflow/SKILL.md", "Skip a grill"),
-            ("app-flow/ai-coding-workflow/SKILL.md", "Enable `tdd` only"),
+            ("delivery/q-delivery-workflow/SKILL.md", "Skip a grill"),
+            ("delivery/q-delivery-workflow/SKILL.md", "Enable `q-code-tdd` only"),
         ],
         "S-07": [
-            ("coding/to-tickets/SKILL.md", "Tickets are durable"),
-            ("coding/to-tickets/SKILL.md", "preserve backlog, requirement, decision, and plan IDs"),
+            ("code/q-code-tickets/SKILL.md", "Tickets are durable"),
+            ("code/q-code-tickets/SKILL.md", "preserve backlog, requirement, decision, and plan IDs"),
         ],
         "S-08": [
-            ("coding/implement/SKILL.md", "internal plans, scratchpads, and delegation messages transient"),
-            ("coding/implement/SKILL.md", "Update only the original durable record"),
+            ("code/q-code-implement/SKILL.md", "internal plans, scratchpads, and delegation messages transient"),
+            ("code/q-code-implement/SKILL.md", "Update only the original durable record"),
         ],
         "S-09": [
-            ("discovery/discovery-proposal-workflow/SKILL.md", "Return scope, price, schedule, commitment, or source errors"),
-            ("discovery/discovery-proposal-workflow/SKILL.md", "visual, layout, accessibility"),
+            ("proposal/q-proposal-workflow/SKILL.md", "Return scope, price, schedule, commitment, or source errors"),
+            ("proposal/q-proposal-workflow/SKILL.md", "visual, layout, accessibility"),
         ],
         "S-10": [
-            ("app-flow/ai-coding-workflow/SKILL.md", "accepted commercial scope"),
-            ("app-flow/ai-coding-workflow/SKILL.md", "Keep the accepted release immutable"),
+            ("delivery/q-delivery-workflow/SKILL.md", "accepted commercial scope"),
+            ("delivery/q-delivery-workflow/SKILL.md", "Keep the accepted release immutable"),
         ],
         "S-11": [
-            ("coding/code-review/SKILL.md", "sequential passes"),
-            ("coding/code-review/SKILL.md", "Keep results separate"),
+            ("review/q-review-code/SKILL.md", "sequential passes"),
+            ("review/q-review-code/SKILL.md", "Keep results separate"),
         ],
         "S-12": [
-            ("app-flow/technical-foundation-definition/SKILL.md", "Never block solely because the selected stack is not T3"),
-            ("00-cross-workflow-contract.md", "profile-driven"),
+            ("plan/q-plan-tech-foundation/SKILL.md", "Never block solely because the selected stack is not T3"),
+            ("core/q-core-contract/SKILL.md", "profile-driven"),
         ],
         "S-13": [
-            ("app-flow/ai-coding-workflow/SKILL.md", "On resume"),
-            ("app-flow/ai-coding-workflow/SKILL.md", "Do not reopen closed decisions"),
+            ("delivery/q-delivery-workflow/SKILL.md", "On resume"),
+            ("delivery/q-delivery-workflow/SKILL.md", "Do not reopen closed decisions"),
         ],
         "S-14": [
-            ("00-cross-workflow-contract.md", "Domain or architecture Mermaid source"),
-            ("00-cross-workflow-contract.md", "SVG, PNG, or PDF rendered from Mermaid"),
+            ("core/q-core-contract/SKILL.md", "Domain or architecture Mermaid source"),
+            ("core/q-core-contract/SKILL.md", "SVG, PNG, or PDF rendered from Mermaid"),
         ],
         "S-15": [
-            ("reporting/reporting-workflow/SKILL.md", "Reporting is optional"),
-            ("reporting/reporting-source-design/SKILL.md", "approved as a reporting snapshot"),
-            ("discovery/discovery-proposal-workflow/SKILL.md", "Reporting is optional"),
+            ("report/q-report-workflow/SKILL.md", "Reporting is optional"),
+            ("report/q-report-source/SKILL.md", "approved as a reporting snapshot"),
+            ("proposal/q-proposal-workflow/SKILL.md", "Reporting is optional"),
         ],
         "S-16": [
-            ("00-cross-workflow-contract.md", "must not commit, publish, message external systems"),
+            ("core/q-core-contract/SKILL.md", "must not commit, publish, message external systems"),
             ("skill-manifest.yaml", "approval_policy"),
         ],
         "S-17": [
-            ("00-cross-workflow-contract.md", "reconciliation_required: true"),
-            ("00-cross-workflow-contract.md", "global_state_updated: false"),
+            ("core/q-core-contract/SKILL.md", "reconciliation_required: true"),
+            ("core/q-core-contract/SKILL.md", "global_state_updated: false"),
         ],
         "S-18": [
-            ("coding/explore/SKILL.md", "Return the summary in the conversation as transient context"),
-            ("app-flow/ai-coding-workflow/SKILL.md", "do not register it as an artifact"),
+            ("code/q-code-explore/SKILL.md", "Return the summary in the conversation as transient context"),
+            ("delivery/q-delivery-workflow/SKILL.md", "do not register it as an artifact"),
         ],
         "S-19": [
-            ("quality/audit-docs/SKILL.md", "Return the diagnostic in the conversation as transient context"),
-            ("quality/audit-docs/SKILL.md", "Record any later implemented documentation change through the owning workflow"),
-            ("quality/audit-docs/SKILL.md", "stop and route the request to `maintain-ai-workflow`"),
-            ("app-flow/ai-coding-workflow/SKILL.md", "`audit-docs` is optional"),
-            ("discovery/discovery-proposal-workflow/SKILL.md", "`audit-docs` is optional"),
+            ("review/q-review-docs/SKILL.md", "Return the diagnostic in the conversation as transient context"),
+            ("review/q-review-docs/SKILL.md", "Record any later implemented documentation change through the owning workflow"),
+            ("review/q-review-docs/SKILL.md", "stop and route the request to `q-maint-ai-workflow`"),
+            ("delivery/q-delivery-workflow/SKILL.md", "`q-review-docs` is optional"),
+            ("proposal/q-proposal-workflow/SKILL.md", "`q-review-docs` is optional"),
         ],
         "S-20": [
-            ("00-cross-workflow-contract.md", "root orchestrator"),
-            ("reporting/reporting-workflow/SKILL.md", "composite delta with `global_state_updated: false`"),
-            ("app-flow/ai-coding-workflow/SKILL.md", "Remain the global state writer"),
+            ("core/q-core-contract/SKILL.md", "root orchestrator"),
+            ("report/q-report-workflow/SKILL.md", "composite delta with `global_state_updated: false`"),
+            ("delivery/q-delivery-workflow/SKILL.md", "Remain the global state writer"),
         ],
         "S-21": [
-            ("reporting/reporting-source-design/SKILL.md", "single semantic source"),
-            ("reporting/generate-report/SKILL.md", "semantic_authority: none"),
-            ("reporting/generate-quasar-deck/SKILL.md", "semantic_authority: none"),
+            ("report/q-report-source/SKILL.md", "single semantic source"),
+            ("report/q-report-document/SKILL.md", "semantic_authority: none"),
+            ("report/q-report-deck/SKILL.md", "semantic_authority: none"),
         ],
         "S-22": [
-            ("reporting/generate-report/SKILL.md", "Return semantic edits to `reporting-source-design`"),
-            ("reporting/generate-quasar-deck/SKILL.md", "Return semantic edits to `reporting-source-design`"),
-            ("reporting/generate-report/SKILL.md", "missing requested format"),
+            ("report/q-report-document/SKILL.md", "Return semantic edits to `q-report-source`"),
+            ("report/q-report-deck/SKILL.md", "Return semantic edits to `q-report-source`"),
+            ("report/q-report-document/SKILL.md", "missing requested format"),
         ],
         "S-23": [
-            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "TypeScript"),
-            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "Next.js App Router"),
-            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "tRPC"),
-            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "Zod"),
-            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "Zustand"),
-            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "shadcn/ui"),
-            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "React Hook Form"),
-            ("app-flow/technical-foundation-definition/references/web-stack-recommendation.md", "Drizzle or Prisma"),
+            ("plan/q-plan-tech-foundation/references/web-stack-recommendation.md", "TypeScript"),
+            ("plan/q-plan-tech-foundation/references/web-stack-recommendation.md", "Next.js App Router"),
+            ("plan/q-plan-tech-foundation/references/web-stack-recommendation.md", "tRPC"),
+            ("plan/q-plan-tech-foundation/references/web-stack-recommendation.md", "Zod"),
+            ("plan/q-plan-tech-foundation/references/web-stack-recommendation.md", "Zustand"),
+            ("plan/q-plan-tech-foundation/references/web-stack-recommendation.md", "shadcn/ui"),
+            ("plan/q-plan-tech-foundation/references/web-stack-recommendation.md", "React Hook Form"),
+            ("plan/q-plan-tech-foundation/references/web-stack-recommendation.md", "Drizzle or Prisma"),
         ],
         "S-24": [
-            ("app-flow/technical-foundation-definition/SKILL.md", "Preserve an existing stack"),
-            ("app-flow/technical-foundation-definition/SKILL.md", "Evaluate an explicit user proposal"),
-            ("app-flow/technical-foundation-definition/SKILL.md", "current primary sources"),
+            ("plan/q-plan-tech-foundation/SKILL.md", "Preserve an existing stack"),
+            ("plan/q-plan-tech-foundation/SKILL.md", "Evaluate an explicit user proposal"),
+            ("plan/q-plan-tech-foundation/SKILL.md", "current primary sources"),
         ],
         "S-25": [
-            ("00-cross-workflow-contract.md", "sole owner of the authored technical foundation"),
-            ("app-flow/ai-coding-workflow/SKILL.md", "technical_foundation_ref"),
-            ("app-flow/high-level-architecture-standards/SKILL.md", "never edit their owned artifacts directly"),
+            ("core/q-core-contract/SKILL.md", "sole owner of the authored technical foundation"),
+            ("delivery/q-delivery-workflow/SKILL.md", "technical_foundation_ref"),
+            ("plan/q-plan-architecture/SKILL.md", "never edit their owned artifacts directly"),
         ],
         "S-26": [
-            ("coding/codebase-review/SKILL.md", "A recommended but unselected library is not"),
-            ("coding/codebase-review/SKILL.md", "generic and repository-grounded criteria"),
-            ("coding/codebase-review/SKILL.md", "do not issue a full stack-specific approval"),
+            ("review/q-review-codebase/SKILL.md", "A recommended but unselected library is not"),
+            ("review/q-review-codebase/SKILL.md", "generic and repository-grounded criteria"),
+            ("review/q-review-codebase/SKILL.md", "do not issue a full stack-specific approval"),
         ],
     }
     errors: list[str] = []
@@ -520,9 +740,16 @@ def package_doc_errors() -> list[str]:
     agents = REPO_ROOT / 'AGENTS.md'
     if agents.is_file():
         text = agents.read_text(encoding='utf-8-sig')
-        for phrase in ('$maintain-ai-workflow', 'administrative housekeeping', 'CHANGELOG.md'):
+        for phrase in ('$q-maint-ai-workflow', 'administrative housekeeping', 'CHANGELOG.md'):
             if phrase not in text:
                 errors.append('AGENTS.md is missing maintenance pointer %r' % phrase)
+
+    readme = REPO_ROOT / 'README.md'
+    if readme.is_file():
+        text = readme.read_text(encoding='utf-8-sig')
+        for phrase in ('npx skills add', 'skills.sh'):
+            if phrase not in text:
+                errors.append('README.md is missing external installation guidance %r' % phrase)
 
     changelog = REPO_ROOT / 'CHANGELOG.md'
     if changelog.is_file() and '## [Unreleased]' not in changelog.read_text(encoding='utf-8-sig'):
@@ -535,7 +762,7 @@ def package_doc_errors() -> list[str]:
             if phrase not in text:
                 errors.append('LICENSE is missing required notice %r' % phrase)
 
-    maintenance = SKILLS_ROOT / 'maintenance' / 'maintain-ai-workflow' / 'SKILL.md'
+    maintenance = SKILLS_ROOT / 'maint' / 'q-maint-ai-workflow' / 'SKILL.md'
     if maintenance.is_file():
         text = maintenance.read_text(encoding='utf-8-sig')
         for phrase in (
@@ -544,16 +771,16 @@ def package_doc_errors() -> list[str]:
             'Do not return a project `stage_result`',
         ):
             if phrase not in text:
-                errors.append('maintain-ai-workflow is missing governance evidence %r' % phrase)
+                errors.append('q-maint-ai-workflow is missing governance evidence %r' % phrase)
 
-    installed = REPO_ROOT / '.agents' / 'skills' / 'maintain-ai-workflow'
-    canonical = SKILLS_ROOT / 'maintenance' / 'maintain-ai-workflow'
+    installed = REPO_ROOT / '.agents' / 'skills' / 'q-maint-ai-workflow'
+    canonical = SKILLS_ROOT / 'maint' / 'q-maint-ai-workflow'
     if not installed.exists():
-        errors.append('maintain-ai-workflow is not installed in .agents/skills')
+        errors.append('q-maint-ai-workflow is not installed in .agents/skills')
     elif not installed.is_symlink():
-        errors.append('maintain-ai-workflow repo installation must link to its canonical package source')
+        errors.append('q-maint-ai-workflow repo installation must link to its canonical package source')
     elif installed.resolve() != canonical.resolve():
-        errors.append('maintain-ai-workflow repo installation points to the wrong source')
+        errors.append('q-maint-ai-workflow repo installation points to the wrong source')
     return errors
 
 
@@ -618,6 +845,12 @@ def run() -> dict[str, Any]:
                     if target not in workflows and target not in terminal_routes:
                         errors.append("workflow %s.optional_next references unknown route %r" % (workflow_id, target))
 
+    folders = {
+        (SKILLS_ROOT / str(entry.get("path", ""))).resolve(): skill_id
+        for skill_id, entry in skills.items()
+        if isinstance(entry, dict)
+    }
+
     for skill_id, entry in skills.items():
         if not isinstance(entry, dict):
             errors.append("%s: manifest entry must be a mapping" % skill_id)
@@ -632,8 +865,9 @@ def run() -> dict[str, Any]:
         errors.extend(current)
         if metadata and metadata.get("name") != skill_id:
             errors.append("%s: frontmatter name is %r" % (skill_id, metadata.get("name")))
-        if directory.name != skill_id:
-            errors.append("%s: folder name is %r" % (skill_id, directory.name))
+        errors.extend(identity_errors(skill_id, directory, entry, metadata))
+        errors.extend(distribution_errors(skill_id, entry, metadata))
+        errors.extend(reference_errors(skill_id, directory, entry, skills, folders))
         if entry.get("invocable") is False:
             errors.extend(internal_skill_errors(directory, skill_id, entry))
         else:
@@ -674,8 +908,8 @@ def run() -> dict[str, Any]:
     errors.extend(current_links)
 
     banned_patterns = {
-        r"(?<![a-z0-9-])proposal-discover(?![a-z0-9-])": "proposal-discovery",
-        r"(?<![a-z0-9-])quasar-crear-presentacion-consultoria(?![a-z0-9-])": "generate-quasar-deck",
+        r"(?<![a-z0-9-])proposal-discover(?![a-z0-9-])": "q-proposal-discovery",
+        r"(?<![a-z0-9-])quasar-crear-presentacion-consultoria(?![a-z0-9-])": "q-report-deck",
         r"(?<![a-z0-9-])05-implementation-roadmap\.md(?![a-z0-9-])": "05-technical-implementation-sequence.md",
         r"(?<![a-z0-9-])render_docx\.py(?![a-z0-9-])": "document_builder.py",
     }
@@ -707,14 +941,14 @@ def run() -> dict[str, Any]:
         active,
     ))
     errors.extend(fixture_pair(
-        schemas / "stage-result.schema.yaml",
+        CORE_CONTRACT / "references" / "stage-result.schema.yaml",
         fixtures / "stage-result.valid.yaml",
         fixtures / "stage-result.invalid.yaml",
         stage_semantics,
         active,
     ))
     errors.extend(fixture_pair(
-        schemas / "report-source.schema.yaml",
+        CORE_CONTRACT / "references" / "report-source.schema.yaml",
         fixtures / "report-source.valid.yaml",
         fixtures / "report-source.invalid.yaml",
         report_source_semantics,
@@ -725,6 +959,9 @@ def run() -> dict[str, Any]:
     errors.extend(current_acceptance_errors)
     errors.extend(readme_planned_errors(set(planned)))
     errors.extend(package_doc_errors())
+    errors.extend(routing_digest_errors(workflows))
+    errors.extend(skills_sh_errors(skills))
+    errors.extend(stray_file_errors())
 
     return {
         "status": "Failed" if errors else ("Passed with warnings" if warnings else "Passed"),

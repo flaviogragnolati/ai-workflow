@@ -1,4 +1,0 @@
-interface:
-  display_name: "Architecture and Standards"
-  short_description: "Define architecture, ADRs, standards, and diagrams"
-  default_prompt: "Use $high-level-architecture-standards to define architecture, ADRs, and project standards from the confirmed technical foundation."

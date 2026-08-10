@@ -1,4 +1,0 @@
-interface:
-  display_name: "Generate Quasar Deck"
-  short_description: "Plan and generate traceable branded Quasar presentations"
-  default_prompt: "Use $generate-quasar-deck to plan and generate a branded, traceable Quasar presentation."

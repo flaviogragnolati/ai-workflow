@@ -1,4 +1,0 @@
-interface:
-  display_name: "Reporting Workflow"
-  short_description: "Coordinate traceable multi-channel reporting"
-  default_prompt: "Use $reporting-workflow to create an approved report from versioned project artifacts and render the requested channels."

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Shared governance",
+      "description": "The companion every coordinated Quasar workflow skill reads before acting: routing, ownership, semantic authority, lifecycle, approvals, and the report-source and stage-result schemas.",
+      "skills": [
+        "q-core-contract"
+      ]
+    },
+    {
+      "title": "Discovery and commercial proposals",
+      "description": "Turn raw client evidence into a traceable discovery brief and a canonical commercial proposal, then render it as a web, DOCX, or PDF channel.",
+      "skills": [
+        "q-proposal-workflow",
+        "q-proposal-discovery",
+        "q-proposal-design",
+        "q-proposal-web",
+        "q-proposal-document"
+      ]
+    },
+    {
+      "title": "Product and technical planning",
+      "description": "The delivery orchestrator plus six sequential stages that take a product idea to a validated backlog: product core, technical foundation, domain model, architecture, feature decomposition, and delivery planning.",
+      "skills": [
+        "q-delivery-workflow",
+        "q-plan-product-core",
+        "q-plan-tech-foundation",
+        "q-plan-domain-model",
+        "q-plan-architecture",
+        "q-plan-features",
+        "q-plan-backlog"
+      ]
+    },
+    {
+      "title": "Understand a codebase",
+      "description": "Orient in unfamiliar code before changing it: locate the relevant surface, map one abstraction level up, explain behavior, and research external ground truth.",
+      "skills": [
+        "q-code-explore",
+        "q-code-zoom-out",
+        "q-code-explain",
+        "q-code-research",
+        "q-review-codebase"
+      ]
+    },
+    {
+      "title": "Align before building",
+      "description": "Short alignment passes that turn a vague request into a durable implementation plan, sized to the change.",
+      "skills": [
+        "q-code-grill-simple",
+        "q-code-grill-feature",
+        "q-code-grill-design",
+        "q-code-implementation-plan",
+        "q-code-tickets"
+      ]
+    },
+    {
+      "title": "Write and fix code",
+      "description": "Execution skills for building behavior, prototyping, applying a confirmed fix, diagnosing failures, and resolving merge conflicts.",
+      "skills": [
+        "q-code-implement",
+        "q-code-tdd",
+        "q-code-prototype",
+        "q-code-fix",
+        "q-code-debug",
+        "q-code-merge-conflicts",
+        "q-code-handoff"
+      ]
+    },
+    {
+      "title": "Review and documentation QA",
+      "description": "Change-scoped technical review, comment and docstring review, and drift auditing for persistent project documentation.",
+      "skills": [
+        "q-review-code",
+        "q-review-comments",
+        "q-review-docs"
+      ]
+    },
+    {
+      "title": "Reporting and presentations",
+      "description": "Synthesize approved project artifacts into one versioned report source, then render Markdown, DOCX, PDF, and branded PowerPoint channels without losing traceability.",
+      "skills": [
+        "q-report-workflow",
+        "q-report-source",
+        "q-report-document",
+        "q-report-deck"
+      ]
+    }
+  ]
+}

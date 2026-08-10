@@ -6,37 +6,58 @@ package:
   stack_profile: project-defined
   compatibility: profile-driven
   human_guide: README.md
-  cross_workflow_contract: skills/00-cross-workflow-contract.md
+  cross_workflow_contract: skills/core/q-core-contract/SKILL.md
   validator: skills/scripts/validate-skills-package.py
 
 workflows:
   discovery-proposal:
     status: active
-    entry_skill: discovery-proposal-workflow
-    stages: [proposal-discovery, commercial-proposal-design, interactive-web-proposal, commercial-proposal-document]
+    entry_skill: q-proposal-workflow
+    stages: [q-proposal-discovery, q-proposal-design, q-proposal-web, q-proposal-document]
     optional_next: [ai-coding, reporting, close]
   ai-coding:
     status: active
-    entry_skill: ai-coding-workflow
-    planning_stages: [product-core-definition, technical-foundation-definition, domain-data-modeling, high-level-architecture-standards, module-feature-decomposition, backlog-and-delivery-planning]
+    entry_skill: q-delivery-workflow
+    planning_stages: [q-plan-product-core, q-plan-tech-foundation, q-plan-domain-model, q-plan-architecture, q-plan-features, q-plan-backlog]
     includes_execution_loop: true
     includes_integral_qa: true
     optional_next: [reporting, close]
   reporting:
     status: active
-    entry_skill: reporting-workflow
-    stages: [reporting-source-design]
-    renderers: [generate-report, generate-quasar-deck]
+    entry_skill: q-report-workflow
+    stages: [q-report-source]
+    renderers: [q-report-document, q-report-deck]
     report_types: [progress, feature, milestone, release, completion, consulting, executive, custom]
     optional_next: [return-to-caller, close]
   maintenance:
     status: active
-    entry_skill: maintain-ai-workflow
+    entry_skill: q-maint-ai-workflow
     scope: package-administration
 
 skills:
-  audit-docs:
-    path: quality/audit-docs
+  q-core-contract:
+    path: core/q-core-contract
+    group: core
+    requires: []
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: false
+    execution_modes: [internal]
+    persistent_outputs: []
+    transient_outputs: []
+    side_effects: [none]
+    approval_policy: read-only-governance-reference-with-no-project-or-package-writes
+    fallback: report-the-missing-governance-reference-instead-of-assuming-shared-rules
+    stack_profile: any
+    contract_version: "1.0"
+    distribution: public
+
+  q-review-docs:
+    path: review/q-review-docs
+    group: review
+    requires: [q-core-contract]
     status: active
     kind: quality
     workflow: shared
@@ -51,8 +72,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  ai-coding-workflow:
-    path: app-flow/ai-coding-workflow
+  q-delivery-workflow:
+    path: delivery/q-delivery-workflow
+    group: delivery
+    requires: [q-core-contract]
     status: active
     kind: orchestrator
     workflow: ai-coding
@@ -72,8 +95,10 @@ skills:
     stack_profile: project-defined
     contract_version: "1.0"
 
-  backlog-and-delivery-planning:
-    path: app-flow/backlog-and-delivery-planning
+  q-plan-backlog:
+    path: plan/q-plan-backlog
+    group: plan
+    requires: [q-core-contract]
     status: active
     kind: stage
     workflow: ai-coding
@@ -91,8 +116,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  domain-data-modeling:
-    path: app-flow/domain-data-modeling
+  q-plan-domain-model:
+    path: plan/q-plan-domain-model
+    group: plan
+    requires: [q-core-contract]
     status: active
     kind: stage
     workflow: ai-coding
@@ -111,8 +138,10 @@ skills:
     stack_profile: project-defined
     contract_version: "1.0"
 
-  high-level-architecture-standards:
-    path: app-flow/high-level-architecture-standards
+  q-plan-architecture:
+    path: plan/q-plan-architecture
+    group: plan
+    requires: [q-core-contract]
     status: active
     kind: stage
     workflow: ai-coding
@@ -131,12 +160,14 @@ skills:
     stack_profile: project-defined
     contract_version: "1.0"
 
-  module-feature-decomposition:
-    path: app-flow/module-feature-decomposition
+  q-plan-features:
+    path: plan/q-plan-features
+    group: plan
+    requires: [q-core-contract]
     status: active
     kind: stage
     workflow: ai-coding
-    stage: module-feature-decomposition
+    stage: module-features
     invocable: true
     execution_modes: [orchestrated, standalone]
     persistent_outputs:
@@ -150,8 +181,10 @@ skills:
     stack_profile: project-defined
     contract_version: "1.0"
 
-  product-core-definition:
-    path: app-flow/product-core-definition
+  q-plan-product-core:
+    path: plan/q-plan-product-core
+    group: plan
+    requires: [q-core-contract]
     status: active
     kind: stage
     workflow: ai-coding
@@ -167,8 +200,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  technical-foundation-definition:
-    path: app-flow/technical-foundation-definition
+  q-plan-tech-foundation:
+    path: plan/q-plan-tech-foundation
+    group: plan
+    requires: [q-core-contract]
     status: active
     kind: stage
     workflow: ai-coding
@@ -184,8 +219,10 @@ skills:
     stack_profile: project-defined
     contract_version: "1.0"
 
-  codebase-review:
-    path: coding/codebase-review
+  q-review-codebase:
+    path: review/q-review-codebase
+    group: review
+    requires: []
     status: active
     kind: quality
     workflow: ai-coding
@@ -201,8 +238,10 @@ skills:
     stack_profile: project-defined
     contract_version: "1.0"
 
-  code-review:
-    path: coding/code-review
+  q-review-code:
+    path: review/q-review-code
+    group: review
+    requires: []
     status: active
     kind: quality
     workflow: ai-coding
@@ -217,8 +256,10 @@ skills:
     stack_profile: project-defined
     contract_version: "1.0"
 
-  debug:
-    path: coding/debug
+  q-code-debug:
+    path: code/q-code-debug
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: ai-coding
@@ -233,8 +274,10 @@ skills:
     stack_profile: project-defined
     contract_version: "1.0"
 
-  design-grill:
-    path: coding/design-grill
+  q-code-grill-design:
+    path: code/q-code-grill-design
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: ai-coding
@@ -246,12 +289,14 @@ skills:
     transient_outputs: [interview-notes]
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-major-tradeoffs-and-scope
-    fallback: deescalate-to-feature-grill
+    fallback: deescalate-to-q-code-grill-feature
     stack_profile: project-defined
     contract_version: "1.0"
 
-  explain:
-    path: coding/explain
+  q-code-explain:
+    path: code/q-code-explain
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: shared
@@ -266,8 +311,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  explore:
-    path: coding/explore
+  q-code-explore:
+    path: code/q-code-explore
+    group: code
+    requires: [q-code-grill-design]
     status: active
     kind: tool
     workflow: shared
@@ -282,8 +329,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  feature-grill:
-    path: coding/feature-grill
+  q-code-grill-feature:
+    path: code/q-code-grill-feature
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: ai-coding
@@ -299,8 +348,10 @@ skills:
     stack_profile: project-defined
     contract_version: "1.0"
 
-  handoff:
-    path: coding/handoff
+  q-code-handoff:
+    path: code/q-code-handoff
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: shared
@@ -316,8 +367,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  implement:
-    path: coding/implement
+  q-code-implement:
+    path: code/q-code-implement
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: ai-coding
@@ -332,8 +385,10 @@ skills:
     stack_profile: project-defined
     contract_version: "1.0"
 
-  implementation-plan:
-    path: coding/implementation-plan
+  q-code-implementation-plan:
+    path: code/q-code-implementation-plan
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: ai-coding
@@ -345,12 +400,14 @@ skills:
     transient_outputs: [planning-notes]
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-scope-and-sequencing
-    fallback: return-to-design-grill
+    fallback: return-to-q-code-grill-design
     stack_profile: project-defined
     contract_version: "1.0"
 
-  prototype:
-    path: coding/prototype
+  q-code-prototype:
+    path: code/q-code-prototype
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: shared
@@ -365,8 +422,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  research:
-    path: coding/research
+  q-code-research:
+    path: code/q-code-research
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: shared
@@ -382,8 +441,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  resolve-merge-conflicts:
-    path: coding/resolve-merge-conflicts
+  q-code-merge-conflicts:
+    path: code/q-code-merge-conflicts
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: ai-coding
@@ -398,8 +459,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  review-code-comments:
-    path: coding/review-code-comments
+  q-review-comments:
+    path: review/q-review-comments
+    group: review
+    requires: []
     status: active
     kind: quality
     workflow: ai-coding
@@ -414,8 +477,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  simple-fix:
-    path: coding/simple-fix
+  q-code-fix:
+    path: code/q-code-fix
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: ai-coding
@@ -426,12 +491,14 @@ skills:
     transient_outputs: [fix-notes]
     side_effects: [write-code, write-tests]
     approval_policy: minimal-confirmed-fix-with-no-external-effects
-    fallback: escalate-to-debug
+    fallback: escalate-to-q-code-debug
     stack_profile: project-defined
     contract_version: "1.0"
 
-  simple-grill:
-    path: coding/simple-grill
+  q-code-grill-simple:
+    path: code/q-code-grill-simple
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: ai-coding
@@ -447,8 +514,10 @@ skills:
     stack_profile: project-defined
     contract_version: "1.0"
 
-  tdd:
-    path: coding/tdd
+  q-code-tdd:
+    path: code/q-code-tdd
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: ai-coding
@@ -463,8 +532,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  to-tickets:
-    path: coding/to-tickets
+  q-code-tickets:
+    path: code/q-code-tickets
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: ai-coding
@@ -480,8 +551,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  writing-for-agents:
-    path: coding/writing-for-agents
+  q-maint-writing-for-agents:
+    path: maint/q-maint-writing-for-agents
+    group: maint
+    requires: []
     status: active
     kind: tool
     workflow: shared
@@ -495,9 +568,12 @@ skills:
     fallback: focused-draft-or-in-place-edit-without-secondary-authority
     stack_profile: any
     contract_version: "1.0"
+    distribution: internal
 
-  zoom-out:
-    path: coding/zoom-out
+  q-code-zoom-out:
+    path: code/q-code-zoom-out
+    group: code
+    requires: []
     status: active
     kind: tool
     workflow: shared
@@ -512,8 +588,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  commercial-proposal-design:
-    path: discovery/commercial-proposal-design
+  q-proposal-design:
+    path: proposal/q-proposal-design
+    group: proposal
+    requires: [q-core-contract]
     status: active
     kind: stage
     workflow: discovery-proposal
@@ -530,8 +608,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  commercial-proposal-document:
-    path: discovery/commercial-proposal-document
+  q-proposal-document:
+    path: proposal/q-proposal-document
+    group: proposal
+    requires: [q-core-contract]
     status: active
     kind: stage
     workflow: discovery-proposal
@@ -549,8 +629,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  discovery-proposal-workflow:
-    path: discovery/discovery-proposal-workflow
+  q-proposal-workflow:
+    path: proposal/q-proposal-workflow
+    group: proposal
+    requires: [q-core-contract]
     status: active
     kind: orchestrator
     workflow: discovery-proposal
@@ -568,8 +650,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  interactive-web-proposal:
-    path: discovery/interactive-web-proposal
+  q-proposal-web:
+    path: proposal/q-proposal-web
+    group: proposal
+    requires: [q-core-contract]
     status: active
     kind: stage
     workflow: discovery-proposal
@@ -586,8 +670,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  proposal-discovery:
-    path: discovery/proposal-discovery
+  q-proposal-discovery:
+    path: proposal/q-proposal-discovery
+    group: proposal
+    requires: [q-core-contract]
     status: active
     kind: stage
     workflow: discovery-proposal
@@ -603,8 +689,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  maintain-ai-workflow:
-    path: maintenance/maintain-ai-workflow
+  q-maint-ai-workflow:
+    path: maint/q-maint-ai-workflow
+    group: maint
+    requires: [q-maint-writing-for-agents]
     status: active
     kind: tool
     workflow: maintenance
@@ -618,9 +706,12 @@ skills:
     fallback: read-only-audit-or-block-on-governance-change
     stack_profile: any
     contract_version: "1.0"
+    distribution: internal
 
-  reporting-workflow:
-    path: reporting/reporting-workflow
+  q-report-workflow:
+    path: report/q-report-workflow
+    group: report
+    requires: [q-core-contract]
     status: active
     kind: orchestrator
     workflow: reporting
@@ -638,8 +729,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  reporting-source-design:
-    path: reporting/reporting-source-design
+  q-report-source:
+    path: report/q-report-source
+    group: report
+    requires: [q-core-contract]
     status: active
     kind: stage
     workflow: reporting
@@ -655,8 +748,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  generate-report:
-    path: reporting/generate-report
+  q-report-document:
+    path: report/q-report-document
+    group: report
+    requires: [q-core-contract, q-report-deck]
     status: active
     kind: renderer
     workflow: reporting
@@ -675,8 +770,10 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-  generate-quasar-deck:
-    path: reporting/generate-quasar-deck
+  q-report-deck:
+    path: report/q-report-deck
+    group: report
+    requires: [q-core-contract]
     status: active
     kind: renderer
     workflow: reporting

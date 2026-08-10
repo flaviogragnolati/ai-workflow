@@ -22,7 +22,7 @@ source_snapshot:
     - artifact_id: ART-BACKLOG-001
       version: "1.2"
       owner_workflow: ai-coding
-      owner_skill: backlog-and-delivery-planning
+      owner_skill: q-plan-backlog
       lifecycle: Baselined
       semantic_authority: canonical
       authority_scope: delivery-structure
@@ -31,7 +31,7 @@ source_snapshot:
     - artifact_id: ART-VALIDATION-001
       version: "0.4"
       owner_workflow: ai-coding
-      owner_skill: ai-coding-workflow
+      owner_skill: q-delivery-workflow
       lifecycle: Working
       semantic_authority: canonical
       authority_scope: release-quality

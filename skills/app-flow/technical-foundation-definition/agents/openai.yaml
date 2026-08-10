@@ -1,4 +1,0 @@
-interface:
-  display_name: "Technical Foundation Definition"
-  short_description: "Define the project stack, NFRs, and operations"
-  default_prompt: "Use $technical-foundation-definition to recommend, confirm, and version the project's technical foundation."
