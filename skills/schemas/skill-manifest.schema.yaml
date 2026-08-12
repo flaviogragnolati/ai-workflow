@@ -32,7 +32,7 @@ properties:
       required: [path, group, requires, status, kind, workflow, stage, invocable, execution_modes, persistent_outputs, transient_outputs, side_effects, approval_policy, fallback, stack_profile, contract_version]
       properties:
         path: {type: string}
-        group: {enum: [proposal, delivery, plan, code, review, report, core, maint]}
+        group: {enum: [proposal, delivery, plan, code, review, report, ask, core, maint]}
         requires:
           type: array
           items: {type: string}

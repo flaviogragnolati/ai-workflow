@@ -13,6 +13,15 @@ are deliberately established.
 
 ### Added
 
+- `q-ask-project`, a read-only project-question skill that conditionally aligns
+  ambiguous questions, reconciles documented intent, workflow state, artifact
+  authority, and observable implementation, and returns only a transient answer.
+- `q-ask-analyze`, a read-only extension of the same alignment and evidence path
+  for multidimensional proposal fit, benefits, downsides, risks, problems,
+  compatibility, alternatives, confidence, and an optional next routing choice.
+- The public `ask` group, matching skills.sh catalog section, dependency guidance,
+  and package acceptance scenarios for conditional alignment, answer-only behavior,
+  compatibility qualification, and planning boundaries.
 - A README quick skill guide that maps proposal, the six planning stages,
   iterative development, mini review, integral QA, delivery, reporting,
   cross-cutting support, and package maintenance to the relevant skills. Its
@@ -215,6 +224,10 @@ are deliberately established.
 
 ### Compatibility
 
+- The two `q-ask-*` additions are backward-compatible and do not change project
+  runtime schemas or existing workflow routes. Install `q-core-contract` with
+  `q-ask-project`; install both with `q-ask-analyze`, which reuses the former's
+  alignment and evidence procedure.
 - The skill rename is breaking and unaliased. An existing installation keeps
   working under its old folder names but receives no updates; reinstall with the
   new IDs from the table above. Saved prompts, scripts, and routing notes that

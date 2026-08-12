@@ -1,6 +1,6 @@
 # Quasar AI delivery skills
 
-This package coordinates discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, and optional reporting. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
+This package coordinates project questions and proposal analysis, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, and optional reporting. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
 
 ## Install
 
@@ -14,7 +14,7 @@ npx skills add flaviogragnolati/ai-workflow --skill q-code-debug --skill q-revie
 
 The installer copies one skill folder at a time into your project's agent directory, where every skill becomes a sibling of every other. Each skill is self-contained: it either bundles what it needs or declares the companion it depends on. Install the dependencies listed under [Skill dependencies](#skill-dependencies) alongside the skill that requires them; a skill whose companion is missing stops and prints the exact install command instead of proceeding on assumed rules.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow` and `q-maint-writing-for-agents` are `distribution: internal` and are not offered to consumers; the remaining 37 are.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow` and `q-maint-writing-for-agents` are `distribution: internal` and are not offered to consumers; the remaining 39 are.
 
 `skills.sh.json` groups the catalog on the skills.sh repository page. It is a derived presentation of the manifest `group` field — sections may merge groups, but the validator requires every public skill to appear in exactly one. `skill-manifest.yaml` stays the authority for what exists, what `group` it belongs to, what it `requires`, and what `distribution` it has.
 
@@ -27,6 +27,13 @@ Use $q-proposal-workflow to prepare a commercial proposal from these meeting not
 Use $q-delivery-workflow to execute q-plan-backlog.
 Use $q-report-workflow to create a progress report and deck from approved project artifacts.
 Use $q-maint-ai-workflow to update a workflow or related skill safely.
+```
+
+For read-only project intelligence, invoke the narrow capability directly:
+
+```text
+Use $q-ask-project to answer how this project currently handles tenant isolation.
+Use $q-ask-analyze to evaluate whether moving background jobs to a managed queue fits this project.
 ```
 
 Do not invoke an orchestrator and a stage as two independent writers. The orchestrator treats the named stage as `target_stage`, delegates domain work, validates the returned delta, and remains the only writer of workflow state and artifact index.
@@ -87,6 +94,8 @@ flowchart LR
 
 | Workflow step | Primary skill or choice | Use it when |
 |---|---|---|
+| Answer a project question | `q-ask-project` | Resolving a bounded factual or explanatory question from project documentation, workflow state, decisions, and observable implementation. |
+| Analyze a proposal | `q-ask-analyze` | Evaluating an idea or change across project fit, benefits, downsides, risks, problems, compatibility, alternatives, and evidence before choosing deeper work. |
 | Route discovery and proposal | `q-proposal-workflow` | Starting, resuming, or reconciling the commercial flow; name a target stage when only one stage is needed. |
 | Proposal 1 — discover | `q-proposal-discovery` | Turning client evidence into a traceable brief, open questions, risks, and proposal-readiness assessment. |
 | Proposal 2 — design | `q-proposal-design` | Defining canonical scope, solution, deliverables, schedule, investment, terms, and commitments. |
@@ -112,7 +121,13 @@ flowchart LR
 
 Use supporting skills only when their trigger appears: `q-code-research` for durable findings from primary external sources, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question.
 
-Two companions are not user entry points: coordinated workflows load `q-core-contract` for shared governance, and package maintenance loads the internal `q-maint-writing-for-agents` when agent-consumed artifacts change. Use `q-maint-ai-workflow` outside project runtime whenever this package, its skills, routing, contracts, metadata, fixtures, validators, or explanatory documentation must be changed or audited.
+Two companions are not user entry points: coordinated workflows and the project-question skills load `q-core-contract` for shared governance, and package maintenance loads the internal `q-maint-writing-for-agents` when agent-consumed artifacts change. Use `q-maint-ai-workflow` outside project runtime whenever this package, its skills, routing, contracts, metadata, fixtures, validators, or explanatory documentation must be changed or audited.
+
+### Project questions and proposal analysis
+
+`q-ask-project` answers one bounded question by reconciling the smallest relevant slice of project documentation, workflow state, decisions, and observable implementation. `q-ask-analyze` extends that path with a multidimensional proposal assessment and a conditional compatibility disposition. Both run a short alignment only when ambiguity could change the evidence or conclusion, return transient conversation output, and never create artifacts or mutate project state.
+
+The analysis skill may recommend deeper research, the applicable planning owner, or a grill at the matching depth. That recommendation is a next route, not authorization to start planning or implementation.
 
 ### Discovery and proposal
 
@@ -173,6 +188,8 @@ Maintenance is outside project runtime. It does not write project workflow state
 | Skill | Requires | Why |
 |---|---|---|
 | The 17 coordinated workflow skills — every `q-proposal-*`, `q-plan-*`, `q-report-*`, plus `q-delivery-workflow` and `q-review-docs` | `q-core-contract` | Shared governance, the routing digest, and the `report-source` and `stage-result` schemas |
+| `q-ask-project` | `q-core-contract` | Reconciles project state, artifact authority, lifecycle, and observable implementation before answering |
+| `q-ask-analyze` | `q-core-contract`, `q-ask-project` | Reuses the same alignment and evidence path before applying proposal-analysis lenses |
 | `q-report-document` | `q-core-contract`, `q-report-deck` | Also reads the Quasar presentation identity bundled in the deck skill |
 | `q-code-explore` | `q-code-grill-design` | Reads its deep-module glossary when modules, interfaces, or seams matter |
 
@@ -199,6 +216,8 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 
 | Need | Entry skill |
 |---|---|
+| Answer a bounded question from project truth | `q-ask-project` |
+| Evaluate whether a proposal fits the project | `q-ask-analyze` |
 | Start or resume a proposal | `q-proposal-workflow` |
 | Start or resume product planning or delivery | `q-delivery-workflow` |
 | Orient around a codebase, feature, module, or document | `q-code-explore` |
@@ -215,11 +234,12 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Produce a standalone Quasar presentation | `q-report-deck` |
 | Change or audit the workflow package | `q-maint-ai-workflow` |
 
-Groups sort the catalog and name the skills: `proposal`, `delivery`, `plan`, `code`, `review`, `report`, `core`, and `maint`. The manifest `group` field is authoritative — the skill name, its folder, its category folder, and the skills.sh sections all derive from it.
+Groups sort the catalog and name the skills: `ask`, `proposal`, `delivery`, `plan`, `code`, `review`, `report`, `core`, and `maint`. The manifest `group` field is authoritative — the skill name, its folder, its category folder, and the skills.sh sections all derive from it.
 
 ## Anti-patterns
 
 - Do not load every skill before choosing a route.
+- Do not force an alignment mini-grill when the question or proposal is already clear, or investigate broadly while a material interpretation remains unresolved.
 - Do not let a stage write global state or artifact index.
 - Do not make tickets or TDD mandatory by default.
 - Do not use an internal implementation scratchpad as a durable project plan.
@@ -236,7 +256,7 @@ Groups sort the catalog and name the skills: `proposal`, `delivery`, `plan`, `co
 
 ## Expected result
 
-A completed workflow stage leaves owned artifacts, traceable IDs, declared authority and lifecycle, a valid `stage_result`, reconciled runtime state when orchestrated, explicit blockers when incomplete, and one clear next action. A read-only shared tool such as `q-code-explore` or `q-review-docs` returns only its declared transient output and does not claim stage completion.
+A completed workflow stage leaves owned artifacts, traceable IDs, declared authority and lifecycle, a valid `stage_result`, reconciled runtime state when orchestrated, explicit blockers when incomplete, and one clear next action. A read-only shared tool such as `q-ask-project`, `q-ask-analyze`, `q-code-explore`, or `q-review-docs` returns only its declared transient output and does not claim stage completion.
 
 ## Planned capabilities
 

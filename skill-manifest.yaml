@@ -54,6 +54,42 @@ skills:
     contract_version: "1.0"
     distribution: public
 
+  q-ask-project:
+    path: ask/q-ask-project
+    group: ask
+    requires: [q-core-contract]
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [standalone]
+    persistent_outputs: []
+    transient_outputs: [project-answer, alignment-notes]
+    side_effects: [network-read]
+    approval_policy: read-only-no-project-artifact-state-or-external-write
+    fallback: answer-with-explicit-scope-and-evidence-limitations
+    stack_profile: any
+    contract_version: "1.0"
+
+  q-ask-analyze:
+    path: ask/q-ask-analyze
+    group: ask
+    requires: [q-core-contract, q-ask-project]
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [standalone]
+    persistent_outputs: []
+    transient_outputs: [proposal-fit-analysis, alignment-notes, routing-recommendation]
+    side_effects: [network-read]
+    approval_policy: read-only-no-project-artifact-state-or-external-write
+    fallback: conditional-or-undetermined-disposition-with-evidence-gaps
+    stack_profile: any
+    contract_version: "1.0"
+
   q-review-docs:
     path: review/q-review-docs
     group: review

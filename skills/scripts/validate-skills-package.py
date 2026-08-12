@@ -692,6 +692,16 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("review/q-review-codebase/SKILL.md", "generic and repository-grounded criteria"),
             ("review/q-review-codebase/SKILL.md", "do not issue a full stack-specific approval"),
         ],
+        "S-27": [
+            ("ask/q-ask-project/SKILL.md", "Ask only when the ambiguity would change"),
+            ("ask/q-ask-project/SKILL.md", "Return the answer in the conversation as transient context"),
+            ("ask/q-ask-project/SKILL.md", "Do not create a file"),
+        ],
+        "S-28": [
+            ("ask/q-ask-analyze/SKILL.md", "Analyze every relevant dimension"),
+            ("ask/q-ask-analyze/SKILL.md", "compatible with conditions"),
+            ("ask/q-ask-analyze/SKILL.md", "do not start it unless the user separately authorizes"),
+        ],
     }
     errors: list[str] = []
     for scenario, requirements in checks.items():

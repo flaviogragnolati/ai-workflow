@@ -10,6 +10,14 @@
       ]
     },
     {
+      "title": "Ask and evaluate the project",
+      "description": "Answer bounded questions from project truth, or evaluate a proposal across fit, value, risk, compatibility, trade-offs, and evidence before choosing deeper work.",
+      "skills": [
+        "q-ask-project",
+        "q-ask-analyze"
+      ]
+    },
+    {
       "title": "Discovery and commercial proposals",
       "description": "Turn raw client evidence into a traceable discovery brief and a canonical commercial proposal, then render it as a web, DOCX, or PDF channel.",
       "skills": [
