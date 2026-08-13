@@ -14,7 +14,7 @@ npx skills add flaviogragnolati/ai-workflow --skill q-code-debug --skill q-revie
 
 The installer copies one skill folder at a time into your project's agent directory, where every skill becomes a sibling of every other. Each skill is self-contained: it either bundles what it needs or declares the companion it depends on. Install the dependencies listed under [Skill dependencies](#skill-dependencies) alongside the skill that requires them; a skill whose companion is missing stops and prints the exact install command instead of proceeding on assumed rules.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow` and `q-maint-writing-for-agents` are `distribution: internal` and are not offered to consumers; the remaining 43 are.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 44 are.
 
 `skills.sh.json` groups the catalog on the skills.sh repository page. It is a derived presentation of the manifest `group` field — sections may merge groups, but the validator requires every public skill to appear in exactly one. `skill-manifest.yaml` stays the authority for what exists, what `group` it belongs to, what it `requires`, and what `distribution` it has.
 
@@ -35,6 +35,7 @@ For read-only project intelligence, invoke the narrow capability directly:
 ```text
 Use $q-ask-project to answer how this project currently handles tenant isolation.
 Use $q-ask-analyze to evaluate whether moving background jobs to a managed queue fits this project.
+Use $q-review-skill to audit an Agent Skill without changing it.
 ```
 
 Do not invoke an orchestrator and a stage as two independent writers. The orchestrator treats the named stage as `target_stage`, delegates domain work, validates the returned delta, and remains the only writer of workflow state and artifact index.
@@ -124,13 +125,14 @@ flowchart LR
 | Handle implementation trouble | `q-code-fix` for a confirmed narrow correction; `q-code-debug` when the cause is unknown; `q-code-merge-conflicts` for an active merge or rebase conflict | The main implementation path encounters a defect or source-control conflict. |
 | Mini review of one change | `q-review-code` plus `q-review-comments` | Checking technical/specification conformance and the accuracy of affected comments or docstrings after implementation. These skills report findings rather than silently fixing them. |
 | Integral QA and delivery | `q-review-codebase` supplies the formal codebase audit; `q-delivery-workflow` reconciles all release evidence and owns delivery | A release candidate is ready for architecture, integration, critical-flow, security, NFR, migration, deployment, documentation, and acceptance checks. The audit alone is not release acceptance. |
+| Audit an Agent Skill | `q-review-skill` | Evaluating activation, authority, context value, progressive disclosure, freedom calibration, safety, verification, packaging, provenance, and behavior without editing the target or treating a numeric grade as approval. |
 | Route a report | `q-report-workflow` | Producing a progress, feature, milestone, release, completion, consulting, executive, or custom report from approved artifact versions. |
 | Define report meaning | `q-report-source` | Synthesizing the approved source bundle into one traceable reporting narrative before rendering. |
 | Render report channels | `q-report-document` for Markdown/DOCX/PDF; `q-report-deck` for PPTX/deck PDF | Rendering the same baselined report-source version into the requested written or presentation channels. |
 
-Use supporting skills only when their trigger appears: `q-code-research` for a bounded technical Findings Register from versioned primary evidence, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question.
+Use supporting skills only when their trigger appears: `q-code-research` for a bounded technical Findings Register from versioned primary evidence, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question. Use `q-review-skill` for a read-only diagnostic of an Agent Skill or an explicitly bounded package slice.
 
-Two companions are not user entry points: coordinated workflows and the project-question skills load `q-core-contract` for shared governance, and package maintenance loads the internal `q-maint-writing-for-agents` when agent-consumed artifacts change. Use `q-maint-ai-workflow` outside project runtime whenever this package, its skills, routing, contracts, metadata, fixtures, validators, or explanatory documentation must be changed or audited.
+Three companions are not user entry points: coordinated workflows and the project-question skills load `q-core-contract` for shared governance; package maintenance loads the internal `q-maint-writing-for-agents` when agent-consumed artifacts change and `q-maint-skill-quality` when skills or invocation metadata are created, materially changed, or audited. Use `q-maint-ai-workflow` outside project runtime whenever this package, its skills, routing, contracts, metadata, fixtures, validators, or explanatory documentation must be changed or audited.
 
 ### Project questions and proposal analysis
 
@@ -193,13 +195,19 @@ When discovery or AI coding delegates reporting, the calling workflow remains ro
 
 Use `q-maint-ai-workflow`, not `q-review-docs`, for documentation owned by this package.
 
+### Agent Skill QA
+
+`q-review-skill` audits one Agent Skill, a comparison, or an explicitly bounded package slice without changing it. It combines deterministic structure checks with evidence-based review of activation, authority, context value, procedure, disclosure, safety, completion, packaging, provenance, and realistic trigger behavior. A requested numeric score is reported only as a disclosed heuristic; it never overrides a blocker or becomes package acceptance.
+
+For this repository, remediation and final acceptance remain package maintenance responsibilities. `q-maint-skill-quality` is the internal companion that applies the public diagnostic together with the manifest, package validator, official `quick_validate.py`, trigger tests, derived-view synchronization, and the maintenance philosophy gate.
+
 ### Package maintenance
 
 `q-maint-ai-workflow` is the administrative entry point for adding, removing, renaming, reorganizing, auditing, or changing workflows, skills, governance, routing, metadata, schemas, fixtures, and validators. It builds an impact map, checks the proposal against package philosophy and anti-patterns, synchronizes connected surfaces, and runs structural and behavioral validation.
 
 Maintenance is outside project runtime. It does not write project workflow state, update the project artifact index, return a project stage result, or participate in client delivery execution.
 
-`q-maint-writing-for-agents` is an internal companion used by repository agents and owning skills when they create or materially edit agent-consumed artifacts. It is registered with `invocable: false`, has no user-facing skill interface, inherits the owning task's authority, and creates no independently authoritative project output.
+`q-maint-writing-for-agents` is an internal companion used by repository agents and owning skills when they create or materially edit agent-consumed artifacts. `q-maint-skill-quality` is an internal acceptance companion for skill and invocation-metadata changes; it reuses `q-review-skill` rather than duplicating its evidence lenses. Both are registered with `invocable: false`, have no user-facing skill interface, inherit the owning task's authority, and create no independently authoritative project output.
 
 ## Skill dependencies
 
@@ -217,6 +225,8 @@ Maintenance is outside project runtime. It does not write project workflow state
 | `q-code-explore` | `q-code-grill-design` | Reads its deep-module glossary when modules, interfaces, or seams matter |
 
 Every other public skill has no required companion. Two reference forms survive installation: a one-level `../<sibling-skill>/…` path, and a companion named in prose. Anything deeper than one level leaves the installed catalog and fails validation.
+
+The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-maint-writing-for-agents` inside the maintenance package. Consumers do not install this internal acceptance route.
 
 ## Artifact lifecycle
 
@@ -257,6 +267,7 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Review one change | `q-review-code` plus `q-review-comments` |
 | Audit a codebase or release candidate | `q-review-codebase` |
 | Audit durable project documentation | `q-review-docs` |
+| Audit an Agent Skill or bounded skill-package slice | `q-review-skill` |
 | Produce a traced project report or report deck | `q-report-workflow` |
 | Render an approved report source as Markdown, DOCX, and PDF | `q-report-document` |
 | Produce a standalone Quasar presentation | `q-report-deck` |
@@ -276,6 +287,7 @@ Groups sort the catalog and name the skills: `ask`, `proposal`, `research`, `del
 - Do not treat the preferred T3 web recommendation as a mandatory stack or flag unselected secondary libraries as missing.
 - Do not issue stack-specific QA approval from generic criteria or stale technology guidance.
 - Do not let a documentation audit rewrite its targets or create a parallel changelog.
+- Do not treat a universal numeric skill grade, line-count target, or pattern taxonomy as package acceptance without target authority and behavioral evidence.
 - Do not let a report renderer own report meaning or treat a rendered channel as upstream truth.
 - Do not let Research overwrite client evidence, create a proposal commitment, or start another workflow without an explicit choice.
 - Do not treat verified source identity, claim support, and completed search coverage as the same state.

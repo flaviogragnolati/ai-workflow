@@ -119,6 +119,25 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
+  q-review-skill:
+    path: review/q-review-skill
+    group: review
+    requires: []
+    status: active
+    kind: quality
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [standalone]
+    human_interaction: {standalone: review-at-boundaries}
+    persistent_outputs: []
+    transient_outputs: [skill-quality-diagnostic]
+    side_effects: [network-read]
+    approval_policy: read-only-no-target-package-or-external-write
+    fallback: evidence-limited-diagnostic-with-unverified-spec-or-unreadable-resources
+    stack_profile: any
+    contract_version: "1.0"
+
   q-delivery-workflow:
     path: delivery/q-delivery-workflow
     group: delivery
@@ -721,6 +740,26 @@ skills:
     side_effects: [write-authorized-agent-artifacts]
     approval_policy: inherit-authority-and-write-scope-from-owning-task
     fallback: focused-draft-or-in-place-edit-without-secondary-authority
+    stack_profile: any
+    contract_version: "1.0"
+    distribution: internal
+
+  q-maint-skill-quality:
+    path: maint/q-maint-skill-quality
+    group: maint
+    requires: [q-review-skill, q-maint-writing-for-agents]
+    status: active
+    kind: quality
+    workflow: maintenance
+    stage: null
+    invocable: false
+    execution_modes: [internal]
+    human_interaction: {internal: none}
+    persistent_outputs: []
+    transient_outputs: [skill-quality-acceptance]
+    side_effects: [write-authorized-package-files]
+    approval_policy: inherit-authority-and-write-scope-from-q-maint-ai-workflow
+    fallback: explicit-coverage-gap-and-block-acceptance-on-unresolved-high-severity-findings
     stack_profile: any
     contract_version: "1.0"
     distribution: internal

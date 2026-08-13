@@ -10,3 +10,7 @@ timestamps; add a dated release only when the package version and release bounda
 are deliberately established.
 
 ## [Unreleased]
+
+### Added
+
+- Added the public `q-review-skill` read-only diagnostic, the internal `q-maint-skill-quality` acceptance companion, and package regression scenarios for their core boundaries. The design adapts the useful context-value, progressive-disclosure, freedom-calibration, and usability ideas from Softaworks' MIT-licensed Skill Judge while replacing its fixed universal score with evidence, severity, target authority, and behavioral checks.

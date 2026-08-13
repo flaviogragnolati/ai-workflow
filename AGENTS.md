@@ -18,6 +18,8 @@ Change the authoritative source first, then synchronize connected views. Link to
 
 Load `skills/maint/q-maint-writing-for-agents/SKILL.md` whenever creating, restructuring, or materially editing an artifact consumed primarily by agents, including skills, agent instructions, context pointers, plans, handoffs, intermediate working documents, temporary instructions, and generated references. It is an internal companion, not a user entry point; apply it inside the authority and write scope of the owning task.
 
+Load `skills/maint/q-maint-skill-quality/SKILL.md` whenever maintenance creates, materially changes, or audits a skill, its resources, or its invocation metadata. It is an internal acceptance companion: apply the public `q-review-skill` evidence lenses together with package validators and trigger tests, then return transient acceptance evidence to `q-maint-ai-workflow`.
+
 ## Maintenance completion
 
 Package maintenance is complete only when `$q-maint-ai-workflow` has applied its impact map and philosophy gate, synchronized every affected authoritative source and view, recorded notable changes under `CHANGELOG.md` `Unreleased`, preserved applicable third-party notices, and produced clean package and skill validation or explicitly separated pre-existing blockers. Store temporary acceptance evidence outside skill directories.

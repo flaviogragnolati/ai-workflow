@@ -88,10 +88,11 @@
     },
     {
       "title": "Review and documentation QA",
-      "description": "Change-scoped technical review, comment and docstring review, and drift auditing for persistent project documentation.",
+      "description": "Change-scoped technical review, comment and docstring review, Agent Skill quality diagnostics, and drift auditing for persistent project documentation.",
       "skills": [
         "q-review-code",
         "q-review-comments",
+        "q-review-skill",
         "q-review-docs"
       ]
     },

@@ -1044,6 +1044,16 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("core/q-core-contract/SKILL.md", "`approval_policy` remains authoritative"),
             ("core/q-core-contract/references/human-interaction.md", "The package validator rejects any drift"),
         ],
+        "S-37": [
+            ("review/q-review-skill/SKILL.md", "Keep the review read-only"),
+            ("review/q-review-skill/SKILL.md", "positive trigger and one nearby negative trigger"),
+            ("review/q-review-skill/SKILL.md", "heuristic with no approval authority"),
+        ],
+        "S-38": [
+            ("maint/q-maint-skill-quality/SKILL.md", "structural validation sequence owned by `q-maint-ai-workflow`"),
+            ("maint/q-maint-skill-quality/SKILL.md", "resolve every `blocker` and `high` finding"),
+            ("maint/q-maint-ai-workflow/SKILL.md", "load `q-maint-skill-quality`"),
+        ],
     }
     errors: list[str] = []
     for scenario, requirements in checks.items():

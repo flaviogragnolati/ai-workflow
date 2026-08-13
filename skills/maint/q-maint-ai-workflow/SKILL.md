@@ -104,6 +104,8 @@ Run the strongest available checks in this order:
 5. Re-read the diff against the impact map and philosophy gate. Confirm documentation describes behavior the package actually enforces.
 6. Forward-test a complex or behavior-changing skill on a realistic request with minimal leaked context when safe and useful.
 
+For skill additions, material skill changes, or skill audits, load `q-maint-skill-quality` through the repository instruction pointer and satisfy its semantic, trigger, provenance, and package-acceptance checks in addition to the structural sequence above.
+
 Treat a failing new check as a blocker. Record unrelated baseline failures separately; do not hide them by weakening the validator or deleting evidence.
 
 Complete this step only when every affected surface has evidence, remaining limitations are explicit, and the package retains one truthful next action.

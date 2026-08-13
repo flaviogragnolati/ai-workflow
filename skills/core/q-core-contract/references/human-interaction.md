@@ -15,6 +15,8 @@ q-ask-analyze:
 q-review-docs:
   orchestrated: review-at-boundaries
   standalone: review-at-boundaries
+q-review-skill:
+  standalone: review-at-boundaries
 q-delivery-workflow:
   orchestrated: decision-gated
 q-plan-backlog:
@@ -97,6 +99,8 @@ q-code-tickets:
   orchestrated: decision-gated
   standalone: decision-gated
 q-maint-writing-for-agents:
+  internal: none
+q-maint-skill-quality:
   internal: none
 q-code-zoom-out:
   standalone: on-demand
