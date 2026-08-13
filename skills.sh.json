@@ -18,6 +18,13 @@
       ]
     },
     {
+      "title": "Shared tools and visual utilities",
+      "description": "Cross-workflow tools for editable structural diagrams, local validation, reproducible rendering, and channel-neutral visual assets.",
+      "skills": [
+        "q-tool-mermaid"
+      ]
+    },
+    {
       "title": "Discovery and commercial proposals",
       "description": "Turn raw client evidence into a traceable discovery brief and a canonical commercial proposal, then render it as a web, DOCX, or PDF channel.",
       "skills": [

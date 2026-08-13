@@ -12,3 +12,30 @@ artifacts:
     lifecycle: Working
     version: "0.1"
     source_refs: [REQ-001]
+  - artifact_id: ART-002
+    artifact_type: architecture-mermaid
+    path: docs/development-workflow/architecture/04-context.mmd
+    owner_workflow: ai-coding
+    owner_skill: q-plan-architecture
+    creation_mode: authored
+    semantic_authority: supporting
+    authority_scope: visual-representation
+    lifecycle: Working
+    version: "0.1"
+    source_refs: [ART-001]
+  - artifact_id: ART-003
+    artifact_type: architecture-render
+    path: docs/development-workflow/architecture/04-context.svg
+    owner_workflow: ai-coding
+    owner_skill: q-plan-architecture
+    creation_mode: derived
+    semantic_authority: none
+    authority_scope: presentation
+    lifecycle: Working
+    version: "0.1"
+    source_refs: [ART-002]
+    provenance:
+      generator_skill: q-tool-mermaid
+      renderer: mmdc
+      renderer_version: "11.16.0"
+      source_sha256: "fixture-source-sha256"

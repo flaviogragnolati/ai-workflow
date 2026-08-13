@@ -23,6 +23,10 @@ Create a durable `Working` architecture document under `docs/architecture/featur
 6. Define high-level stages and the next slice that should enter `q-code-grill-feature`, `q-code-grill-simple`, or `q-code-implementation-plan`.
 7. Validate traceability, open questions, and consequences with the user. Route a newly required stack choice to `q-plan-tech-foundation` rather than deciding it here.
 
+## Optional Mermaid collaboration
+
+When `approved-feature-architecture-needs-a-structural-diagram` and `q-tool-mermaid` is installed, delegate only the approved nodes and relationships, then review the source for fidelity. The architecture document and ADRs remain authoritative. If the tool is absent, `continue-with-canonical-textual-design-and-record-the-visual-capability-gap`.
+
 ## Durable output
 
 Include status, sources, scope, current context, proposed architecture, data and contracts, security, operations, decisions and ADRs, alternatives, risks, assumptions, open questions, high-level rollout, and next skill.

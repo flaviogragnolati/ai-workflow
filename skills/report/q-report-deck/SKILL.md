@@ -41,6 +41,8 @@ Do not generate or substantially revise the deck until the user approves the pla
 
 Apply Quasar brand assets consistently. Prefer assertion-led slide titles, readable visuals, restrained text, and useful speaker notes. Preserve source IDs in notes or the agreed traceability mechanism.
 
+When `approved-deck-plan-needs-a-mermaid-derived-asset` and `q-tool-mermaid` is installed, pass only the approved visual intent and a presentation profile. Keep slide composition, brand, and visual QA here. If the tool is absent, `continue-with-the-approved-textual-visual-intent-or-block-a-required-slide-asset`.
+
 ### 5. Verify and deliver
 
 Render every slide and inspect layout, overflow, contrast, consistency, data fidelity, traceability, and notes. Correct defects and rerender. Deliver the editable PPTX and requested derivatives.

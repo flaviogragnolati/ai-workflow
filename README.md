@@ -1,6 +1,6 @@
 # Quasar AI delivery skills
 
-This package coordinates project questions and proposal analysis, optional engagement research, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, and optional reporting. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
+This package coordinates project questions and proposal analysis, optional engagement research, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, optional reporting, and shared structural-diagram tooling. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
 
 ## Install
 
@@ -14,9 +14,9 @@ npx skills add flaviogragnolati/ai-workflow --skill q-code-debug --skill q-revie
 
 The installer copies one skill folder at a time into your project's agent directory, where every skill becomes a sibling of every other. Each skill is self-contained: it either bundles what it needs or declares the companion it depends on. Install the dependencies listed under [Skill dependencies](#skill-dependencies) alongside the skill that requires them; a skill whose companion is missing stops and prints the exact install command instead of proceeding on assumed rules.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 44 are.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 45 are.
 
-`skills.sh.json` groups the catalog on the skills.sh repository page. It is a derived presentation of the manifest `group` field — sections may merge groups, but the validator requires every public skill to appear in exactly one. `skill-manifest.yaml` stays the authority for what exists, what `group` it belongs to, what it `requires`, and what `distribution` it has.
+`skills.sh.json` groups the catalog on the skills.sh repository page. It is a derived presentation of the manifest `group` field — sections may merge groups, but the validator requires every public skill to appear in exactly one. `skill-manifest.yaml` stays the authority for what exists, what `group` it belongs to, what it `requires` or optionally `uses`, and what `distribution` it has.
 
 ## Quick start
 
@@ -36,6 +36,12 @@ For read-only project intelligence, invoke the narrow capability directly:
 Use $q-ask-project to answer how this project currently handles tenant isolation.
 Use $q-ask-analyze to evaluate whether moving background jobs to a managed queue fits this project.
 Use $q-review-skill to audit an Agent Skill without changing it.
+```
+
+Invoke the shared Mermaid tool directly for an editable source, local validation, or export:
+
+```text
+Use $q-tool-mermaid to create a sequence diagram for this authentication flow and save the source and SVG.
 ```
 
 Do not invoke an orchestrator and a stage as two independent writers. The orchestrator treats the named stage as `target_stage`, delegates domain work, validates the returned delta, and remains the only writer of workflow state and artifact index.
@@ -126,11 +132,12 @@ flowchart LR
 | Mini review of one change | `q-review-code` plus `q-review-comments` | Checking technical/specification conformance and the accuracy of affected comments or docstrings after implementation. These skills report findings rather than silently fixing them. |
 | Integral QA and delivery | `q-review-codebase` supplies the formal codebase audit; `q-delivery-workflow` reconciles all release evidence and owns delivery | A release candidate is ready for architecture, integration, critical-flow, security, NFR, migration, deployment, documentation, and acceptance checks. The audit alone is not release acceptance. |
 | Audit an Agent Skill | `q-review-skill` | Evaluating activation, authority, context value, progressive disclosure, freedom calibration, safety, verification, packaging, provenance, and behavior without editing the target or treating a numeric grade as approval. |
+| Create or export a structural diagram | `q-tool-mermaid` | Creating, revising, validating, repairing, rendering, or compiling Mermaid while the caller retains domain meaning. |
 | Route a report | `q-report-workflow` | Producing a progress, feature, milestone, release, completion, consulting, executive, or custom report from approved artifact versions. |
 | Define report meaning | `q-report-source` | Synthesizing the approved source bundle into one traceable reporting narrative before rendering. |
 | Render report channels | `q-report-document` for Markdown/DOCX/PDF; `q-report-deck` for PPTX/deck PDF | Rendering the same baselined report-source version into the requested written or presentation channels. |
 
-Use supporting skills only when their trigger appears: `q-code-research` for a bounded technical Findings Register from versioned primary evidence, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question. Use `q-review-skill` for a read-only diagnostic of an Agent Skill or an explicitly bounded package slice.
+Use supporting skills only when their trigger appears: `q-code-research` for a bounded technical Findings Register from versioned primary evidence, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-tool-mermaid` for editable structural diagrams and verified local exports, `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question, and `q-review-skill` for a read-only diagnostic of an Agent Skill or an explicitly bounded package slice.
 
 Three companions are not user entry points: coordinated workflows and the project-question skills load `q-core-contract` for shared governance; package maintenance loads the internal `q-maint-writing-for-agents` when agent-consumed artifacts change and `q-maint-skill-quality` when skills or invocation metadata are created, materially changed, or audited. Use `q-maint-ai-workflow` outside project runtime whenever this package, its skills, routing, contracts, metadata, fixtures, validators, or explanatory documentation must be changed or audited.
 
@@ -217,7 +224,9 @@ Maintenance is outside project runtime. It does not write project workflow state
 
 | Skill | Requires | Why |
 |---|---|---|
-| The 21 coordinated workflow skills — every `q-proposal-*`, `q-plan-*`, `q-research-*`, `q-report-*`, plus `q-delivery-workflow` and `q-review-docs` | `q-core-contract` | Shared governance, the routing digest, and the cited-findings, report-source, and stage-result schemas |
+| Coordinated workflow skills, except where a stronger row below applies | `q-core-contract` | Shared governance, the routing digest, and the cited-findings, report-source, and stage-result schemas |
+| `q-plan-domain-model`, `q-plan-architecture` | `q-core-contract`, `q-tool-mermaid` | Preserve planning ownership while delegating Mermaid authoring, validation, and rendering |
+| `q-tool-mermaid` | `q-core-contract` | Applies shared artifact authority, single-writer, stage-result, and diagram-delegation rules |
 | `q-ask-project` | `q-core-contract` | Reconciles project state, artifact authority, lifecycle, and observable implementation before answering |
 | `q-ask-analyze` | `q-core-contract`, `q-ask-project` | Reuses the same alignment and evidence path before applying proposal-analysis lenses |
 | `q-code-research` | `q-core-contract` | Uses the shared cited-findings evidence contract while retaining technical-domain procedure |
@@ -225,6 +234,8 @@ Maintenance is outside project runtime. It does not write project workflow state
 | `q-code-explore` | `q-code-grill-design` | Reads its deep-module glossary when modules, interfaces, or seams matter |
 
 Every other public skill has no required companion. Two reference forms survive installation: a one-level `../<sibling-skill>/…` path, and a companion named in prose. Anything deeper than one level leaves the installed catalog and fails validation.
+
+`uses` declares optional collaboration. Its `when` trigger activates only for the named branch and its `fallback` keeps the owning skill truthful when the tool is absent. Unlike `requires`, a missing `uses` target does not block unrelated procedure; it must produce the declared capability gap when that branch is requested.
 
 The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-maint-writing-for-agents` inside the maintenance package. Consumers do not install this internal acceptance route.
 
@@ -268,12 +279,13 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Audit a codebase or release candidate | `q-review-codebase` |
 | Audit durable project documentation | `q-review-docs` |
 | Audit an Agent Skill or bounded skill-package slice | `q-review-skill` |
+| Create, validate, render, or compile Mermaid | `q-tool-mermaid` |
 | Produce a traced project report or report deck | `q-report-workflow` |
 | Render an approved report source as Markdown, DOCX, and PDF | `q-report-document` |
 | Produce a standalone Quasar presentation | `q-report-deck` |
 | Change or audit the workflow package | `q-maint-ai-workflow` |
 
-Groups sort the catalog and name the skills: `ask`, `proposal`, `research`, `delivery`, `plan`, `code`, `review`, `report`, `core`, and `maint`. The manifest `group` field is authoritative — the skill name, its folder, its category folder, and the skills.sh sections all derive from it.
+Groups sort the catalog and name the skills: `ask`, `proposal`, `research`, `delivery`, `plan`, `code`, `review`, `report`, `tool`, `core`, and `maint`. The manifest `group` field is authoritative — the skill name, its folder, its category folder, and the skills.sh sections all derive from it.
 
 ## Anti-patterns
 

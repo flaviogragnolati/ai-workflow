@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -35,6 +37,11 @@ SKILLS_SH_SCHEMA_URL = "https://skills.sh/schemas/skills.sh.schema.json"
 CORE_CONTRACT = SKILLS_ROOT / "core" / "q-core-contract"
 ROUTING_DIGEST = CORE_CONTRACT / "references" / "routing.md"
 HUMAN_INTERACTION_DIGEST = CORE_CONTRACT / "references" / "human-interaction.md"
+IGNORED_PATH_PARTS = {".git", "node_modules", "__pycache__", ".venv"}
+
+
+def ignored_path(path: Path) -> bool:
+    return any(part in IGNORED_PATH_PARTS for part in path.parts)
 
 
 def load(path: Path) -> Any:
@@ -141,6 +148,8 @@ def link_errors(root: Path) -> tuple[list[str], int]:
     checked = 0
     pattern = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
     for path in root.rglob("*.md"):
+        if ignored_path(path):
+            continue
         text = path.read_text(encoding="utf-8-sig")
         for raw in pattern.findall(text):
             href = raw.strip().split()[0].strip("<>")
@@ -197,7 +206,8 @@ def internal_skill_errors(directory: Path, skill_id: str, entry: dict[str, Any])
 
     pointer_paths = [REPO_ROOT / "AGENTS.md"]
     pointer_paths.extend(
-        path for path in SKILLS_ROOT.rglob("SKILL.md") if path.parent.resolve() != directory.resolve()
+        path for path in SKILLS_ROOT.rglob("SKILL.md")
+        if not ignored_path(path) and path.parent.resolve() != directory.resolve()
     )
     if not any(
         path.is_file() and skill_id in path.read_text(encoding="utf-8-sig")
@@ -266,7 +276,7 @@ def outside_references(directory: Path) -> list[tuple[Path, str]]:
     found: list[tuple[Path, str]] = []
     seen: set[str] = set()
     for path in sorted(directory.rglob("*")):
-        if not path.is_file() or path.suffix.lower() not in {".md", ".yaml", ".yml"}:
+        if ignored_path(path) or not path.is_file() or path.suffix.lower() not in {".md", ".yaml", ".yml"}:
             continue
         for raw in RELATIVE_REFERENCE_PATTERN.findall(path.read_text(encoding="utf-8-sig")):
             if raw in seen:
@@ -323,7 +333,7 @@ def reference_errors(
     body = "".join(
         path.read_text(encoding="utf-8-sig")
         for path in sorted(directory.rglob("*"))
-        if path.is_file() and path.suffix.lower() in {".md", ".yaml", ".yml"}
+        if not ignored_path(path) and path.is_file() and path.suffix.lower() in {".md", ".yaml", ".yml"}
     )
     for name in declared:
         if name == skill_id:
@@ -338,6 +348,61 @@ def reference_errors(
         elif public and "--skill %s" % name not in body:
             errors.append("%s: requires %r without an integrity check naming the install command"
                           % (skill_id, name))
+    return errors
+
+
+def optional_use_semantics(skills: dict[str, Any]) -> list[str]:
+    """Validate optional collaboration without turning it into a hard dependency."""
+    errors: list[str] = []
+    for skill_id, entry in skills.items():
+        if not isinstance(entry, dict):
+            continue
+        uses = entry.get("uses", [])
+        if not isinstance(uses, list):
+            continue
+        seen: set[str] = set()
+        required = set(entry.get("requires", [])) if isinstance(entry.get("requires"), list) else set()
+        public = entry.get("distribution", "public") != "internal"
+        for use in uses:
+            if not isinstance(use, dict):
+                continue
+            target = use.get("skill")
+            if not isinstance(target, str):
+                continue
+            if target in seen:
+                errors.append("%s: uses duplicates %r" % (skill_id, target))
+            seen.add(target)
+            if target == skill_id:
+                errors.append("%s: cannot optionally use itself" % skill_id)
+            elif target not in skills:
+                errors.append("%s: uses unregistered skill %r" % (skill_id, target))
+            elif public and skills[target].get("distribution", "public") == "internal":
+                errors.append("%s: a publicly distributed skill cannot use the internal skill %r"
+                              % (skill_id, target))
+            if target in required:
+                errors.append("%s: %r cannot appear in both requires and uses" % (skill_id, target))
+    return errors
+
+
+def optional_use_body_errors(skill_id: str, directory: Path, entry: dict[str, Any]) -> list[str]:
+    """Keep each optional trigger and fallback observable in the consuming skill."""
+    uses = entry.get("uses", [])
+    if not isinstance(uses, list) or not uses:
+        return []
+    body = "\n".join(
+        path.read_text(encoding="utf-8-sig")
+        for path in sorted(directory.rglob("*"))
+        if not ignored_path(path) and path.is_file() and path.suffix.lower() in {".md", ".yaml", ".yml"}
+    )
+    errors: list[str] = []
+    for use in uses:
+        if not isinstance(use, dict):
+            continue
+        for key in ("skill", "when", "fallback"):
+            value = use.get(key)
+            if isinstance(value, str) and value not in body:
+                errors.append("%s: uses %r but its %s %r is absent from the skill body"
+                              % (skill_id, use.get("skill"), key, value))
     return errors
 
 
@@ -501,8 +566,39 @@ def stray_file_errors() -> list[str]:
     return [
         "%s: Windows alternate-data-stream artifact must not ship inside a skill" % path.relative_to(REPO_ROOT)
         for path in sorted(SKILLS_ROOT.rglob("*"))
-        if path.is_file() and path.name.endswith(":Zone.Identifier")
+        if not ignored_path(path) and path.is_file() and path.name.endswith(":Zone.Identifier")
     ]
+
+
+def mermaid_runtime_errors(skills: dict[str, Any]) -> list[str]:
+    entry = skills.get("q-tool-mermaid")
+    if not isinstance(entry, dict) or entry.get("status") != "active":
+        return []
+    directory = SKILLS_ROOT / str(entry.get("path", ""))
+    runtime = directory / "runtime"
+    required = [
+        runtime / "package.json",
+        runtime / "package-lock.json",
+        runtime / "mermaid.mjs",
+        directory / "tests" / "run-tests.mjs",
+        directory / "THIRD_PARTY_NOTICES.md",
+    ]
+    errors = ["q-tool-mermaid: missing runtime file %s" % path.relative_to(REPO_ROOT)
+              for path in required if not path.is_file()]
+    node = shutil.which("node")
+    if node and (runtime / "mermaid.mjs").is_file():
+        run = subprocess.run(
+            [node, str(runtime / "mermaid.mjs"), "--help"],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=20,
+            check=False,
+        )
+        if run.returncode != 0 or "q-tool-mermaid local runtime" not in run.stdout:
+            errors.append("q-tool-mermaid: runtime --help smoke failed: %s"
+                          % (run.stderr.strip() or run.stdout.strip() or run.returncode))
+    return errors
 
 
 def artifact_semantics(data: Any, active: set[str]) -> list[str]:
@@ -522,6 +618,13 @@ def artifact_semantics(data: Any, active: set[str]) -> list[str]:
             errors.append("unknown owner_skill %r" % item.get("owner_skill"))
         if item.get("creation_mode") == "derived" and item.get("semantic_authority") != "none":
             errors.append("derived artifact %r must have semantic_authority none" % artifact_id)
+        if item.get("creation_mode") == "derived":
+            provenance = item.get("provenance")
+            if not isinstance(provenance, dict):
+                errors.append("derived artifact %r requires generation provenance" % artifact_id)
+            elif provenance.get("generator_skill") not in active:
+                errors.append("derived artifact %r has unknown provenance generator_skill %r"
+                              % (artifact_id, provenance.get("generator_skill")))
     return errors
 
 
@@ -876,6 +979,26 @@ def fixture_pair(
     return errors
 
 
+def manifest_use_fixture_errors(schema: dict[str, Any], fixtures: Path) -> list[str]:
+    valid_path = fixtures / "skill-manifest-uses.valid.yaml"
+    invalid_path = fixtures / "skill-manifest-uses.invalid.yaml"
+    valid = load(valid_path)
+    invalid = load(invalid_path)
+    valid_errors = schema_errors(valid, schema)
+    invalid_errors = schema_errors(invalid, schema)
+    valid_skills = valid.get("skills", {}) if isinstance(valid, dict) else {}
+    invalid_skills = invalid.get("skills", {}) if isinstance(invalid, dict) else {}
+    valid_errors.extend(optional_use_semantics(valid_skills))
+    invalid_errors.extend(optional_use_semantics(invalid_skills))
+    errors: list[str] = []
+    if valid_errors:
+        errors.append("%s rejected: %s" % (valid_path.name, "; ".join(valid_errors)))
+    if len(invalid_errors) < 4:
+        errors.append("%s produced %d error(s); expected at least 4"
+                      % (invalid_path.name, len(invalid_errors)))
+    return errors
+
+
 def acceptance_errors() -> tuple[list[str], int]:
     checks = {
         "S-01": [
@@ -1054,6 +1177,16 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("maint/q-maint-skill-quality/SKILL.md", "resolve every `blocker` and `high` finding"),
             ("maint/q-maint-ai-workflow/SKILL.md", "load `q-maint-skill-quality`"),
         ],
+        "S-39": [
+            ("tool/q-tool-mermaid/SKILL.md", "caller retains semantic ownership"),
+            ("tool/q-tool-mermaid/SKILL.md", "semantic ambiguity"),
+            ("core/q-core-contract/SKILL.md", "Diagram delegation"),
+        ],
+        "S-40": [
+            ("tool/q-tool-mermaid/SKILL.md", "local runtime never installs dependencies"),
+            ("tool/q-tool-mermaid/SKILL.md", "derived with `semantic_authority: none`"),
+            ("review/q-review-docs/SKILL.md", "read-only validation"),
+        ],
     }
     errors: list[str] = []
     for scenario, requirements in checks.items():
@@ -1166,7 +1299,11 @@ def run() -> dict[str, Any]:
     planned = manifest.get("planned_capabilities", {}) if isinstance(manifest, dict) else {}
     active = set(skills)
     workflows = manifest.get("workflows", {}) if isinstance(manifest, dict) else {}
-    discovered = {p.parent.resolve() for p in SKILLS_ROOT.rglob("SKILL.md") if "_to_delete" not in p.parts}
+    discovered = {
+        p.parent.resolve()
+        for p in SKILLS_ROOT.rglob("SKILL.md")
+        if not ignored_path(p) and "_to_delete" not in p.parts
+    }
     registered: set[Path] = set()
     checked_artifacts = 0
 
@@ -1228,6 +1365,8 @@ def run() -> dict[str, Any]:
         if isinstance(entry, dict)
     }
 
+    errors.extend(optional_use_semantics(skills))
+
     for skill_id, entry in skills.items():
         if not isinstance(entry, dict):
             errors.append("%s: manifest entry must be a mapping" % skill_id)
@@ -1246,6 +1385,7 @@ def run() -> dict[str, Any]:
         errors.extend(distribution_errors(skill_id, entry, metadata))
         errors.extend(human_interaction_errors(skill_id, entry))
         errors.extend(reference_errors(skill_id, directory, entry, skills, folders))
+        errors.extend(optional_use_body_errors(skill_id, directory, entry))
         if entry.get("invocable") is False:
             errors.extend(internal_skill_errors(directory, skill_id, entry))
         else:
@@ -1292,7 +1432,7 @@ def run() -> dict[str, Any]:
         r"(?<![a-z0-9-])render_docx\.py(?![a-z0-9-])": "document_builder.py",
     }
     for path in REPO_ROOT.rglob("*"):
-        if path.resolve() == Path(__file__).resolve():
+        if ignored_path(path) or path.resolve() == Path(__file__).resolve():
             continue
         if not path.is_file() or path.suffix.lower() not in {".md", ".yaml", ".yml", ".py", ".json"}:
             continue
@@ -1304,6 +1444,7 @@ def run() -> dict[str, Any]:
 
     schemas = SKILLS_ROOT / "schemas"
     fixtures = SKILLS_ROOT / "fixtures"
+    errors.extend(manifest_use_fixture_errors(schema, fixtures))
     errors.extend(fixture_pair(
         schemas / "artifact-index.schema.yaml",
         fixtures / "artifact-index.valid.yaml",
@@ -1385,6 +1526,7 @@ def run() -> dict[str, Any]:
     errors.extend(skills_sh_errors(skills))
     errors.extend(anti_pattern_errors(skills))
     errors.extend(stray_file_errors())
+    errors.extend(mermaid_runtime_errors(skills))
 
     return {
         "status": "Failed" if errors else ("Passed with warnings" if warnings else "Passed"),

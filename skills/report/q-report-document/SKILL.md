@@ -33,6 +33,8 @@ If the runtime cannot produce or visually inspect a requested DOCX or PDF, repor
 6. Compare all formats against the source and mapping. Correct channel-only defects and regenerate affected derivatives.
 7. Obtain release approval separately from publication or external sending.
 
+When `approved-report-visual-intent-needs-a-mermaid-derived-asset` and `q-tool-mermaid` is installed, provide the exact report-source blocks and document profile, then retain mapping, layout, brand, and page QA here. If the tool is absent, `continue-with-the-approved-textual-visual-intent-or-block-a-required-format`.
+
 Keep Markdown and DOCX editable, but not authoritative. Return semantic edits to `q-report-source`; after approval, regenerate every affected document and deck channel.
 
 ## Outputs and result

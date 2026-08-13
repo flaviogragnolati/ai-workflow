@@ -1,11 +1,11 @@
 ---
 name: q-plan-domain-model
-description: "Create the canonical domain narrative and data dictionary plus supporting ERD sources from validated product and technical inputs. Use for stage 3 to define concepts, relationships, ownership, lifecycles, invariants, history, retention, and data authority before architecture. Requires the q-core-contract companion. Part of the Quasar AI delivery skills."
+description: "Create the canonical domain narrative and data dictionary plus supporting ERD sources from validated product and technical inputs. Use for stage 3 to define concepts, relationships, ownership, lifecycles, invariants, history, retention, and data authority before architecture. Requires the q-core-contract and q-tool-mermaid companions. Part of the Quasar AI delivery skills."
 ---
 
 # Domain and data modeling
 
-Read the `q-core-contract` companion for shared governance; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Preserve the distinction between semantic authority and visual representation.
+Read the `q-core-contract` companion for shared governance and `q-tool-mermaid` for diagram delegation. If either is missing, stop and install both with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract --skill q-tool-mermaid`. Preserve the distinction between semantic authority and visual representation.
 
 ## Inputs
 
@@ -29,8 +29,9 @@ No critical relationship, invariant, or ownership rule may exist only in Mermaid
 3. Define relationships, cardinality, lifecycle, state transitions, invariants, history, retention, and deletion.
 4. Identify systems of record, derived data, sensitive fields, and access constraints.
 5. Reconcile the model with requirements and the referenced technical foundation. If persistence, consistency, retention, or scale evidence invalidates a technology choice, return the affected IDs to `q-plan-tech-foundation` rather than editing its artifact.
-6. Generate the Mermaid source from the documented model; render only after the source is valid.
-7. Validate traceability and mark unresolved semantic decisions.
+6. Build a `diagram_request` from the approved model, dictionary, and exact source versions. Keep this skill as `owner_skill`; delegate Mermaid authoring, validation, and requested rendering to `q-tool-mermaid`.
+7. Review the returned `.mmd` source against approved concepts, relationships, cardinalities, and invariants. Return syntax or layout defects to the tool and keep semantic corrections here.
+8. Validate traceability and mark unresolved semantic decisions. Include the source and verified renders in the stage result with `q-tool-mermaid` as generator provenance.
 
 ## Gate
 

@@ -1,4 +1,4 @@
-schema_version: "1.1"
+schema_version: "1.2"
 
 package:
   id: quasar-ai-delivery-skills
@@ -62,6 +62,28 @@ skills:
     contract_version: "1.1"
     distribution: public
 
+  q-tool-mermaid:
+    path: tool/q-tool-mermaid
+    group: tool
+    requires: [q-core-contract]
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
+    persistent_outputs:
+      - {type: standalone-mermaid-source, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-representation}
+      - {type: standalone-mermaid-render, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
+    transient_outputs: [diagram-request, validation-diagnostic, repair-log, render-preview]
+    side_effects: [write-project-artifacts, execute-local-renderer]
+    approval_policy: local-generation-within-authorized-paths-and-explicit-approval-for-overwrite-remote-render-or-publication
+    fallback: return-source-and-explicit-validation-or-rendering-gap-without-false-success
+    stack_profile: any
+    contract_version: "1.1"
+    distribution: public
+
   q-ask-project:
     path: ask/q-ask-project
     group: ask
@@ -104,6 +126,10 @@ skills:
     path: review/q-review-docs
     group: review
     requires: [q-core-contract]
+    uses:
+      - skill: q-tool-mermaid
+        when: durable-scope-contains-mermaid-that-needs-read-only-validation
+        fallback: inspect-source-structure-manually-and-report-render-validation-as-unavailable
     status: active
     kind: quality
     workflow: shared
@@ -166,6 +192,10 @@ skills:
     path: plan/q-plan-backlog
     group: plan
     requires: [q-core-contract]
+    uses:
+      - skill: q-tool-mermaid
+        when: approved-backlog-visual-intent-requires-a-derived-gantt-view
+        fallback: continue-with-canonical-backlog-and-textual-derived-views
     status: active
     kind: stage
     workflow: ai-coding
@@ -187,7 +217,7 @@ skills:
   q-plan-domain-model:
     path: plan/q-plan-domain-model
     group: plan
-    requires: [q-core-contract]
+    requires: [q-core-contract, q-tool-mermaid]
     status: active
     kind: stage
     workflow: ai-coding
@@ -210,7 +240,7 @@ skills:
   q-plan-architecture:
     path: plan/q-plan-architecture
     group: plan
-    requires: [q-core-contract]
+    requires: [q-core-contract, q-tool-mermaid]
     status: active
     kind: stage
     workflow: ai-coding
@@ -234,6 +264,10 @@ skills:
     path: plan/q-plan-features
     group: plan
     requires: [q-core-contract]
+    uses:
+      - skill: q-tool-mermaid
+        when: approved-module-or-dependency-structure-benefits-from-a-diagram
+        fallback: continue-with-canonical-module-feature-and-sequence-artifacts
     status: active
     kind: stage
     workflow: ai-coding
@@ -354,6 +388,10 @@ skills:
     path: code/q-code-grill-design
     group: code
     requires: []
+    uses:
+      - skill: q-tool-mermaid
+        when: approved-feature-architecture-needs-a-structural-diagram
+        fallback: continue-with-canonical-textual-design-and-record-the-visual-capability-gap
     status: active
     kind: tool
     workflow: ai-coding
@@ -393,6 +431,10 @@ skills:
     path: code/q-code-explore
     group: code
     requires: [q-code-grill-design]
+    uses:
+      - skill: q-tool-mermaid
+        when: user-requests-a-transient-code-structure-diagram
+        fallback: return-the-evidence-grounded-textual-map-and-state-the-visual-capability-gap
     status: active
     kind: tool
     workflow: shared
@@ -768,6 +810,10 @@ skills:
     path: code/q-code-zoom-out
     group: code
     requires: []
+    uses:
+      - skill: q-tool-mermaid
+        when: user-requests-a-transient-higher-level-module-map
+        fallback: return-the-textual-module-map-and-state-the-visual-capability-gap
     status: active
     kind: tool
     workflow: shared
@@ -852,6 +898,10 @@ skills:
     path: proposal/q-proposal-web
     group: proposal
     requires: [q-core-contract]
+    uses:
+      - skill: q-tool-mermaid
+        when: approved-web-visual-intent-needs-a-structural-diagram
+        fallback: continue-with-an-accessible-textual-or-native-web-representation
     status: active
     kind: stage
     workflow: discovery-proposal
@@ -955,6 +1005,10 @@ skills:
     path: report/q-report-document
     group: report
     requires: [q-core-contract, q-report-deck]
+    uses:
+      - skill: q-tool-mermaid
+        when: approved-report-visual-intent-needs-a-mermaid-derived-asset
+        fallback: continue-with-the-approved-textual-visual-intent-or-block-a-required-format
     status: active
     kind: renderer
     workflow: reporting
@@ -978,6 +1032,10 @@ skills:
     path: report/q-report-deck
     group: report
     requires: [q-core-contract]
+    uses:
+      - skill: q-tool-mermaid
+        when: approved-deck-plan-needs-a-mermaid-derived-asset
+        fallback: continue-with-the-approved-textual-visual-intent-or-block-a-required-slide-asset
     status: active
     kind: renderer
     workflow: reporting

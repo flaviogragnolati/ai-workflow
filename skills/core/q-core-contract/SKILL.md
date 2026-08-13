@@ -1,6 +1,6 @@
 ---
 name: q-core-contract
-description: "Shared governance companion for the Quasar AI delivery skills. Read it when a Quasar workflow, orchestrator, stage, renderer, or quality skill needs routing, human-interaction cadence, single-writer rules, stage results, artifact authority and lifecycle, external-content safety, research baselines and cited findings, change control, stack compatibility, reporting, or bundled shared schemas. Any Quasar skill that declares it in requires must read it before acting. It is a companion, not a user entry point."
+description: "Shared governance companion for the Quasar AI delivery skills. Read it when a Quasar workflow, orchestrator, stage, renderer, tool, or quality skill needs routing, human-interaction cadence, dependencies or optional collaboration, single-writer rules, stage results, artifact authority and lifecycle, diagram delegation, external-content safety, research baselines and cited findings, change control, stack compatibility, reporting, or bundled shared schemas. Any Quasar skill that declares it in requires must read it before acting. It is a companion, not a user entry point."
 ---
 
 # Cross-workflow contract
@@ -65,6 +65,8 @@ Installers copy one skill folder at a time into a flat agent directory, so a ski
 | The companion's name | shared governance, schemas, and routing that many skills need | Declare the target in `requires` and read the companion by name. |
 
 `requires` lists the skills a skill cannot work without. Every entry must be a registered skill the body actually references. A skill with `requires` states one **integrity check**: read the named companion and, if it is absent, stop and give the exact install command instead of proceeding on assumed rules.
+
+`uses` lists optional cross-skill collaboration. Each entry names a registered public skill, one exact `when` trigger, and one `fallback`. Absence never blocks unrelated procedure; when the trigger is active and the target is unavailable, execute the declared fallback and report the capability gap. A skill cannot both require and optionally use the same target, use itself, or present a missing optional capability as completed.
 
 ## Single-writer rule
 
@@ -153,6 +155,12 @@ Classify diagrams explicitly:
 | SVG, PNG, or PDF rendered from Mermaid | derived | none |
 
 Mermaid is the canonical source of the visual representation, not the canonical source of domain or architectural semantics. No critical rule may exist only as an unlabeled visual edge.
+
+## Diagram delegation
+
+An owning skill may delegate Mermaid encoding, validation, bounded syntactic repair, and rendering to `q-tool-mermaid`. The caller retains semantic ownership, supplies exact source refs and forbidden inferences, reviews the returned source for fidelity, and includes accepted artifacts in its own result. The tool inherits only the caller's authorized write paths and overwrite decision; it does not expand scope, decide domain or architecture meaning, publish, or write global state.
+
+Keep Mermaid source authored and supporting for `visual-representation`. Keep SVG, PNG, and PDF renders derived with `semantic_authority: none` and generation provenance. Syntax or layout defects may return to the tool; cardinality, ownership, trust boundaries, protocols, state meaning, schedule, commercial scope, and every other semantic ambiguity return to the owning skill. Only the root orchestrator reconciles persistent source and renders into the artifact index.
 
 ## Decisions, risks, and changes
 

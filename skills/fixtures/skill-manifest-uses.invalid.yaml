@@ -1,0 +1,59 @@
+schema_version: "1.2"
+package:
+  id: fixture
+  description: Fixture
+  stack_profile: any
+  compatibility: profile-driven
+  human_guide: README.md
+  cross_workflow_contract: core
+  validator: validator.py
+workflows: {}
+skills:
+  q-tool-internal:
+    path: tool/q-tool-internal
+    group: tool
+    requires: []
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: false
+    execution_modes: [internal]
+    human_interaction: {internal: none}
+    persistent_outputs: []
+    transient_outputs: []
+    side_effects: [none]
+    approval_policy: inherited
+    fallback: stop
+    stack_profile: any
+    contract_version: "1.0"
+    distribution: internal
+  q-plan-invalid:
+    path: plan/q-plan-invalid
+    group: plan
+    requires: [q-tool-internal]
+    uses:
+      - skill: q-tool-internal
+        when: internal-tool-is-wanted
+        fallback: continue
+      - skill: q-plan-invalid
+        when: self-use
+        fallback: stop
+      - skill: q-tool-missing
+        when: unknown-use
+        fallback: stop
+    status: active
+    kind: stage
+    workflow: fixture
+    stage: invalid
+    invocable: true
+    execution_modes: [standalone]
+    human_interaction: {standalone: on-demand}
+    persistent_outputs: []
+    transient_outputs: []
+    side_effects: [none]
+    approval_policy: local-only
+    fallback: stop
+    stack_profile: any
+    contract_version: "1.0"
+planned_capabilities: {}

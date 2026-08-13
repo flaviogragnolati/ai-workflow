@@ -8,6 +8,9 @@ contract defines the values. The package validator rejects any drift.
 ```yaml
 q-core-contract:
   internal: none
+q-tool-mermaid:
+  orchestrated: on-demand
+  standalone: on-demand
 q-ask-project:
   standalone: on-demand
 q-ask-analyze:

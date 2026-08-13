@@ -41,6 +41,8 @@ The technical sequence is supporting guidance for slicing and dependency order. 
 7. Verify every in-scope requirement is assigned or has an explicit exception.
 8. Return unresolved scope, boundary, or technology decisions to their owning stage; do not update the technical foundation directly.
 
+When `approved-module-or-dependency-structure-benefits-from-a-diagram` and `q-tool-mermaid` is installed, delegate a representation of already approved modules, feature dependencies, or technical order. Keep the module map, feature index, and technical sequence authoritative. If the tool is absent, `continue-with-canonical-module-feature-and-sequence-artifacts`.
+
 ## Gate
 
 Complete when modules and features are sufficiently defined for Stage 6 to create milestones and epics. No delivery milestone or canonical epic may be introduced here.

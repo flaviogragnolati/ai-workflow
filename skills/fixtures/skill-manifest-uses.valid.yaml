@@ -1,0 +1,52 @@
+schema_version: "1.2"
+package:
+  id: fixture
+  description: Fixture
+  stack_profile: any
+  compatibility: profile-driven
+  human_guide: README.md
+  cross_workflow_contract: core
+  validator: validator.py
+workflows: {}
+skills:
+  q-tool-mermaid:
+    path: tool/q-tool-mermaid
+    group: tool
+    requires: []
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [standalone]
+    human_interaction: {standalone: on-demand}
+    persistent_outputs: []
+    transient_outputs: [diagram-result]
+    side_effects: [none]
+    approval_policy: local-only
+    fallback: source-only
+    stack_profile: any
+    contract_version: "1.1"
+  q-plan-sample:
+    path: plan/q-plan-sample
+    group: plan
+    requires: []
+    uses:
+      - skill: q-tool-mermaid
+        when: diagram-is-requested
+        fallback: continue-with-text
+    status: active
+    kind: stage
+    workflow: fixture
+    stage: sample
+    invocable: true
+    execution_modes: [standalone]
+    human_interaction: {standalone: on-demand}
+    persistent_outputs: []
+    transient_outputs: []
+    side_effects: [none]
+    approval_policy: local-only
+    fallback: continue-with-text
+    stack_profile: any
+    contract_version: "1.0"
+planned_capabilities: {}

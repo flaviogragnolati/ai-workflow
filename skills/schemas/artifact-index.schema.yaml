@@ -27,3 +27,8 @@ properties:
           items: {type: string}
         provenance:
           type: object
+          properties:
+            generator_skill: {type: string}
+            renderer: {type: string}
+            renderer_version: {type: string}
+            source_sha256: {type: string}

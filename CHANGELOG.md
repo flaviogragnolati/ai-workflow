@@ -13,4 +13,11 @@ are deliberately established.
 
 ### Added
 
+- Added the public, independently installable `q-tool-mermaid` capability for Mermaid creation, revision, validation, bounded repair, local SVG/PNG/PDF and optional ASCII/Unicode rendering, transactional Markdown compilation, structured requests/results, provenance, profiles, fixtures, and offline runtime checks.
+- Added the `tool` manifest group and optional `uses` collaboration contract with schema, fixture, package-validation, trigger, fallback, distribution, self-use, and hard-dependency overlap checks.
+- Integrated `q-plan-domain-model` and `q-plan-architecture` as hard Mermaid-tool consumers while preserving their semantic ownership, and added conditional collaboration to selected planning, code orientation, documentation review, proposal web, and report renderer skills.
 - Added the public `q-review-skill` read-only diagnostic, the internal `q-maint-skill-quality` acceptance companion, and package regression scenarios for their core boundaries. The design adapts the useful context-value, progressive-disclosure, freedom-calibration, and usability ideas from Softaworks' MIT-licensed Skill Judge while replacing its fixed universal score with evidence, severity, target authority, and behavioral checks.
+
+### Changed
+
+- Advanced the manifest schema from `1.1` to `1.2` for the additive `tool` group and `uses` relationship. Existing `requires` semantics remain unchanged; optional consumers continue through their declared fallback when Mermaid is not installed.

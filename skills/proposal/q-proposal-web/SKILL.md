@@ -32,6 +32,8 @@ Publication is a separate side effect and requires explicit authorization.
 6. Validate content fidelity, calculation logic, links, performance, and visual quality.
 7. Regenerate from the corrected canonical source after semantic changes.
 
+When `approved-web-visual-intent-needs-a-structural-diagram` and `q-tool-mermaid` is installed, delegate only approved commercial meaning and treat its SVG as a derived web asset. This skill retains web layout, brand, accessibility, and QA. If the tool is absent, `continue-with-an-accessible-textual-or-native-web-representation`.
+
 ## Error routing
 
 Return scope, price, schedule, commitment, or source contradictions to `q-proposal-design`. Fix layout, interaction, accessibility, or presentation defects here.

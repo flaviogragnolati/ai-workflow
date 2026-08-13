@@ -51,6 +51,8 @@ Incorporate new information by adding, splitting, combining, reordering, deferri
 6. Validate dependency direction, readiness, checkpoints, and next action.
 7. Regenerate derived views from `06-backlog.yaml`.
 
+When `approved-backlog-visual-intent-requires-a-derived-gantt-view` and `q-tool-mermaid` is installed, delegate only approved backlog dates, dependencies, and milestones and register the result as a derived view with no semantic authority. If the tool is absent, `continue-with-canonical-backlog-and-textual-derived-views`.
+
 ## Initial exit criteria
 
 Close app-flow when:

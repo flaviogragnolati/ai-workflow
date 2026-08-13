@@ -1,11 +1,11 @@
 ---
 name: q-plan-architecture
-description: "Define canonical architecture, ADRs, and project application standards plus supporting diagrams from validated product, technical, and domain inputs. Use for stage 4 before module and feature decomposition. Requires the q-core-contract companion. Part of the Quasar AI delivery skills."
+description: "Define canonical architecture, ADRs, and project application standards plus supporting diagrams from validated product, technical, and domain inputs. Use for stage 4 before module and feature decomposition. Requires the q-core-contract and q-tool-mermaid companions. Part of the Quasar AI delivery skills."
 ---
 
 # High-level architecture and standards
 
-Read the `q-core-contract` companion for shared governance; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Load the exact confirmed technical foundation version. Return to its owner when an architecture-driving stack selection is unresolved or contradicted.
+Read the `q-core-contract` companion for shared governance and `q-tool-mermaid` for diagram delegation. If either is missing, stop and install both with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract --skill q-tool-mermaid`. Load the exact confirmed technical foundation version. Return to its owner when an architecture-driving stack selection is unresolved or contradicted.
 
 ## Outputs and authority
 
@@ -26,9 +26,10 @@ ADRs and narrative text own architecture decisions. The technical foundation own
 3. Cover security, failure behavior, observability, deployment, migration, and operational constraints.
 4. Turn architecture-driving choices into ADRs.
 5. Define standards that are specific enough for downstream implementation and review; reference adopted technology guidance IDs instead of copying them.
-6. Generate diagrams that reflect, but do not replace, the narrative.
-7. Validate every requirement and domain boundary has a responsible architectural element.
-8. Record alternatives, trade-offs, pending decisions, downstream constraints, and any technical foundation guidance made stale by architecture evidence.
+6. Build one `diagram_request` per approved context, container, deployment, data-flow, or sequence view. Keep this skill as `owner_skill`; delegate Mermaid authoring, validation, and requested rendering to `q-tool-mermaid` with exact narrative and ADR source versions.
+7. Review every returned source for semantic fidelity before accepting it. Return syntax or layout defects to the tool; resolve components, boundaries, protocols, ownership, and sequence meaning here.
+8. Validate every requirement and domain boundary has a responsible architectural element.
+9. Record alternatives, trade-offs, pending decisions, downstream constraints, generator provenance, and any technical foundation guidance made stale by architecture evidence.
 
 ## Gate
 

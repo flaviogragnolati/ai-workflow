@@ -44,6 +44,8 @@ Apply every relevant lens across the declared scope:
 
 Run repository-provided parsers, schema checks, link checks, or documentation linters when they apply. Inspect rendered deliverables only for source fidelity and provenance; route layout and visual-quality defects to the renderer that owns that format.
 
+When `durable-scope-contains-mermaid-that-needs-read-only-validation` and `q-tool-mermaid` is installed, invoke only its read-only validation path and turn diagnostics into findings; never pass repair or overwrite flags. If the tool is absent, `inspect-source-structure-manually-and-report-render-validation-as-unavailable`.
+
 Complete this step when every applicable lens has either inspected evidence or an explicit coverage gap, and no claim relies only on absence, intuition, or a stale summary.
 
 ## 4. Qualify findings

@@ -40,6 +40,8 @@ Do not force a fixed template. Shape the response around the user's prompt and t
 
 Complete this step when the user has a concise mental model, lightweight evidence pointers, explicit limitations, and no durable or source mutation from the exploration itself.
 
+When `user-requests-a-transient-code-structure-diagram` and `q-tool-mermaid` is installed, pass the evidence-grounded map to it and return the diagram as transient context. Do not let the diagram add unobserved modules or calls. If the tool is absent, `return-the-evidence-grounded-textual-map-and-state-the-visual-capability-gap`.
+
 ## Boundaries
 
 Use `q-code-zoom-out` when the request is specifically for the modules, callers, and dependencies one abstraction level above current code. Use `q-code-research` for external primary-source investigation and a durable cited report, `q-review-codebase` for a formal quality audit, and `q-code-explain` to re-pitch technical content already presented.
