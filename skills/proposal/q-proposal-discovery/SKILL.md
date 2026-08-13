@@ -19,6 +19,8 @@ Accept raw meeting evidence and existing project records. Preserve source refere
 
 Never fabricate a decision, budget, deadline, acceptance criterion, or technical confirmation.
 
+An approved Research Baseline may enter as `external-research` only when the root orchestrator records `adopt-as-proposal-input` and supplies the exact baseline ID and version. Keep its claims supporting, preserve its `as_of` and limitations, and do not let it overwrite contrary client evidence. A retained or deferred baseline is not an input to the active Discovery Brief.
+
 ## Canonical output
 
 Create a versioned Discovery Brief as an authored, canonical `Working` artifact for discovered client context. Include stable IDs for:
@@ -45,6 +47,8 @@ Create a concise follow-up question set only for gaps that materially affect pro
 5. Record uncertainty with owner and impact.
 6. Evaluate readiness.
 7. Validate traceability and internal consistency.
+
+When adopted external research changes discovered context, add its exact baseline reference through this stage's owned Discovery Brief. Never let the research workflow edit the brief directly.
 
 ## Readiness gate
 

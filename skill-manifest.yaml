@@ -1,8 +1,8 @@
-schema_version: "1.0"
+schema_version: "1.1"
 
 package:
   id: quasar-ai-delivery-skills
-  description: "Coordinated skills for Quasar discovery, proposals, profile-driven software delivery, QA, and optional reporting."
+  description: "Coordinated skills for Quasar project questions, engagement research, discovery, proposals, profile-driven software delivery, QA, and optional reporting."
   stack_profile: project-defined
   compatibility: profile-driven
   human_guide: README.md
@@ -14,6 +14,7 @@ workflows:
     status: active
     entry_skill: q-proposal-workflow
     stages: [q-proposal-discovery, q-proposal-design, q-proposal-web, q-proposal-document]
+    delegates: [research, reporting]
     optional_next: [ai-coding, reporting, close]
   ai-coding:
     status: active
@@ -21,7 +22,13 @@ workflows:
     planning_stages: [q-plan-product-core, q-plan-tech-foundation, q-plan-domain-model, q-plan-architecture, q-plan-features, q-plan-backlog]
     includes_execution_loop: true
     includes_integral_qa: true
+    delegates: [reporting]
     optional_next: [reporting, close]
+  research:
+    status: active
+    entry_skill: q-research-workflow
+    stages: [q-research-scope, q-research-investigate, q-research-synthesize]
+    optional_next: [discovery-proposal, reporting, close]
   reporting:
     status: active
     entry_skill: q-report-workflow
@@ -45,13 +52,14 @@ skills:
     stage: null
     invocable: false
     execution_modes: [internal]
+    human_interaction: {internal: none}
     persistent_outputs: []
     transient_outputs: []
     side_effects: [none]
     approval_policy: read-only-governance-reference-with-no-project-or-package-writes
     fallback: report-the-missing-governance-reference-instead-of-assuming-shared-rules
     stack_profile: any
-    contract_version: "1.0"
+    contract_version: "1.1"
     distribution: public
 
   q-ask-project:
@@ -64,6 +72,7 @@ skills:
     stage: null
     invocable: true
     execution_modes: [standalone]
+    human_interaction: {standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [project-answer, alignment-notes]
     side_effects: [network-read]
@@ -82,6 +91,7 @@ skills:
     stage: null
     invocable: true
     execution_modes: [standalone]
+    human_interaction: {standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [proposal-fit-analysis, alignment-notes, routing-recommendation]
     side_effects: [network-read]
@@ -100,6 +110,7 @@ skills:
     stage: null
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: review-at-boundaries, standalone: review-at-boundaries}
     persistent_outputs: []
     transient_outputs: [documentation-diagnostic]
     side_effects: [none]
@@ -118,6 +129,7 @@ skills:
     stage: orchestration
     invocable: true
     execution_modes: [orchestrated]
+    human_interaction: {orchestrated: decision-gated}
     persistent_outputs:
       - {type: workflow-state, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: workflow-runtime}
       - {type: artifact-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: artifact-inventory}
@@ -129,7 +141,7 @@ skills:
     approval_policy: user-confirms-commercial-impact-priority-and-release
     fallback: block-on-unresolved-requirement-or-coverage-gap
     stack_profile: project-defined
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-plan-backlog:
     path: plan/q-plan-backlog
@@ -141,6 +153,7 @@ skills:
     stage: backlog
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: development-backlog, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: delivery-structure}
       - {type: backlog-changelog, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: structural-change-history}
@@ -162,6 +175,7 @@ skills:
     stage: domain-data
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: domain-model, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: domain-semantics}
       - {type: data-dictionary, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: entity-and-attribute-definitions}
@@ -184,6 +198,7 @@ skills:
     stage: architecture
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: architecture-narrative, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: architecture}
       - {type: architecture-adrs, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: decisions}
@@ -206,6 +221,7 @@ skills:
     stage: module-features
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: module-map, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: module-ownership}
       - {type: feature-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: feature-definition}
@@ -227,6 +243,7 @@ skills:
     stage: product-core
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: product-core, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: product-intent-and-scope}
     transient_outputs: []
@@ -246,6 +263,7 @@ skills:
     stage: technical-foundation
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: technical-foundation, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: stack-selection-versioned-guidance-nfr-and-operations}
     transient_outputs: [stack-options-analysis]
@@ -265,6 +283,7 @@ skills:
     stage: integral-qa
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: review-at-boundaries, standalone: review-at-boundaries}
     persistent_outputs:
       - {type: codebase-audit, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: quality-assessment}
     transient_outputs: [review-notes]
@@ -284,6 +303,7 @@ skills:
     stage: mini-review
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: review-at-boundaries, standalone: review-at-boundaries}
     persistent_outputs: []
     transient_outputs: [standards-review, specification-review]
     side_effects: [none]
@@ -302,6 +322,7 @@ skills:
     stage: implementation
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [hypotheses, reproduction-harness]
     side_effects: [write-code, write-tests]
@@ -320,6 +341,7 @@ skills:
     stage: refinement
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: dialogue-led, standalone: dialogue-led}
     persistent_outputs:
       - {type: architecture-feature-design, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: feature-architecture}
     transient_outputs: [interview-notes]
@@ -339,6 +361,7 @@ skills:
     stage: null
     invocable: true
     execution_modes: [standalone]
+    human_interaction: {standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [rephrased-explanation]
     side_effects: [none]
@@ -357,6 +380,7 @@ skills:
     stage: null
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [orientation-summary]
     side_effects: [none]
@@ -375,6 +399,7 @@ skills:
     stage: refinement
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: dialogue-led, standalone: dialogue-led}
     persistent_outputs:
       - {type: feature-implementation-plan, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: feature-execution}
     transient_outputs: [interview-notes]
@@ -394,6 +419,7 @@ skills:
     stage: null
     invocable: true
     execution_modes: [standalone]
+    human_interaction: {standalone: on-demand}
     persistent_outputs:
       - {type: session-handoff, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: continuity}
     transient_outputs: []
@@ -413,6 +439,7 @@ skills:
     stage: implementation
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [internal-plan, scratchpad, internal-delegation]
     side_effects: [write-code, write-tests, update-original-execution-record]
@@ -431,6 +458,7 @@ skills:
     stage: refinement
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: implementation-plan, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: planned-execution}
     transient_outputs: [planning-notes]
@@ -450,6 +478,7 @@ skills:
     stage: null
     invocable: true
     execution_modes: [standalone]
+    human_interaction: {standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [prototype]
     side_effects: [write-throwaway-artifacts]
@@ -461,19 +490,102 @@ skills:
   q-code-research:
     path: code/q-code-research
     group: code
-    requires: []
+    requires: [q-core-contract]
     status: active
     kind: tool
     workflow: shared
     stage: null
     invocable: true
-    execution_modes: [standalone]
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
     persistent_outputs:
-      - {type: research-report, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: cited-findings}
+      - {type: technical-findings-register, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: cited-technical-findings}
     transient_outputs: [research-notes]
     side_effects: [write-workspace-artifact, network-read]
     approval_policy: no-external-write-or-publication
     fallback: report-source-limitations
+    stack_profile: any
+    contract_version: "2.0"
+
+  q-research-workflow:
+    path: research/q-research-workflow
+    group: research
+    requires: [q-core-contract]
+    status: active
+    kind: orchestrator
+    workflow: research
+    stage: orchestration
+    invocable: true
+    execution_modes: [orchestrated]
+    human_interaction: {orchestrated: decision-gated}
+    persistent_outputs:
+      - {type: workflow-state, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: workflow-runtime}
+      - {type: artifact-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: artifact-inventory}
+      - {type: research-baseline, lifecycle: Baselined, creation_mode: authored, semantic_authority: canonical, authority_scope: approved-research-snapshot}
+    transient_outputs: [routing-plan, internal-delegation, baseline-disposition]
+    side_effects: [write-project-state, write-artifact-index, write-project-artifacts]
+    approval_policy: user-confirms-research-scope-budget-baseline-and-any-next-workflow
+    fallback: honest-partial-baseline-or-return-to-caller-with-explicit-gaps
+    stack_profile: any
+    contract_version: "1.0"
+
+  q-research-scope:
+    path: research/q-research-scope
+    group: research
+    requires: [q-core-contract]
+    status: active
+    kind: stage
+    workflow: research
+    stage: scope
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: dialogue-led}
+    persistent_outputs:
+      - {type: research-brief, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: research-scope}
+    transient_outputs: [candidate-questions]
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-questions-boundaries-budget-and-search-strategies
+    fallback: return-candidate-questions-and-blockers-without-investigating
+    stack_profile: any
+    contract_version: "1.0"
+
+  q-research-investigate:
+    path: research/q-research-investigate
+    group: research
+    requires: [q-core-contract]
+    status: active
+    kind: stage
+    workflow: research
+    stage: investigation
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
+    persistent_outputs:
+      - {type: findings-register, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: cited-findings-and-observed-coverage}
+    transient_outputs: [search-notes]
+    side_effects: [write-project-artifacts, network-read]
+    approval_policy: stay-within-approved-scope-budget-and-privacy-boundary-with-no-external-write
+    fallback: partial-or-exploratory-coverage-with-explicit-access-and-evidence-gaps
+    stack_profile: any
+    contract_version: "1.0"
+
+  q-research-synthesize:
+    path: research/q-research-synthesize
+    group: research
+    requires: [q-core-contract]
+    status: active
+    kind: stage
+    workflow: research
+    stage: synthesis
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: review-at-boundaries, standalone: review-at-boundaries}
+    persistent_outputs:
+      - {type: research-synthesis, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: cross-finding-interpretation}
+    transient_outputs: []
+    side_effects: [write-project-artifacts]
+    approval_policy: no-upstream-commitment-or-external-publication
+    fallback: synthesize-explicit-gaps-and-unresolved-contradictions
     stack_profile: any
     contract_version: "1.0"
 
@@ -487,6 +599,7 @@ skills:
     stage: implementation
     invocable: true
     execution_modes: [standalone]
+    human_interaction: {standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [conflict-analysis]
     side_effects: [write-code]
@@ -505,6 +618,7 @@ skills:
     stage: mini-review
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: review-at-boundaries, standalone: review-at-boundaries}
     persistent_outputs: []
     transient_outputs: [comment-review]
     side_effects: [none]
@@ -523,6 +637,7 @@ skills:
     stage: implementation
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [fix-notes]
     side_effects: [write-code, write-tests]
@@ -541,6 +656,7 @@ skills:
     stage: refinement
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: dialogue-led, standalone: dialogue-led}
     persistent_outputs:
       - {type: simple-implementation-plan, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: small-change-execution}
     transient_outputs: [interview-notes]
@@ -560,6 +676,7 @@ skills:
     stage: implementation
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [red-green-notes]
     side_effects: [write-tests, write-code]
@@ -578,6 +695,7 @@ skills:
     stage: distribution
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: execution-ticket, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: ticket-execution}
     transient_outputs: [ticket-draft]
@@ -597,6 +715,7 @@ skills:
     stage: null
     invocable: false
     execution_modes: [internal]
+    human_interaction: {internal: none}
     persistent_outputs: []
     transient_outputs: [editing-notes]
     side_effects: [write-authorized-agent-artifacts]
@@ -616,6 +735,7 @@ skills:
     stage: null
     invocable: true
     execution_modes: [standalone]
+    human_interaction: {standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [module-map-explanation]
     side_effects: [none]
@@ -634,6 +754,7 @@ skills:
     stage: proposal-design
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: proposal-source, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: commercial-meaning}
       - {type: proposal-narrative, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
@@ -654,6 +775,7 @@ skills:
     stage: document-channel
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: proposal-document-mapping, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: channel-mapping}
       - {type: proposal-docx, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: document-presentation}
@@ -675,6 +797,7 @@ skills:
     stage: orchestration
     invocable: true
     execution_modes: [orchestrated]
+    human_interaction: {orchestrated: decision-gated}
     persistent_outputs:
       - {type: workflow-state, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: workflow-runtime}
       - {type: artifact-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: artifact-inventory}
@@ -684,7 +807,7 @@ skills:
     approval_policy: user-confirms-commercial-release-and-client-disposition
     fallback: close-or-route-non-development-engagement
     stack_profile: any
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-proposal-web:
     path: proposal/q-proposal-web
@@ -696,6 +819,7 @@ skills:
     stage: web-channel
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: web-proposal-source, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: web-presentation}
       - {type: web-proposal-build, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: interactive-presentation}
@@ -716,6 +840,7 @@ skills:
     stage: discovery
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: discovery-brief, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: discovered-client-context}
     transient_outputs: [follow-up-questions]
@@ -723,7 +848,7 @@ skills:
     approval_policy: no-fabrication-and-user-confirms-blocking-assumptions
     fallback: blocked-with-targeted-questions
     stack_profile: any
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-maint-ai-workflow:
     path: maint/q-maint-ai-workflow
@@ -735,6 +860,7 @@ skills:
     stage: null
     invocable: true
     execution_modes: [standalone]
+    human_interaction: {standalone: decision-gated}
     persistent_outputs: []
     transient_outputs: [impact-map, validation-evidence]
     side_effects: [write-package-files]
@@ -754,6 +880,7 @@ skills:
     stage: orchestration
     invocable: true
     execution_modes: [orchestrated]
+    human_interaction: {orchestrated: decision-gated}
     persistent_outputs:
       - {type: workflow-state, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: workflow-runtime}
       - {type: artifact-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: artifact-inventory}
@@ -775,6 +902,7 @@ skills:
     stage: content
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: report-source, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: reporting-narrative-selection-and-approved-interpretation}
     transient_outputs: [source-gap-analysis, working-outline]
@@ -794,6 +922,7 @@ skills:
     stage: document
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: report-document-mapping, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: document-channel-mapping}
       - {type: quasar-report-markdown, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: document-presentation}
@@ -816,6 +945,7 @@ skills:
     stage: deck
     invocable: true
     execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: quasar-deck-plan, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: presentation-plan}
       - {type: quasar-deck-pptx, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: presentation}

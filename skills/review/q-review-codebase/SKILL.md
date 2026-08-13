@@ -56,4 +56,13 @@ Rank findings by severity and likelihood. Do not bury blockers under style obser
 
 Complete when every retained finding is reproducible and source-backed, every applicable selected technology is reviewed or named as a coverage gap, and the report identifies one truthful next action.
 
+## Anti-patterns
+
+| # | Anti-pattern | How it shows up | Correct behavior |
+|---|---|---|---|
+| 1 | Reviewing only known issues | The audit searches for previously reported defects and calls that broad coverage. | Inspect every applicable lens in the locked scope and record coverage or a gap. |
+| 2 | Auditing against unadopted standards | A recommended library or generic preference becomes a project requirement. | Bind each criterion to a generic catalog, adopted project guidance, repository convention, or specification. |
+| 3 | Silencing independent corroboration | Multiple reproducible paths to one defect are collapsed until important breadth disappears. | Deduplicate the finding while retaining materially distinct evidence and affected paths. |
+| 4 | Approving beyond verified coverage | Generic checks are presented as full stack-specific assurance. | State the technology coverage gap and limit the approval to verified evidence. |
+
 This report is supporting quality evidence. Integral acceptance remains an orchestrator decision reconciled with tests, UAT, security, deployment, technical-profile freshness, and other evidence.

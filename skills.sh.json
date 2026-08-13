@@ -4,7 +4,7 @@
   "groupings": [
     {
       "title": "Shared governance",
-      "description": "The companion every coordinated Quasar workflow skill reads before acting: routing, ownership, semantic authority, lifecycle, approvals, and the report-source and stage-result schemas.",
+      "description": "The companion every coordinated Quasar workflow skill reads before acting: routing, interaction cadence, ownership, authority, lifecycle, cited findings, report sources, and stage results.",
       "skills": [
         "q-core-contract"
       ]
@@ -26,6 +26,16 @@
         "q-proposal-design",
         "q-proposal-web",
         "q-proposal-document"
+      ]
+    },
+    {
+      "title": "Engagement research",
+      "description": "Scope, investigate, synthesize, and baseline optional consulting research for market, competitor, regulatory, technology, feasibility, and risk decisions.",
+      "skills": [
+        "q-research-workflow",
+        "q-research-scope",
+        "q-research-investigate",
+        "q-research-synthesize"
       ]
     },
     {

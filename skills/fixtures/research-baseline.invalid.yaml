@@ -1,0 +1,15 @@
+schema_version: "1.0"
+baseline:
+  baseline_id: RBL-INVALID
+  version: ""
+  lifecycle: Working
+  brief_ref:
+    artifact_id: RB-001
+    version: ""
+  findings_ref:
+    artifact_id: FR-001
+    version: ""
+  synthesis_ref:
+    artifact_id: RS-001
+    version: ""
+  as_of: ""

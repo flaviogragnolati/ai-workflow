@@ -1,0 +1,50 @@
+schema_version: "1.0"
+brief:
+  brief_id: RB-INVALID
+  version: "0.1"
+  lifecycle: Working
+  status: draft
+  approval_ref: null
+decision_refs: [DEC-MARKET-001]
+questions:
+  - question_id: RQ-001
+    question: "Research everything relevant."
+    question_type: market
+    decision_refs: [DEC-MARKET-001]
+    parent_question_ref: null
+    boundaries: ["Undefined market"]
+    radar:
+      researchable: 1
+      anchored: 1
+      decision_linked: 3
+      adds_evidence: 2
+      relevant: 3
+      average: 4.5
+      passes: true
+  - question_id: RQ-001
+    question: "Duplicate identifier."
+    question_type: factual
+    decision_refs: [DEC-MARKET-001]
+    parent_question_ref: RQ-404
+    boundaries: ["Undefined"]
+    radar:
+      researchable: 2
+      anchored: 2
+      decision_linked: 2
+      adds_evidence: 2
+      relevant: 2
+      average: 2.0
+      passes: false
+scope:
+  in_scope: ["Undefined"]
+  out_of_scope: []
+  privacy_constraints: []
+budget:
+  time_limit: "Undefined"
+  cost_limit: "Undefined"
+  stopping_conditions: ["Undefined"]
+search_plan:
+  - question_ref: RQ-404
+    strategies: ["Undefined"]
+    source_classes: ["Undefined"]
+assumptions: []

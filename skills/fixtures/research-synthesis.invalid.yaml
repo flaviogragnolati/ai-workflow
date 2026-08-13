@@ -1,0 +1,40 @@
+schema_version: "1.0"
+synthesis:
+  synthesis_id: RS-INVALID
+  version: "0.1"
+  lifecycle: Working
+brief_ref:
+  artifact_id: RB-001
+  version: "1.0"
+findings_ref:
+  artifact_id: FR-001
+  version: "1.0"
+answers:
+  - question_ref: RQ-001
+    answer: "An unsupported answer."
+    confidence: high
+    supporting_finding_refs: [F-999]
+    contradicting_finding_refs: []
+    coverage_status: partial
+    decision_implication: "Create a commitment immediately."
+  - question_ref: RQ-001
+    answer: "Duplicate question answer."
+    confidence: high
+    supporting_finding_refs: [F-998]
+    contradicting_finding_refs: []
+    coverage_status: partial
+    decision_implication: "Duplicate."
+themes:
+  - theme_id: TH-001
+    synthesis: "Unsupported theme."
+    strength: strong
+    supporting_finding_refs: [F-997]
+    contradicting_finding_refs: []
+debates: []
+gaps: []
+counter_evidence_check:
+  adverse_finding_refs: [F-996]
+  strongest_counterargument: "None considered."
+  strongest_source_dependency: "Not checked."
+  circularity_notes: "Not checked."
+  limitations: []

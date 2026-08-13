@@ -1,0 +1,16 @@
+schema_version: "1.0"
+baseline:
+  baseline_id: RBL-001
+  version: "1.0"
+  lifecycle: Baselined
+  brief_ref:
+    artifact_id: RB-001
+    version: "1.0"
+  findings_ref:
+    artifact_id: FR-001
+    version: "1.0"
+  synthesis_ref:
+    artifact_id: RS-001
+    version: "1.0"
+  as_of: "2026-08-13"
+  approval_ref: APR-RBL-001

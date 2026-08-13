@@ -1,6 +1,6 @@
 ---
 name: q-proposal-workflow
-description: "Orchestrate Quasar discovery and commercial proposals from initial client evidence through readiness, canonical proposal design, web or DOCX/PDF channels, client disposition, commercial close, optional development handoff, and optional reporting. Requires the q-core-contract companion."
+description: "Orchestrate Quasar discovery and commercial proposals from initial client evidence through readiness, optional delegated engagement research, canonical proposal design, web or DOCX/PDF channels, client disposition, commercial close, optional development handoff, and optional reporting. Requires the q-core-contract companion."
 ---
 
 # Discovery and proposal workflow
@@ -47,6 +47,18 @@ Never let a channel renderer silently modify canonical commercial meaning.
 
 Only software or mixed engagements with applicable software scope may continue to `q-delivery-workflow`. Pass proposal object IDs, version, applicable commitments, assumptions, exclusions, unresolved references, and readiness. Do not imply technical confirmation where the proposal records only a preliminary assumption.
 
+## Optional engagement research
+
+When Discovery exposes an external uncertainty that materially affects a proposal decision and client evidence cannot resolve it, offer delegation to `q-research-workflow`. Start it only after the user authorizes the questions, boundary, privacy treatment, and budget. Pass `root_orchestrator: q-proposal-workflow`, `global_state_writer: q-proposal-workflow`, and an exact `return_to`; remain the global state writer and reconcile its composite delta.
+
+After Research returns, obtain one explicit disposition:
+
+- `adopt-as-proposal-input` — route the exact Research Baseline ID and version to `q-proposal-discovery` as `external-research`;
+- `retain-as-independent` — preserve the research artifacts without using them in this proposal;
+- `defer-decision` — keep the disposition unresolved and block only the commitment that depends on it.
+
+Research never edits the Discovery Brief and never opens Proposal by itself. Treat its claims and synthesis as supporting evidence; client evidence and the proposal owners retain their declared authority.
+
 ## Reporting
 
 At an approved proposal, commercial-close, consulting, or other reporting checkpoint, delegate to `q-report-workflow`. Pass the reporting request, relevant discovery and proposal artifact IDs and versions, `root_orchestrator: q-proposal-workflow`, `global_state_writer: q-proposal-workflow`, and the exact `return_to` disposition or action.
@@ -58,6 +70,15 @@ Remain the global state writer and reconcile the composite reporting delta after
 Keep accepted commercial releases immutable. Use change requests for subsequent scope, price, schedule, or commitment changes.
 
 When a DOCX is edited manually, reintroduce it through `q-proposal-document` for reconciliation. Do not implement partial hashes or editable-field tracking in this version.
+
+## Anti-patterns
+
+| # | Anti-pattern | How it shows up | Correct behavior |
+|---|---|---|---|
+| 1 | Performing stage substance here | The orchestrator rewrites discovery evidence or proposal terms instead of routing their owners. | Delegate the named stage and reconcile its validated delta. |
+| 2 | Letting external research override the client | A Research Baseline silently replaces contrary client evidence or accepted commercial meaning. | Keep research supporting and route any proposed meaning change through Discovery or Proposal Design. |
+| 3 | Auto-adopting delegated research | A returned baseline becomes proposal input because the research completed. | Obtain and record one explicit adoption, retention, or deferral disposition. |
+| 4 | Treating a channel as the proposal owner | A web or document edit becomes the new commercial source. | Return semantic edits to `q-proposal-design` and regenerate the channel. |
 
 ## Completion
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Synthesis"
+  short_description: "Synthesize cited findings without duplicating evidence"
+  default_prompt: "Use $q-research-synthesize to answer the approved research questions from exact cited-finding versions and preserve debates and gaps."

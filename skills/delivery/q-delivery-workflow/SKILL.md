@@ -35,7 +35,7 @@ Stage 6 closes initial app-flow only when the high-level backlog contains milest
 
 Route to `q-code-explore` when the user asks for a high-level understanding of a codebase, module, feature, or document, or when a specific question requires repository-grounded orientation before another stage. Supply the current target and question as its lens. Treat its summary as transient context: do not register it as an artifact, use it as stage-completion evidence, or run it as routine ceremony when the needed context is already available.
 
-Use `q-code-zoom-out` instead for a map exactly one abstraction level above current code, `q-code-research` for external primary sources and durable cited findings, and `q-review-codebase` for a formal quality audit.
+Use `q-code-zoom-out` instead for a map exactly one abstraction level above current code, `q-code-research` for bounded technical questions and a durable Findings Register that follows the shared cited-findings contract, and `q-review-codebase` for a formal quality audit. Technical research may return an orchestrated delta, but it does not run the engagement-research workflow or open Proposal.
 
 ## Development loop
 
@@ -89,6 +89,15 @@ When technical work affects accepted commercial scope, price, schedule, or commi
 5. Regenerate derivatives after approval.
 
 On resume, rebuild context from state, index, baselines, decisions, risks, blockers, housekeeping, and the exact technical foundation version. Do not reopen closed decisions without new evidence.
+
+## Anti-patterns
+
+| # | Anti-pattern | How it shows up | Correct behavior |
+|---|---|---|---|
+| 1 | Reimplementing a stage in the coordinator | The workflow authors architecture, backlog detail, or code instead of routing the registered owner. | Select the narrow skill, validate its result, and reconcile the delta. |
+| 2 | Mandatory refinement ceremony | Every backlog item is forced through a grill, tickets, and TDD regardless of readiness or risk. | Use only the refinement and verification that the item actually needs. |
+| 3 | Treating one audit as release acceptance | A clean `q-review-codebase` report is used as the whole delivery gate. | Reconcile tests, UAT, security, deployment, profile freshness, and other applicable evidence. |
+| 4 | Writing a second execution diary | Implementation scratch notes become a durable record beside the selected item or ticket. | Update the original durable execution source and keep coordination transient. |
 
 ## Completion response
 

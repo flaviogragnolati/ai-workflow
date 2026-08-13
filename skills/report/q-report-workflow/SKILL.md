@@ -69,6 +69,15 @@ If canonical sources conflict, block the affected claim and return the inconsist
 
 When an upstream version changes after rendering, mark affected report channels stale and regenerate them from a newly approved report source version.
 
+## Anti-patterns
+
+| # | Anti-pattern | How it shows up | Correct behavior |
+|---|---|---|---|
+| 1 | Authoring report meaning in the orchestrator | The coordinator writes conclusions instead of routing `q-report-source`. | Delegate semantic synthesis and reconcile its approved version. |
+| 2 | Rewriting upstream truth through reporting | A report correction silently changes project status, commitments, or accepted scope. | Return the change to the upstream owner and regenerate from a new approved source. |
+| 3 | Treating a renderer as a semantic editor | A slide or DOCX edit becomes the report's new meaning. | Route semantic edits to `q-report-source` and mark affected channels stale. |
+| 4 | Calling a partial channel set complete | Missing DOCX, PDF, or deck output is hidden because one renderer succeeded. | Preserve completed channels and require explicit partial-release approval or report the blocker. |
+
 ## Fallback and completion
 
 Return a transient source-gap diagnostic when required evidence is missing. If one requested renderer is unavailable, preserve the approved report source and completed channels, but do not call the run complete without explicit approval of a partial release.

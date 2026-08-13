@@ -80,6 +80,15 @@ Route each approved remediation as a separate task to the artifact owner. Record
 
 Complete the audit when the declared scope is exhausted, remaining uncertainty is explicit, each actionable finding has one owner, and the user has one truthful next action.
 
+## Anti-patterns
+
+| # | Anti-pattern | How it shows up | Correct behavior |
+|---|---|---|---|
+| 1 | Creating an audit-owned truth source | Findings are saved as a parallel durable report or changelog. | Return transient findings and route approved remediation to each artifact owner. |
+| 2 | Letting implementation redefine intent | Current code silently replaces canonical product or commercial meaning. | Use implementation as observable evidence and report the divergence to the owning workflow. |
+| 3 | Auditing only known broken links | A parser pass is presented as complete documentation QA. | Apply every relevant authority, lifecycle, semantic, freshness, coverage, and usability lens. |
+| 4 | Editing while diagnosing | The reviewer fixes documents to make the audit pass. | Keep the audit read-only and authorize remediation as a separate owner-routed task. |
+
 ## Boundaries
 
 Use `q-code-explore` for document orientation, `q-review-comments` for comments and docstrings, `q-review-codebase` for integral technical quality, and the owning renderer for visual QA. Use this skill only for extended QA of durable project documentation and its authority graph.

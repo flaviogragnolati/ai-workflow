@@ -1,0 +1,36 @@
+schema_version: "1.0"
+brief:
+  brief_id: RB-001
+  version: "1.0"
+  lifecycle: Working
+  status: authorized
+  approval_ref: APR-RB-001
+decision_refs: [DEC-MARKET-001]
+questions:
+  - question_id: RQ-001
+    question: "Which documented adoption constraints affect the target segment this quarter?"
+    question_type: market
+    decision_refs: [DEC-MARKET-001]
+    parent_question_ref: null
+    boundaries: ["Argentina", "SMB segment", "2026 Q3"]
+    radar:
+      researchable: 4
+      anchored: 4
+      decision_linked: 5
+      adds_evidence: 4
+      relevant: 4
+      average: 4.2
+      passes: true
+scope:
+  in_scope: ["Published adoption constraints for the defined segment"]
+  out_of_scope: ["Scientific causal inference", "Proposal pricing"]
+  privacy_constraints: ["Do not send client identity or confidential material to external services"]
+budget:
+  time_limit: "8 hours"
+  cost_limit: "No paid sources without separate approval"
+  stopping_conditions: ["Run the two approved search strategies and record coverage"]
+search_plan:
+  - question_ref: RQ-001
+    strategies: ["Official datasets and regulator publications", "Independent industry reports"]
+    source_classes: [authoritative-primary, formal-independent]
+assumptions: ["Public evidence is sufficient for a preliminary decision"]

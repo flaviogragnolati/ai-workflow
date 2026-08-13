@@ -34,6 +34,14 @@ For each finding include priority, axis, exact location, evidence, impact, and r
 
 Distinguish blockers from suggestions. Do not report pre-existing issues outside the changed surface unless the change makes them newly relevant.
 
+## Anti-patterns
+
+| # | Anti-pattern | How it shows up | Correct behavior |
+|---|---|---|---|
+| 1 | Silencing corroborating observations | A second axis finds the same defect for a different reason and the observation is discarded as duplicate. | Merge only the finding record while preserving evidence and impact from both axes. |
+| 2 | Collapsing both review axes | Repository standards are treated as proof that the requested behavior was implemented. | Evaluate standards and originating specification separately, then reconcile outcomes. |
+| 3 | Expanding into a codebase audit | Unrelated pre-existing issues dominate a change-scoped review. | Report only changed-surface issues or pre-existing defects made newly relevant by the change. |
+
 ## Close
 
 Return:

@@ -9,11 +9,17 @@ on every run, so a mismatch is drift rather than a second opinion.
 discovery-proposal:
   entry_skill: q-proposal-workflow
   stages: [q-proposal-discovery, q-proposal-design, q-proposal-web, q-proposal-document]
+  delegates: [research, reporting]
   optional_next: [ai-coding, reporting, close]
 ai-coding:
   entry_skill: q-delivery-workflow
   planning_stages: [q-plan-product-core, q-plan-tech-foundation, q-plan-domain-model, q-plan-architecture, q-plan-features, q-plan-backlog]
+  delegates: [reporting]
   optional_next: [reporting, close]
+research:
+  entry_skill: q-research-workflow
+  stages: [q-research-scope, q-research-investigate, q-research-synthesize]
+  optional_next: [discovery-proposal, reporting, close]
 reporting:
   entry_skill: q-report-workflow
   stages: [q-report-source]

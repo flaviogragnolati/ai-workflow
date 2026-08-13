@@ -34,6 +34,7 @@ SKILLS_SH_SCHEMA_URL = "https://skills.sh/schemas/skills.sh.schema.json"
 
 CORE_CONTRACT = SKILLS_ROOT / "core" / "q-core-contract"
 ROUTING_DIGEST = CORE_CONTRACT / "references" / "routing.md"
+HUMAN_INTERACTION_DIGEST = CORE_CONTRACT / "references" / "human-interaction.md"
 
 
 def load(path: Path) -> Any:
@@ -217,6 +218,28 @@ def distribution_errors(skill_id: str, entry: dict[str, Any], metadata: dict[str
     return errors
 
 
+def human_interaction_errors(skill_id: str, entry: dict[str, Any]) -> list[str]:
+    modes = entry.get("execution_modes", [])
+    interaction = entry.get("human_interaction")
+    if not isinstance(modes, list) or not isinstance(interaction, dict):
+        return []
+    errors: list[str] = []
+    mode_set = set(modes)
+    key_set = set(interaction)
+    if key_set != mode_set:
+        missing = sorted(mode_set - key_set)
+        extra = sorted(key_set - mode_set)
+        errors.append("%s: human_interaction keys must equal execution_modes; missing=%s extra=%s"
+                      % (skill_id, missing, extra))
+    if "internal" in mode_set and interaction.get("internal") != "none":
+        errors.append("%s: internal execution requires human_interaction none" % skill_id)
+    if entry.get("invocable") is True and "none" in interaction.values():
+        errors.append("%s: an invocable skill cannot use human_interaction none" % skill_id)
+    if entry.get("invocable") is False and set(interaction.values()) != {"none"}:
+        errors.append("%s: a non-invocable companion must use only human_interaction none" % skill_id)
+    return errors
+
+
 def identity_errors(skill_id: str, directory: Path, entry: dict[str, Any],
                     metadata: dict[str, Any] | None) -> list[str]:
     """`group` is authoritative: the name, both folders, and attribution derive from it."""
@@ -326,7 +349,7 @@ def routing_digest_body(workflows: dict[str, Any]) -> str:
             continue
         lines.append("%s:" % workflow_id)
         lines.append("  entry_skill: %s" % entry.get("entry_skill"))
-        for key in ("stages", "planning_stages", "renderers", "current_tools"):
+        for key in ("stages", "planning_stages", "renderers", "current_tools", "delegates"):
             route = entry.get(key)
             if route:
                 lines.append("  %s: [%s]" % (key, ", ".join(route)))
@@ -346,6 +369,34 @@ def routing_digest_errors(workflows: dict[str, Any]) -> list[str]:
         return ["routing digest is missing its generated ```yaml block"]
     if block.group(1).strip("\n") != routing_digest_body(workflows):
         return ["routing digest is stale; regenerate it from skill-manifest.yaml"]
+    return []
+
+
+def human_interaction_digest_body(skills: dict[str, Any]) -> str:
+    lines: list[str] = []
+    for skill_id, entry in skills.items():
+        if not isinstance(entry, dict):
+            continue
+        interaction = entry.get("human_interaction")
+        if not isinstance(interaction, dict):
+            continue
+        lines.append("%s:" % skill_id)
+        for mode in entry.get("execution_modes", []):
+            lines.append("  %s: %s" % (mode, interaction.get(mode)))
+    return "\n".join(lines)
+
+
+def human_interaction_digest_errors(skills: dict[str, Any]) -> list[str]:
+    if not HUMAN_INTERACTION_DIGEST.is_file():
+        return ["Missing human interaction digest %s" % HUMAN_INTERACTION_DIGEST.relative_to(REPO_ROOT)]
+    block = re.search(
+        r"(?ms)^```yaml\n(.*?)^```",
+        HUMAN_INTERACTION_DIGEST.read_text(encoding="utf-8-sig"),
+    )
+    if not block:
+        return ["human interaction digest is missing its generated ```yaml block"]
+    if block.group(1).strip("\n") != human_interaction_digest_body(skills):
+        return ["human interaction digest is stale; regenerate it from skill-manifest.yaml"]
     return []
 
 
@@ -402,6 +453,47 @@ def skills_sh_errors(skills: dict[str, Any]) -> list[str]:
     ):
         if difference:
             errors.append("skills.sh.json %s: %s" % (label, ", ".join(difference)))
+    return errors
+
+
+def anti_pattern_errors(skills: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    research_skills = {
+        "q-research-workflow",
+        "q-research-scope",
+        "q-research-investigate",
+        "q-research-synthesize",
+    }
+    required = {
+        skill_id
+        for skill_id, entry in skills.items()
+        if isinstance(entry, dict)
+        and (entry.get("kind") in {"orchestrator", "quality"} or skill_id in research_skills)
+    }
+    header = "| # | Anti-pattern | How it shows up | Correct behavior |"
+    separator = "|---|---|---|---|"
+    for skill_id in sorted(required):
+        entry = skills.get(skill_id, {})
+        path = SKILLS_ROOT / str(entry.get("path", "")) / "SKILL.md"
+        text = path.read_text(encoding="utf-8-sig")
+        section = re.search(r"(?ms)^## Anti-patterns\s*\n(.*?)(?=^## |\Z)", text)
+        if not section:
+            errors.append("%s: missing exact '## Anti-patterns' section" % skill_id)
+            continue
+        lines = [line.strip() for line in section.group(1).splitlines() if line.strip()]
+        if header not in lines:
+            errors.append("%s: anti-pattern table has the wrong header" % skill_id)
+        if separator not in lines:
+            errors.append("%s: anti-pattern table has the wrong separator" % skill_id)
+        rows = [
+            line for line in lines
+            if line.startswith("|") and line not in {header, separator}
+        ]
+        if not 1 <= len(rows) <= 7:
+            errors.append("%s: anti-pattern table requires 1-7 rows, got %d" % (skill_id, len(rows)))
+        for row in rows:
+            if row.count("|") != 5:
+                errors.append("%s: anti-pattern row must have four columns: %s" % (skill_id, row))
     return errors
 
 
@@ -545,12 +637,224 @@ def report_source_semantics(data: Any) -> list[str]:
     return errors
 
 
+def research_brief_semantics(data: Any) -> list[str]:
+    if not isinstance(data, dict):
+        return ["research brief must be a mapping"]
+    errors: list[str] = []
+    brief = data.get("brief", {})
+    if isinstance(brief, dict) and brief.get("status") == "authorized" and not brief.get("approval_ref"):
+        errors.append("an authorized research brief requires approval_ref")
+    if isinstance(brief, dict) and brief.get("status") != "authorized":
+        errors.append("a runnable research brief must be authorized")
+
+    questions = data.get("questions", [])
+    known: set[str] = set()
+    question_ids: list[str] = []
+    for question in questions if isinstance(questions, list) else []:
+        if not isinstance(question, dict):
+            continue
+        question_id = question.get("question_id")
+        if isinstance(question_id, str):
+            question_ids.append(question_id)
+            known.add(question_id)
+        radar = question.get("radar", {})
+        if isinstance(radar, dict):
+            keys = ("researchable", "anchored", "decision_linked", "adds_evidence", "relevant")
+            scores = [radar.get(key) for key in keys]
+            if all(isinstance(score, (int, float)) and not isinstance(score, bool) for score in scores):
+                average = sum(scores) / len(scores)
+                if not isinstance(radar.get("average"), (int, float)) or abs(radar["average"] - average) > 0.01:
+                    errors.append("question %r has an inconsistent RADAR average" % question_id)
+                expected = average >= 3.0 and min(scores) >= 2
+                if radar.get("passes") is not expected:
+                    errors.append("question %r has an inconsistent RADAR pass result" % question_id)
+    duplicates = sorted({item for item in question_ids if question_ids.count(item) > 1})
+    if duplicates:
+        errors.append("duplicate research question IDs: %s" % ", ".join(duplicates))
+
+    for question in questions if isinstance(questions, list) else []:
+        if not isinstance(question, dict):
+            continue
+        parent = question.get("parent_question_ref")
+        if parent is not None and parent not in known:
+            errors.append("question %r has unknown parent %r" % (question.get("question_id"), parent))
+    for item in data.get("search_plan", []) if isinstance(data.get("search_plan"), list) else []:
+        if isinstance(item, dict) and item.get("question_ref") not in known:
+            errors.append("search plan references unknown question %r" % item.get("question_ref"))
+    return errors
+
+
+def cited_findings_semantics(data: Any, known_questions: set[str] | None = None) -> list[str]:
+    if not isinstance(data, dict):
+        return ["cited findings register must be a mapping"]
+    errors: list[str] = []
+    register = data.get("register", {})
+    if isinstance(register, dict):
+        scope_ref = register.get("scope_ref", {})
+        if register.get("research_type") == "engagement":
+            if not isinstance(scope_ref, dict) or scope_ref.get("reference_type") != "research-brief":
+                errors.append("engagement cited findings require a research-brief scope_ref")
+            if not isinstance(scope_ref, dict) or not isinstance(scope_ref.get("version"), str) or not scope_ref.get("version", "").strip():
+                errors.append("engagement cited findings require an exact research-brief version")
+        if isinstance(scope_ref, dict) and scope_ref.get("reference_type") == "project-artifact":
+            if not isinstance(scope_ref.get("version"), str) or not scope_ref.get("version", "").strip():
+                errors.append("project-artifact scope_ref requires an exact version")
+    sources: dict[str, dict[str, Any]] = {}
+    source_ids: list[str] = []
+    for source in data.get("sources", []) if isinstance(data.get("sources"), list) else []:
+        if not isinstance(source, dict):
+            continue
+        source_id = source.get("source_id")
+        if isinstance(source_id, str):
+            source_ids.append(source_id)
+            sources.setdefault(source_id, source)
+    duplicates = sorted({item for item in source_ids if source_ids.count(item) > 1})
+    if duplicates:
+        errors.append("duplicate cited source IDs: %s" % ", ".join(duplicates))
+
+    search_ids: list[str] = []
+    for search in data.get("search_log", []) if isinstance(data.get("search_log"), list) else []:
+        if not isinstance(search, dict):
+            continue
+        search_id = search.get("search_id")
+        if isinstance(search_id, str):
+            search_ids.append(search_id)
+        if known_questions is not None and search.get("question_ref") not in known_questions:
+            errors.append("search %r references unknown question %r"
+                          % (search_id, search.get("question_ref")))
+    duplicates = sorted({item for item in search_ids if search_ids.count(item) > 1})
+    if duplicates:
+        errors.append("duplicate cited search IDs: %s" % ", ".join(duplicates))
+
+    finding_ids: list[str] = []
+    for finding in data.get("findings", []) if isinstance(data.get("findings"), list) else []:
+        if not isinstance(finding, dict):
+            continue
+        finding_id = finding.get("finding_id")
+        if isinstance(finding_id, str):
+            finding_ids.append(finding_id)
+        if known_questions is not None and finding.get("question_ref") not in known_questions:
+            errors.append("finding %r references unknown question %r"
+                          % (finding_id, finding.get("question_ref")))
+        refs = finding.get("evidence_refs", [])
+        refs = refs if isinstance(refs, list) else []
+        supports = []
+        groups: set[str] = set()
+        for ref in refs:
+            if not isinstance(ref, dict):
+                continue
+            source_ref = ref.get("source_ref")
+            source = sources.get(source_ref)
+            if source is None:
+                errors.append("finding %r references unknown source %r" % (finding_id, source_ref))
+            elif ref.get("relation") == "supports":
+                supports.append(ref)
+                group = source.get("independence_group")
+                if isinstance(group, str):
+                    groups.add(group)
+            if not isinstance(ref.get("locator"), str) or not ref.get("locator", "").strip():
+                errors.append("finding %r has evidence without a locator" % finding_id)
+        if finding.get("finding_status") == "supported" and not supports:
+            errors.append("supported finding %r requires a supports relation" % finding_id)
+        if finding.get("corroboration") == "multiple-independent" and len(groups) < 2:
+            errors.append("multiple-independent finding %r requires two independence groups" % finding_id)
+    duplicates = sorted({item for item in finding_ids if finding_ids.count(item) > 1})
+    if duplicates:
+        errors.append("duplicate cited finding IDs: %s" % ", ".join(duplicates))
+
+    def misplaced_not_found(value: Any, key: str | None = None) -> bool:
+        if isinstance(value, dict):
+            return any(misplaced_not_found(item, child_key) for child_key, item in value.items())
+        if isinstance(value, list):
+            return any(misplaced_not_found(item, key) for item in value)
+        return value == "not-found" and key != "source_verification"
+
+    if misplaced_not_found(data):
+        errors.append("not-found is valid only as source_verification")
+    return errors
+
+
+def research_synthesis_semantics(
+    data: Any,
+    known_findings: set[str],
+    known_questions: set[str],
+) -> list[str]:
+    if not isinstance(data, dict):
+        return ["research synthesis must be a mapping"]
+    errors: list[str] = []
+    answer_refs: list[str] = []
+    reference_fields = {
+        "supporting_finding_refs",
+        "contradicting_finding_refs",
+        "finding_refs",
+        "adverse_finding_refs",
+    }
+
+    def inspect(value: Any, key: str | None = None) -> None:
+        if isinstance(value, dict):
+            for child_key, item in value.items():
+                inspect(item, child_key)
+        elif isinstance(value, list):
+            if key in reference_fields:
+                for ref in value:
+                    if ref not in known_findings:
+                        errors.append("research synthesis references unknown finding %r" % ref)
+            else:
+                for item in value:
+                    inspect(item, key)
+
+    answers = data.get("answers", [])
+    for answer in answers if isinstance(answers, list) else []:
+        if isinstance(answer, dict) and isinstance(answer.get("question_ref"), str):
+            answer_refs.append(answer["question_ref"])
+            if answer["question_ref"] not in known_questions:
+                errors.append("research synthesis answer references unknown question %r"
+                              % answer["question_ref"])
+    duplicates = sorted({item for item in answer_refs if answer_refs.count(item) > 1})
+    if duplicates:
+        errors.append("duplicate research synthesis answers: %s" % ", ".join(duplicates))
+    for collection, id_key in (("themes", "theme_id"), ("debates", "debate_id"), ("gaps", "gap_id")):
+        identifiers = [
+            item.get(id_key)
+            for item in data.get(collection, [])
+            if isinstance(item, dict) and isinstance(item.get(id_key), str)
+        ] if isinstance(data.get(collection), list) else []
+        duplicates = sorted({item for item in identifiers if identifiers.count(item) > 1})
+        if duplicates:
+            errors.append("duplicate research synthesis %s IDs: %s"
+                          % (collection, ", ".join(duplicates)))
+    for gap in data.get("gaps", []) if isinstance(data.get("gaps"), list) else []:
+        if isinstance(gap, dict) and gap.get("question_ref") not in known_questions:
+            errors.append("research synthesis gap references unknown question %r"
+                          % gap.get("question_ref"))
+    inspect(data)
+    return errors
+
+
+def research_baseline_semantics(data: Any) -> list[str]:
+    if not isinstance(data, dict):
+        return ["research baseline must be a mapping"]
+    errors: list[str] = []
+    baseline = data.get("baseline", {})
+    if not isinstance(baseline, dict):
+        return errors
+    for key in ("version", "as_of", "approval_ref"):
+        if not isinstance(baseline.get(key), str) or not baseline.get(key, "").strip():
+            errors.append("research baseline requires non-empty %s" % key)
+    for key in ("brief_ref", "findings_ref", "synthesis_ref"):
+        ref = baseline.get(key, {})
+        if not isinstance(ref, dict) or not isinstance(ref.get("version"), str) or not ref.get("version", "").strip():
+            errors.append("research baseline %s requires an exact version" % key)
+    return errors
+
+
 def fixture_pair(
     schema_path: Path,
     valid_path: Path,
     invalid_path: Path,
     semantic,
     active: set[str],
+    min_invalid_errors: int = 1,
 ) -> list[str]:
     schema = load(schema_path)
     valid = load(valid_path)
@@ -566,8 +870,9 @@ def fixture_pair(
     errors: list[str] = []
     if valid_errors:
         errors.append("%s rejected: %s" % (valid_path.name, "; ".join(valid_errors)))
-    if not invalid_errors:
-        errors.append("%s was incorrectly accepted" % invalid_path.name)
+    if len(invalid_errors) < min_invalid_errors:
+        errors.append("%s produced %d error(s); expected at least %d"
+                      % (invalid_path.name, len(invalid_errors), min_invalid_errors))
     return errors
 
 
@@ -701,6 +1006,43 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("ask/q-ask-analyze/SKILL.md", "Analyze every relevant dimension"),
             ("ask/q-ask-analyze/SKILL.md", "compatible with conditions"),
             ("ask/q-ask-analyze/SKILL.md", "do not start it unless the user separately authorizes"),
+        ],
+        "S-29": [
+            ("research/q-research-workflow/SKILL.md", "For a direct root run"),
+            ("research/q-research-workflow/SKILL.md", "`discovery-proposal`, `reporting`, and `close`"),
+        ],
+        "S-30": [
+            ("research/q-research-workflow/SKILL.md", "Start none of them without an explicit user choice"),
+            ("research/q-research-workflow/SKILL.md", "Research is optional consulting or engagement work"),
+        ],
+        "S-31": [
+            ("research/q-research-workflow/SKILL.md", "composite delta with `global_state_updated: false`"),
+            ("proposal/q-proposal-workflow/SKILL.md", "`adopt-as-proposal-input`"),
+            ("proposal/q-proposal-workflow/SKILL.md", "`retain-as-independent`"),
+        ],
+        "S-32": [
+            ("research/q-research-investigate/SKILL.md", "untrusted evidence"),
+            ("research/q-research-investigate/SKILL.md", "Do not send client names"),
+            ("research/q-research-investigate/SKILL.md", "planned-search-complete"),
+        ],
+        "S-33": [
+            ("code/q-code-research/SKILL.md", "do not start `q-research-workflow`"),
+            ("code/q-code-research/SKILL.md", "stage delta with `global_state_updated: false`"),
+            ("core/q-core-contract/SKILL.md", "references/cited-findings.schema.yaml"),
+        ],
+        "S-34": [
+            ("review/q-review-comments/SKILL.md", "Validating intention without code"),
+            ("review/q-review-code/SKILL.md", "Silencing corroborating observations"),
+        ],
+        "S-35": [
+            ("review/q-review-codebase/SKILL.md", "Reviewing only known issues"),
+            ("review/q-review-codebase/SKILL.md", "Auditing against unadopted standards"),
+            ("report/q-report-workflow/SKILL.md", "Rewriting upstream truth through reporting"),
+        ],
+        "S-36": [
+            ("core/q-core-contract/SKILL.md", "This field describes cadence only"),
+            ("core/q-core-contract/SKILL.md", "`approval_policy` remains authoritative"),
+            ("core/q-core-contract/references/human-interaction.md", "The package validator rejects any drift"),
         ],
     }
     errors: list[str] = []
@@ -847,6 +1189,21 @@ def run() -> dict[str, Any]:
                         errors.append("workflow %s.%s references unknown skill %r" % (workflow_id, route_key, skill_id))
                     elif skill.get("workflow") != workflow_id:
                         errors.append("workflow %s.%s references cross-owned skill %r" % (workflow_id, route_key, skill_id))
+            delegates = workflow_entry.get("delegates", [])
+            if not isinstance(delegates, list):
+                errors.append("workflow %s.delegates must be a list" % workflow_id)
+            else:
+                duplicates = sorted({target for target in delegates if delegates.count(target) > 1})
+                if duplicates:
+                    errors.append("workflow %s.delegates contains duplicates: %s"
+                                  % (workflow_id, ", ".join(duplicates)))
+                for target in delegates:
+                    target_entry = workflows.get(target)
+                    if target == workflow_id:
+                        errors.append("workflow %s cannot delegate to itself" % workflow_id)
+                    elif not isinstance(target_entry, dict) or target_entry.get("status") != "active":
+                        errors.append("workflow %s.delegates references inactive or unknown workflow %r"
+                                      % (workflow_id, target))
             optional_next = workflow_entry.get("optional_next", [])
             if not isinstance(optional_next, list):
                 errors.append("workflow %s.optional_next must be a list" % workflow_id)
@@ -877,6 +1234,7 @@ def run() -> dict[str, Any]:
             errors.append("%s: frontmatter name is %r" % (skill_id, metadata.get("name")))
         errors.extend(identity_errors(skill_id, directory, entry, metadata))
         errors.extend(distribution_errors(skill_id, entry, metadata))
+        errors.extend(human_interaction_errors(skill_id, entry))
         errors.extend(reference_errors(skill_id, directory, entry, skills, folders))
         if entry.get("invocable") is False:
             errors.extend(internal_skill_errors(directory, skill_id, entry))
@@ -964,13 +1322,58 @@ def run() -> dict[str, Any]:
         report_source_semantics,
         active,
     ))
+    valid_brief = load(fixtures / "research-brief.valid.yaml")
+    known_questions = {
+        item.get("question_id")
+        for item in valid_brief.get("questions", [])
+        if isinstance(item, dict) and isinstance(item.get("question_id"), str)
+    }
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "research" / "q-research-scope" / "references" / "research-brief.schema.yaml",
+        fixtures / "research-brief.valid.yaml",
+        fixtures / "research-brief.invalid.yaml",
+        research_brief_semantics,
+        active,
+        min_invalid_errors=2,
+    ))
+    errors.extend(fixture_pair(
+        CORE_CONTRACT / "references" / "cited-findings.schema.yaml",
+        fixtures / "cited-findings.valid.yaml",
+        fixtures / "cited-findings.invalid.yaml",
+        lambda value: cited_findings_semantics(value, known_questions),
+        active,
+        min_invalid_errors=2,
+    ))
+    known_findings = {
+        item.get("finding_id")
+        for item in load(fixtures / "cited-findings.valid.yaml").get("findings", [])
+        if isinstance(item, dict) and isinstance(item.get("finding_id"), str)
+    }
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "research" / "q-research-synthesize" / "references" / "research-synthesis.schema.yaml",
+        fixtures / "research-synthesis.valid.yaml",
+        fixtures / "research-synthesis.invalid.yaml",
+        lambda value: research_synthesis_semantics(value, known_findings, known_questions),
+        active,
+        min_invalid_errors=2,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "research" / "q-research-workflow" / "references" / "research-baseline.schema.yaml",
+        fixtures / "research-baseline.valid.yaml",
+        fixtures / "research-baseline.invalid.yaml",
+        research_baseline_semantics,
+        active,
+        min_invalid_errors=2,
+    ))
 
     current_acceptance_errors, checked_scenarios = acceptance_errors()
     errors.extend(current_acceptance_errors)
     errors.extend(readme_planned_errors(set(planned)))
     errors.extend(package_doc_errors())
     errors.extend(routing_digest_errors(workflows))
+    errors.extend(human_interaction_digest_errors(skills))
     errors.extend(skills_sh_errors(skills))
+    errors.extend(anti_pattern_errors(skills))
     errors.extend(stray_file_errors())
 
     return {

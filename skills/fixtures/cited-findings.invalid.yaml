@@ -1,0 +1,60 @@
+schema_version: "1.0"
+register:
+  register_id: FR-INVALID
+  version: "0.1"
+  lifecycle: Working
+  research_type: engagement
+  scope_ref:
+    reference_type: research-brief
+    reference_id: RB-001
+    version: "1.0"
+sources:
+  - source_id: SRC-001
+    title: "Repeated press release"
+    publisher: "Vendor"
+    owner_or_independence: "Vendor"
+    published_at: "2026-07-01"
+    accessed_at: "2026-08-13"
+    url_or_locator: "https://vendor.example/release"
+    provenance_class: specialist-editorial
+    conflicts: ["Vendor promotion"]
+    currency_notes: "Current"
+    independence_group: VENDOR-RELEASE-001
+    source_verification: verified
+  - source_id: SRC-001
+    title: "Article repeating the same release"
+    publisher: "Trade outlet"
+    owner_or_independence: "Repeats vendor release"
+    published_at: "2026-07-02"
+    accessed_at: "2026-08-13"
+    url_or_locator: "https://outlet.example/article"
+    provenance_class: specialist-editorial
+    conflicts: []
+    currency_notes: "Current"
+    independence_group: VENDOR-RELEASE-001
+    source_verification: verified
+search_log:
+  - search_id: SEARCH-001
+    question_ref: RQ-001
+    strategy: "Vendor coverage only"
+    coverage_status: partial
+    notes: "Independent strategy was not run."
+findings:
+  - finding_id: F-001
+    question_ref: RQ-001
+    claim: "The claim is supported by multiple independent sources."
+    finding_status: supported
+    corroboration: multiple-independent
+    confidence: high
+    evidence_refs:
+      - source_ref: SRC-001
+        relation: contextualizes
+        claim_fit: contextual
+        locator: ""
+      - source_ref: SRC-404
+        relation: supports
+        claim_fit: indirect
+        locator: ""
+    conflicts: []
+    coverage_status: partial
+    notes: "Invalid fixture."

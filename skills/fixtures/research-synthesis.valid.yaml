@@ -1,0 +1,38 @@
+schema_version: "1.0"
+synthesis:
+  synthesis_id: RS-001
+  version: "1.0"
+  lifecycle: Working
+brief_ref:
+  artifact_id: RB-001
+  version: "1.0"
+findings_ref:
+  artifact_id: FR-001
+  version: "1.0"
+answers:
+  - question_ref: RQ-001
+    answer: "A documented constraint exists, but it does not affect every subgroup equally."
+    confidence: medium
+    supporting_finding_refs: [F-001]
+    contradicting_finding_refs: [F-002]
+    coverage_status: planned-search-complete
+    decision_implication: "Segment the proposed response instead of assuming one uniform constraint."
+themes:
+  - theme_id: TH-001
+    synthesis: "The constraint is real but heterogeneous."
+    strength: moderate
+    supporting_finding_refs: [F-001]
+    contradicting_finding_refs: [F-002]
+debates:
+  - debate_id: DB-001
+    position_a: "Use a segment-wide response."
+    position_b: "Tailor the response by subgroup."
+    finding_refs: [F-001, F-002]
+    balance: "The evidence supports the constraint but also material variation."
+gaps: []
+counter_evidence_check:
+  adverse_finding_refs: [F-002]
+  strongest_counterargument: "The observed constraint may be concentrated in a subgroup."
+  strongest_source_dependency: "The subgroup conclusion depends on SRC-002."
+  circularity_notes: "No shared publication lineage was observed between the two sources."
+  limitations: ["The approved search was bounded to 2026 Q3 evidence."]

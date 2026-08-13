@@ -1,6 +1,6 @@
 # Quasar AI delivery skills
 
-This package coordinates project questions and proposal analysis, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, and optional reporting. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
+This package coordinates project questions and proposal analysis, optional engagement research, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, and optional reporting. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
 
 ## Install
 
@@ -14,7 +14,7 @@ npx skills add flaviogragnolati/ai-workflow --skill q-code-debug --skill q-revie
 
 The installer copies one skill folder at a time into your project's agent directory, where every skill becomes a sibling of every other. Each skill is self-contained: it either bundles what it needs or declares the companion it depends on. Install the dependencies listed under [Skill dependencies](#skill-dependencies) alongside the skill that requires them; a skill whose companion is missing stops and prints the exact install command instead of proceeding on assumed rules.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow` and `q-maint-writing-for-agents` are `distribution: internal` and are not offered to consumers; the remaining 39 are.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow` and `q-maint-writing-for-agents` are `distribution: internal` and are not offered to consumers; the remaining 43 are.
 
 `skills.sh.json` groups the catalog on the skills.sh repository page. It is a derived presentation of the manifest `group` field — sections may merge groups, but the validator requires every public skill to appear in exactly one. `skill-manifest.yaml` stays the authority for what exists, what `group` it belongs to, what it `requires`, and what `distribution` it has.
 
@@ -24,6 +24,7 @@ Invoke one orchestrator and name the objective or target stage:
 
 ```text
 Use $q-proposal-workflow to prepare a commercial proposal from these meeting notes.
+Use $q-research-workflow to investigate this market uncertainty before deciding whether to open a proposal.
 Use $q-delivery-workflow to execute q-plan-backlog.
 Use $q-report-workflow to create a progress report and deck from approved project artifacts.
 Use $q-maint-ai-workflow to update a workflow or related skill safely.
@@ -44,6 +45,7 @@ Invoke a stage directly only when standalone output is intentional. A standalone
 
 - Registry and routing: `skill-manifest.yaml`.
 - Shared governance: `skills/core/q-core-contract/SKILL.md` (the `q-core-contract` companion).
+- Human-interaction cadence: [generated mapping](skills/core/q-core-contract/references/human-interaction.md); the manifest owns each mode mapping and `approval_policy` still owns mandatory approvals.
 - Stage procedure: the selected `SKILL.md`.
 - Internal agent-writing discipline: `skills/maint/q-maint-writing-for-agents/SKILL.md`.
 - Runtime truth: project `00-workflow-state.yaml` and `00-artifact-index.yaml`.
@@ -56,6 +58,8 @@ Technical development is stack-agnostic and profile-driven. Skills marked `stack
 ```mermaid
 flowchart TB
     D["Discovery and proposal"] --> G{"Accepted engagement"}
+    D -. "authorized external uncertainty" .-> H["Engagement research"]
+    H -. "explicit baseline adoption" .-> D
     G -->|"Software or mixed with software"| A["AI coding: stages 1-6"]
     G -->|"Consulting or other service"| S["Future or manual execution"]
     G -->|"Review or negotiation"| D
@@ -68,6 +72,7 @@ flowchart TB
     Q --> E["Delivery"]
 
     D -. "optional" .-> R["Reporting"]
+    H -. "optional next" .-> R
     S -. "optional" .-> R
     X -. "checkpoint" .-> R
     E -. "optional" .-> R
@@ -96,6 +101,10 @@ flowchart LR
 |---|---|---|
 | Answer a project question | `q-ask-project` | Resolving a bounded factual or explanatory question from project documentation, workflow state, decisions, and observable implementation. |
 | Analyze a proposal | `q-ask-analyze` | Evaluating an idea or change across project fit, benefits, downsides, risks, problems, compatibility, alternatives, and evidence before choosing deeper work. |
+| Route engagement research | `q-research-workflow` | Reducing a bounded market, competitor, regulatory, technology, feasibility, or risk uncertainty into an approved snapshot without automatically opening Proposal. |
+| Research 1 — scope | `q-research-scope` | Defining stable decision-linked questions, boundaries, privacy limits, search strategies, and a time or cost budget before investigation. |
+| Research 2 — investigate | `q-research-investigate` | Building a cited Findings Register with source identity, claim fit, independence, contradictions, and honest search coverage. |
+| Research 3 — synthesize | `q-research-synthesize` | Answering approved questions through stable finding refs, themes, debates, gaps, and a counter-evidence check. |
 | Route discovery and proposal | `q-proposal-workflow` | Starting, resuming, or reconciling the commercial flow; name a target stage when only one stage is needed. |
 | Proposal 1 — discover | `q-proposal-discovery` | Turning client evidence into a traceable brief, open questions, risks, and proposal-readiness assessment. |
 | Proposal 2 — design | `q-proposal-design` | Defining canonical scope, solution, deliverables, schedule, investment, terms, and commitments. |
@@ -119,7 +128,7 @@ flowchart LR
 | Define report meaning | `q-report-source` | Synthesizing the approved source bundle into one traceable reporting narrative before rendering. |
 | Render report channels | `q-report-document` for Markdown/DOCX/PDF; `q-report-deck` for PPTX/deck PDF | Rendering the same baselined report-source version into the requested written or presentation channels. |
 
-Use supporting skills only when their trigger appears: `q-code-research` for durable findings from primary external sources, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question.
+Use supporting skills only when their trigger appears: `q-code-research` for a bounded technical Findings Register from versioned primary evidence, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question.
 
 Two companions are not user entry points: coordinated workflows and the project-question skills load `q-core-contract` for shared governance, and package maintenance loads the internal `q-maint-writing-for-agents` when agent-consumed artifacts change. Use `q-maint-ai-workflow` outside project runtime whenever this package, its skills, routing, contracts, metadata, fixtures, validators, or explanatory documentation must be changed or audited.
 
@@ -137,6 +146,19 @@ The analysis skill may recommend deeper research, the applicable planning owner,
 4. `q-proposal-document` owns DOCX/PDF mapping, generation, reconciliation, and visual QA.
 
 Accepted software work may continue to AI coding. Consulting, assessment, training, managed service, and other non-development engagements may close commercially, continue through a future/manual execution path, or optionally produce reporting.
+
+### Engagement research
+
+`q-research-workflow` coordinates optional consulting or engagement research that reduces a named external uncertainty. It may run as a root workflow or be delegated by Proposal when Discovery cannot responsibly resolve a material market, competitor, regulatory, technology, feasibility, or risk question from client evidence.
+
+1. `q-research-scope` creates an authorized Research Brief with stable questions, decision links, boundaries, search strategies, privacy limits, budget, and stopping conditions.
+2. `q-research-investigate` creates the Findings Register. Source verification, claim status, and search coverage remain separate; source provenance and claim fit are independent axes.
+3. `q-research-synthesize` answers by finding ID, preserves debates and gaps, and runs a counter-evidence check without copying source or claim records.
+4. `q-research-workflow` baselines the exact approved brief, findings, and synthesis versions at an `as_of` date.
+
+The Research Baseline is canonical only for the approved snapshot. Its claims and synthesis remain supporting evidence. A directly invoked root run may close without Proposal; starting Proposal or Reporting requires an explicit choice. A Proposal-delegated run is adopted as `external-research`, retained independently, or deferred through an explicit disposition, and Research never edits the Discovery Brief.
+
+`q-code-research` remains a separate technical capability for official documentation, specifications, source code, APIs, compatibility, and versioned behavior during planning or delivery. It shares the cited-findings contract but not the engagement workflow or synthesis procedure.
 
 ### AI coding and delivery
 
@@ -187,13 +209,14 @@ Maintenance is outside project runtime. It does not write project workflow state
 
 | Skill | Requires | Why |
 |---|---|---|
-| The 17 coordinated workflow skills — every `q-proposal-*`, `q-plan-*`, `q-report-*`, plus `q-delivery-workflow` and `q-review-docs` | `q-core-contract` | Shared governance, the routing digest, and the `report-source` and `stage-result` schemas |
+| The 21 coordinated workflow skills — every `q-proposal-*`, `q-plan-*`, `q-research-*`, `q-report-*`, plus `q-delivery-workflow` and `q-review-docs` | `q-core-contract` | Shared governance, the routing digest, and the cited-findings, report-source, and stage-result schemas |
 | `q-ask-project` | `q-core-contract` | Reconciles project state, artifact authority, lifecycle, and observable implementation before answering |
 | `q-ask-analyze` | `q-core-contract`, `q-ask-project` | Reuses the same alignment and evidence path before applying proposal-analysis lenses |
+| `q-code-research` | `q-core-contract` | Uses the shared cited-findings evidence contract while retaining technical-domain procedure |
 | `q-report-document` | `q-core-contract`, `q-report-deck` | Also reads the Quasar presentation identity bundled in the deck skill |
 | `q-code-explore` | `q-code-grill-design` | Reads its deep-module glossary when modules, interfaces, or seams matter |
 
-Every other public skill is standalone. Two reference forms survive installation: a one-level `../<sibling-skill>/…` path, and a companion named in prose. Anything deeper than one level leaves the installed catalog and fails validation.
+Every other public skill has no required companion. Two reference forms survive installation: a one-level `../<sibling-skill>/…` path, and a companion named in prose. Anything deeper than one level leaves the installed catalog and fails validation.
 
 ## Artifact lifecycle
 
@@ -208,6 +231,9 @@ Every other public skill is standalone. Two reference forms survive installation
 | Rendered SVG/PNG/PDF | Yes when delivered | None; derived from its source |
 | Baselined report source | Yes | Canonical only for reporting selection, narrative, and approved interpretation |
 | Report Markdown/DOCX/PDF or deck PPTX/PDF | Yes when delivered | None; derived from the baselined report source |
+| Research Brief | Yes | Canonical only for the approved research scope, boundaries, and budget |
+| Findings Register and Research Synthesis | Yes | Supporting for cited findings, observed coverage, and cross-finding interpretation |
+| Research Baseline | Yes | Canonical only for exact approved research artifact versions and `as_of` |
 | Release candidate, integral validation, delivery manifest | Yes | Canonical for release/delivery scope |
 
 Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient` as defined in the shared contract.
@@ -218,6 +244,8 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 |---|---|
 | Answer a bounded question from project truth | `q-ask-project` |
 | Evaluate whether a proposal fits the project | `q-ask-analyze` |
+| Reduce an external engagement uncertainty | `q-research-workflow` |
+| Research a bounded technical claim | `q-code-research` |
 | Start or resume a proposal | `q-proposal-workflow` |
 | Start or resume product planning or delivery | `q-delivery-workflow` |
 | Orient around a codebase, feature, module, or document | `q-code-explore` |
@@ -234,7 +262,7 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Produce a standalone Quasar presentation | `q-report-deck` |
 | Change or audit the workflow package | `q-maint-ai-workflow` |
 
-Groups sort the catalog and name the skills: `ask`, `proposal`, `delivery`, `plan`, `code`, `review`, `report`, `core`, and `maint`. The manifest `group` field is authoritative — the skill name, its folder, its category folder, and the skills.sh sections all derive from it.
+Groups sort the catalog and name the skills: `ask`, `proposal`, `research`, `delivery`, `plan`, `code`, `review`, `report`, `core`, and `maint`. The manifest `group` field is authoritative — the skill name, its folder, its category folder, and the skills.sh sections all derive from it.
 
 ## Anti-patterns
 
@@ -249,6 +277,8 @@ Groups sort the catalog and name the skills: `ask`, `proposal`, `delivery`, `pla
 - Do not issue stack-specific QA approval from generic criteria or stale technology guidance.
 - Do not let a documentation audit rewrite its targets or create a parallel changelog.
 - Do not let a report renderer own report meaning or treat a rendered channel as upstream truth.
+- Do not let Research overwrite client evidence, create a proposal commitment, or start another workflow without an explicit choice.
+- Do not treat verified source identity, claim support, and completed search coverage as the same state.
 - Do not let a delegated reporting subworkflow write global state or the artifact index.
 - Do not create empty folders for planned capabilities.
 - Do not commit or publish through a read-only or unapproved execution mode.

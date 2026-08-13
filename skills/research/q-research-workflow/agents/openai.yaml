@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engagement Research Workflow"
+  short_description: "Coordinate scoped research into an approved baseline"
+  default_prompt: "Use $q-research-workflow to investigate this engagement uncertainty through scope, evidence, synthesis, and an approved baseline."

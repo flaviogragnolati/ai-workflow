@@ -1,0 +1,74 @@
+schema_version: "1.0"
+register:
+  register_id: FR-001
+  version: "1.0"
+  lifecycle: Working
+  research_type: engagement
+  scope_ref:
+    reference_type: research-brief
+    reference_id: RB-001
+    version: "1.0"
+sources:
+  - source_id: SRC-001
+    title: "Official adoption dataset"
+    publisher: "Public authority"
+    owner_or_independence: "Dataset owner"
+    published_at: "2026-07-01"
+    accessed_at: "2026-08-13"
+    url_or_locator: "https://example.gov/data"
+    provenance_class: authoritative-primary
+    conflicts: []
+    currency_notes: "Current for 2026 Q3"
+    independence_group: DATASET-OFFICIAL-001
+    source_verification: verified
+  - source_id: SRC-002
+    title: "Independent segment survey"
+    publisher: "Independent institute"
+    owner_or_independence: "Independent of SRC-001"
+    published_at: "2026-06-15"
+    accessed_at: "2026-08-13"
+    url_or_locator: "https://example.org/survey"
+    provenance_class: formal-independent
+    conflicts: []
+    currency_notes: "Fielded in 2026 Q2"
+    independence_group: SURVEY-INDEPENDENT-001
+    source_verification: verified
+search_log:
+  - search_id: SEARCH-001
+    question_ref: RQ-001
+    strategy: "Official datasets and independent reports"
+    coverage_status: planned-search-complete
+    notes: "Both approved strategies completed."
+findings:
+  - finding_id: F-001
+    question_ref: RQ-001
+    claim: "The segment reports a documented adoption constraint."
+    finding_status: supported
+    corroboration: multiple-independent
+    confidence: medium
+    evidence_refs:
+      - source_ref: SRC-001
+        relation: supports
+        claim_fit: direct
+        locator: "table 4, row 12"
+      - source_ref: SRC-002
+        relation: supports
+        claim_fit: direct
+        locator: "section 3.2"
+    conflicts: []
+    coverage_status: planned-search-complete
+    notes: "Independent evidence converges within the approved period."
+  - finding_id: F-002
+    question_ref: RQ-001
+    claim: "The constraint affects every organization in the segment."
+    finding_status: contradicted
+    corroboration: single-source
+    confidence: medium
+    evidence_refs:
+      - source_ref: SRC-002
+        relation: contradicts
+        claim_fit: direct
+        locator: "appendix B, subgroup results"
+    conflicts: []
+    coverage_status: planned-search-complete
+    notes: "The survey shows meaningful subgroup variation."
