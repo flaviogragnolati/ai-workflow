@@ -1,6 +1,6 @@
 ---
 name: q-ideation-session
-description: "Facilitate a structured ideation session that turns one decision into a traceable candidate space: independent generation, explicit provenance, assumptions, clustering, predeclared criteria, transparent evaluation, adversarial review, non-compensatory gates, evidence requests, and an approved snapshot with per-candidate dispositions. Use for brainstorming, option generation, problem framing, opportunity and solution exploration, workshop facilitation, strategic or intervention alternatives, research-direction ideation, and reopening options after new evidence. Supports scientific, product, consulting, and general profiles. It never investigates evidence itself, decides for the owner, or creates scope, requirements, architecture, or commitments; for one already-chosen option use the owning analysis, planning, or research skill instead. Part of the Quasar AI delivery skills; requires the q-core-contract companion."
+description: "Facilitate a structured ideation session that turns one decision into a traceable candidate space: independent generation, explicit provenance, assumptions, clustering, predeclared criteria, transparent evaluation, adversarial review, non-compensatory gates, evidence requests, and an approved snapshot with per-candidate dispositions. Use for brainstorming, option generation, problem framing, opportunity and solution exploration, improvement-opportunity discovery over an existing product or service, workshop facilitation, strategic or intervention alternatives, research-direction ideation, and reopening options after new evidence. Supports scientific, product, consulting, and general profiles. It never investigates evidence itself, decides for the owner, or creates scope, requirements, architecture, or commitments; for one already-chosen option use the owning analysis, planning, or research skill instead. Part of the Quasar AI delivery skills; requires the q-core-contract companion."
 ---
 
 # Structured ideation session
@@ -32,6 +32,7 @@ Complete this step when the decision, owner, three dimensions, versioned inputs,
 | [Method core](references/method-core.md) | Every session: perspectives, independent generation, structured sharing, structuring, and stop conditions. |
 | [Scientific profile](references/profile-scientific.md) | `profile: scientific`. |
 | [Product profile](references/profile-product.md) | `profile: product`. |
+| [Opportunity discovery](references/opportunity-discovery.md) | `profile: product` and the session is an improvement-opportunity sweep over an existing product, service, or area. |
 | [Consulting profile](references/profile-consulting.md) | `profile: consulting`. |
 | [Evaluation and gates](references/evaluation-and-gates.md) | The session scores, compares, or gates candidates. |
 | [Handoffs](references/handoffs.md) | The session disposes candidates, routes evidence requests, or hands a snapshot to another owner. |

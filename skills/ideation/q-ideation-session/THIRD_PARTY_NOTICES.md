@@ -54,3 +54,58 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+## game-changing-features (Softaworks)
+
+The opportunity-discovery route adapts the divergence scaffolding and the product-opportunity criteria of the
+`game-changing-features` skill in Softaworks' `agent-toolkit`.
+
+- **Source repository:** <https://github.com/softaworks/agent-toolkit>
+- **Source skill:** [`skills/game-changing-features`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/game-changing-features)
+- **Commit consulted:** `3027f20f3181758385a1bb8c022d4041dfb4de84` (2026-03-05)
+- **Copyright:** © 2026 Leonardo Flores
+- **License:** MIT, reproduced below
+
+### Files derived from that source
+
+| File here | Relationship to the source |
+|---|---|
+| `references/opportunity-discovery.md` | Adapted: the three effort and impact scales, the ten coverage categories, and the unsticking prompts, rewritten into this session's declaration, evidence, clustering, evaluation, and disposition rules. |
+| `references/profile-product.md` | Three criteria entries (`reach`, `frequency`, `defensibility-compounding`) informed by the source's evaluation criteria; the rest of the file is original Quasar work. |
+
+### Deliberately not incorporated
+
+Quasar does not import the source's emoji rating scale, its stack rank as the decision, its in-session codebase and user research step, its `.claude/docs` output location, its frontmatter and README, or its "10x" branding.
+
+### Quasar modifications
+
+- Replaced the score-and-rank decision with the session's predeclared criteria, anchored intervals, non-compensatory gates, and the decision owner's explicit disposition.
+- Replaced in-session investigation with versioned current-state inputs and routed `evidence_requests`; every generated opportunity stays an `opportunity-hypothesis` with an explicit evidence status.
+- Expressed the three scales as declared cluster labels on existing candidate records instead of a new field, and mapped roadmap language onto the existing disposition vocabulary.
+- Kept the route inside the `product` profile and the `generate-options` intent; no schema, script, or manifest capability was added.
+
+### MIT License
+
+```text
+MIT License
+
+Copyright (c) 2026 Leonardo Flores
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

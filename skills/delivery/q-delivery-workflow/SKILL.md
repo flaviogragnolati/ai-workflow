@@ -47,7 +47,7 @@ When `user-requests-standalone-database-schema-migration-or-performance-analysis
 
 ## Optional structured ideation
 
-When `user-requests-structured-ideation-before-product-core-or-for-a-bounded-technical-option-set` and `q-ideation-session` is installed, route that session to it with the decision, its owner, and the versioned inputs, then record one adoption disposition from the contract's structured-ideation section before any stage consumes the result. `q-plan-product-core` may receive a selected option, an outcome hypothesis, and assumptions; technology and architecture options return to `q-plan-tech-foundation` or `q-plan-architecture`. A candidate never becomes a requirement, a business rule, an ADR, or a stack selection. If it is absent, `continue-with-the-owning-planning-stage-and-record-the-unexplored-option-space-as-a-gap`.
+When `user-requests-structured-ideation-before-product-core-opportunity-discovery-on-the-existing-product-or-a-bounded-technical-option-set` and `q-ideation-session` is installed, route that session to it with the decision, its owner, and the versioned inputs, then record one adoption disposition from the contract's structured-ideation section before any stage consumes the result. `q-plan-product-core` may receive a selected option, an outcome hypothesis, and assumptions; technology and architecture options return to `q-plan-tech-foundation` or `q-plan-architecture`. A candidate never becomes a requirement, a business rule, an ADR, or a stack selection. If it is absent, `continue-with-the-owning-planning-stage-and-record-the-unexplored-option-space-as-a-gap`.
 
 ## Development loop
 

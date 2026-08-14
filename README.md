@@ -38,6 +38,7 @@ Use $q-ask-project to answer how this project currently handles tenant isolation
 Use $q-ask-analyze to evaluate whether moving background jobs to a managed queue fits this project.
 Use $q-review-skill to audit an Agent Skill without changing it.
 Use $q-ideation-session to explore options for this decision before Discovery, Product Core, or Proposal Design.
+Use $q-ideation-session to discover improvement opportunities in an existing product before deciding what to build next.
 ```
 
 Invoke a shared tool directly for bounded prose editing, database analysis, or an editable architecture or structural diagram:
@@ -117,7 +118,7 @@ flowchart LR
 |---|---|---|
 | Answer a project question | `q-ask-project` | Resolving a bounded factual or explanatory question from project documentation, workflow state, decisions, and observable implementation. |
 | Analyze a proposal | `q-ask-analyze` | Evaluating an idea or change across project fit, benefits, downsides, risks, problems, compatibility, alternatives, and evidence before choosing deeper work. |
-| Explore options for a decision | `q-ideation-session` | Generating, comparing, gating, and disposing candidate problem frames, opportunities, solutions, interventions, or research directions before an owning stage commits to one. |
+| Explore options for a decision | `q-ideation-session` | Generating, comparing, gating, and disposing candidate problem frames, opportunities, solutions, interventions, or research directions before an owning stage commits to one, including an improvement-opportunity sweep over an existing product or service. |
 | Route engagement research | `q-research-workflow` | Reducing a bounded market, competitor, regulatory, technology, feasibility, or risk uncertainty into an approved snapshot without automatically opening Proposal. |
 | Research 1 — scope | `q-research-scope` | Defining stable decision-linked questions, boundaries, privacy limits, search strategies, and a time or cost budget before investigation. |
 | Research 2 — investigate | `q-research-investigate` | Building a cited Findings Register with source identity, claim fit, independence, contradictions, and honest search coverage. |
@@ -173,13 +174,13 @@ Accepted software work may continue to AI coding. Consulting, assessment, traini
 
 ### Structured ideation
 
-`q-ideation-session` is an optional cross-cutting capability, never a mandatory first stage. It turns one decision into a traceable candidate space through independent generation, explicit provenance, clustered alternatives, predeclared weighted criteria, non-compensatory gates, adversarial review, and routed evidence requests. It runs `scientific`, `product`, `consulting`, and `general` profiles with `frame-problem`, `generate-options`, `stress-test-options`, or `reopen-after-evidence` intent.
+`q-ideation-session` is an optional cross-cutting capability, never a mandatory first stage. It turns one decision into a traceable candidate space through independent generation, explicit provenance, clustered alternatives, predeclared weighted criteria, non-compensatory gates, adversarial review, and routed evidence requests. It runs `scientific`, `product`, `consulting`, and `general` profiles with `frame-problem`, `generate-options`, `stress-test-options`, or `reopen-after-evidence` intent. Inside the product profile, an opportunity-discovery route sweeps an existing product or service across three declared effort and impact scales and ten coverage categories, keeping every generated opportunity an assumed hypothesis with its unknowns routed as evidence requests.
 
 It produces an Ideation Register (supporting), an approved Ideation Baseline (canonical only for the frozen register version, dispositions, applied criteria and gates, dissent, and the authorized handoff), and an optional derived evaluation. All three are created and stay `Working` under the skill's ownership: the adopting workflow's root orchestrator registers the exact version and performs the lifecycle transition.
 
 Keep the three exploratory capabilities distinct: `q-ask-analyze` evaluates one already-proposed change against project truth, `q-research-workflow` reduces an external uncertainty with cited evidence, and `q-ideation-session` runs when the option set itself is the open question.
 
-The session generates options and questions but never evidence: unresolved uncertainties leave as typed evidence requests routed to `q-research-scope`, `q-code-research`, `q-code-prototype`, or a named human owner. Adoption is always an explicit orchestrator disposition, and a candidate never becomes a client fact, an authorized research question, a requirement, an ADR, scope, price, schedule, or a commitment. Its bundled offline CLIs scaffold, validate, score, and freeze the record without any network or model call. The method and its offline CLIs adapt K-Dense Inc.'s MIT-licensed `scientific-brainstorming` skill; see the skill's `THIRD_PARTY_NOTICES.md`.
+The session generates options and questions but never evidence: unresolved uncertainties leave as typed evidence requests routed to `q-research-scope`, `q-code-research`, `q-code-prototype`, or a named human owner. Adoption is always an explicit orchestrator disposition, and a candidate never becomes a client fact, an authorized research question, a requirement, an ADR, scope, price, schedule, or a commitment. Its bundled offline CLIs scaffold, validate, score, and freeze the record without any network or model call. The method and its offline CLIs adapt K-Dense Inc.'s MIT-licensed `scientific-brainstorming` skill, and the opportunity-discovery route adapts Softaworks' MIT-licensed `game-changing-features` skill; see the skill's `THIRD_PARTY_NOTICES.md`.
 
 ### Engagement research
 

@@ -271,7 +271,7 @@ skills:
         when: user-requests-standalone-database-schema-migration-or-performance-analysis
         fallback: route-to-the-current-domain-architecture-refinement-debug-or-review-owner-with-database-capability-gap
       - skill: q-ideation-session
-        when: user-requests-structured-ideation-before-product-core-or-for-a-bounded-technical-option-set
+        when: user-requests-structured-ideation-before-product-core-opportunity-discovery-on-the-existing-product-or-a-bounded-technical-option-set
         fallback: continue-with-the-owning-planning-stage-and-record-the-unexplored-option-space-as-a-gap
     status: active
     kind: orchestrator
@@ -1069,7 +1069,7 @@ skills:
     requires: [q-core-contract]
     uses:
       - skill: q-ideation-session
-        when: user-requests-structured-ideation-before-discovery-or-proposal-design
+        when: user-requests-structured-ideation-or-opportunity-discovery-before-discovery-or-proposal-design
         fallback: continue-the-proposal-stage-without-a-recorded-session-and-name-the-unexplored-option-space
     status: active
     kind: orchestrator

@@ -62,6 +62,8 @@ Select three to seven; do not enable all of them:
 - opportunity evidence;
 - user value;
 - business value;
+- reach;
+- frequency;
 - time-to-learning;
 - reversibility;
 - viability;
@@ -69,17 +71,18 @@ Select three to seven; do not enable all of them:
 - adoption;
 - operational load;
 - differentiation;
+- defensibility-compounding;
 - risk;
 - strategic compatibility.
 
-Do not import scientific originality as "product innovation". Prefer differentiation, evidence of opportunity, and expected value, each with anchors.
+Do not import scientific originality as "product innovation". Prefer differentiation, evidence of opportunity, and expected value, each with anchors. Keep the overlapping ones distinct: `reach` counts who is affected, `frequency` how often they meet the value, and `defensibility-compounding` whether an advantage accumulates through data, network, or habit instead of restating `differentiation`.
 
 ## Session shapes
 
 | Intent | Run |
 |---|---|
 | `frame-problem` | Outcome statement, candidate problem frames, affected segments, and the evidence each frame would need. Produce no solutions. |
-| `generate-options` | One selected opportunity, then divergent solution concepts, assumptions per concept, and candidate experiments. |
+| `generate-options` | One selected opportunity, then divergent solution concepts, assumptions per concept, and candidate experiments. For an improvement sweep over an existing product, service, or area, load [opportunity discovery](opportunity-discovery.md) and run its sweep instead of starting from one selected opportunity. |
 | `stress-test-options` | Premortem, adoption and operations failure modes, and the smallest test that would falsify the favored concept. |
 | `reopen-after-evidence` | Adopt the exact returned artifact version, mark affected candidates and assumptions, and generate a `post-check` round without overwriting the original pool. |
 

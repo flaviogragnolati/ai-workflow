@@ -49,7 +49,7 @@ Only software or mixed engagements with applicable software scope may continue t
 
 ## Optional structured ideation
 
-When `user-requests-structured-ideation-before-discovery-or-proposal-design` and `q-ideation-session` is installed, route that bounded session to it with the decision, its accountable owner, the versioned inputs, and the information classification. If it is absent, `continue-the-proposal-stage-without-a-recorded-session-and-name-the-unexplored-option-space`.
+When `user-requests-structured-ideation-or-opportunity-discovery-before-discovery-or-proposal-design` and `q-ideation-session` is installed, route that bounded session to it with the decision, its accountable owner, the versioned inputs, and the information classification. If it is absent, `continue-the-proposal-stage-without-a-recorded-session-and-name-the-unexplored-option-space`.
 
 After it returns, record one disposition defined in the contract's structured-ideation section: `adopt-as-supporting-input`, `retain-as-independent`, `defer-decision`, or `reject`. Adoption is the act in which you register the exact snapshot version and mark that version `Baselined`; nothing is adopted by the session ending. Route problem frames, questions, assumptions, and interpretation risks to `q-proposal-discovery`, and solution, engagement, or workstream options to `q-proposal-design`. A candidate never becomes a client fact, scope, price, schedule, or commitment.
 
