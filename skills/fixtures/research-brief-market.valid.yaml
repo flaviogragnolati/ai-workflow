@@ -1,0 +1,66 @@
+schema_version: "1.0"
+research_profile: market
+intended_consumers: [decision-support, proposal, reporting]
+engagement_ref: ENG-001
+analysis_modules: [market-sizing, tam-sam-som, top-down-bottom-up-reconciliation, scenario-analysis]
+measurement_contract:
+  contract_id: measurement-contract
+  product_or_service: "Subscription software for the defined SMB segment"
+  inclusions: ["Annual subscription revenue at the vendor level"]
+  exclusions: ["Implementation services", "Distributor resale value"]
+  buyer: ["SMB operations leader"]
+  user: ["Operations team"]
+  payer: ["SMB legal entity"]
+  transaction: "Annual subscription"
+  value_chain_level: "Vendor revenue"
+  geography: [Argentina]
+  import_export_treatment: "Include imported software sold to Argentine buyers"
+  channels: [Direct, Partner]
+  historical_period: {from: "2024", to: "2025"}
+  forecast_period: {from: "2026", to: "2030"}
+  as_of: "2026-08-13"
+  measure:
+    measure_type: revenue
+    unit: ARS
+    denominator_id: annual-vendor-revenue
+    stock_or_flow: flow
+    gross_or_net: net
+    tax_treatment: "Exclude VAT"
+  currency: {code: ARS, base_year: 2026, price_basis: nominal}
+  taxonomy: {name: "Quasar target-market taxonomy", version: "1.0"}
+brief:
+  brief_id: RB-MARKET-001
+  version: "1.0"
+  lifecycle: Working
+  status: authorized
+  approval_ref: APR-RB-MARKET-001
+decision_refs: [DEC-MARKET-001]
+questions:
+  - question_id: RQ-001
+    question: "What is the evidence-bounded addressable market for the defined segment?"
+    question_type: market
+    decision_refs: [DEC-MARKET-001]
+    parent_question_ref: null
+    boundaries: [Argentina, "SMB segment", "2026 base year"]
+    radar:
+      researchable: 4
+      anchored: 5
+      decision_linked: 5
+      adds_evidence: 4
+      relevant: 5
+      average: 4.6
+      passes: true
+scope:
+  in_scope: ["Published evidence for the defined market and calculation inputs"]
+  out_of_scope: ["Primary fieldwork", "Proposal pricing"]
+  privacy_constraints: ["Use only registered evidence; do not collect personal data"]
+budget:
+  time_limit: "12 hours"
+  cost_limit: "No paid sources without separate approval"
+  max_sources_inspected: 20
+  stopping_conditions: ["Run approved strategies or stop at the source limit"]
+search_plan:
+  - question_ref: RQ-001
+    strategies: ["Official datasets", "Independent market evidence"]
+    source_classes: [authoritative-primary, formal-independent]
+assumptions: ["Published evidence can support conditional sizing scenarios"]

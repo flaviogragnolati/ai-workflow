@@ -1,0 +1,80 @@
+schema_version: "1.0"
+analysis:
+  analysis_id: MA-001
+  version: "1.0"
+  lifecycle: Working
+  profile: market
+  brief_ref: {artifact_id: RB-MARKET-001, version: "1.0"}
+  findings_ref: {artifact_id: FR-001, version: "1.0"}
+  as_of: "2026-08-13"
+measurement_contract_ref: measurement-contract
+modules: [market-sizing, tam-sam-som, top-down-bottom-up-reconciliation, scenario-analysis]
+assumptions:
+  - assumption_id: ASM-001
+    description: "Serviceable share of the measured market"
+    value_or_range: {value: 0.55, minimum: 0.45, maximum: 0.65}
+    unit: fraction
+    finding_refs: [F-001]
+    rationale: "Bounded by the documented adoption constraint."
+    sensitivity_range: {minimum: 0.45, maximum: 0.65}
+  - assumption_id: ASM-002
+    description: "Obtainable share in the base scenario"
+    value_or_range: {value: 0.08, minimum: 0.04, maximum: 0.12}
+    unit: fraction
+    finding_refs: [F-001, F-002]
+    rationale: "Conditional planning assumption, not a forecast guarantee."
+    sensitivity_range: {minimum: 0.04, maximum: 0.12}
+calculations:
+  - calculation_id: CALC-001
+    method: top-down
+    formula: "sum(disjoint in-scope component values)"
+    input_refs: [{ref_type: finding, ref_id: F-001}]
+    assumption_refs: [ASM-001]
+    script:
+      path: scripts/calculate_market_sizing.py
+      version: "1.0"
+      command: "python3 scripts/calculate_market_sizing.py input.json"
+      hash: sha256:fixture-sizing
+    rounding_policy: "Round published currency results to whole units."
+  - calculation_id: CALC-002
+    method: bottom-up
+    formula: "customers * addressable_fraction * annual_quantity * price"
+    input_refs: [{ref_type: finding, ref_id: F-001}]
+    assumption_refs: [ASM-001, ASM-002]
+    script:
+      path: scripts/calculate_market_sizing.py
+      version: "1.0"
+      command: "python3 scripts/calculate_market_sizing.py input.json"
+      hash: sha256:fixture-sizing
+    rounding_policy: "Round published currency results to whole units."
+scenarios:
+  - scenario_id: SCN-BASE
+    label: base
+    assumption_refs: [ASM-001, ASM-002]
+    invalidation_conditions: ["The registered market denominator changes materially."]
+  - scenario_id: SCN-UPSIDE
+    label: upside
+    assumption_refs: [ASM-001]
+    invalidation_conditions: ["The serviceable share falls below the stated range."]
+published_results:
+  - result_id: RES-001
+    calculation_ref: CALC-001
+    scenario_ref: SCN-BASE
+    value: 1000000
+    range: {minimum: 850000, maximum: 1150000}
+    unit: ARS
+    denominator_id: annual-vendor-revenue
+    base_year: 2026
+    finding_refs: [F-001]
+    assumption_refs: [ASM-001, ASM-002]
+    qualifiers: ["Conditional scenario result", "Not a guaranteed revenue forecast"]
+    export_locator: null
+exports: []
+limitations: ["Public evidence does not establish primary-demand intent."]
+unresolved_reconciliation: []
+validation_summary:
+  valid: true
+  validated_at: "2026-08-13"
+  script_version: "1.0"
+  errors: []
+  warnings: []

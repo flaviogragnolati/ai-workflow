@@ -1,6 +1,6 @@
 ---
 name: q-research-workflow
-description: "Orchestrate optional Quasar engagement research from an approved question and budget through cited investigation, synthesis, and an exact approved baseline. Use for market, competitor, regulatory, technology, feasibility, or risk uncertainty that informs a client or project decision without automatically opening a proposal. Requires the q-core-contract companion."
+description: "Orchestrate optional Quasar engagement research from an approved general or market brief and budget through cited investigation, conditional market analysis, synthesis, and an exact approved baseline. Use for market, competitor, regulatory, technology, feasibility, or risk uncertainty that informs a client or project decision without automatically opening a proposal. Requires the q-core-contract companion."
 ---
 
 # Engagement research workflow
@@ -22,7 +22,8 @@ Research is optional consulting or engagement work. It reduces external uncertai
 
 1. Route question and boundary work to `q-research-scope`.
 2. Route approved search strategies to `q-research-investigate`.
-3. Route exact brief and findings versions to `q-research-synthesize`.
+3. Route exact brief and findings versions to `q-research-market-analysis` only when `research_profile: market` has at least one `analysis_module`, or when that stage is the explicit target with valid refs and a measurement contract. Otherwise preserve the general route without it.
+4. Route exact brief, findings, and any market-analysis versions to `q-research-synthesize`.
 
 Validate every `stage_result` and reconcile its artifact IDs, versions, blockers, risks, and stale references. Keep stage procedure with its owner.
 
@@ -30,10 +31,13 @@ Validate every `stage_result` and reconcile its artifact IDs, versions, blockers
 
 - **Scope:** require an authorized Research Brief with question IDs, decision references, limits, search strategies, privacy boundary, time or cost budget, and approval evidence before investigation.
 - **Evidence:** require every supported claim to resolve to source evidence with a locator. Preserve source-verification, finding, and coverage states separately.
+- **Market analysis:** require registered findings only, normalized measurement, resolvable calculation lineage, approved material assumptions/scenarios/results, explicit reconciliation, and promotion into `published_results`. Reject primary fieldwork, network reads, raw survey-response processing, or JSON/CSV-only report values.
 - **Synthesis:** require answers or explicit gaps for every question, visible contradictions, stable finding references, and a counter-evidence check. Reject a synthesis that rebuilds the findings register.
-- **Baseline:** obtain approval for the exact brief, findings, and synthesis artifact IDs and versions plus `as_of`. Create a `Baselined` Research Baseline only after that approval.
+- **Baseline:** obtain approval for the exact brief, findings, optional analysis, and synthesis artifact IDs and versions plus `as_of`. Create a `Baselined` Research Baseline only after that approval; do not declare `report-ready`.
 
-Before baselining, verify that supported claims have evidence and locators, adverse evidence and circular dependencies remain visible, approved scope and privacy limits were respected, every question has an answer or gap, and synthesis points to findings instead of copying them.
+Before baselining, verify that supported claims have evidence and locators, adverse evidence and circular dependencies remain visible, approved scope and privacy limits were respected, every question has an answer or gap, Market Analysis inputs and published results resolve when present, and synthesis points to findings/results instead of copying them.
+
+Any changed brief, finding, assumption, calculation, scenario, or published result makes dependent synthesis, baseline, and report sources stale. Route correction to the owning stage and never rewrite an accepted snapshot in place.
 
 ## Progress dashboard
 

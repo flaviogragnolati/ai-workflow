@@ -1,0 +1,52 @@
+schema_version: "1.0"
+report:
+  report_id: RPT-MARKET-001
+  version: "1.0"
+  lifecycle: Baselined
+  report_type: consulting
+  content_profile: market-research
+  project_id: demo
+  title: "Market analysis report"
+  audience: "Decision owners"
+  purpose: "Communicate approved market results and their uncertainty"
+  reporting_period: {from: "2026-01-01", to: "2026-08-13", as_of: "2026-08-13"}
+  confidentiality: internal
+  language: en
+source_snapshot:
+  status: approved
+  approved_at: "2026-08-13"
+  approval_ref: APR-REPORT-MARKET-001
+  sources:
+    - artifact_id: MA-001
+      version: "1.0"
+      owner_workflow: research
+      owner_skill: q-research-market-analysis
+      lifecycle: Working
+      semantic_authority: supporting
+      authority_scope: market-methods-assumptions-calculations-and-published-results
+      usage: published-market-results
+      reporting_approval_ref: APR-SNAPSHOT-MARKET-001
+coverage:
+  included: [market-definition, sizing, uncertainty]
+  excluded: [primary-fieldwork]
+  gaps: []
+sections:
+  - section_id: SEC-MARKET-001
+    title: "Market sizing"
+    purpose: "Present the approved conditional result"
+    blocks:
+      - block_id: CLM-MARKET-001
+        kind: estimate
+        statement: "The published market result is a conditional scenario estimate."
+        source_refs: [MA-001]
+        evidence_refs:
+          - {artifact_id: MA-001, version: "1.0", ref_type: analysis-result, ref_id: RES-001}
+          - {artifact_id: MA-001, version: "1.0", ref_type: assumption, ref_id: ASM-001}
+        qualifiers: ["Not a guaranteed revenue forecast"]
+        visual_intent: "Show the result range and scenario qualifier."
+decisions_requested: []
+risks_referenced: []
+recommendations: []
+next_actions: ["Reconcile the result when an upstream finding changes."]
+channels_requested: [document, deck]
+approvals: [APR-REPORT-MARKET-001]

@@ -87,6 +87,13 @@ def schema_errors(value: Any, schema: dict[str, Any], path: str = "$") -> list[s
         if isinstance(schema.get("items"), dict):
             for index, item in enumerate(value):
                 out.extend(schema_errors(item, schema["items"], "%s[%d]" % (path, index)))
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        minimum = schema.get("minimum")
+        maximum = schema.get("maximum")
+        if isinstance(minimum, (int, float)) and value < minimum:
+            out.append("%s: must be at least %s" % (path, minimum))
+        if isinstance(maximum, (int, float)) and value > maximum:
+            out.append("%s: must be at most %s" % (path, maximum))
     return out
 
 
@@ -414,10 +421,16 @@ def routing_digest_body(workflows: dict[str, Any]) -> str:
             continue
         lines.append("%s:" % workflow_id)
         lines.append("  entry_skill: %s" % entry.get("entry_skill"))
-        for key in ("stages", "planning_stages", "renderers", "current_tools", "delegates"):
+        for key in ("profiles", "content_profiles", "stages", "planning_stages", "renderers", "current_tools", "delegates"):
             route = entry.get(key)
             if route:
                 lines.append("  %s: [%s]" % (key, ", ".join(route)))
+        conditions = entry.get("stage_conditions")
+        if isinstance(conditions, dict) and conditions:
+            lines.append("  stage_conditions:")
+            for stage_id, condition in conditions.items():
+                if isinstance(condition, dict):
+                    lines.append("    %s: %s" % (stage_id, condition.get("when")))
         if entry.get("scope"):
             lines.append("  scope: %s" % entry["scope"])
         if entry.get("optional_next"):
@@ -521,12 +534,53 @@ def skills_sh_errors(skills: dict[str, Any]) -> list[str]:
     return errors
 
 
+def workflow_profile_semantics(workflows: dict[str, Any]) -> list[str]:
+    """Keep workflow profiles and conditional stages explicit and resolvable."""
+    errors: list[str] = []
+    for workflow_id, entry in workflows.items():
+        if not isinstance(entry, dict):
+            continue
+        for key in ("profiles", "content_profiles"):
+            values = entry.get(key, [])
+            if not isinstance(values, list):
+                continue
+            duplicates = sorted({value for value in values if values.count(value) > 1})
+            if duplicates:
+                errors.append("workflow %s.%s contains duplicates: %s"
+                              % (workflow_id, key, ", ".join(duplicates)))
+        stages = entry.get("stages", [])
+        stages = stages if isinstance(stages, list) else []
+        conditions = entry.get("stage_conditions", {})
+        if not isinstance(conditions, dict):
+            continue
+        for stage_id, condition in conditions.items():
+            if stage_id not in stages:
+                errors.append("workflow %s conditions unknown stage %r"
+                              % (workflow_id, stage_id))
+            when = condition.get("when") if isinstance(condition, dict) else None
+            if not isinstance(when, str) or not when.strip():
+                errors.append("workflow %s condition %r requires a non-empty when"
+                              % (workflow_id, stage_id))
+    research = workflows.get("research", {})
+    if isinstance(research, dict) and "q-research-market-analysis" in research.get("stages", []):
+        if research.get("profiles") != ["general", "market"]:
+            errors.append("research workflow with market analysis requires profiles [general, market]")
+        condition = research.get("stage_conditions", {}).get("q-research-market-analysis", {})
+        if not isinstance(condition, dict) or condition.get("when") != "market-profile-with-analysis-modules-or-explicit-target":
+            errors.append("q-research-market-analysis requires its declared conditional route")
+    reporting = workflows.get("reporting", {})
+    if isinstance(reporting, dict) and reporting.get("content_profiles") not in (None, ["general", "market-research"]):
+        errors.append("reporting content_profiles must preserve general and market-research")
+    return errors
+
+
 def anti_pattern_errors(skills: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     research_skills = {
         "q-research-workflow",
         "q-research-scope",
         "q-research-investigate",
+        "q-research-market-analysis",
         "q-research-synthesize",
     }
     required = {
@@ -597,6 +651,53 @@ def mermaid_runtime_errors(skills: dict[str, Any]) -> list[str]:
         if run.returncode != 0 or "q-tool-mermaid local runtime" not in run.stdout:
             errors.append("q-tool-mermaid: runtime --help smoke failed: %s"
                           % (run.stderr.strip() or run.stdout.strip() or run.returncode))
+    return errors
+
+
+def market_analysis_runtime_errors(skills: dict[str, Any]) -> list[str]:
+    entry = skills.get("q-research-market-analysis")
+    if not isinstance(entry, dict) or entry.get("status") != "active":
+        return []
+    directory = SKILLS_ROOT / str(entry.get("path", ""))
+    scripts = [
+        "calculate_market_sizing.py",
+        "forecast_sensitivity.py",
+        "check_unit_consistency.py",
+        "calculate_concentration.py",
+        "validate_competitor_matrix.py",
+        "validate_market_analysis.py",
+    ]
+    required = [directory / "scripts" / "_common.py", directory / "tests" / "run_tests.py"]
+    required.extend(directory / "scripts" / name for name in scripts)
+    errors = [
+        "q-research-market-analysis: missing runtime file %s" % path.relative_to(REPO_ROOT)
+        for path in required if not path.is_file()
+    ]
+    if errors:
+        return errors
+    test = subprocess.run(
+        [sys.executable, str(directory / "tests" / "run_tests.py")],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        timeout=30,
+        check=False,
+    )
+    if test.returncode != 0 or not re.search(r"q-research-market-analysis tests: [1-9][0-9]* passed", test.stdout):
+        errors.append("q-research-market-analysis: tests failed: %s"
+                      % (test.stderr.strip() or test.stdout.strip() or test.returncode))
+    for name in scripts:
+        smoke = subprocess.run(
+            [sys.executable, str(directory / "scripts" / name), "--help"],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=10,
+            check=False,
+        )
+        if smoke.returncode != 0 or "usage:" not in smoke.stdout:
+            errors.append("q-research-market-analysis: %s --help failed: %s"
+                          % (name, smoke.stderr.strip() or smoke.stdout.strip() or smoke.returncode))
     return errors
 
 
@@ -691,6 +792,7 @@ def report_source_semantics(data: Any) -> list[str]:
         errors.append("an approved source snapshot requires approved_at")
 
     semantic_kinds = {"fact", "metric", "estimate", "interpretation", "recommendation", "projection"}
+    market_profile = isinstance(report, dict) and report.get("content_profile") == "market-research"
     section_ids: set[str] = set()
     block_ids: set[str] = set()
     sections = data.get("sections", [])
@@ -732,6 +834,32 @@ def report_source_semantics(data: Any) -> list[str]:
                         eligible = True
                 if not eligible:
                     errors.append("report block %r has no eligible authoritative source" % block_id)
+            evidence_refs = block.get("evidence_refs", [])
+            evidence_refs = evidence_refs if isinstance(evidence_refs, list) else []
+            typed_sources: set[str] = set()
+            for evidence_ref in evidence_refs:
+                if not isinstance(evidence_ref, dict):
+                    continue
+                artifact_id = evidence_ref.get("artifact_id")
+                version = evidence_ref.get("version")
+                source = known.get(artifact_id)
+                if source is None or source.get("version") != version:
+                    errors.append("report block %r has typed evidence for an unknown source version %r@%r"
+                                  % (block_id, artifact_id, version))
+                elif artifact_id not in refs:
+                    errors.append("report block %r typed evidence %r is absent from source_refs"
+                                  % (block_id, artifact_id))
+                typed_sources.add(artifact_id)
+            if market_profile and block.get("kind") in semantic_kinds and not evidence_refs:
+                errors.append("market-research block %r requires typed evidence_refs" % block_id)
+            if market_profile and evidence_refs:
+                authoritative_typed = any(
+                    known.get(artifact_id, {}).get("semantic_authority") in {"canonical", "supporting"}
+                    for artifact_id in typed_sources
+                )
+                if not authoritative_typed:
+                    errors.append("market-research block %r cannot rely only on derived/none evidence"
+                                  % block_id)
 
     channels = data.get("channels_requested", [])
     if isinstance(channels, list) and len(channels) != len(set(channels)):
@@ -748,6 +876,40 @@ def research_brief_semantics(data: Any) -> list[str]:
         errors.append("an authorized research brief requires approval_ref")
     if isinstance(brief, dict) and brief.get("status") != "authorized":
         errors.append("a runnable research brief must be authorized")
+
+    profile = data.get("research_profile", "general")
+    modules = data.get("analysis_modules", [])
+    modules = modules if isinstance(modules, list) else []
+    duplicate_modules = sorted({item for item in modules if modules.count(item) > 1})
+    if duplicate_modules:
+        errors.append("research brief analysis_modules contains duplicates: %s"
+                      % ", ".join(duplicate_modules))
+    consumers = data.get("intended_consumers", [])
+    consumers = consumers if isinstance(consumers, list) else []
+    duplicate_consumers = sorted({item for item in consumers if consumers.count(item) > 1})
+    if duplicate_consumers:
+        errors.append("research brief intended_consumers contains duplicates: %s"
+                      % ", ".join(duplicate_consumers))
+    measurement = data.get("measurement_contract")
+    if profile == "market" and not isinstance(measurement, dict):
+        errors.append("market research brief requires measurement_contract")
+    if isinstance(measurement, dict):
+        currency = measurement.get("currency", {})
+        if isinstance(currency, dict):
+            code = currency.get("code")
+            base_year = currency.get("base_year")
+            price_basis = currency.get("price_basis")
+            if code is not None and (not isinstance(code, str) or len(code) != 3 or code.upper() != code):
+                errors.append("measurement_contract currency code must be an uppercase three-letter code")
+            if code and (not isinstance(base_year, int) or price_basis == "not-applicable"):
+                errors.append("monetary measurement_contract requires base_year and price_basis")
+            if code is None and price_basis != "not-applicable":
+                errors.append("non-monetary measurement_contract requires price_basis not-applicable")
+    budget = data.get("budget", {})
+    if isinstance(budget, dict):
+        source_limit = budget.get("max_sources_inspected")
+        if source_limit is not None and (type(source_limit) is not int or source_limit < 1):
+            errors.append("budget.max_sources_inspected must be null or a positive integer")
 
     questions = data.get("questions", [])
     known: set[str] = set()
@@ -860,6 +1022,20 @@ def cited_findings_semantics(data: Any, known_questions: set[str] | None = None)
             errors.append("supported finding %r requires a supports relation" % finding_id)
         if finding.get("corroboration") == "multiple-independent" and len(groups) < 2:
             errors.append("multiple-independent finding %r requires two independence groups" % finding_id)
+        quantitative = finding.get("quantitative")
+        if isinstance(quantitative, dict):
+            value_range = quantitative.get("range")
+            if isinstance(value_range, dict):
+                minimum = value_range.get("minimum")
+                maximum = value_range.get("maximum")
+                if isinstance(minimum, (int, float)) and isinstance(maximum, (int, float)) and minimum > maximum:
+                    errors.append("finding %r quantitative range is reversed" % finding_id)
+            currency = quantitative.get("currency")
+            base_year = quantitative.get("base_year")
+            price_basis = quantitative.get("price_basis")
+            if currency and (not isinstance(base_year, int) or price_basis in {None, "not-applicable"}):
+                errors.append("finding %r monetary quantitative value requires base_year and price_basis"
+                              % finding_id)
     duplicates = sorted({item for item in finding_ids if finding_ids.count(item) > 1})
     if duplicates:
         errors.append("duplicate cited finding IDs: %s" % ", ".join(duplicates))
@@ -880,6 +1056,7 @@ def research_synthesis_semantics(
     data: Any,
     known_findings: set[str],
     known_questions: set[str],
+    known_analysis_results: dict[tuple[str, str], set[str]] | None = None,
 ) -> list[str]:
     if not isinstance(data, dict):
         return ["research synthesis must be a mapping"]
@@ -891,6 +1068,16 @@ def research_synthesis_semantics(
         "finding_refs",
         "adverse_finding_refs",
     }
+    declared_analysis: set[tuple[str, str]] = set()
+    for ref in data.get("analysis_refs", []) if isinstance(data.get("analysis_refs"), list) else []:
+        if not isinstance(ref, dict):
+            continue
+        key = (ref.get("artifact_id"), ref.get("version"))
+        if key in declared_analysis:
+            errors.append("duplicate research synthesis analysis_ref %r@%r" % key)
+        declared_analysis.add(key)
+        if not isinstance(ref.get("version"), str) or not ref.get("version", "").strip():
+            errors.append("research synthesis analysis_ref requires an exact version")
 
     def inspect(value: Any, key: str | None = None) -> None:
         if isinstance(value, dict):
@@ -912,6 +1099,17 @@ def research_synthesis_semantics(
             if answer["question_ref"] not in known_questions:
                 errors.append("research synthesis answer references unknown question %r"
                               % answer["question_ref"])
+        if not isinstance(answer, dict):
+            continue
+        for ref in answer.get("analysis_result_refs", []) if isinstance(answer.get("analysis_result_refs"), list) else []:
+            if not isinstance(ref, dict):
+                continue
+            key = (ref.get("artifact_id"), ref.get("version"))
+            if key not in declared_analysis:
+                errors.append("research synthesis result ref uses undeclared analysis %r@%r" % key)
+            if known_analysis_results is not None and ref.get("result_id") not in known_analysis_results.get(key, set()):
+                errors.append("research synthesis references unknown analysis result %r"
+                              % ref.get("result_id"))
     duplicates = sorted({item for item in answer_refs if answer_refs.count(item) > 1})
     if duplicates:
         errors.append("duplicate research synthesis answers: %s" % ", ".join(duplicates))
@@ -947,6 +1145,160 @@ def research_baseline_semantics(data: Any) -> list[str]:
         ref = baseline.get(key, {})
         if not isinstance(ref, dict) or not isinstance(ref.get("version"), str) or not ref.get("version", "").strip():
             errors.append("research baseline %s requires an exact version" % key)
+    analysis_refs = baseline.get("analysis_refs", [])
+    seen: list[tuple[str, str]] = []
+    for ref in analysis_refs if isinstance(analysis_refs, list) else []:
+        if not isinstance(ref, dict):
+            continue
+        key = (ref.get("artifact_id"), ref.get("version"))
+        seen.append(key)
+        if not isinstance(ref.get("version"), str) or not ref.get("version", "").strip():
+            errors.append("research baseline analysis_ref requires an exact version")
+    duplicates = sorted({item for item in seen if seen.count(item) > 1})
+    if duplicates:
+        errors.append("duplicate research baseline analysis_refs: %s"
+                      % ", ".join("%s@%s" % item for item in duplicates))
+    return errors
+
+
+def market_analysis_semantics(data: Any, known_findings: set[str]) -> list[str]:
+    """Validate market lineage, scenario differentiation, and publishable promotion."""
+    if not isinstance(data, dict):
+        return ["market analysis must be a mapping"]
+    errors: list[str] = []
+    analysis = data.get("analysis", {})
+    if isinstance(analysis, dict):
+        for key in ("brief_ref", "findings_ref"):
+            ref = analysis.get(key, {})
+            if not isinstance(ref, dict) or not isinstance(ref.get("version"), str) or not ref.get("version", "").strip():
+                errors.append("market analysis %s requires an exact version" % key)
+        if not isinstance(analysis.get("as_of"), str) or not analysis.get("as_of", "").strip():
+            errors.append("market analysis requires a non-empty as_of")
+    if not isinstance(data.get("measurement_contract_ref"), str) or not data.get("measurement_contract_ref", "").strip():
+        errors.append("market analysis requires measurement_contract_ref")
+
+    def unique_mapping_ids(collection: str, key: str) -> tuple[dict[str, dict[str, Any]], list[str]]:
+        found: dict[str, dict[str, Any]] = {}
+        identifiers: list[str] = []
+        items = data.get(collection, [])
+        for item in items if isinstance(items, list) else []:
+            if not isinstance(item, dict):
+                continue
+            identifier = item.get(key)
+            if isinstance(identifier, str):
+                identifiers.append(identifier)
+                found.setdefault(identifier, item)
+        duplicates = sorted({item for item in identifiers if identifiers.count(item) > 1})
+        if duplicates:
+            errors.append("duplicate market analysis %s IDs: %s"
+                          % (collection, ", ".join(duplicates)))
+        return found, identifiers
+
+    modules = data.get("modules", [])
+    modules = modules if isinstance(modules, list) else []
+    duplicate_modules = sorted({item for item in modules if modules.count(item) > 1})
+    if duplicate_modules:
+        errors.append("market analysis modules contains duplicates: %s"
+                      % ", ".join(duplicate_modules))
+    assumptions, _ = unique_mapping_ids("assumptions", "assumption_id")
+    calculations, _ = unique_mapping_ids("calculations", "calculation_id")
+    scenarios, _ = unique_mapping_ids("scenarios", "scenario_id")
+    results, _ = unique_mapping_ids("published_results", "result_id")
+    exports, _ = unique_mapping_ids("exports", "export_id")
+
+    for assumption_id, assumption in assumptions.items():
+        for finding_ref in assumption.get("finding_refs", []) if isinstance(assumption.get("finding_refs"), list) else []:
+            if finding_ref not in known_findings:
+                errors.append("assumption %r references unknown finding %r"
+                              % (assumption_id, finding_ref))
+        for field in ("value_or_range", "sensitivity_range"):
+            value_range = assumption.get(field, {})
+            if not isinstance(value_range, dict):
+                continue
+            minimum = value_range.get("minimum")
+            maximum = value_range.get("maximum")
+            value = value_range.get("value")
+            if isinstance(minimum, (int, float)) and isinstance(maximum, (int, float)) and minimum > maximum:
+                errors.append("assumption %r has reversed %s" % (assumption_id, field))
+            if isinstance(value, (int, float)) and isinstance(minimum, (int, float)) and value < minimum:
+                errors.append("assumption %r value is below its declared range" % assumption_id)
+            if isinstance(value, (int, float)) and isinstance(maximum, (int, float)) and value > maximum:
+                errors.append("assumption %r value is above its declared range" % assumption_id)
+
+    for calculation_id, calculation in calculations.items():
+        for input_ref in calculation.get("input_refs", []) if isinstance(calculation.get("input_refs"), list) else []:
+            if not isinstance(input_ref, dict):
+                continue
+            ref_type = input_ref.get("ref_type")
+            ref_id = input_ref.get("ref_id")
+            known = known_findings if ref_type == "finding" else assumptions if ref_type == "assumption" else calculations
+            if ref_id not in known:
+                errors.append("calculation %r references unknown %s %r"
+                              % (calculation_id, ref_type, ref_id))
+        for assumption_ref in calculation.get("assumption_refs", []) if isinstance(calculation.get("assumption_refs"), list) else []:
+            if assumption_ref not in assumptions:
+                errors.append("calculation %r references unknown assumption %r"
+                              % (calculation_id, assumption_ref))
+        script = calculation.get("script", {})
+        for key in ("path", "version", "command", "hash"):
+            if not isinstance(script, dict) or not isinstance(script.get(key), str) or not script.get(key, "").strip():
+                errors.append("calculation %r requires script.%s" % (calculation_id, key))
+        if not isinstance(calculation.get("rounding_policy"), str) or not calculation.get("rounding_policy", "").strip():
+            errors.append("calculation %r requires a rounding_policy" % calculation_id)
+        custom = calculation.get("custom_method")
+        if calculation.get("method") == "custom" and not isinstance(custom, dict):
+            errors.append("custom calculation %r requires custom_method lineage" % calculation_id)
+        if isinstance(custom, dict) and custom.get("review_status") == "approved" and not custom.get("approval_ref"):
+            errors.append("approved custom calculation %r requires approval_ref" % calculation_id)
+
+    scenario_modules = {"market-sizing", "tam-sam-som", "forecast", "scenario-analysis"}
+    if scenario_modules.intersection(modules) and len(scenarios) < 2:
+        errors.append("scenario-based market modules require at least two scenarios")
+    scenario_signatures: set[tuple[str, ...]] = set()
+    for scenario_id, scenario in scenarios.items():
+        refs = scenario.get("assumption_refs", [])
+        refs = refs if isinstance(refs, list) else []
+        for ref in refs:
+            if ref not in assumptions:
+                errors.append("scenario %r references unknown assumption %r" % (scenario_id, ref))
+        scenario_signatures.add(tuple(sorted(refs)))
+    if len(scenarios) > 1 and len(scenario_signatures) < 2:
+        errors.append("market scenarios must differ in their assumption sets")
+
+    for result_id, result in results.items():
+        if result.get("calculation_ref") not in calculations:
+            errors.append("published result %r references unknown calculation %r"
+                          % (result_id, result.get("calculation_ref")))
+        if result.get("scenario_ref") is not None and result.get("scenario_ref") not in scenarios:
+            errors.append("published result %r references unknown scenario %r"
+                          % (result_id, result.get("scenario_ref")))
+        for finding_ref in result.get("finding_refs", []) if isinstance(result.get("finding_refs"), list) else []:
+            if finding_ref not in known_findings:
+                errors.append("published result %r references unknown finding %r"
+                              % (result_id, finding_ref))
+        for assumption_ref in result.get("assumption_refs", []) if isinstance(result.get("assumption_refs"), list) else []:
+            if assumption_ref not in assumptions:
+                errors.append("published result %r references unknown assumption %r"
+                              % (result_id, assumption_ref))
+        value_range = result.get("range", {})
+        minimum = value_range.get("minimum") if isinstance(value_range, dict) else None
+        maximum = value_range.get("maximum") if isinstance(value_range, dict) else None
+        if result.get("value") is None and minimum is None and maximum is None:
+            errors.append("published result %r requires a value or range" % result_id)
+        if isinstance(minimum, (int, float)) and isinstance(maximum, (int, float)) and minimum > maximum:
+            errors.append("published result %r has a reversed range" % result_id)
+        export_locator = result.get("export_locator")
+        if export_locator is not None and export_locator not in exports:
+            errors.append("published result %r references unknown export %r"
+                          % (result_id, export_locator))
+
+    summary = data.get("validation_summary", {})
+    if isinstance(summary, dict):
+        if summary.get("valid") is True and summary.get("errors"):
+            errors.append("market analysis cannot be valid with validation errors")
+        for key in ("validated_at", "script_version"):
+            if not isinstance(summary.get(key), str) or not summary.get(key, "").strip():
+                errors.append("market analysis validation_summary requires %s" % key)
     return errors
 
 
@@ -1139,6 +1491,10 @@ def manifest_use_fixture_errors(schema: dict[str, Any], fixtures: Path) -> list[
     invalid_skills = invalid.get("skills", {}) if isinstance(invalid, dict) else {}
     valid_errors.extend(optional_use_semantics(valid_skills))
     invalid_errors.extend(optional_use_semantics(invalid_skills))
+    valid_workflows = valid.get("workflows", {}) if isinstance(valid, dict) else {}
+    invalid_workflows = invalid.get("workflows", {}) if isinstance(invalid, dict) else {}
+    valid_errors.extend(workflow_profile_semantics(valid_workflows))
+    invalid_errors.extend(workflow_profile_semantics(invalid_workflows))
     errors: list[str] = []
     if valid_errors:
         errors.append("%s rejected: %s" % (valid_path.name, "; ".join(valid_errors)))
@@ -1369,6 +1725,31 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("ideation/q-ideation-session/references/method-core.md", "never a consulted stakeholder"),
             ("ideation/q-ideation-session/references/responsible-ai.md", "no synthetic panel"),
         ],
+        "S-47": [
+            ("skill-manifest.yaml", "market-profile-with-analysis-modules-or-explicit-target"),
+            ("research/q-research-workflow/SKILL.md", "preserve the general route"),
+            ("research/q-research-market-analysis/SKILL.md", "Skip this stage for a general-profile run"),
+        ],
+        "S-48": [
+            ("research/q-research-market-analysis/SKILL.md", "JSON/CSV output is transient"),
+            ("research/q-research-market-analysis/SKILL.md", "promoted to `published_results`"),
+            ("report/q-report-source/SKILL.md", "derived export as the only semantic support"),
+        ],
+        "S-49": [
+            ("research/q-research-market-analysis/references/methods-and-ethics.md", "does not contact, recruit, survey, interview"),
+            ("research/q-research-market-analysis/SKILL.md", "raw survey-response analysis outside this package"),
+            ("research/q-research-investigate/SKILL.md", "Published aggregate survey or interview evidence"),
+        ],
+        "S-50": [
+            ("research/q-research-market-analysis/THIRD_PARTY_NOTICES.md", "13385c7c4db02fdcc84a020752c07cce91ef780e"),
+            ("research/q-research-market-analysis/THIRD_PARTY_NOTICES.md", "MIT License"),
+            ("research/q-research-market-analysis/SKILL.md", "make no network, model, database, or image call"),
+        ],
+        "S-51": [
+            ("report/q-report-source/SKILL.md", "typed `evidence_refs`"),
+            ("report/q-report-workflow/SKILL.md", "it never searches, processes raw survey responses, recalculates market values"),
+            ("core/q-core-contract/SKILL.md", "`content_profile` states the semantic source pattern"),
+        ],
     }
     errors: list[str] = []
     for scenario, requirements in checks.items():
@@ -1548,6 +1929,7 @@ def run() -> dict[str, Any]:
     }
 
     errors.extend(optional_use_semantics(skills))
+    errors.extend(workflow_profile_semantics(workflows))
 
     for skill_id, entry in skills.items():
         if not isinstance(entry, dict):
@@ -1671,6 +2053,14 @@ def run() -> dict[str, Any]:
         report_source_semantics,
         active,
     ))
+    errors.extend(fixture_pair(
+        CORE_CONTRACT / "references" / "report-source.schema.yaml",
+        fixtures / "report-source-market.valid.yaml",
+        fixtures / "report-source-market.invalid.yaml",
+        report_source_semantics,
+        active,
+        min_invalid_errors=2,
+    ))
     valid_brief = load(fixtures / "research-brief.valid.yaml")
     known_questions = {
         item.get("question_id")
@@ -1686,6 +2076,14 @@ def run() -> dict[str, Any]:
         min_invalid_errors=2,
     ))
     errors.extend(fixture_pair(
+        SKILLS_ROOT / "research" / "q-research-scope" / "references" / "research-brief.schema.yaml",
+        fixtures / "research-brief-market.valid.yaml",
+        fixtures / "research-brief-market.invalid.yaml",
+        research_brief_semantics,
+        active,
+        min_invalid_errors=3,
+    ))
+    errors.extend(fixture_pair(
         CORE_CONTRACT / "references" / "cited-findings.schema.yaml",
         fixtures / "cited-findings.valid.yaml",
         fixtures / "cited-findings.invalid.yaml",
@@ -1699,10 +2097,38 @@ def run() -> dict[str, Any]:
         if isinstance(item, dict) and isinstance(item.get("finding_id"), str)
     }
     errors.extend(fixture_pair(
+        SKILLS_ROOT / "research" / "q-research-market-analysis" / "references" / "market-analysis.schema.yaml",
+        fixtures / "market-analysis.valid.yaml",
+        fixtures / "market-analysis.invalid.yaml",
+        lambda value: market_analysis_semantics(value, known_findings),
+        active,
+        min_invalid_errors=8,
+    ))
+    valid_market_analysis = load(fixtures / "market-analysis.valid.yaml")
+    valid_market_identity = valid_market_analysis.get("analysis", {})
+    known_analysis_results = {
+        (
+            valid_market_identity.get("analysis_id"),
+            valid_market_identity.get("version"),
+        ): {
+            item.get("result_id")
+            for item in valid_market_analysis.get("published_results", [])
+            if isinstance(item, dict) and isinstance(item.get("result_id"), str)
+        }
+    }
+    errors.extend(fixture_pair(
         SKILLS_ROOT / "research" / "q-research-synthesize" / "references" / "research-synthesis.schema.yaml",
         fixtures / "research-synthesis.valid.yaml",
         fixtures / "research-synthesis.invalid.yaml",
-        lambda value: research_synthesis_semantics(value, known_findings, known_questions),
+        lambda value: research_synthesis_semantics(value, known_findings, known_questions, known_analysis_results),
+        active,
+        min_invalid_errors=2,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "research" / "q-research-synthesize" / "references" / "research-synthesis.schema.yaml",
+        fixtures / "research-synthesis-market.valid.yaml",
+        fixtures / "research-synthesis-market.invalid.yaml",
+        lambda value: research_synthesis_semantics(value, known_findings, known_questions, known_analysis_results),
         active,
         min_invalid_errors=2,
     ))
@@ -1710,6 +2136,14 @@ def run() -> dict[str, Any]:
         SKILLS_ROOT / "research" / "q-research-workflow" / "references" / "research-baseline.schema.yaml",
         fixtures / "research-baseline.valid.yaml",
         fixtures / "research-baseline.invalid.yaml",
+        research_baseline_semantics,
+        active,
+        min_invalid_errors=2,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "research" / "q-research-workflow" / "references" / "research-baseline.schema.yaml",
+        fixtures / "research-baseline-market.valid.yaml",
+        fixtures / "research-baseline-market.invalid.yaml",
         research_baseline_semantics,
         active,
         min_invalid_errors=2,
@@ -1733,6 +2167,7 @@ def run() -> dict[str, Any]:
     errors.extend(anti_pattern_errors(skills))
     errors.extend(stray_file_errors())
     errors.extend(mermaid_runtime_errors(skills))
+    errors.extend(market_analysis_runtime_errors(skills))
 
     return {
         "status": "Failed" if errors else ("Passed with warnings" if warnings else "Passed"),

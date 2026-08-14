@@ -1,0 +1,47 @@
+schema_version: "1.0"
+report:
+  report_id: RPT-MARKET-INVALID
+  version: "1.0"
+  lifecycle: Baselined
+  report_type: consulting
+  content_profile: market-research
+  project_id: demo
+  title: "Invalid market report"
+  audience: "Decision owners"
+  purpose: "Exercise the market source gate"
+  reporting_period: {from: "2026-01-01", to: "2026-08-13", as_of: "2026-08-13"}
+  confidentiality: internal
+  language: en
+source_snapshot:
+  status: approved
+  approved_at: "2026-08-13"
+  approval_ref: APR-REPORT-MARKET-INVALID
+  sources:
+    - artifact_id: EXPORT-001
+      version: "1.0"
+      owner_workflow: research
+      owner_skill: q-research-market-analysis
+      lifecycle: Working
+      semantic_authority: none
+      authority_scope: presentation
+      usage: derived-export-only
+      reporting_approval_ref: APR-SNAPSHOT-MARKET-INVALID
+coverage: {included: [market-sizing], excluded: [], gaps: []}
+sections:
+  - section_id: SEC-MARKET-INVALID
+    title: "Market sizing"
+    purpose: "Exercise invalid typed evidence"
+    blocks:
+      - block_id: CLM-MARKET-INVALID
+        kind: estimate
+        statement: "A derived export is the only support."
+        source_refs: [EXPORT-001]
+        evidence_refs: []
+        qualifiers: []
+        visual_intent: null
+decisions_requested: []
+risks_referenced: []
+recommendations: []
+next_actions: []
+channels_requested: [document]
+approvals: [APR-REPORT-MARKET-INVALID]

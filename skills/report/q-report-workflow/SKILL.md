@@ -1,6 +1,6 @@
 ---
 name: q-report-workflow
-description: "Orchestrate sequential Quasar reporting from versioned project artifacts into an approved structured source and requested Markdown, DOCX, PDF, or PowerPoint channels. Use for progress, feature, milestone, release, completion, consulting, executive, or custom reports that require cross-workflow traceability, root-writer reconciliation, channel QA, and explicit release approval. Requires the q-core-contract companion."
+description: "Orchestrate sequential Quasar reporting from versioned project artifacts into an approved structured source and requested Markdown, DOCX, PDF, or PowerPoint channels. Use for progress, feature, milestone, release, completion, consulting, executive, or custom report types, including a market-research content profile with typed evidence refs, cross-workflow traceability, root-writer reconciliation, channel QA, and explicit release approval. Requires the q-core-contract companion."
 ---
 
 # Reporting workflow
@@ -24,16 +24,16 @@ Never let a delegated reporting run replace or discard the caller's stage state.
 
 Require or align:
 
-- `reporting_request`: report ID, type, project, audience, purpose, reporting period, `as_of`, scope, confidentiality, language, and requested channels and formats;
+- `reporting_request`: report ID, type, content profile, project, audience, purpose, reporting period, `as_of`, scope, confidentiality, language, and requested channels and formats;
 - `source_bundle`: explicit artifact IDs, versions, owners, lifecycles, authority scopes, intended uses, and any reporting-snapshot approval;
 - `orchestration_context`: root workflow, root orchestrator, global state writer, and return target;
 - current workflow state and artifact index when the run belongs to a project.
 
 Resolve paths through the artifact index. Treat IDs and versions, not paths, as source identity. Load only the sources needed for the requested report scope.
 
-## Report profiles
+## Report types and source patterns
 
-Use these profiles to select candidate sources, then obtain explicit source-bundle approval:
+Use these report types to select candidate sources, then obtain explicit source-bundle approval:
 
 | Type | Typical sources |
 |---|---|
@@ -44,6 +44,12 @@ Use these profiles to select candidate sources, then obtain explicit source-bund
 | Completion | accepted proposal commitments, deliverables, acceptance evidence, and delivery manifest |
 | Consulting | discovery brief, accepted proposal, and approved execution results |
 | Executive or custom | the smallest approved source set supporting the stated decision or communication objective |
+
+## Content profiles
+
+`general` preserves the existing source pattern. `market-research` organizes approved Research Baseline, Findings Register, Market Analysis `published_results`, and synthesis refs without changing `report_type`. It may include an executive synopsis, market definition, evidence and methodology, sizing and reconciliation, demand and customers, market dynamics, competition, forecast and sensitivity, regulation, risks/implications/options, limitations, and auditable appendices only when requested and supported.
+
+For `market-research`, require exact typed evidence refs and approved snapshot versions. Reporting communicates qualifiers and unresolved reconciliation; it never searches, processes raw survey responses, recalculates market values, or treats a derived export as sole support.
 
 ## Sequential flow
 
@@ -77,6 +83,7 @@ When an upstream version changes after rendering, mark affected report channels 
 | 2 | Rewriting upstream truth through reporting | A report correction silently changes project status, commitments, or accepted scope. | Return the change to the upstream owner and regenerate from a new approved source. |
 | 3 | Treating a renderer as a semantic editor | A slide or DOCX edit becomes the report's new meaning. | Route semantic edits to `q-report-source` and mark affected channels stale. |
 | 4 | Calling a partial channel set complete | Missing DOCX, PDF, or deck output is hidden because one renderer succeeded. | Preserve completed channels and require explicit partial-release approval or report the blocker. |
+| 5 | Reporting recalculates research | The orchestrator derives a new market result from a CSV export. | Return the calculation to Market Analysis and report only promoted `published_results`. |
 
 ## Fallback and completion
 

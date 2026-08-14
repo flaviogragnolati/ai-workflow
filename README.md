@@ -1,6 +1,6 @@
 # Quasar AI delivery skills
 
-This package coordinates project questions and proposal analysis, optional structured ideation, optional engagement research, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, optional reporting, and shared database-schema and structural-diagram tooling. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
+This package coordinates project questions and proposal analysis, optional structured ideation, optional general or market engagement research, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, optional reporting, and shared database-schema and structural-diagram tooling. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
 
 ## Install
 
@@ -14,7 +14,7 @@ npx skills add flaviogragnolati/ai-workflow --skill q-code-debug --skill q-revie
 
 The installer copies one skill folder at a time into your project's agent directory, where every skill becomes a sibling of every other. Each skill is self-contained: it either bundles what it needs or declares the companion it depends on. Install the dependencies listed under [Skill dependencies](#skill-dependencies) alongside the skill that requires them; a skill whose companion is missing stops and prints the exact install command instead of proceeding on assumed rules.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 47 are.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 48 are.
 
 `skills.sh.json` groups the catalog on the skills.sh repository page. It is a derived presentation of the manifest `group` field — sections may merge groups, but the validator requires every public skill to appear in exactly one. `skill-manifest.yaml` stays the authority for what exists, what `group` it belongs to, what it `requires` or optionally `uses`, and what `distribution` it has.
 
@@ -25,6 +25,7 @@ Invoke one orchestrator and name the objective or target stage:
 ```text
 Use $q-proposal-workflow to prepare a commercial proposal from these meeting notes.
 Use $q-research-workflow to investigate this market uncertainty before deciding whether to open a proposal.
+Use $q-research-workflow to run a market-profile brief through evidence, auditable sizing, synthesis, and baseline.
 Use $q-delivery-workflow to execute q-plan-backlog.
 Use $q-report-workflow to create a progress report and deck from approved project artifacts.
 Use $q-maint-ai-workflow to update a workflow or related skill safely.
@@ -118,7 +119,8 @@ flowchart LR
 | Route engagement research | `q-research-workflow` | Reducing a bounded market, competitor, regulatory, technology, feasibility, or risk uncertainty into an approved snapshot without automatically opening Proposal. |
 | Research 1 — scope | `q-research-scope` | Defining stable decision-linked questions, boundaries, privacy limits, search strategies, and a time or cost budget before investigation. |
 | Research 2 — investigate | `q-research-investigate` | Building a cited Findings Register with source identity, claim fit, independence, contradictions, and honest search coverage. |
-| Research 3 — synthesize | `q-research-synthesize` | Answering approved questions through stable finding refs, themes, debates, gaps, and a counter-evidence check. |
+| Research 3 — market analysis (conditional) | `q-research-market-analysis` | Normalizing measurement and producing evidence-linked sizing, TAM/SAM/SOM, reconciliation, forecasts, sensitivity, competitor matrices, shares, CRn, HHI, and scenarios from exact brief and findings versions. |
+| Research 4 — synthesize | `q-research-synthesize` | Answering approved questions through stable finding and optional published-result refs, themes, debates, gaps, and a counter-evidence check. |
 | Route discovery and proposal | `q-proposal-workflow` | Starting, resuming, or reconciling the commercial flow; name a target stage when only one stage is needed. |
 | Proposal 1 — discover | `q-proposal-discovery` | Turning client evidence into a traceable brief, open questions, risks, and proposal-readiness assessment. |
 | Proposal 2 — design | `q-proposal-design` | Defining canonical scope, solution, deliverables, schedule, investment, terms, and commitments. |
@@ -176,14 +178,17 @@ The session generates options and questions but never evidence: unresolved uncer
 
 ### Engagement research
 
-`q-research-workflow` coordinates optional consulting or engagement research that reduces a named external uncertainty. It may run as a root workflow or be delegated by Proposal when Discovery cannot responsibly resolve a material market, competitor, regulatory, technology, feasibility, or risk question from client evidence.
+`q-research-workflow` coordinates optional consulting or engagement research that reduces a named external uncertainty. It may run as a root workflow or be delegated by Proposal when Discovery cannot responsibly resolve a material market, competitor, regulatory, technology, feasibility, or risk question from client evidence. The `general` profile preserves the original route; the `market` profile conditionally inserts Market Analysis.
 
-1. `q-research-scope` creates an authorized Research Brief with stable questions, decision links, boundaries, search strategies, privacy limits, budget, and stopping conditions.
-2. `q-research-investigate` creates the Findings Register. Source verification, claim status, and search coverage remain separate; source provenance and claim fit are independent axes.
-3. `q-research-synthesize` answers by finding ID, preserves debates and gaps, and runs a counter-evidence check without copying source or claim records.
-4. `q-research-workflow` baselines the exact approved brief, findings, and synthesis versions at an `as_of` date.
+1. `q-research-scope` creates an authorized Research Brief with stable questions, profile, intended-consumer routing signal, boundaries, search strategies, privacy limits, budget, stopping conditions, and—when needed—analysis modules plus a measurement contract.
+2. `q-research-investigate` creates the Findings Register. Source verification, claim status, and search coverage remain separate; market inputs may add measurement, methodology, rights, and quantitative context without adding calculations.
+3. `q-research-market-analysis` runs only for a market profile with modules or an explicit valid target. It creates one supporting `market-analysis.yaml` from registered findings and approved assumptions, using deterministic local sizing, forecast, units, competition, and concentration tools with no network read.
+4. `q-research-synthesize` answers by finding and optional published-result ID, preserves debates and gaps, and runs a counter-evidence check without copying source, claim, formula, or full calculation records.
+5. `q-research-workflow` baselines the exact approved brief, findings, optional analysis, and synthesis versions at an `as_of` date.
 
-The Research Baseline is canonical only for the approved snapshot. Its claims and synthesis remain supporting evidence. A directly invoked root run may close without Proposal; starting Proposal or Reporting requires an explicit choice. A Proposal-delegated run is adopted as `external-research`, retained independently, or deferred through an explicit disposition, and Research never edits the Discovery Brief.
+The Research Baseline is canonical only for the approved snapshot. Its claims, analysis, and synthesis remain supporting evidence, and it never declares `report-ready`. A directly invoked root run may close without Proposal; starting Proposal or Reporting requires an explicit choice. A Proposal-delegated run is adopted as `external-research`, retained independently, or deferred through an explicit disposition, and Research never edits the Discovery Brief.
+
+`market-analysis.yaml` is the only new semantic artifact. JSON/CSV calculation workspaces are transient unless explicitly persisted as derived exports with no semantic authority; a value must be promoted into `published_results` before Synthesis or Reporting can use it. The package does not include primary-fieldwork capability, participant contact, survey/interview operation, PII or recording storage, or raw response-level survey processing. Published aggregate evidence may be registered and interpreted within its disclosed method limits.
 
 `q-code-research` remains a separate technical capability for official documentation, specifications, source code, APIs, compatibility, and versioned behavior during planning or delivery. It shares the cited-findings contract but not the engagement workflow or synthesis procedure.
 
@@ -208,9 +213,11 @@ Development selects a high-level item, refines only as needed, optionally create
 
 ### Reporting
 
-`q-report-workflow` coordinates optional progress, feature, milestone, release, completion, consulting, executive, and custom reporting from explicit artifact IDs and versions produced by prior workflows. It delegates semantic synthesis to `q-report-source`, then renders the approved source through `q-report-document` for Markdown, DOCX, and PDF, `q-report-deck` for PPTX and PDF, or both sequentially.
+`q-report-workflow` coordinates optional progress, feature, milestone, release, completion, consulting, executive, and custom report types from explicit artifact IDs and versions produced by prior workflows. `content_profile: general | market-research` separately selects the semantic source pattern. It delegates semantic synthesis to `q-report-source`, then renders the approved source through `q-report-document` for Markdown, DOCX, and PDF, `q-report-deck` for PPTX and PDF, or both sequentially.
 
 The report source is canonical only for reporting narrative and approved interpretation. Upstream artifacts retain authority over their facts and commitments; every rendered channel is derived with no semantic authority. A report may use an explicitly approved snapshot of in-progress work, but must show its reporting period and `as_of` and must not imply upstream completion.
+
+Market-research content uses typed finding, calculation, assumption, analysis-result, and scenario refs that resolve to exact versions in the source snapshot. Reporting communicates promoted results and qualifiers; it does not search, recalculate, process raw survey responses, or rely on a derived export as the only support.
 
 When discovery or AI coding delegates reporting, the calling workflow remains root orchestrator and global state writer. Reporting returns a composite delta and resumes at the supplied return target. When reporting is invoked directly for the project, `q-report-workflow` is the root orchestrator. Release approval remains separate from publication or external sending.
 
@@ -276,6 +283,7 @@ The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-
 | Ideation Baseline | Yes | Canonical only for the approved snapshot, dispositions, and authorized handoff; stays `Working` until an adopting workflow transitions it |
 | Research Brief | Yes | Canonical only for the approved research scope, boundaries, and budget |
 | Findings Register and Research Synthesis | Yes | Supporting for cited findings, observed coverage, and cross-finding interpretation |
+| Market Analysis | Yes | Supporting for owned methods, assumptions, calculations, scenarios, reconciliation, and promoted published results; subordinate to brief and findings |
 | Research Baseline | Yes | Canonical only for exact approved research artifact versions and `as_of` |
 | Release candidate, integral validation, delivery manifest | Yes | Canonical for release/delivery scope |
 
@@ -289,6 +297,7 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Evaluate whether a proposal fits the project | `q-ask-analyze` |
 | Explore and compare options for one decision | `q-ideation-session` |
 | Reduce an external engagement uncertainty | `q-research-workflow` |
+| Analyze registered market evidence and scenarios | `q-research-market-analysis` |
 | Research a bounded technical claim | `q-code-research` |
 | Start or resume a proposal | `q-proposal-workflow` |
 | Start or resume product planning or delivery | `q-delivery-workflow` |
@@ -328,6 +337,8 @@ Groups sort the catalog and name the skills: `ask`, `ideation`, `proposal`, `res
 - Do not let a report renderer own report meaning or treat a rendered channel as upstream truth.
 - Do not let an ideation candidate, score, or snapshot become client evidence, a requirement, an ADR, or a commitment without the owning skill's explicit adoption.
 - Do not let Research overwrite client evidence, create a proposal commitment, or start another workflow without an explicit choice.
+- Do not let Market Analysis invent evidence, operate primary fieldwork, process raw survey responses, or let a derived JSON/CSV export become semantic truth.
+- Do not let market-research Reporting search or recalculate; require promoted results and typed evidence refs.
 - Do not treat verified source identity, claim support, and completed search coverage as the same state.
 - Do not let a delegated reporting subworkflow write global state or the artifact index.
 - Do not create empty folders for planned capabilities.

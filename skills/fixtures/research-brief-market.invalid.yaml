@@ -1,0 +1,40 @@
+schema_version: "1.0"
+research_profile: market
+intended_consumers: [reporting]
+analysis_modules: [market-sizing, market-sizing]
+brief:
+  brief_id: RB-MARKET-INVALID
+  version: "0.1"
+  lifecycle: Working
+  status: authorized
+  approval_ref: APR-RB-MARKET-INVALID
+decision_refs: [DEC-MARKET-001]
+questions:
+  - question_id: RQ-001
+    question: "Size an undefined market."
+    question_type: market
+    decision_refs: [DEC-MARKET-001]
+    parent_question_ref: null
+    boundaries: [Undefined]
+    radar:
+      researchable: 2
+      anchored: 1
+      decision_linked: 4
+      adds_evidence: 3
+      relevant: 3
+      average: 2.6
+      passes: false
+scope:
+  in_scope: [Undefined]
+  out_of_scope: []
+  privacy_constraints: []
+budget:
+  time_limit: "2 hours"
+  cost_limit: "0"
+  max_sources_inspected: 0
+  stopping_conditions: ["Undefined"]
+search_plan:
+  - question_ref: RQ-001
+    strategies: ["Undefined"]
+    source_classes: [authoritative-primary]
+assumptions: []

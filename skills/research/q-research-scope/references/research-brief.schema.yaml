@@ -5,6 +5,93 @@ required: [schema_version, brief, decision_refs, questions, scope, budget, searc
 additionalProperties: false
 properties:
   schema_version: {const: "1.0"}
+  research_profile: {enum: [general, market]}
+  intended_consumers:
+    type: array
+    items: {enum: [decision-support, proposal, reporting]}
+  engagement_ref: {type: [string, "null"]}
+  analysis_modules:
+    type: array
+    items:
+      enum: [market-sizing, tam-sam-som, forecast, sensitivity, unit-normalization, top-down-bottom-up-reconciliation, competitive-landscape, concentration, demand-segmentation, scenario-analysis, custom-method]
+  measurement_contract:
+    type: object
+    required: [contract_id, product_or_service, inclusions, exclusions, buyer, user, payer, transaction, value_chain_level, geography, import_export_treatment, channels, historical_period, forecast_period, as_of, measure, currency, taxonomy]
+    additionalProperties: false
+    properties:
+      contract_id: {type: string}
+      product_or_service: {type: string}
+      inclusions:
+        type: array
+        minItems: 1
+        items: {type: string}
+      exclusions:
+        type: array
+        items: {type: string}
+      buyer:
+        type: array
+        minItems: 1
+        items: {type: string}
+      user:
+        type: array
+        minItems: 1
+        items: {type: string}
+      payer:
+        type: array
+        minItems: 1
+        items: {type: string}
+      transaction: {type: string}
+      value_chain_level: {type: string}
+      geography:
+        type: array
+        minItems: 1
+        items: {type: string}
+      import_export_treatment: {type: string}
+      channels:
+        type: array
+        minItems: 1
+        items: {type: string}
+      historical_period:
+        type: object
+        required: [from, to]
+        additionalProperties: false
+        properties:
+          from: {type: string}
+          to: {type: string}
+      forecast_period:
+        type: object
+        required: [from, to]
+        additionalProperties: false
+        properties:
+          from: {type: [string, "null"]}
+          to: {type: [string, "null"]}
+      as_of: {type: string}
+      measure:
+        type: object
+        required: [measure_type, unit, denominator_id, stock_or_flow, gross_or_net, tax_treatment]
+        additionalProperties: false
+        properties:
+          measure_type: {type: string}
+          unit: {type: string}
+          denominator_id: {type: string}
+          stock_or_flow: {enum: [stock, flow, not-applicable]}
+          gross_or_net: {enum: [gross, net, not-applicable]}
+          tax_treatment: {type: string}
+      currency:
+        type: object
+        required: [code, base_year, price_basis]
+        additionalProperties: false
+        properties:
+          code: {type: [string, "null"]}
+          base_year: {type: [integer, "null"]}
+          price_basis: {enum: [nominal, real, current, constant, not-applicable]}
+      taxonomy:
+        type: object
+        required: [name, version]
+        additionalProperties: false
+        properties:
+          name: {type: string}
+          version: {type: string}
   brief:
     type: object
     required: [brief_id, version, lifecycle, status, approval_ref]
@@ -73,6 +160,9 @@ properties:
     properties:
       time_limit: {type: string}
       cost_limit: {type: string}
+      max_sources_inspected:
+        type: [integer, "null"]
+        minimum: 1
       stopping_conditions:
         type: array
         minItems: 1

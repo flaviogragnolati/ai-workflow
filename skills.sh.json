@@ -45,11 +45,12 @@
     },
     {
       "title": "Engagement research",
-      "description": "Scope, investigate, synthesize, and baseline optional consulting research for market, competitor, regulatory, technology, feasibility, and risk decisions.",
+      "description": "Scope and investigate optional consulting research, run conditional evidence-linked market analysis, synthesize, and baseline general or market decisions.",
       "skills": [
         "q-research-workflow",
         "q-research-scope",
         "q-research-investigate",
+        "q-research-market-analysis",
         "q-research-synthesize"
       ]
     },

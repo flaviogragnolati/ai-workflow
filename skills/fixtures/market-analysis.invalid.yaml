@@ -1,0 +1,61 @@
+schema_version: "1.0"
+analysis:
+  analysis_id: MA-INVALID
+  version: "0.1"
+  lifecycle: Working
+  profile: market
+  brief_ref: {artifact_id: RB-MARKET-001, version: ""}
+  findings_ref: {artifact_id: FR-001, version: ""}
+  as_of: ""
+measurement_contract_ref: missing-contract
+modules: [forecast, custom-method]
+assumptions:
+  - assumption_id: ASM-DUPLICATE
+    description: "Invalid assumption"
+    value_or_range: {value: 0.5, minimum: 0.8, maximum: 0.2}
+    unit: fraction
+    finding_refs: [F-404]
+    rationale: "Invalid fixture"
+    sensitivity_range: {minimum: 0.8, maximum: 0.2}
+  - assumption_id: ASM-DUPLICATE
+    description: "Duplicate"
+    value_or_range: {value: 0.4, minimum: 0.2, maximum: 0.6}
+    unit: fraction
+    finding_refs: []
+    rationale: "Duplicate"
+    sensitivity_range: {minimum: 0.2, maximum: 0.6}
+calculations:
+  - calculation_id: CALC-INVALID
+    method: custom
+    formula: "opaque"
+    input_refs: [{ref_type: finding, ref_id: F-404}]
+    assumption_refs: [ASM-404]
+    script: {path: custom.py, version: "0", command: "", hash: ""}
+    rounding_policy: ""
+scenarios:
+  - scenario_id: SCN-ONLY
+    label: only
+    assumption_refs: [ASM-DUPLICATE]
+    invalidation_conditions: ["None"]
+published_results:
+  - result_id: RES-INVALID
+    calculation_ref: CALC-404
+    scenario_ref: SCN-404
+    value: null
+    range: {minimum: null, maximum: null}
+    unit: ARS
+    denominator_id: annual-vendor-revenue
+    base_year: 2026
+    finding_refs: [F-404]
+    assumption_refs: [ASM-404]
+    qualifiers: []
+    export_locator: EXPORT-404
+exports: []
+limitations: []
+unresolved_reconciliation: []
+validation_summary:
+  valid: true
+  validated_at: ""
+  script_version: "0"
+  errors: []
+  warnings: []

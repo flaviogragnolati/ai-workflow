@@ -21,6 +21,29 @@ sources:
     currency_notes: "Current for 2026 Q3"
     independence_group: DATASET-OFFICIAL-001
     source_verification: verified
+    measurement_context:
+      geography: Argentina
+      period: "2026-Q2"
+      measure_type: share
+      unit: fraction
+      denominator_id: smb-organizations
+      currency: null
+      base_year: null
+      price_basis: not-applicable
+      taxonomy: "Quasar target-market taxonomy"
+      taxonomy_version: "1.0"
+    methodology:
+      original_producer: "Public authority"
+      source_type: administrative-dataset
+      method: "Published administrative aggregation"
+      covered_population: "Registered SMB organizations"
+      sample: null
+      limitations: ["Coverage follows the authority's registration boundary."]
+      revision_status: final
+      vintage: "2026-Q2"
+    rights:
+      license_or_terms: "Public data terms"
+      archive_locator: "archive/SRC-001"
   - source_id: SRC-002
     title: "Independent segment survey"
     publisher: "Independent institute"
@@ -33,6 +56,29 @@ sources:
     currency_notes: "Fielded in 2026 Q2"
     independence_group: SURVEY-INDEPENDENT-001
     source_verification: verified
+    measurement_context:
+      geography: Argentina
+      period: "2026-Q2"
+      measure_type: share
+      unit: fraction
+      denominator_id: surveyed-smb-organizations
+      currency: null
+      base_year: null
+      price_basis: not-applicable
+      taxonomy: "Survey segment taxonomy"
+      taxonomy_version: "2026"
+    methodology:
+      original_producer: "Independent institute"
+      source_type: published-survey
+      method: "Published survey methodology"
+      covered_population: "SMB organizations"
+      sample: "Published aggregate sample; no microdata processed"
+      limitations: ["Subgroup estimates have smaller published bases."]
+      revision_status: final
+      vintage: "2026-Q2"
+    rights:
+      license_or_terms: "Publisher terms"
+      archive_locator: "archive/SRC-002"
 search_log:
   - search_id: SEARCH-001
     question_ref: RQ-001
@@ -43,6 +89,7 @@ findings:
   - finding_id: F-001
     question_ref: RQ-001
     claim: "The segment reports a documented adoption constraint."
+    statement_class: source-estimate
     finding_status: supported
     corroboration: multiple-independent
     confidence: medium
@@ -58,9 +105,22 @@ findings:
     conflicts: []
     coverage_status: planned-search-complete
     notes: "Independent evidence converges within the approved period."
+    quantitative:
+      value: 0.55
+      range: {minimum: 0.48, maximum: 0.62}
+      unit: fraction
+      denominator_id: smb-organizations
+      geography: Argentina
+      period: "2026-Q2"
+      currency: null
+      base_year: null
+      price_basis: not-applicable
+      taxonomy: "Quasar target-market taxonomy"
+      revision_status: final
   - finding_id: F-002
     question_ref: RQ-001
     claim: "The constraint affects every organization in the segment."
+    statement_class: fact
     finding_status: contradicted
     corroboration: single-source
     confidence: medium

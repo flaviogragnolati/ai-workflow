@@ -18,10 +18,14 @@ ai-coding:
   optional_next: [reporting, close]
 research:
   entry_skill: q-research-workflow
-  stages: [q-research-scope, q-research-investigate, q-research-synthesize]
+  profiles: [general, market]
+  stages: [q-research-scope, q-research-investigate, q-research-market-analysis, q-research-synthesize]
+  stage_conditions:
+    q-research-market-analysis: market-profile-with-analysis-modules-or-explicit-target
   optional_next: [discovery-proposal, reporting, close]
 reporting:
   entry_skill: q-report-workflow
+  content_profiles: [general, market-research]
   stages: [q-report-source]
   renderers: [q-report-document, q-report-deck]
   optional_next: [return-to-caller, close]

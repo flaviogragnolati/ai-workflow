@@ -1,0 +1,13 @@
+schema_version: "1.0"
+baseline:
+  baseline_id: RBL-MARKET-INVALID
+  version: "1.0"
+  lifecycle: Baselined
+  brief_ref: {artifact_id: RB-MARKET-001, version: "1.0"}
+  findings_ref: {artifact_id: FR-001, version: "1.0"}
+  synthesis_ref: {artifact_id: RS-MARKET-001, version: "1.0"}
+  analysis_refs:
+    - {artifact_id: MA-001, version: "", profile: market}
+    - {artifact_id: MA-001, version: "", profile: market}
+  as_of: "2026-08-13"
+  approval_ref: APR-RBL-MARKET-001

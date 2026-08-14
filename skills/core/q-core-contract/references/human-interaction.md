@@ -87,6 +87,9 @@ q-research-scope:
 q-research-investigate:
   orchestrated: on-demand
   standalone: on-demand
+q-research-market-analysis:
+  orchestrated: decision-gated
+  standalone: decision-gated
 q-research-synthesize:
   orchestrated: review-at-boundaries
   standalone: review-at-boundaries

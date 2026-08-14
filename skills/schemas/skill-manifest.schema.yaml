@@ -5,7 +5,7 @@ required: [schema_version, package, workflows, skills, planned_capabilities]
 additionalProperties: false
 properties:
   schema_version:
-    const: "1.3"
+    const: "1.4"
   package:
     type: object
     required: [id, description, stack_profile, compatibility, human_guide, cross_workflow_contract, validator]
@@ -25,6 +25,20 @@ properties:
       properties:
         status: {enum: [active, planned, deprecated, archived]}
         entry_skill: {type: [string, "null"]}
+        profiles:
+          type: array
+          items: {enum: [general, market]}
+        content_profiles:
+          type: array
+          items: {enum: [general, market-research]}
+        stage_conditions:
+          type: object
+          additionalProperties:
+            type: object
+            required: [when]
+            additionalProperties: false
+            properties:
+              when: {type: string}
         delegates:
           type: array
           items: {type: string}

@@ -34,5 +34,15 @@ properties:
         properties:
           artifact_id: {type: string}
           version: {type: string}
+      analysis_refs:
+        type: array
+        items:
+          type: object
+          required: [artifact_id, version, profile]
+          additionalProperties: false
+          properties:
+            artifact_id: {type: string}
+            version: {type: string}
+            profile: {const: market}
       as_of: {type: string}
       approval_ref: {type: string}
