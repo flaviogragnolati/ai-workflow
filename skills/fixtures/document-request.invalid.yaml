@@ -1,0 +1,17 @@
+schema_version: "2.0"
+request_id: 7
+operation: publish
+caller:
+  skill_id: q-report-document
+  mode: background
+owner_skill: q-report-document
+sources: wrong
+output:
+  overwrite: yes
+preservation_requirements: false
+forbidden_semantic_changes: wrong
+runtime: deno
+validation:
+  structural: maybe
+  rendered: false
+unknown: true

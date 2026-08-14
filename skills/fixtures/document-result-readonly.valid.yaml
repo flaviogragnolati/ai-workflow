@@ -1,0 +1,22 @@
+schema_version: "1.0"
+request_id: doc-req-003
+outcome: completed
+owner_skill: q-report-document
+generator_skill: q-tool-document
+runtime: node
+operation: inspect
+inputs: [reports/report.docx]
+outputs: []
+validation:
+  structural: passed
+  rendered: not-required
+  inspected_pages: []
+preserved_semantics: [source-file-unchanged]
+intentional_changes: []
+capability_gaps: []
+warnings: []
+blockers: []
+provenance:
+  source_refs: [report-docx-001@2]
+  command: scripts/document inspect
+  tools: [node-24]

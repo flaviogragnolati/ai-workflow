@@ -14,8 +14,8 @@ imply endorsement by its authors.
 
 | Reference repository | Quasar skills informed or adapted |
 |---|---|
-| [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, `q-review-evidence`, and `q-tool-pdf` |
-| [anthropics/skills](https://github.com/anthropics/skills) | `q-tool-pdf` |
+| [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, `q-review-evidence`, `q-tool-document`, and `q-tool-pdf` |
+| [anthropics/skills](https://github.com/anthropics/skills) | `q-tool-document` and `q-tool-pdf` |
 | [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit) | `q-ideation-session`, `q-tool-humanizer`, `q-review-skill`, `q-tool-c4`, and `q-plan-design-system` |
 
 ## Original Quasar material — MIT License
@@ -75,6 +75,34 @@ security boundaries, runtime-specific references, and deterministic smoke
 tests. Original Quasar portions remain under the repository MIT license above;
 third-party runtime dependencies retain their own licenses and are not
 vendored.
+
+## DOCX functional reference — restricted source not incorporated
+
+Sources identified by the incoming DOCX staging bundle and consulted only for
+its public functional boundary:
+
+- <https://github.com/K-Dense-AI/scientific-agent-skills/tree/b2a92ba052dcae4ef48e850b9e31ebf75706be48/skills/docx>
+- <https://github.com/anthropics/skills/tree/f6656c1256d5a8adfa37db9110046ef20bac644c/skills/docx>
+
+The incoming bundle identified the K-Dense source as Anthropic's DOCX skill
+version `2.1`, extended with a second runtime. Its bundled `LICENSE.txt` was
+not MIT and stated restrictions on extraction, retention, copying, derivative
+works, and distribution. Marking the skill internal would not have cured
+those restrictions in this public repository. The staging bundle was
+therefore treated only as a functional requirements input and removed after
+review. No source prose, Python or Node script, XML template, XSD schema,
+fixture, reference guide, or license text from that bundle was copied,
+translated, vendored, or adapted into the registered skill.
+
+`skills/tool/q-tool-document` is an original Quasar implementation. It uses a
+runtime-neutral caller-owned delegation contract; independent standard-library
+Python and Node backends; bounded DOCX/DOTX inspection, extraction, creation,
+exact text replacement, comments, redlines, accepted-change materialization,
+conversion, rendering, and package validation; safe ZIP/OPC mechanics;
+explicit overwrite authorization; capability-based fallbacks; and
+cross-runtime tests. It bundles no ISO schema corpus or third-party runtime
+dependency. LibreOffice, Poppler, and other separately installed native tools
+retain their own licenses and are not vendored.
 
 ## K-Dense Inc. adaptations — MIT License
 

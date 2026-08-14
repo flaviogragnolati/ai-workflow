@@ -1,0 +1,22 @@
+schema_version: "1.0"
+request_id: doc-req-002
+outcome: blocked
+owner_skill: q-proposal-document
+generator_skill: q-tool-document
+runtime: null
+operation: render
+inputs: [proposal.docx]
+outputs: []
+validation:
+  structural: not-required
+  rendered: unavailable
+  inspected_pages: []
+preserved_semantics: []
+intentional_changes: []
+capability_gaps: [libreoffice-unavailable]
+warnings: []
+blockers: [required-visual-validation-unavailable]
+provenance:
+  source_refs: [proposal-source-001@1]
+  command: scripts/document render
+  tools: []

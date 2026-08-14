@@ -1,11 +1,11 @@
 ---
 name: q-proposal-document
-description: "Generate, validate, reconcile, and release branded Quasar proposal DOCX and PDF files from the canonical proposal source. Use for the document channel to author one Markdown mapping with YAML frontmatter, preserve IDs and provenance, run render-based visual QA, and reprocess manually edited documents without silently changing commercial meaning. Requires the q-core-contract and q-proposal-design companions and may use q-tool-pdf for verified PDF mechanics; an installed skill is not proof that its local runtime is healthy."
+description: "Generate, validate, reconcile, and release branded Quasar proposal DOCX and PDF files from the canonical proposal source. Use for the document channel to author one Markdown mapping with YAML frontmatter, preserve IDs and provenance, run render-based visual QA, and reprocess manually edited documents without silently changing commercial meaning. Requires the q-core-contract and q-proposal-design companions and may use q-tool-document or q-tool-pdf for verified format mechanics; an installed skill is not proof that its local runtime is healthy."
 ---
 
 # Commercial proposal document
 
-Read the `q-core-contract` companion for shared governance, `q-proposal-design` for the canonical Proposal Source contract, and the references in this directory; if either companion is missing, stop and install both with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract --skill q-proposal-design`. Use only a document runtime whose generation, rendering, and inspection capabilities are verified in the current environment. `q-tool-document` remains planned. `q-tool-pdf` is an optional mechanics and validation collaborator, not evidence that the current environment can convert DOCX or render PDF.
+Read the `q-core-contract` companion for shared governance, `q-proposal-design` for the canonical Proposal Source contract, and the references in this directory; if either companion is missing, stop and install both with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract --skill q-proposal-design`. Use only runtimes whose requested generation, rendering, and inspection capabilities are verified in the current environment. `q-tool-document` and `q-tool-pdf` are optional mechanics collaborators; installation alone proves neither DOCX nor PDF capability.
 
 ## Inputs
 
@@ -50,9 +50,11 @@ Keep imports aligned with these names. Run each affected CLI with `--help` and e
 6. Mark a release only after explicit approval.
 7. Register DOCX and PDF as derived artifacts with source references.
 
+When `requested-proposal-docx-mechanics-need-inspection-editing-comment-redline-conversion-or-validation` and `q-tool-document` is installed, pass its `document_request` the exact Proposal Source and mapping versions, validated source or DOCX path, authorized output path, forbidden commercial changes, preservation requirements, and required structural and rendered checks. Keep document mapping, brand, content selection, cross-format comparison, release approval, and artifact deltas here. If the tool is absent, `use-only-a-separately-verified-local-document-route-or-block-the-docx-and-require-explicit-partial-release`.
+
 When `requested-proposal-channel-includes-pdf-generation-inspection-or-validation` and `q-tool-pdf` is installed, pass its `pdf_request` the exact Proposal Source and mapping versions, the validated DOCX path, required preservation and comparison checks, authorized PDF path, and `overwrite: false` unless replacement was explicitly approved. Keep commercial meaning, DOCX-to-PDF source order, release approval, and artifact deltas here. If the tool is absent, `use-only-a-separately-verified-local-pdf-route-or-block-the-pdf-and-require-explicit-partial-release`.
 
-If `python-docx`, Pillow, JSON Schema Draft 2020-12 support, YAML parsing, conversion, rendering, or visual inspection is unavailable, identify the missing capability and block only the affected format. A mapping-only result or another supported subset requires explicit partial-release approval and must name every omitted output.
+Use this skill's builder for the branded proposal and route bounded DOCX mechanics through `q-tool-document` when installed. If `python-docx`, Pillow, JSON Schema Draft 2020-12 support, YAML parsing, conversion, rendering, or visual inspection remains unavailable on the selected route, identify the missing capability and block only the affected format. A mapping-only result or another supported subset requires explicit partial-release approval and must name every omitted output.
 
 ## Manual edit reconciliation
 

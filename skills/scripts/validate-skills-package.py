@@ -787,6 +787,88 @@ def pdf_runtime_errors(skills: dict[str, Any]) -> list[str]:
     return errors
 
 
+def document_runtime_errors(skills: dict[str, Any]) -> list[str]:
+    entry = skills.get("q-tool-document")
+    if not isinstance(entry, dict) or entry.get("status") != "active":
+        return []
+    directory = SKILLS_ROOT / str(entry.get("path", ""))
+    dispatcher = directory / "scripts" / "document"
+    python_backend = directory / "scripts" / "python" / "document_tool.py"
+    node_backend = directory / "scripts" / "node" / "document-tool.mjs"
+    static_test = directory / "tests" / "validate_static.py"
+    runtime_test = directory / "tests" / "run_tests.py"
+    required = [
+        dispatcher,
+        directory / "scripts" / "document.ps1",
+        python_backend,
+        directory / "scripts" / "python" / "pyproject.toml",
+        node_backend,
+        directory / "scripts" / "node" / "package.json",
+        static_test,
+        runtime_test,
+        directory / "references" / "document-request.schema.yaml",
+        directory / "references" / "document-result.schema.yaml",
+    ]
+    errors = [
+        "q-tool-document: missing runtime file %s" % path.relative_to(REPO_ROOT)
+        for path in required if not path.is_file()
+    ]
+    if errors:
+        return errors
+
+    for command, expected, label, timeout in (
+        ([sys.executable, str(static_test)], "q-tool-document static validation passed", "static validation", 30),
+        ([sys.executable, str(runtime_test)], "q-tool-document tests:", "runtime tests", 45),
+        ([sys.executable, str(python_backend), "--help"], "accept-changes", "Python --help", 10),
+    ):
+        run = subprocess.run(
+            command,
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=timeout,
+            check=False,
+        )
+        if run.returncode != 0 or expected not in run.stdout:
+            errors.append("q-tool-document: %s failed: %s"
+                          % (label, run.stderr.strip() or run.stdout.strip() or run.returncode))
+
+    bash = shutil.which("bash")
+    if bash:
+        syntax = subprocess.run(
+            [bash, "-n", str(dispatcher)],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=10,
+            check=False,
+        )
+        if syntax.returncode != 0:
+            errors.append("q-tool-document: dispatcher syntax failed: %s"
+                          % (syntax.stderr.strip() or syntax.stdout.strip() or syntax.returncode))
+
+    node = shutil.which("node")
+    if node:
+        for arguments, label, expected in (
+            ([node, "--check", str(node_backend)], "Node syntax", None),
+            ([node, str(node_backend), "--help"], "Node --help", "accept-changes"),
+        ):
+            smoke = subprocess.run(
+                arguments,
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                timeout=10,
+                check=False,
+            )
+            if smoke.returncode != 0 or (expected and expected not in smoke.stdout):
+                errors.append("q-tool-document: %s failed: %s"
+                              % (label, smoke.stderr.strip() or smoke.stdout.strip() or smoke.returncode))
+    else:
+        errors.append("q-tool-document: Node is required to verify the declared dual-runtime backend")
+    return errors
+
+
 def c4_runtime_errors(skills: dict[str, Any]) -> list[str]:
     entry = skills.get("q-tool-c4")
     if not isinstance(entry, dict) or entry.get("status") != "active":
@@ -1845,6 +1927,50 @@ def c4_result_semantics(data: Any) -> list[str]:
     return errors
 
 
+def document_request_semantics(request: Any) -> list[str]:
+    if not isinstance(request, dict):
+        return []
+    errors: list[str] = []
+    operation = request.get("operation")
+    output = request.get("output", {})
+    validation = request.get("validation", {})
+    if isinstance(output, dict):
+        if output.get("overwrite") is True and not output.get("approval_ref"):
+            errors.append("document overwrite requires an approval_ref")
+        if operation in {"create", "replace-text", "comment", "redline", "accept-changes", "convert"} and not output.get("path"):
+            errors.append("document mutation requires an output path")
+        if operation == "render" and not output.get("validation_dir"):
+            errors.append("document render requires a validation_dir")
+    if operation == "render" and isinstance(validation, dict) and validation.get("rendered") is not True:
+        errors.append("document render requires rendered validation")
+    return errors
+
+
+def document_result_semantics(result: Any) -> list[str]:
+    if not isinstance(result, dict):
+        return []
+    errors: list[str] = []
+    outcome = result.get("outcome")
+    outputs = result.get("outputs", [])
+    warnings = result.get("warnings", [])
+    blockers = result.get("blockers", [])
+    gaps = result.get("capability_gaps", [])
+    if outcome in {"completed", "completed_with_warnings"} and blockers:
+        errors.append("non-blocked document result cannot contain blockers")
+    if outcome == "completed" and warnings:
+        errors.append("completed document result cannot contain warnings")
+    if outcome == "completed_with_warnings" and not warnings and not gaps:
+        errors.append("completed_with_warnings document result requires a warning or capability gap")
+    if outcome == "blocked" and not blockers:
+        errors.append("blocked document result requires at least one blocker")
+    output_operations = {"create", "replace-text", "comment", "redline", "accept-changes", "convert", "render"}
+    if outcome in {"completed", "completed_with_warnings"} and result.get("operation") in output_operations and not outputs:
+        errors.append("completed document mutation or render requires at least one output")
+    if outcome == "blocked" and result.get("runtime") is None and outputs:
+        errors.append("document result blocked before runtime selection cannot contain outputs")
+    return errors
+
+
 def fixture_pair(
     schema_path: Path,
     valid_path: Path,
@@ -2218,6 +2344,14 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("maint/q-maint-writing-for-agents/SKILL-MECHANICS.md", "A skill root must not contain another `SKILL.md`"),
             ("scripts/validate-skills-package.py", "unregistered or nested SKILL.md"),
         ],
+        "S-64": [
+            ("core/q-core-contract/SKILL.md", "Pass one `document_request` with exact source refs"),
+            ("tool/q-tool-document/SKILL.md", "The local runtime never installs dependencies"),
+            ("tool/q-tool-document/SKILL.md", "creation_mode: derived"),
+            ("proposal/q-proposal-document/SKILL.md", "requested-proposal-docx-mechanics-need-inspection-editing-comment-redline-conversion-or-validation"),
+            ("report/q-report-document/SKILL.md", "requested-report-docx-mechanics-need-creation-inspection-editing-comment-redline-conversion-or-validation"),
+            ("../LICENSE", "DOCX functional reference — restricted source not incorporated"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():
@@ -2296,7 +2430,30 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     prototype = skills.get("q-code-prototype", {})
     conflicts = skills.get("q-code-merge-conflicts", {})
     maintenance = skills.get("q-maint-ai-workflow", {})
+    document_tool = skills.get("q-tool-document", {})
     pdf_tool = skills.get("q-tool-pdf", {})
+    check(
+        "document-tool-active-not-planned",
+        isinstance(document_tool, dict)
+        and document_tool.get("status") == "active"
+        and document_tool.get("distribution", "public") == "public"
+        and "q-tool-document" not in planned,
+    )
+    check(
+        "document-tool-overwrite-is-approval-gated",
+        "overwrite" in str(document_tool.get("approval_policy", "")),
+    )
+    document_consumers = {"q-proposal-document", "q-report-document"}
+    check(
+        "document-tool-renderer-routing",
+        all(
+            any(
+                isinstance(use, dict) and use.get("skill") == "q-tool-document"
+                for use in skills.get(skill_id, {}).get("uses", [])
+            )
+            for skill_id in document_consumers
+        ),
+    )
     check(
         "pdf-tool-active-not-planned",
         isinstance(pdf_tool, dict)
@@ -2369,7 +2526,7 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
         conflict_class="semantically-compatible", continuation_commit=False
     ))
 
-    expected_planned = {"q-tool-document", "q-tool-spreadsheet"}
+    expected_planned = {"q-tool-spreadsheet"}
     check("planned-capability-set", set(planned) == expected_planned)
     check("planned-capabilities-pathless", all(
         isinstance(entry, dict)
@@ -2401,6 +2558,9 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     check("single-global-writer", not invalid_writers)
     check("pdf-tool-is-not-a-global-writer", not global_effects.intersection(
         pdf_tool.get("side_effects", [])
+    ))
+    check("document-tool-is-not-a-global-writer", not global_effects.intersection(
+        document_tool.get("side_effects", [])
     ))
     proposal_document = skills.get("q-proposal-document", {})
     check("proposal-document-returns-deltas", not global_effects.intersection(
@@ -2524,10 +2684,12 @@ def package_doc_errors() -> list[str]:
             '`q-review-skill`',
             '`q-tool-c4`',
             '`q-plan-design-system`',
+            '`q-tool-document`',
             '`q-tool-pdf`',
             'b2a92ba052dcae4ef48e850b9e31ebf75706be48',
             'f6656c1256d5a8adfa37db9110046ef20bac644c',
             'restricted source not incorporated',
+            'DOCX functional reference — restricted source not incorporated',
             'K-Dense Inc. adaptations',
             'Softaworks / Leonardo Flores references and adaptations',
             'Wikipedia contributors',
@@ -2805,6 +2967,38 @@ def run() -> dict[str, Any]:
         min_invalid_errors=10,
     ))
     errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-document" / "references" / "document-request.schema.yaml",
+        fixtures / "document-request.valid.yaml",
+        fixtures / "document-request.invalid.yaml",
+        document_request_semantics,
+        active,
+        min_invalid_errors=8,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-document" / "references" / "document-result.schema.yaml",
+        fixtures / "document-result.valid.yaml",
+        fixtures / "document-result.invalid.yaml",
+        document_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-document" / "references" / "document-result.schema.yaml",
+        fixtures / "document-result-blocked.valid.yaml",
+        fixtures / "document-result.invalid.yaml",
+        document_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-document" / "references" / "document-result.schema.yaml",
+        fixtures / "document-result-readonly.valid.yaml",
+        fixtures / "document-result.invalid.yaml",
+        document_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
         CORE_CONTRACT / "references" / "report-source.schema.yaml",
         fixtures / "report-source.valid.yaml",
         fixtures / "report-source.invalid.yaml",
@@ -2928,6 +3122,7 @@ def run() -> dict[str, Any]:
     errors.extend(skill_layout_errors(skills))
     errors.extend(stray_file_errors())
     errors.extend(mermaid_runtime_errors(skills))
+    errors.extend(document_runtime_errors(skills))
     errors.extend(pdf_runtime_errors(skills))
     errors.extend(c4_runtime_errors(skills))
     errors.extend(market_analysis_runtime_errors(skills))

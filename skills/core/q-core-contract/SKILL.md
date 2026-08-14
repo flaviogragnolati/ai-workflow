@@ -281,7 +281,17 @@ An owning skill may delegate PDF inspection, extraction, transformation, form ha
 
 Keep every persisted PDF or extraction derived with `semantic_authority: none` and exact generation provenance. For Proposal, Report Document, or Report Deck, the renderer reviews semantic fidelity and incorporates accepted outputs into its own result; only the root orchestrator reconciles them. If the optional tool is unavailable, use only a separately verified local PDF route or block the affected PDF and require explicit approval for a partial release. Never treat an active tool entry as proof that the current environment can produce or visually inspect the requested format.
 
-## Manual DOCX reconciliation
+## Document delegation
+
+An owning skill may delegate DOCX/DOTX inspection, extraction, bounded creation and exact-text edits, comments, tracked replacements, accepted-change materialization, local conversion, rendering, and structural validation to `q-tool-document`. The caller retains approved content and meaning, branding intent, source versions, lifecycle, release decisions, authorized paths, preservation requirements, and every artifact-index delta. Pass one `document_request` with exact source refs, forbidden semantic changes, output and overwrite policy, runtime policy, security flags, and required structural and visual evidence.
+
+`q-tool-document` owns verified local selection between its independent Python and Node backends, safe Open Packaging Convention mechanics, exact-operation compatibility checks, structural validation, rendered inspection, and provenance. It never installs dependencies, executes macros, follows external relationships, uses a remote converter, resolves semantic ambiguity, approves a release, publishes, or writes workflow state or the artifact index. An executable without the operation's declared package and native capabilities is not a supported route.
+
+Keep every persisted document output, conversion, extraction, or render derived with `semantic_authority: none` and exact generation provenance. For Proposal or Report Document, the renderer reviews semantic and brand fidelity and incorporates accepted outputs into its own result; only the root orchestrator reconciles them. `q-tool-document` may optionally use `q-tool-pdf` for transient verification-PDF structure or page rendering, but neither tool owns the caller's released PDF or source meaning.
+
+If the optional document tool is unavailable, use only a separately verified local document route or block the affected DOCX/DOTX output and require explicit approval for a partial release. Never treat an active skill entry, a successful ZIP check, or a LibreOffice conversion as proof of Microsoft Word fidelity or visual correctness.
+
+### Manual DOCX reconciliation
 
 Do not implement partial hashes or editable-field tracking in this version. When a proposal DOCX is edited manually, reintroduce the edited file to `q-proposal-document`, reconcile it with canonical sources, and regenerate affected derivatives.
 

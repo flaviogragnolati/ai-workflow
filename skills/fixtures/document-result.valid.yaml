@@ -1,0 +1,26 @@
+schema_version: "1.0"
+request_id: doc-req-001
+outcome: completed
+owner_skill: q-report-document
+generator_skill: q-tool-document
+runtime: python
+operation: create
+inputs: [reports/report-source.yaml]
+outputs:
+  - path: reports/report.docx
+    sha256: abc123
+    creation_mode: derived
+    semantic_authority: none
+validation:
+  structural: passed
+  rendered: passed
+  inspected_pages: [1, 2]
+preserved_semantics: [facts, source-ids]
+intentional_changes: [document-encoding]
+capability_gaps: []
+warnings: []
+blockers: []
+provenance:
+  source_refs: [report-source-001@2]
+  command: scripts/document create
+  tools: [python-3.12]

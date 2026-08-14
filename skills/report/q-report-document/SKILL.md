@@ -1,13 +1,13 @@
 ---
 name: q-report-document
-description: "Render approved Quasar report content into traceable Markdown, editable DOCX, and matching PDF documents. Use when a baselined report source must be mapped into written channels, branded consistently, validated for content and layout, reconciled after manual edits, and registered without acquiring semantic authority. Requires the q-core-contract and q-report-deck companions."
+description: "Render approved Quasar report content into traceable Markdown, editable DOCX, and matching PDF documents. Use when a baselined report source must be mapped into written channels, branded consistently, validated for content and layout, reconciled after manual edits, and registered without acquiring semantic authority. Requires the q-core-contract and q-report-deck companions and may use q-tool-document or q-tool-pdf for verified format mechanics."
 ---
 
 # Generate a Quasar report
 
 Render written report channels from one baselined report source. Keep the source as semantic authority and treat Markdown, DOCX, and PDF as regenerable derivatives with `semantic_authority: none`.
 
-Generate Markdown directly from the approved mapping. For DOCX or PDF, use only a document runtime whose generation, rendering, and inspection capabilities have been verified in the current environment. `q-tool-document` remains planned. `q-tool-pdf` is an optional mechanics and validation collaborator, not evidence that the current environment can create DOCX, convert it to PDF, or render the result.
+Generate Markdown directly from the approved mapping. For DOCX or PDF, use only runtimes whose requested generation, rendering, and inspection capabilities are verified in the current environment. `q-tool-document` and `q-tool-pdf` are optional mechanics collaborators; installation alone proves neither DOCX creation nor PDF conversion or rendering.
 
 Read the `q-core-contract` companion for shared governance and its `references/report-source.schema.yaml`, and the general identity, typography, accessibility, confidentiality, and source rules in [Quasar presentation identity](../q-report-deck/references/identidad-visual.md); if either companion is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract --skill q-report-deck`. Do not apply slide-specific canvas or layout patterns to documents.
 
@@ -32,6 +32,8 @@ If the runtime cannot produce or visually inspect a requested DOCX or PDF, repor
 5. Render DOCX and PDF and inspect every page. Validate structure, headings, tables, charts, pagination, overflow, typography, contrast, accessibility, confidentiality, and source attribution.
 6. Compare all formats against the source and mapping. Correct channel-only defects and regenerate affected derivatives.
 7. Obtain release approval separately from publication or external sending.
+
+When `requested-report-docx-mechanics-need-creation-inspection-editing-comment-redline-conversion-or-validation` and `q-tool-document` is installed, pass its `document_request` the exact Report Source and mapping versions, approved content or DOCX path, authorized output path, forbidden narrative changes, preservation requirements, and required structural and rendered checks. Keep narrative selection, document mapping, brand, cross-format comparison, release approval, and artifact deltas here. If the tool is absent, `use-only-a-separately-verified-local-document-route-or-block-the-docx-and-require-explicit-partial-release`.
 
 When `requested-document-channel-includes-pdf-generation-inspection-or-validation` and `q-tool-pdf` is installed, pass its `pdf_request` the exact Report Source and mapping versions, editable-source path, required preservation checks, authorized PDF path, and `overwrite: false` unless replacement was explicitly approved. Keep narrative selection, document mapping, branding, cross-format comparison, release approval, and artifact deltas here. If the tool is absent, `use-only-a-separately-verified-local-pdf-route-or-block-the-pdf-and-require-explicit-partial-release`.
 

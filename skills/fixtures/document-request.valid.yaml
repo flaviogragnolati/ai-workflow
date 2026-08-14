@@ -1,0 +1,34 @@
+schema_version: "1.0"
+request_id: doc-req-001
+operation: create
+caller:
+  skill_id: q-report-document
+  workflow: reporting
+  mode: orchestrated
+owner_skill: q-report-document
+sources:
+  - artifact_id: report-source-001
+    version: "2"
+    path: reports/report-source.yaml
+    sha256: null
+output:
+  path: reports/report.docx
+  overwrite: false
+  approval_ref: null
+  validation_dir: reports/.document-validation
+preservation_requirements: [facts, source-ids, reading-order]
+forbidden_semantic_changes: [new-facts, changed-commitments]
+runtime: auto
+validation:
+  structural: true
+  rendered: true
+  inspect_all_pages: true
+security:
+  macros: false
+  external_relationships: false
+  signatures: false
+  protection: false
+  tracked_changes: false
+  comments: false
+  sensitive_content: false
+  retention_policy: transient-validation-only

@@ -5,7 +5,7 @@ description: "Plan, create, edit, or review branded Quasar presentations for rep
 
 # Generate a Quasar deck
 
-Use only a presentation runtime whose PowerPoint generation, rendering, and inspection capabilities are verified in the current environment. `q-tool-document` remains planned. `q-tool-pdf` is an optional collaborator for exported-PDF mechanics and validation, not evidence that PPTX export or PDF rendering is available. Read the `q-core-contract` companion for shared governance; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Use `references/identidad-visual.md` and the assets in this skill for Quasar narrative and brand rules.
+Use only a presentation runtime whose PowerPoint generation, rendering, and inspection capabilities are verified in the current environment. `q-tool-pdf` is an optional collaborator for exported-PDF mechanics and validation, not evidence that PPTX export or PDF rendering is available; `q-tool-document` does not own PowerPoint files. Read the `q-core-contract` companion for shared governance; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Use `references/identidad-visual.md` and the assets in this skill for Quasar narrative and brand rules.
 
 ## Authority and inputs
 
