@@ -2,7 +2,7 @@ schema_version: "1.4"
 
 package:
   id: quasar-ai-delivery-skills
-  description: "Coordinated skills for Quasar project questions, structured ideation, engagement research, discovery, proposals, profile-driven software delivery, database schema design and review, C4 architecture views, QA, and optional reporting."
+  description: "Coordinated skills for Quasar project questions, structured ideation, engagement research, discovery, proposals, profile-driven software delivery, bilingual prose humanization and clarity editing, database schema design and review, C4 architecture views, QA, and optional reporting."
   stack_profile: project-defined
   compatibility: profile-driven
   human_guide: README.md
@@ -137,6 +137,26 @@ skills:
     fallback: bounded-analysis-or-coverage-gap-with-owner-route
     stack_profile: project-defined
     contract_version: "1.0"
+    distribution: public
+
+  q-tool-humanizer:
+    path: tool/q-tool-humanizer
+    group: tool
+    requires: [q-core-contract]
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
+    persistent_outputs: []
+    transient_outputs: [humanization-report, rewritten-text, change-summary]
+    side_effects: [write-project-artifacts]
+    approval_policy: conversation-output-by-default-with-explicit-authorization-for-writing-or-overwriting-a-named-project-artifact
+    fallback: return-conversation-only-detection-or-revision-with-a-named-language-evidence-or-meaning-preservation-gap
+    stack_profile: any
+    contract_version: "1.1"
     distribution: public
 
   q-ideation-session:

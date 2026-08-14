@@ -1,6 +1,6 @@
 # Quasar AI delivery skills
 
-This package coordinates project questions and proposal analysis, optional structured ideation, optional general or market engagement research, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, optional reporting, and shared database-schema, C4 architecture, and structural-diagram tooling. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
+This package coordinates project questions and proposal analysis, optional structured ideation, optional general or market engagement research, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, optional reporting, and shared bilingual prose-editing, database-schema, C4 architecture, and structural-diagram tooling. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
 
 ## Install
 
@@ -14,7 +14,7 @@ npx skills add flaviogragnolati/ai-workflow --skill q-code-debug --skill q-revie
 
 The installer copies one skill folder at a time into your project's agent directory, where every skill becomes a sibling of every other. Each skill is self-contained: it either bundles what it needs or declares the companion it depends on. Install the dependencies listed under [Skill dependencies](#skill-dependencies) alongside the skill that requires them; a skill whose companion is missing stops and prints the exact install command instead of proceeding on assumed rules.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 50 are.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 51 are.
 
 `skills.sh.json` groups the catalog on the skills.sh repository page. It is a derived presentation of the manifest `group` field — sections may merge groups, but the validator requires every public skill to appear in exactly one. `skill-manifest.yaml` stays the authority for what exists, what `group` it belongs to, what it `requires` or optionally `uses`, and what `distribution` it has.
 
@@ -40,12 +40,13 @@ Use $q-review-skill to audit an Agent Skill without changing it.
 Use $q-ideation-session to explore options for this decision before Discovery, Product Core, or Proposal Design.
 ```
 
-Invoke a shared tool directly for bounded database analysis or an editable architecture or structural diagram:
+Invoke a shared tool directly for bounded prose editing, database analysis, or an editable architecture or structural diagram:
 
 ```text
 Use $q-tool-database-schema to review this PostgreSQL migration from the supplied schema and rollout constraints without executing it.
 Use $q-tool-c4 to map the components inside the confirmed Checkout API container from repository evidence and render a C4 SVG with an available local backend.
 Use $q-tool-mermaid to create a sequence diagram for this authentication flow and save the source and SVG.
+Use $q-tool-humanizer to detect AI-writing patterns in this Spanish proposal, rewrite it naturally, or make it clearer without changing facts.
 ```
 
 Do not invoke an orchestrator and a stage as two independent writers. The orchestrator treats the named stage as `target_stage`, delegates domain work, validates the returned delta, and remains the only writer of workflow state and artifact index.
@@ -146,11 +147,12 @@ flowchart LR
 | Design or review a database schema | `q-tool-database-schema` | Producing transient physical-design, relational-schema, document-model, migration, or supplied-evidence performance analysis without choosing the stack or executing database work. |
 | Model or render C4 architecture | `q-tool-c4` | Selecting C4 abstraction and consistent views, then using a capability-verified Mermaid, Structurizr DSL, or C4-PlantUML route while the caller retains architecture or feature meaning. |
 | Create or export a Mermaid diagram | `q-tool-mermaid` | Creating, revising, validating, repairing, rendering, or compiling Mermaid while the caller retains domain meaning. |
+| Detect, humanize, or clarify prose | `q-tool-humanizer` | Reporting clustered AI-writing indicators or revising English and Spanish text without changing facts, citations, commitments, or semantic ownership. |
 | Route a report | `q-report-workflow` | Producing a progress, feature, milestone, release, completion, consulting, executive, or custom report from approved artifact versions. |
 | Define report meaning | `q-report-source` | Synthesizing the approved source bundle into one traceable reporting narrative before rendering. |
 | Render report channels | `q-report-document` for Markdown/DOCX/PDF; `q-report-deck` for PPTX/deck PDF | Rendering the same baselined report-source version into the requested written or presentation channels. |
 
-Use supporting skills only when their trigger appears: `q-code-research` for a bounded technical Findings Register from versioned primary evidence, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-tool-database-schema` for read-only physical schema, document-model, migration, and supplied-evidence performance assistance; `q-tool-c4` for C4 abstraction, synchronized views, backend selection, and verified C4 rendering; `q-tool-mermaid` for editable Mermaid diagrams and verified local exports; `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question; and `q-review-skill` for a read-only diagnostic of an Agent Skill or an explicitly bounded package slice.
+Use supporting skills only when their trigger appears: `q-code-research` for a bounded technical Findings Register from versioned primary evidence, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-tool-humanizer` for transient AI-pattern detection, meaning-preserving humanization, or clarity editing in English and Spanish; `q-tool-database-schema` for read-only physical schema, document-model, migration, and supplied-evidence performance assistance; `q-tool-c4` for C4 abstraction, synchronized views, backend selection, and verified C4 rendering; `q-tool-mermaid` for editable Mermaid diagrams and verified local exports; `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question; and `q-review-skill` for a read-only diagnostic of an Agent Skill or an explicitly bounded package slice.
 
 Three companions are not user entry points: coordinated workflows and the project-question skills load `q-core-contract` for shared governance; package maintenance loads the internal `q-maint-writing-for-agents` when agent-consumed artifacts change and `q-maint-skill-quality` when skills or invocation metadata are created, materially changed, or audited. Use `q-maint-ai-workflow` outside project runtime whenever this package, its skills, routing, contracts, metadata, fixtures, validators, or explanatory documentation must be changed or audited.
 
@@ -194,6 +196,12 @@ The Research Baseline is canonical only for the approved snapshot. Its claims, a
 `market-analysis.yaml` is the only new semantic artifact. JSON/CSV calculation workspaces are transient unless explicitly persisted as derived exports with no semantic authority; a value must be promoted into `published_results` before Synthesis or Reporting can use it. The package does not include primary-fieldwork capability, participant contact, survey/interview operation, PII or recording storage, or raw response-level survey processing. Published aggregate evidence may be registered and interpreted within its disclosed method limits.
 
 `q-code-research` remains a separate technical capability for official documentation, specifications, source code, APIs, compatibility, and versioned behavior during planning or delivery. It shares the cited-findings contract but not the engagement workflow or synthesis procedure.
+
+### Prose humanization and clarity
+
+`q-tool-humanizer` handles three bounded tasks over supplied English or Spanish prose: `detect` reports localized AI-writing indicators without an authorship verdict, `rewrite` removes clustered indicators, and `improve` applies a separate clarity-and-concision taxonomy to human or AI-assisted text. It loads only the applicable pattern or clarity reference for the text language, reports partial coverage for other languages, and keeps all output transient unless the caller explicitly authorizes writing a named project file.
+
+Facts, numbers, names, quotations, citations, commitments, uncertainty, and semantic ownership remain unchanged. Vague claims never gain invented specificity: the tool preserves them with a named evidence gap, or omits the whole unsupported assertion only when the caller authorizes that editorial choice. Citation signals route to the evidence owner rather than being silently repaired.
 
 ### AI coding and delivery
 
@@ -267,6 +275,7 @@ Maintenance is outside project runtime. It does not write project workflow state
 | `q-tool-mermaid` | `q-core-contract` | Applies shared artifact authority, single-writer, stage-result, and diagram-delegation rules |
 | `q-tool-c4` | `q-core-contract` | Applies shared artifact authority while selecting C4 abstraction, consistent views, and a capability-verified backend; Mermaid and code exploration remain optional collaborators |
 | `q-tool-database-schema` | `q-core-contract` | Applies owner routing, transient-output, external-content, and stack-compatibility rules without database execution |
+| `q-tool-humanizer` | `q-core-contract` | Applies transient-output, external-content, single-writer, and artifact-write approval rules to supplied prose without owning durable meaning |
 | `q-ask-project` | `q-core-contract` | Reconciles project state, artifact authority, lifecycle, and observable implementation before answering |
 | `q-ask-analyze` | `q-core-contract`, `q-ask-project` | Reuses the same alignment and evidence path before applying proposal-analysis lenses |
 | `q-code-research` | `q-core-contract` | Uses the shared cited-findings evidence contract while retaining technical-domain procedure |
@@ -330,6 +339,7 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Design or review a physical database schema, document model, migration, or supplied performance evidence | `q-tool-database-schema` |
 | Model, validate, or render a C4 view of a system, subsystem, container, component, code area, dynamic flow, deployment, or landscape | `q-tool-c4` |
 | Create, validate, render, or compile Mermaid | `q-tool-mermaid` |
+| Detect clustered AI-writing indicators, humanize prose, or improve English or Spanish clarity without changing meaning | `q-tool-humanizer` |
 | Produce a traced project report or report deck | `q-report-workflow` |
 | Render an approved report source as Markdown, DOCX, and PDF | `q-report-document` |
 | Produce a standalone Quasar presentation | `q-report-deck` |

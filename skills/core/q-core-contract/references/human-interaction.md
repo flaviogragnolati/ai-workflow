@@ -17,6 +17,9 @@ q-tool-c4:
 q-tool-database-schema:
   orchestrated: on-demand
   standalone: on-demand
+q-tool-humanizer:
+  orchestrated: on-demand
+  standalone: on-demand
 q-ideation-session:
   orchestrated: decision-gated
   standalone: dialogue-led

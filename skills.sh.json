@@ -18,12 +18,13 @@
       ]
     },
     {
-      "title": "Shared technical tools",
-      "description": "Cross-cutting tools for database design evidence, C4 architecture models and views, and editable structural diagrams while owning stages retain project meaning.",
+      "title": "Shared tools",
+      "description": "Cross-cutting tools for bilingual prose editing, database design evidence, C4 architecture models and views, and editable structural diagrams while owning stages retain project meaning.",
       "skills": [
         "q-tool-mermaid",
         "q-tool-c4",
-        "q-tool-database-schema"
+        "q-tool-database-schema",
+        "q-tool-humanizer"
       ]
     },
     {
