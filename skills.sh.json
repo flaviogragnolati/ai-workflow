@@ -18,10 +18,11 @@
       ]
     },
     {
-      "title": "Shared tools and visual utilities",
-      "description": "Cross-workflow tools for editable structural diagrams, local validation, reproducible rendering, and channel-neutral visual assets.",
+      "title": "Shared technical tools",
+      "description": "Cross-cutting tools for database design evidence and editable structural diagrams while owning stages retain project meaning.",
       "skills": [
-        "q-tool-mermaid"
+        "q-tool-mermaid",
+        "q-tool-database-schema"
       ]
     },
     {

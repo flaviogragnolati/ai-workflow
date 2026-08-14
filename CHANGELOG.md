@@ -13,6 +13,8 @@ are deliberately established.
 
 ### Added
 
+- Added the public `q-tool-database-schema` capability for transient, profile-driven physical design, relational schema review, document-model review, migration design, and supplied-evidence performance analysis. It delegates no execution, preserves domain, stack, architecture, implementation, and review ownership, and ships verified PostgreSQL and MongoDB profiles.
+- Added conditional database-schema collaboration to domain modeling, architecture, deep and feature refinement, implementation planning, debugging, change review, codebase review, and delivery routing, with explicit fallbacks when the optional tool is unavailable.
 - Added the public, independently installable `q-tool-mermaid` capability for Mermaid creation, revision, validation, bounded repair, local SVG/PNG/PDF and optional ASCII/Unicode rendering, transactional Markdown compilation, structured requests/results, provenance, profiles, fixtures, and offline runtime checks.
 - Added the `tool` manifest group and optional `uses` collaboration contract with schema, fixture, package-validation, trigger, fallback, distribution, self-use, and hard-dependency overlap checks.
 - Integrated `q-plan-domain-model` and `q-plan-architecture` as hard Mermaid-tool consumers while preserving their semantic ownership, and added conditional collaboration to selected planning, code orientation, documentation review, proposal web, and report renderer skills.
@@ -20,4 +22,5 @@ are deliberately established.
 
 ### Changed
 
+- Removed `THIRD_PARTY_NOTICES.md` file-presence and content assertions from the package validator; provenance guidance remains unchanged.
 - Advanced the manifest schema from `1.1` to `1.2` for the additive `tool` group and `uses` relationship. Existing `requires` semantics remain unchanged; optional consumers continue through their declared fallback when Mermaid is not installed.

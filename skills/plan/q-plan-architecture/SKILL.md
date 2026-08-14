@@ -19,6 +19,12 @@ Create under `docs/development-workflow/architecture/`:
 
 ADRs and narrative text own architecture decisions. The technical foundation owns stack selection and adopted technology guidance. `04-application-standards.md` references applicable guidance IDs and adds only project-specific architecture and engineering rules. Mermaid owns only the visual representation.
 
+## Optional database schema assistance
+
+When `confirmed-database-profile-needs-physical-design-or-migration-analysis` and `q-tool-database-schema` is installed, use `physical-design` for a candidate persistence mapping or `migration-design` for architecture-significant evolution. Supply the confirmed technical foundation version, approved domain artifacts, access patterns, NFRs, deployment constraints, and exact observed schema when one exists.
+
+Treat the returned analysis as transient advice. Reconcile accepted ownership, consistency, distribution, operational, rollout, and physical-architecture decisions into this skill's narrative or ADRs; do not let the tool write them or create a parallel canonical persistence document. Return semantic contradictions to `q-plan-domain-model` and stack contradictions to `q-plan-tech-foundation`. If the tool is absent, `continue-with-evidence-bounded-architecture-and-record-the-database-analysis-gap`.
+
 ## Procedure
 
 1. Load product, the referenced technical foundation version, domain model, decisions, risks, and existing repository constraints.
@@ -29,7 +35,8 @@ ADRs and narrative text own architecture decisions. The technical foundation own
 6. Build one `diagram_request` per approved context, container, deployment, data-flow, or sequence view. Keep this skill as `owner_skill`; delegate Mermaid authoring, validation, and requested rendering to `q-tool-mermaid` with exact narrative and ADR source versions.
 7. Review every returned source for semantic fidelity before accepting it. Return syntax or layout defects to the tool; resolve components, boundaries, protocols, ownership, and sequence meaning here.
 8. Validate every requirement and domain boundary has a responsible architectural element.
-9. Record alternatives, trade-offs, pending decisions, downstream constraints, generator provenance, and any technical foundation guidance made stale by architecture evidence.
+9. Use optional database schema assistance only for the triggered physical or migration branch, then reconcile accepted architecture meaning here.
+10. Record alternatives, trade-offs, pending decisions, downstream constraints, generator provenance, and any technical foundation guidance made stale by architecture evidence.
 
 ## Gate
 

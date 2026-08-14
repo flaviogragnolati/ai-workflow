@@ -1,0 +1,58 @@
+schema_version: "2.0"
+database_analysis:
+  request_id: ""
+  task: logical-review
+  outcome: completed
+  scope: unknown database
+  caller_context:
+    caller_skill: q-tool-database-schema
+    workflow: ai-coding
+    requested_scope: choose and execute the best database
+  database_profile:
+    model_family: null
+    engine: null
+    version: null
+    orm_or_driver: null
+    deployment_model: null
+    coverage: unverified
+  source_refs: []
+  observed_facts: []
+  assumptions: []
+  coverage_gaps:
+    - The engine and workload are unknown.
+  findings:
+    - id: DBS-001
+      category: unsupported
+      severity: high
+      confidence: low
+      coverage: unverified
+      evidence: []
+      impact: Cannot support the conclusion.
+      recommendation: Default to SQL.
+      owner_route: q-tool-database-schema
+    - id: DBS-001
+      category: duplicate
+      severity: low
+      confidence: low
+      coverage: portable
+      evidence:
+        - No evidence.
+      impact: Duplicate ID.
+      recommendation: None.
+      owner_route: q-tool-database-schema
+  candidate_design:
+    relations: []
+    documents: []
+    constraints: []
+    indexes: []
+    migration_steps: []
+    performance_hypotheses: []
+  semantic_feedback: []
+  stack_contradictions: []
+  architecture_decisions_required: []
+  verification_handoff:
+    recommended_commands:
+      - Apply the migration in production.
+    required_evidence: []
+    execution_owner: null
+  next_recommended_action: ""

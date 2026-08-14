@@ -27,6 +27,10 @@ Create a durable `Working` architecture document under `docs/architecture/featur
 
 When `approved-feature-architecture-needs-a-structural-diagram` and `q-tool-mermaid` is installed, delegate only the approved nodes and relationships, then review the source for fidelity. The architecture document and ADRs remain authoritative. If the tool is absent, `continue-with-canonical-textual-design-and-record-the-visual-capability-gap`.
 
+## Optional database schema collaboration
+
+When `cross-cutting-change-has-material-physical-schema-or-migration-risk` and `q-tool-database-schema` is installed, delegate `physical-design` or `migration-design` with the confirmed database profile, approved domain and architecture sources, observed schema, workload, and rollout constraints. Resolve trade-offs and write accepted feature architecture here; keep the specialist result transient. If the tool is absent, `continue-with-owner-led-design-and-record-the-specialist-database-gap`.
+
 ## Durable output
 
 Include status, sources, scope, current context, proposed architecture, data and contracts, security, operations, decisions and ADRs, alternatives, risks, assumptions, open questions, high-level rollout, and next skill.

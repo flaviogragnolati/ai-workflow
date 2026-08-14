@@ -581,7 +581,6 @@ def mermaid_runtime_errors(skills: dict[str, Any]) -> list[str]:
         runtime / "package-lock.json",
         runtime / "mermaid.mjs",
         directory / "tests" / "run-tests.mjs",
-        directory / "THIRD_PARTY_NOTICES.md",
     ]
     errors = ["q-tool-mermaid: missing runtime file %s" % path.relative_to(REPO_ROOT)
               for path in required if not path.is_file()]
@@ -951,6 +950,74 @@ def research_baseline_semantics(data: Any) -> list[str]:
     return errors
 
 
+def database_analysis_semantics(data: Any) -> list[str]:
+    if not isinstance(data, dict):
+        return ["database analysis must be a mapping"]
+    analysis = data.get("database_analysis", {})
+    if not isinstance(analysis, dict):
+        return ["database_analysis must be a mapping"]
+
+    errors: list[str] = []
+    request_id = analysis.get("request_id")
+    if not isinstance(request_id, str) or not request_id.strip():
+        errors.append("database analysis requires a non-empty request_id")
+    next_action = analysis.get("next_recommended_action")
+    if not isinstance(next_action, str) or not next_action.strip():
+        errors.append("database analysis requires one next_recommended_action")
+
+    profile = analysis.get("database_profile", {})
+    if analysis.get("task") in {"physical-design", "migration-design"}:
+        for key in ("model_family", "engine", "version"):
+            if not isinstance(profile, dict) or not isinstance(profile.get(key), str) or not profile.get(key, "").strip():
+                errors.append("%s requires a confirmed database profile %s" % (analysis.get("task"), key))
+
+    finding_ids: list[str] = []
+    for finding in analysis.get("findings", []) if isinstance(analysis.get("findings"), list) else []:
+        if isinstance(finding, dict) and isinstance(finding.get("id"), str):
+            finding_ids.append(finding["id"])
+        if isinstance(finding, dict) and finding.get("owner_route") == "q-tool-database-schema":
+            errors.append("database findings must route to an owning skill, not q-tool-database-schema")
+    duplicates = sorted({item for item in finding_ids if finding_ids.count(item) > 1})
+    if duplicates:
+        errors.append("duplicate database finding IDs: %s" % ", ".join(duplicates))
+
+    gaps = analysis.get("coverage_gaps", [])
+    if analysis.get("outcome") == "completed" and isinstance(gaps, list) and gaps:
+        errors.append("a completed database analysis cannot retain coverage gaps")
+    if analysis.get("outcome") == "completed":
+        sources = analysis.get("source_refs", [])
+        authoritative = [
+            source for source in sources if isinstance(source, dict)
+            and source.get("authority") in {"canonical", "observed", "user-supplied"}
+        ] if isinstance(sources, list) else []
+        if not authoritative:
+            errors.append("a completed database analysis requires authoritative source evidence")
+        facts = analysis.get("observed_facts", [])
+        if not isinstance(facts, list) or not facts:
+            errors.append("a completed database analysis requires observed facts")
+
+        candidate = analysis.get("candidate_design", {})
+        task = analysis.get("task")
+        family = profile.get("model_family") if isinstance(profile, dict) else None
+        if task == "physical-design" and family == "relational" and (
+            not isinstance(candidate, dict) or not candidate.get("relations")
+        ):
+            errors.append("a completed relational physical design requires candidate relations")
+        if task == "physical-design" and family == "document" and (
+            not isinstance(candidate, dict) or not candidate.get("documents")
+        ):
+            errors.append("a completed document physical design requires candidate documents")
+        if task == "migration-design" and (
+            not isinstance(candidate, dict) or not candidate.get("migration_steps")
+        ):
+            errors.append("a completed migration design requires migration steps")
+
+    handoff = analysis.get("verification_handoff", {})
+    if isinstance(handoff, dict) and handoff.get("recommended_commands") and not handoff.get("execution_owner"):
+        errors.append("recommended database commands require an execution_owner")
+    return errors
+
+
 def fixture_pair(
     schema_path: Path,
     valid_path: Path,
@@ -1186,6 +1253,21 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("tool/q-tool-mermaid/SKILL.md", "local runtime never installs dependencies"),
             ("tool/q-tool-mermaid/SKILL.md", "derived with `semantic_authority: none`"),
             ("review/q-review-docs/SKILL.md", "read-only validation"),
+        ],
+        "S-41": [
+            ("tool/q-tool-database-schema/SKILL.md", "must not choose the stack"),
+            ("tool/q-tool-database-schema/SKILL.md", "`performance-review` requires supplied evidence"),
+            ("tool/q-tool-database-schema/SKILL.md", "must not replace it"),
+            ("tool/q-tool-database-schema/SKILL.md", "Recommended commands are a handoff only"),
+        ],
+        "S-42": [
+            ("plan/q-plan-domain-model/SKILL.md", "existing-database-schema-or-material-confirmed-profile-needs-physical-persistence-assistance"),
+            ("plan/q-plan-domain-model/SKILL.md", "continue-with-persistence-neutral-domain-model-and-record-the-database-assistance-gap"),
+            ("plan/q-plan-domain-model/SKILL.md", "A physical schema is not an exit criterion"),
+        ],
+        "S-43": [
+            ("tool/q-tool-database-schema/references/document-model-review.md", "A document schema is a physical model"),
+            ("tool/q-tool-database-schema/references/migration-strategies.md", "Classify rollback as"),
         ],
     }
     errors: list[str] = []
@@ -1465,6 +1547,22 @@ def run() -> dict[str, Any]:
         fixtures / "stage-result.invalid.yaml",
         stage_semantics,
         active,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-database-schema" / "references" / "database-analysis.schema.yaml",
+        fixtures / "database-analysis.valid.yaml",
+        fixtures / "database-analysis.invalid.yaml",
+        database_analysis_semantics,
+        active,
+        min_invalid_errors=5,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-database-schema" / "references" / "database-analysis.schema.yaml",
+        fixtures / "database-analysis.valid.yaml",
+        fixtures / "database-analysis-incomplete.invalid.yaml",
+        database_analysis_semantics,
+        active,
+        min_invalid_errors=3,
     ))
     errors.extend(fixture_pair(
         CORE_CONTRACT / "references" / "report-source.schema.yaml",

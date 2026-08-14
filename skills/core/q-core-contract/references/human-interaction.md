@@ -11,6 +11,9 @@ q-core-contract:
 q-tool-mermaid:
   orchestrated: on-demand
   standalone: on-demand
+q-tool-database-schema:
+  orchestrated: on-demand
+  standalone: on-demand
 q-ask-project:
   standalone: on-demand
 q-ask-analyze:

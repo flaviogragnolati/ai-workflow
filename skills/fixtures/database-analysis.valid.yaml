@@ -1,0 +1,60 @@
+schema_version: "1.0"
+database_analysis:
+  request_id: DBS-REQ-001
+  task: performance-review
+  outcome: completed_with_warnings
+  scope: orders lookup by tenant and creation time
+  caller_context:
+    caller_skill: q-code-debug
+    workflow: ai-coding
+    requested_scope: explain the supplied slow-query evidence without executing commands
+  database_profile:
+    model_family: relational
+    engine: postgresql
+    version: "18"
+    orm_or_driver: null
+    deployment_model: managed-primary-with-read-replica
+    coverage: verified-profile
+  source_refs:
+    - source_id: SRC-SCHEMA
+      location: db/schema.sql
+      version: commit-abc123
+      authority: observed
+    - source_id: SRC-PLAN
+      location: supplied-estimated-plan.txt
+      version: null
+      authority: user-supplied
+  observed_facts:
+    - The supplied estimated plan scans orders before applying the tenant predicate.
+  assumptions: []
+  coverage_gaps:
+    - No actual plan, timings, row distribution, or concurrency metrics were supplied.
+  findings:
+    - id: DBS-001
+      category: performance-evidence
+      severity: medium
+      confidence: medium
+      coverage: verified-profile
+      evidence:
+        - SRC-PLAN shows the estimated scan and filter.
+      impact: The current evidence cannot establish representative runtime or index benefit.
+      recommendation: Collect a sanitized actual plan in an authorized non-production environment.
+      owner_route: q-code-debug
+  candidate_design:
+    relations: []
+    documents: []
+    constraints: []
+    indexes: []
+    migration_steps: []
+    performance_hypotheses:
+      - A tenant-prefixed access path may reduce scanned rows if the observed distribution supports it.
+  semantic_feedback: []
+  stack_contradictions: []
+  architecture_decisions_required: []
+  verification_handoff:
+    recommended_commands:
+      - Run an authorized sanitized EXPLAIN ANALYZE equivalent in staging.
+    required_evidence:
+      - Actual rows, timings, parameters, distribution, and cache state.
+    execution_owner: q-code-debug
+  next_recommended_action: Route the bounded measurement to q-code-debug.

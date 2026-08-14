@@ -20,6 +20,8 @@ Load repository instructions, the current technical foundation when available, a
 9. Run the mini review required by the workflow.
 10. Update the original durable execution record.
 
+When `database-performance-failure-has-supplied-query-plan-or-metric-evidence` and `q-tool-database-schema` is installed, pass the sanitized query shape, schema, confirmed profile, plan, metrics, distributions, and environment to `performance-review`. Keep hypothesis testing and every command execution here; the specialist only analyzes supplied evidence. If it is absent, `continue-with-evidence-led-debugging-and-mark-specialist-database-analysis-unavailable`.
+
 Use `q-code-fix` when the cause and correction are already confirmed. Escalate to refinement when the change alters product behavior, architecture, or a cross-module contract.
 
 Do not treat a throwaway reproduction, scratchpad, or internal plan as a durable artifact.

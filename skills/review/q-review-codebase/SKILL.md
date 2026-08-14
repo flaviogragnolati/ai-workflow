@@ -22,6 +22,8 @@ When a selected technology lacks current adopted guidance and its idiomatic use 
 
 Complete authority setup when every review lens resolves to a generic catalog ID, project guidance ID, repository convention, specification, or explicit coverage gap.
 
+When `audit-scope-includes-material-database-schema-document-model-migration-or-performance-risk` and `q-tool-database-schema` is installed, use the matching specialist mode with the fixed audit scope, observed schema, confirmed profile, and supplied workload evidence. Reconcile its transient findings into this audit's existing lenses and evidence standard; do not treat the tool as integral acceptance. If it is absent, `continue-with-generic-and-project-grounded-database-coverage-and-name-the-specialist-gap`.
+
 ## Coverage
 
 Review applicable evidence across:

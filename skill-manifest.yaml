@@ -2,7 +2,7 @@ schema_version: "1.2"
 
 package:
   id: quasar-ai-delivery-skills
-  description: "Coordinated skills for Quasar project questions, engagement research, discovery, proposals, profile-driven software delivery, QA, and optional reporting."
+  description: "Coordinated skills for Quasar project questions, engagement research, discovery, proposals, profile-driven software delivery, database schema design and review, QA, and optional reporting."
   stack_profile: project-defined
   compatibility: profile-driven
   human_guide: README.md
@@ -82,6 +82,26 @@ skills:
     fallback: return-source-and-explicit-validation-or-rendering-gap-without-false-success
     stack_profile: any
     contract_version: "1.1"
+    distribution: public
+
+  q-tool-database-schema:
+    path: tool/q-tool-database-schema
+    group: tool
+    requires: [q-core-contract]
+    status: active
+    kind: tool
+    workflow: ai-coding
+    stage: null
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
+    persistent_outputs: []
+    transient_outputs: [database-design-analysis, schema-review-findings, document-model-findings, migration-strategy, performance-diagnostic]
+    side_effects: [none]
+    approval_policy: read-only-no-database-connection-execution-code-write-or-project-state-change
+    fallback: bounded-analysis-or-coverage-gap-with-owner-route
+    stack_profile: project-defined
+    contract_version: "1.0"
     distribution: public
 
   q-ask-project:
@@ -168,6 +188,10 @@ skills:
     path: delivery/q-delivery-workflow
     group: delivery
     requires: [q-core-contract]
+    uses:
+      - skill: q-tool-database-schema
+        when: user-requests-standalone-database-schema-migration-or-performance-analysis
+        fallback: route-to-the-current-domain-architecture-refinement-debug-or-review-owner-with-database-capability-gap
     status: active
     kind: orchestrator
     workflow: ai-coding
@@ -218,6 +242,10 @@ skills:
     path: plan/q-plan-domain-model
     group: plan
     requires: [q-core-contract, q-tool-mermaid]
+    uses:
+      - skill: q-tool-database-schema
+        when: existing-database-schema-or-material-confirmed-profile-needs-physical-persistence-assistance
+        fallback: continue-with-persistence-neutral-domain-model-and-record-the-database-assistance-gap
     status: active
     kind: stage
     workflow: ai-coding
@@ -241,6 +269,10 @@ skills:
     path: plan/q-plan-architecture
     group: plan
     requires: [q-core-contract, q-tool-mermaid]
+    uses:
+      - skill: q-tool-database-schema
+        when: confirmed-database-profile-needs-physical-design-or-migration-analysis
+        fallback: continue-with-evidence-bounded-architecture-and-record-the-database-analysis-gap
     status: active
     kind: stage
     workflow: ai-coding
@@ -330,6 +362,10 @@ skills:
     path: review/q-review-codebase
     group: review
     requires: []
+    uses:
+      - skill: q-tool-database-schema
+        when: audit-scope-includes-material-database-schema-document-model-migration-or-performance-risk
+        fallback: continue-with-generic-and-project-grounded-database-coverage-and-name-the-specialist-gap
     status: active
     kind: quality
     workflow: ai-coding
@@ -350,6 +386,10 @@ skills:
     path: review/q-review-code
     group: review
     requires: []
+    uses:
+      - skill: q-tool-database-schema
+        when: changed-surface-includes-relational-schema-document-model-or-migration
+        fallback: apply-project-and-generic-data-integrity-criteria-and-declare-specialist-coverage-unavailable
     status: active
     kind: quality
     workflow: ai-coding
@@ -369,6 +409,10 @@ skills:
     path: code/q-code-debug
     group: code
     requires: []
+    uses:
+      - skill: q-tool-database-schema
+        when: database-performance-failure-has-supplied-query-plan-or-metric-evidence
+        fallback: continue-with-evidence-led-debugging-and-mark-specialist-database-analysis-unavailable
     status: active
     kind: tool
     workflow: ai-coding
@@ -392,6 +436,9 @@ skills:
       - skill: q-tool-mermaid
         when: approved-feature-architecture-needs-a-structural-diagram
         fallback: continue-with-canonical-textual-design-and-record-the-visual-capability-gap
+      - skill: q-tool-database-schema
+        when: cross-cutting-change-has-material-physical-schema-or-migration-risk
+        fallback: continue-with-owner-led-design-and-record-the-specialist-database-gap
     status: active
     kind: tool
     workflow: ai-coding
@@ -454,6 +501,10 @@ skills:
     path: code/q-code-grill-feature
     group: code
     requires: []
+    uses:
+      - skill: q-tool-database-schema
+        when: bounded-feature-has-material-physical-schema-or-migration-risk
+        fallback: continue-with-repository-grounded-feature-planning-and-record-the-specialist-database-gap
     status: active
     kind: tool
     workflow: ai-coding
@@ -513,6 +564,10 @@ skills:
     path: code/q-code-implementation-plan
     group: code
     requires: []
+    uses:
+      - skill: q-tool-database-schema
+        when: settled-work-needs-engine-specific-schema-or-migration-sequencing
+        fallback: continue-with-observed-repository-evidence-and-mark-the-specialist-database-gap
     status: active
     kind: tool
     workflow: ai-coding

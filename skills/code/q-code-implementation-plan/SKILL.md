@@ -22,6 +22,8 @@ Accept a backlog item, issue, ticket, architecture document, specification, or e
 7. Mark assumptions and blockers honestly.
 8. Write one durable `Working` plan.
 
+When `settled-work-needs-engine-specific-schema-or-migration-sequencing` and `q-tool-database-schema` is installed, use `schema-review` to ground the current relational state, `document-model-review` for a document model, or `migration-design` for the proposed transition. Supply exact repository evidence and the confirmed profile. Incorporate accepted sequencing, validation, recovery, and execution ownership into this plan; keep the specialist analysis transient. If the tool is absent, `continue-with-observed-repository-evidence-and-mark-the-specialist-database-gap`.
+
 ## Required content
 
 Include objective, target outcome, source references, scope, non-goals, deferred work, current system context, approach, assumptions, ordered phases, detailed tasks, cross-cutting concerns, pitfalls, testing, rollout and rollback, documentation, risks, open questions, definition of done, and executor instructions.

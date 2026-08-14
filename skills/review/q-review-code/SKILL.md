@@ -28,6 +28,10 @@ Keep results separate:
 
 Use independent reviewers or parallel passes when that capability is available. Otherwise run two sequential passes with separate notes and context. Do not require a particular tool or agent name.
 
+## Optional database schema review
+
+When `changed-surface-includes-relational-schema-document-model-or-migration` and `q-tool-database-schema` is installed, use `schema-review`, `document-model-review`, or `migration-design` against the fixed diff, observed current state, originating specification, and confirmed profile. Reconcile its transient findings into the applicable standards or specification axis; do not add a third authority axis or let the specialist apply fixes. If it is absent, `apply-project-and-generic-data-integrity-criteria-and-declare-specialist-coverage-unavailable`.
+
 ## Finding format
 
 For each finding include priority, axis, exact location, evidence, impact, and recommended correction. Merge only true duplicates while preserving both axes.

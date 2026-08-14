@@ -1,0 +1,41 @@
+schema_version: "1.0"
+database_analysis:
+  request_id: DBS-REQ-INCOMPLETE
+  task: physical-design
+  outcome: completed
+  scope: empty relational physical design
+  caller_context:
+    caller_skill: q-plan-architecture
+    workflow: ai-coding
+    requested_scope: design a confirmed relational schema
+  database_profile:
+    model_family: relational
+    engine: postgresql
+    version: "18"
+    orm_or_driver: null
+    deployment_model: managed-primary
+    coverage: verified-profile
+  source_refs:
+    - source_id: SRC-DOCS
+      location: https://www.postgresql.org/docs/18/
+      version: "18"
+      authority: supporting
+  observed_facts: []
+  assumptions: []
+  coverage_gaps: []
+  findings: []
+  candidate_design:
+    relations: []
+    documents: []
+    constraints: []
+    indexes: []
+    migration_steps: []
+    performance_hypotheses: []
+  semantic_feedback: []
+  stack_contradictions: []
+  architecture_decisions_required: []
+  verification_handoff:
+    recommended_commands: []
+    required_evidence: []
+    execution_owner: null
+  next_recommended_action: Hand the empty result to architecture.

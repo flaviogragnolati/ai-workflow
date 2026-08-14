@@ -17,6 +17,8 @@ This is the middle refinement level. Inspect the real repository and existing do
 6. Produce an ordered implementation plan grounded in exact files, functions, data, dependencies, and tests.
 7. Validate the plan with the user. Route any material stack selection not already settled to `q-plan-tech-foundation`.
 
+When `bounded-feature-has-material-physical-schema-or-migration-risk` and `q-tool-database-schema` is installed, use `physical-design` or `migration-design` after the feature behavior and database profile are settled. Incorporate accepted steps and risks into this skill's execution-ready plan; do not persist the tool result separately. If the tool is absent, `continue-with-repository-grounded-feature-planning-and-record-the-specialist-database-gap`.
+
 ## Durable output
 
 Create one `Working` feature implementation plan. Include objective, alignment, scope and non-goals, current context, approach, assumptions, ordered phases and tasks, cross-cutting concerns, pitfalls, testing, rollout and rollback, documentation, risks, open questions, definition of done, and instructions for execution.

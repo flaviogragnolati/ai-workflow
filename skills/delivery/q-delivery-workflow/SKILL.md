@@ -37,6 +37,8 @@ Route to `q-code-explore` when the user asks for a high-level understanding of a
 
 Use `q-code-zoom-out` instead for a map exactly one abstraction level above current code, `q-code-research` for bounded technical questions and a durable Findings Register that follows the shared cited-findings contract, and `q-review-codebase` for a formal quality audit. Technical research may return an orchestrated delta, but it does not run the engagement-research workflow or open Proposal.
 
+When `user-requests-standalone-database-schema-migration-or-performance-analysis` and `q-tool-database-schema` is installed, route the bounded read-only request to it without changing active stage ownership. Route domain meaning to `q-plan-domain-model`, stack selection to `q-plan-tech-foundation`, durable physical decisions to `q-plan-architecture`, execution to implementation or debugging, and audit findings to the applicable review owner. If the tool is absent, `route-to-the-current-domain-architecture-refinement-debug-or-review-owner-with-database-capability-gap`.
+
 ## Development loop
 
 For each selected backlog item:

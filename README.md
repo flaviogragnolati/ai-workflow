@@ -1,6 +1,6 @@
 # Quasar AI delivery skills
 
-This package coordinates project questions and proposal analysis, optional engagement research, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, optional reporting, and shared structural-diagram tooling. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
+This package coordinates project questions and proposal analysis, optional engagement research, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, optional reporting, and shared database-schema and structural-diagram tooling. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
 
 ## Install
 
@@ -14,7 +14,7 @@ npx skills add flaviogragnolati/ai-workflow --skill q-code-debug --skill q-revie
 
 The installer copies one skill folder at a time into your project's agent directory, where every skill becomes a sibling of every other. Each skill is self-contained: it either bundles what it needs or declares the companion it depends on. Install the dependencies listed under [Skill dependencies](#skill-dependencies) alongside the skill that requires them; a skill whose companion is missing stops and prints the exact install command instead of proceeding on assumed rules.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 45 are.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 46 are.
 
 `skills.sh.json` groups the catalog on the skills.sh repository page. It is a derived presentation of the manifest `group` field — sections may merge groups, but the validator requires every public skill to appear in exactly one. `skill-manifest.yaml` stays the authority for what exists, what `group` it belongs to, what it `requires` or optionally `uses`, and what `distribution` it has.
 
@@ -38,9 +38,10 @@ Use $q-ask-analyze to evaluate whether moving background jobs to a managed queue
 Use $q-review-skill to audit an Agent Skill without changing it.
 ```
 
-Invoke the shared Mermaid tool directly for an editable source, local validation, or export:
+Invoke a shared tool directly for bounded database analysis or an editable structural diagram:
 
 ```text
+Use $q-tool-database-schema to review this PostgreSQL migration from the supplied schema and rollout constraints without executing it.
 Use $q-tool-mermaid to create a sequence diagram for this authentication flow and save the source and SVG.
 ```
 
@@ -132,12 +133,13 @@ flowchart LR
 | Mini review of one change | `q-review-code` plus `q-review-comments` | Checking technical/specification conformance and the accuracy of affected comments or docstrings after implementation. These skills report findings rather than silently fixing them. |
 | Integral QA and delivery | `q-review-codebase` supplies the formal codebase audit; `q-delivery-workflow` reconciles all release evidence and owns delivery | A release candidate is ready for architecture, integration, critical-flow, security, NFR, migration, deployment, documentation, and acceptance checks. The audit alone is not release acceptance. |
 | Audit an Agent Skill | `q-review-skill` | Evaluating activation, authority, context value, progressive disclosure, freedom calibration, safety, verification, packaging, provenance, and behavior without editing the target or treating a numeric grade as approval. |
+| Design or review a database schema | `q-tool-database-schema` | Producing transient physical-design, relational-schema, document-model, migration, or supplied-evidence performance analysis without choosing the stack or executing database work. |
 | Create or export a structural diagram | `q-tool-mermaid` | Creating, revising, validating, repairing, rendering, or compiling Mermaid while the caller retains domain meaning. |
 | Route a report | `q-report-workflow` | Producing a progress, feature, milestone, release, completion, consulting, executive, or custom report from approved artifact versions. |
 | Define report meaning | `q-report-source` | Synthesizing the approved source bundle into one traceable reporting narrative before rendering. |
 | Render report channels | `q-report-document` for Markdown/DOCX/PDF; `q-report-deck` for PPTX/deck PDF | Rendering the same baselined report-source version into the requested written or presentation channels. |
 
-Use supporting skills only when their trigger appears: `q-code-research` for a bounded technical Findings Register from versioned primary evidence, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-tool-mermaid` for editable structural diagrams and verified local exports, `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question, and `q-review-skill` for a read-only diagnostic of an Agent Skill or an explicitly bounded package slice.
+Use supporting skills only when their trigger appears: `q-code-research` for a bounded technical Findings Register from versioned primary evidence, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-tool-database-schema` for read-only physical schema, document-model, migration, and supplied-evidence performance assistance; `q-tool-mermaid` for editable structural diagrams and verified local exports; `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question; and `q-review-skill` for a read-only diagnostic of an Agent Skill or an explicitly bounded package slice.
 
 Three companions are not user entry points: coordinated workflows and the project-question skills load `q-core-contract` for shared governance; package maintenance loads the internal `q-maint-writing-for-agents` when agent-consumed artifacts change and `q-maint-skill-quality` when skills or invocation metadata are created, materially changed, or audited. Use `q-maint-ai-workflow` outside project runtime whenever this package, its skills, routing, contracts, metadata, fixtures, validators, or explanatory documentation must be changed or audited.
 
@@ -227,6 +229,7 @@ Maintenance is outside project runtime. It does not write project workflow state
 | Coordinated workflow skills, except where a stronger row below applies | `q-core-contract` | Shared governance, the routing digest, and the cited-findings, report-source, and stage-result schemas |
 | `q-plan-domain-model`, `q-plan-architecture` | `q-core-contract`, `q-tool-mermaid` | Preserve planning ownership while delegating Mermaid authoring, validation, and rendering |
 | `q-tool-mermaid` | `q-core-contract` | Applies shared artifact authority, single-writer, stage-result, and diagram-delegation rules |
+| `q-tool-database-schema` | `q-core-contract` | Applies owner routing, transient-output, external-content, and stack-compatibility rules without database execution |
 | `q-ask-project` | `q-core-contract` | Reconciles project state, artifact authority, lifecycle, and observable implementation before answering |
 | `q-ask-analyze` | `q-core-contract`, `q-ask-project` | Reuses the same alignment and evidence path before applying proposal-analysis lenses |
 | `q-code-research` | `q-core-contract` | Uses the shared cited-findings evidence contract while retaining technical-domain procedure |
@@ -279,6 +282,7 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Audit a codebase or release candidate | `q-review-codebase` |
 | Audit durable project documentation | `q-review-docs` |
 | Audit an Agent Skill or bounded skill-package slice | `q-review-skill` |
+| Design or review a physical database schema, document model, migration, or supplied performance evidence | `q-tool-database-schema` |
 | Create, validate, render, or compile Mermaid | `q-tool-mermaid` |
 | Produce a traced project report or report deck | `q-report-workflow` |
 | Render an approved report source as Markdown, DOCX, and PDF | `q-report-document` |
@@ -298,6 +302,7 @@ Groups sort the catalog and name the skills: `ask`, `proposal`, `research`, `del
 - Do not rewrite accepted commercial scope from a channel renderer.
 - Do not treat the preferred T3 web recommendation as a mandatory stack or flag unselected secondary libraries as missing.
 - Do not issue stack-specific QA approval from generic criteria or stale technology guidance.
+- Do not let transient database candidates choose the engine, overwrite semantic or architecture owners, or execute database commands.
 - Do not let a documentation audit rewrite its targets or create a parallel changelog.
 - Do not treat a universal numeric skill grade, line-count target, or pattern taxonomy as package acceptance without target authority and behavioral evidence.
 - Do not let a report renderer own report meaning or treat a rendered channel as upstream truth.
@@ -310,7 +315,7 @@ Groups sort the catalog and name the skills: `ask`, `proposal`, `research`, `del
 
 ## Expected result
 
-A completed workflow stage leaves owned artifacts, traceable IDs, declared authority and lifecycle, a valid `stage_result`, reconciled runtime state when orchestrated, explicit blockers when incomplete, and one clear next action. A read-only shared tool such as `q-ask-project`, `q-ask-analyze`, `q-code-explore`, or `q-review-docs` returns only its declared transient output and does not claim stage completion.
+A completed workflow stage leaves owned artifacts, traceable IDs, declared authority and lifecycle, a valid `stage_result`, reconciled runtime state when orchestrated, explicit blockers when incomplete, and one clear next action. A read-only shared tool such as `q-ask-project`, `q-ask-analyze`, `q-code-explore`, `q-tool-database-schema`, or `q-review-docs` returns only its declared transient output and does not claim stage completion.
 
 ## Planned capabilities
 

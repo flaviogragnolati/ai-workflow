@@ -22,6 +22,18 @@ Create:
 
 No critical relationship, invariant, or ownership rule may exist only in Mermaid.
 
+## Optional database schema assistance
+
+This stage owns the semantic data schema: domain meaning, identity, attributes, relationships, invariants, lifecycle, history, retention, deletion, and authority. Physical tables, collections, engine types, indexes, ORM declarations, and migration syntax remain advisory here.
+
+When `existing-database-schema-or-material-confirmed-profile-needs-physical-persistence-assistance` and `q-tool-database-schema` is installed, delegate the smallest useful branch after a semantic draft exists:
+
+- use `schema-review` for an observed relational schema;
+- use `document-model-review` for an observed document model;
+- use `physical-design` only when the technical foundation confirms the engine and a material persistence constraint warrants a feasibility projection.
+
+Reconcile accepted feedback about identity, cardinality, ownership, invariants, lifecycle, history, retention, or deletion into the owned domain artifacts. Keep candidate tables, collections, types, indexes, and migrations transient and route durable physical choices to `q-plan-architecture`. If the tool is absent, `continue-with-persistence-neutral-domain-model-and-record-the-database-assistance-gap`. Absence never blocks an otherwise sufficient semantic model.
+
 ## Procedure
 
 1. Establish ubiquitous language and stable concept IDs.
@@ -29,12 +41,13 @@ No critical relationship, invariant, or ownership rule may exist only in Mermaid
 3. Define relationships, cardinality, lifecycle, state transitions, invariants, history, retention, and deletion.
 4. Identify systems of record, derived data, sensitive fields, and access constraints.
 5. Reconcile the model with requirements and the referenced technical foundation. If persistence, consistency, retention, or scale evidence invalidates a technology choice, return the affected IDs to `q-plan-tech-foundation` rather than editing its artifact.
-6. Build a `diagram_request` from the approved model, dictionary, and exact source versions. Keep this skill as `owner_skill`; delegate Mermaid authoring, validation, and requested rendering to `q-tool-mermaid`.
-7. Review the returned `.mmd` source against approved concepts, relationships, cardinalities, and invariants. Return syntax or layout defects to the tool and keep semantic corrections here.
-8. Validate traceability and mark unresolved semantic decisions. Include the source and verified renders in the stage result with `q-tool-mermaid` as generator provenance.
+6. Use optional database schema assistance only under its exact trigger and reconcile semantic findings before approving the model.
+7. Build a `diagram_request` from the approved model, dictionary, and exact source versions. Keep this skill as `owner_skill`; delegate Mermaid authoring, validation, and requested rendering to `q-tool-mermaid`.
+8. Review the returned `.mmd` source against approved concepts, relationships, cardinalities, and invariants. Return syntax or layout defects to the tool and keep semantic corrections here.
+9. Validate traceability and mark unresolved semantic decisions. Include the source and verified renders in the stage result with `q-tool-mermaid` as generator provenance.
 
 ## Gate
 
-Complete when every critical concept has a definition and owner, important relationships and invariants are textual, data authority is explicit, and diagrams match the narrative. Block on contradictions that would invalidate architecture.
+Complete when every critical concept has a definition and owner, important relationships and invariants are textual, data authority is explicit, and diagrams match the narrative. A physical schema is not an exit criterion. Block on contradictions that would invalidate architecture, not on unresolved index or DDL syntax.
 
 Return a valid `stage_result`; standalone execution requires later orchestration reconciliation.
