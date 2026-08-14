@@ -14,6 +14,9 @@ q-tool-mermaid:
 q-tool-database-schema:
   orchestrated: on-demand
   standalone: on-demand
+q-ideation-session:
+  orchestrated: decision-gated
+  standalone: dialogue-led
 q-ask-project:
   standalone: on-demand
 q-ask-analyze:

@@ -47,6 +47,12 @@ Never let a channel renderer silently modify canonical commercial meaning.
 
 Only software or mixed engagements with applicable software scope may continue to `q-delivery-workflow`. Pass proposal object IDs, version, applicable commitments, assumptions, exclusions, unresolved references, and readiness. Do not imply technical confirmation where the proposal records only a preliminary assumption.
 
+## Optional structured ideation
+
+When `user-requests-structured-ideation-before-discovery-or-proposal-design` and `q-ideation-session` is installed, route that bounded session to it with the decision, its accountable owner, the versioned inputs, and the information classification. If it is absent, `continue-the-proposal-stage-without-a-recorded-session-and-name-the-unexplored-option-space`.
+
+After it returns, record one disposition defined in the contract's structured-ideation section: `adopt-as-supporting-input`, `retain-as-independent`, `defer-decision`, or `reject`. Adoption is the act in which you register the exact snapshot version and mark that version `Baselined`; nothing is adopted by the session ending. Route problem frames, questions, assumptions, and interpretation risks to `q-proposal-discovery`, and solution, engagement, or workstream options to `q-proposal-design`. A candidate never becomes a client fact, scope, price, schedule, or commitment.
+
 ## Optional engagement research
 
 When Discovery exposes an external uncertainty that materially affects a proposal decision and client evidence cannot resolve it, offer delegation to `q-research-workflow`. Start it only after the user authorizes the questions, boundary, privacy treatment, and budget. Pass `root_orchestrator: q-proposal-workflow`, `global_state_writer: q-proposal-workflow`, and an exact `return_to`; remain the global state writer and reconcile its composite delta.
@@ -77,7 +83,7 @@ When a DOCX is edited manually, reintroduce it through `q-proposal-document` for
 |---|---|---|---|
 | 1 | Performing stage substance here | The orchestrator rewrites discovery evidence or proposal terms instead of routing their owners. | Delegate the named stage and reconcile its validated delta. |
 | 2 | Letting external research override the client | A Research Baseline silently replaces contrary client evidence or accepted commercial meaning. | Keep research supporting and route any proposed meaning change through Discovery or Proposal Design. |
-| 3 | Auto-adopting delegated research | A returned baseline becomes proposal input because the research completed. | Obtain and record one explicit adoption, retention, or deferral disposition. |
+| 3 | Auto-adopting a returned snapshot | A Research Baseline or ideation snapshot becomes proposal input because the delegated work finished. | Obtain and record one explicit adoption, retention, deferral, or rejection disposition. |
 | 4 | Treating a channel as the proposal owner | A web or document edit becomes the new commercial source. | Return semantic edits to `q-proposal-design` and regenerate the channel. |
 
 ## Completion

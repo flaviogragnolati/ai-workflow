@@ -11,7 +11,9 @@ Read the `q-core-contract` companion for shared governance; if it is missing, st
 
 ## Inputs
 
-Accept a direct question or unresolved external uncertainty from intake, a Discovery Brief, a `q-ask-*` result, or another approved project artifact. Preserve source IDs and separate client evidence, accepted facts, assumptions, and evidence gaps.
+Accept a direct question or unresolved external uncertainty from intake, a Discovery Brief, a `q-ask-*` result, an ideation snapshot's evidence requests, or another approved project artifact. Preserve source IDs and separate client evidence, accepted facts, assumptions, and evidence gaps.
+
+Treat an evidence request from ideation as a candidate question with a recorded decision impact, not an authorized one: it still passes RADAR, boundaries, privacy limits, budget, and explicit approval here.
 
 ## Question readiness
 

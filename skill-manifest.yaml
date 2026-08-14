@@ -1,8 +1,8 @@
-schema_version: "1.2"
+schema_version: "1.3"
 
 package:
   id: quasar-ai-delivery-skills
-  description: "Coordinated skills for Quasar project questions, engagement research, discovery, proposals, profile-driven software delivery, database schema design and review, QA, and optional reporting."
+  description: "Coordinated skills for Quasar project questions, structured ideation, engagement research, discovery, proposals, profile-driven software delivery, database schema design and review, QA, and optional reporting."
   stack_profile: project-defined
   compatibility: profile-driven
   human_guide: README.md
@@ -104,6 +104,29 @@ skills:
     contract_version: "1.0"
     distribution: public
 
+  q-ideation-session:
+    path: ideation/q-ideation-session
+    group: ideation
+    requires: [q-core-contract]
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: dialogue-led}
+    persistent_outputs:
+      - {type: ideation-register, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: session-provenance-candidate-space-and-raw-assessments}
+      - {type: ideation-baseline, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: approved-ideation-snapshot-dispositions-and-handoff}
+      - {type: ideation-evaluation, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: evaluation-calculation-and-presentation}
+    transient_outputs: [private-generation-buffer, facilitation-prompts, working-clusters, unapproved-ratings, internal-agent-reasoning]
+    side_effects: [write-project-artifacts, execute-local-scripts]
+    approval_policy: user-confirms-session-scope-criteria-noncompensatory-gates-snapshot-approval-and-downstream-adoption
+    fallback: return-an-unapproved-working-register-with-explicit-gaps-or-use-transient-output-when-durable-recording-is-not-authorized
+    stack_profile: any
+    contract_version: "1.1"
+    distribution: public
+
   q-ask-project:
     path: ask/q-ask-project
     group: ask
@@ -192,6 +215,9 @@ skills:
       - skill: q-tool-database-schema
         when: user-requests-standalone-database-schema-migration-or-performance-analysis
         fallback: route-to-the-current-domain-architecture-refinement-debug-or-review-owner-with-database-capability-gap
+      - skill: q-ideation-session
+        when: user-requests-structured-ideation-before-product-core-or-for-a-bounded-technical-option-set
+        fallback: continue-with-the-owning-planning-stage-and-record-the-unexplored-option-space-as-a-gap
     status: active
     kind: orchestrator
     workflow: ai-coding
@@ -931,6 +957,10 @@ skills:
     path: proposal/q-proposal-workflow
     group: proposal
     requires: [q-core-contract]
+    uses:
+      - skill: q-ideation-session
+        when: user-requests-structured-ideation-before-discovery-or-proposal-design
+        fallback: continue-the-proposal-stage-without-a-recorded-session-and-name-the-unexplored-option-space
     status: active
     kind: orchestrator
     workflow: discovery-proposal

@@ -1,0 +1,85 @@
+schema_version: "1.0"
+baseline:
+  baseline_id: "IB-001"
+  version: "1.0"
+  lifecycle: "Working"
+  profile: "product"
+  intent: "generate-options"
+  participation_mode: "facilitated-human"
+  as_of: "2026-08-13"
+decision_context:
+  decision_ref: "DEC-014"
+  owner_ref: "P-001"
+  decision_statement: "Which onboarding change to test first in the next quarter."
+  time_horizon: "Q4 2026"
+source_register:
+  artifact_id: "IS-001"
+  version: "1.3"
+evaluation_ref:
+  artifact_id: "IE-001"
+  version: "1.0"
+criteria_applied:
+  - criterion_id: "CR-001"
+    name: "time_to_learning"
+    direction: "lower"
+    weight: 3
+  - criterion_id: "CR-002"
+    name: "user_value"
+    direction: "higher"
+    weight: 2
+gates_applied:
+  - gate_id: "GATE-001"
+    name: "privacy and data"
+    result: "review-required"
+    owner_ref: "P-001"
+  - gate_id: "GATE-002"
+    name: "commercial authority"
+    result: "passed"
+    owner_ref: "P-001"
+candidate_dispositions:
+  - candidate_ref: "CAND-001"
+    kind: "solution-concept"
+    disposition: "advance"
+    rationale: "Earliest learning with a reversible change."
+    unresolved_assumption_refs:
+      - "ASM-001"
+    gate_refs:
+      - "GATE-002"
+    recommended_route:
+      skill: "q-plan-product-core"
+      intended_use: "supporting-input"
+  - candidate_ref: "CAND-002"
+    kind: "opportunity-hypothesis"
+    disposition: "evidence-needed"
+    rationale: "No customer evidence supports the delegation need."
+    unresolved_assumption_refs:
+      - "ASM-002"
+    gate_refs:
+      - "GATE-002"
+    recommended_route: null
+  - candidate_ref: "CAND-003"
+    kind: "solution-concept"
+    disposition: "defer"
+    rationale: "Blocked by an unresolved privacy review."
+    unresolved_assumption_refs:
+      - "ASM-002"
+    gate_refs:
+      - "GATE-001"
+    recommended_route: null
+evidence_requests:
+  - request_id: "ERQ-001"
+    candidate_refs:
+      - "CAND-002"
+    uncertainty: "Whether administrators want to delegate setup at all."
+    decision_impact: "Removes the opportunity if delegation demand is absent."
+    recommended_route: "q-research-scope"
+dissent:
+  - participant_ref: "P-002"
+    statement: "Prefers pre-filled configuration once the privacy review clears."
+limitations:
+  - "No end users participated."
+  - "No customer interviews were run before the session."
+approval:
+  approved_by: "P-001"
+  approval_ref: "APR-021"
+  approved_at: "2026-08-13"

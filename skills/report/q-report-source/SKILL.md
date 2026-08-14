@@ -23,6 +23,8 @@ Apply this precedence:
 
 A `Working` artifact may inform planning. Before baselining the report source, require that exact version to be `Baselined`, `Released`, or explicitly approved as a reporting snapshot by the owning or root orchestrator.
 
+An approved ideation snapshot qualifies under that rule and is canonical only for its dispositions, applied criteria and gates, retained dissent, and authorized handoff. Report its candidates as `recommendation`, `decision-request`, or `risk` blocks with their unresolved assumptions; never as `fact`, `metric`, or accepted scope.
+
 Complete the source gate when every material content block has eligible evidence or a visible gap and no unresolved conflict is hidden.
 
 ## Build the source

@@ -39,6 +39,10 @@ Use `q-code-zoom-out` instead for a map exactly one abstraction level above curr
 
 When `user-requests-standalone-database-schema-migration-or-performance-analysis` and `q-tool-database-schema` is installed, route the bounded read-only request to it without changing active stage ownership. Route domain meaning to `q-plan-domain-model`, stack selection to `q-plan-tech-foundation`, durable physical decisions to `q-plan-architecture`, execution to implementation or debugging, and audit findings to the applicable review owner. If the tool is absent, `route-to-the-current-domain-architecture-refinement-debug-or-review-owner-with-database-capability-gap`.
 
+## Optional structured ideation
+
+When `user-requests-structured-ideation-before-product-core-or-for-a-bounded-technical-option-set` and `q-ideation-session` is installed, route that session to it with the decision, its owner, and the versioned inputs, then record one adoption disposition from the contract's structured-ideation section before any stage consumes the result. `q-plan-product-core` may receive a selected option, an outcome hypothesis, and assumptions; technology and architecture options return to `q-plan-tech-foundation` or `q-plan-architecture`. A candidate never becomes a requirement, a business rule, an ADR, or a stack selection. If it is absent, `continue-with-the-owning-planning-stage-and-record-the-unexplored-option-space-as-a-gap`.
+
 ## Development loop
 
 For each selected backlog item:

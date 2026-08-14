@@ -1,6 +1,6 @@
 # Quasar AI delivery skills
 
-This package coordinates project questions and proposal analysis, optional engagement research, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, optional reporting, and shared database-schema and structural-diagram tooling. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
+This package coordinates project questions and proposal analysis, optional structured ideation, optional engagement research, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, optional reporting, and shared database-schema and structural-diagram tooling. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
 
 ## Install
 
@@ -14,7 +14,7 @@ npx skills add flaviogragnolati/ai-workflow --skill q-code-debug --skill q-revie
 
 The installer copies one skill folder at a time into your project's agent directory, where every skill becomes a sibling of every other. Each skill is self-contained: it either bundles what it needs or declares the companion it depends on. Install the dependencies listed under [Skill dependencies](#skill-dependencies) alongside the skill that requires them; a skill whose companion is missing stops and prints the exact install command instead of proceeding on assumed rules.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 46 are.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 47 are.
 
 `skills.sh.json` groups the catalog on the skills.sh repository page. It is a derived presentation of the manifest `group` field — sections may merge groups, but the validator requires every public skill to appear in exactly one. `skill-manifest.yaml` stays the authority for what exists, what `group` it belongs to, what it `requires` or optionally `uses`, and what `distribution` it has.
 
@@ -36,6 +36,7 @@ For read-only project intelligence, invoke the narrow capability directly:
 Use $q-ask-project to answer how this project currently handles tenant isolation.
 Use $q-ask-analyze to evaluate whether moving background jobs to a managed queue fits this project.
 Use $q-review-skill to audit an Agent Skill without changing it.
+Use $q-ideation-session to explore options for this decision before Discovery, Product Core, or Proposal Design.
 ```
 
 Invoke a shared tool directly for bounded database analysis or an editable structural diagram:
@@ -65,9 +66,13 @@ Technical development is stack-agnostic and profile-driven. Skills marked `stack
 
 ```mermaid
 flowchart TB
+    I["Structured ideation<br/>(optional)"] -. "explicit snapshot adoption" .-> D
     D["Discovery and proposal"] --> G{"Accepted engagement"}
     D -. "authorized external uncertainty" .-> H["Engagement research"]
     H -. "explicit baseline adoption" .-> D
+    I -. "evidence request" .-> H
+    H -. "reopen after evidence" .-> I
+    I -. "explicit snapshot adoption" .-> A
     G -->|"Software or mixed with software"| A["AI coding: stages 1-6"]
     G -->|"Consulting or other service"| S["Future or manual execution"]
     G -->|"Review or negotiation"| D
@@ -109,6 +114,7 @@ flowchart LR
 |---|---|---|
 | Answer a project question | `q-ask-project` | Resolving a bounded factual or explanatory question from project documentation, workflow state, decisions, and observable implementation. |
 | Analyze a proposal | `q-ask-analyze` | Evaluating an idea or change across project fit, benefits, downsides, risks, problems, compatibility, alternatives, and evidence before choosing deeper work. |
+| Explore options for a decision | `q-ideation-session` | Generating, comparing, gating, and disposing candidate problem frames, opportunities, solutions, interventions, or research directions before an owning stage commits to one. |
 | Route engagement research | `q-research-workflow` | Reducing a bounded market, competitor, regulatory, technology, feasibility, or risk uncertainty into an approved snapshot without automatically opening Proposal. |
 | Research 1 — scope | `q-research-scope` | Defining stable decision-linked questions, boundaries, privacy limits, search strategies, and a time or cost budget before investigation. |
 | Research 2 — investigate | `q-research-investigate` | Building a cited Findings Register with source identity, claim fit, independence, contradictions, and honest search coverage. |
@@ -157,6 +163,16 @@ The analysis skill may recommend deeper research, the applicable planning owner,
 4. `q-proposal-document` owns DOCX/PDF mapping, generation, reconciliation, and visual QA.
 
 Accepted software work may continue to AI coding. Consulting, assessment, training, managed service, and other non-development engagements may close commercially, continue through a future/manual execution path, or optionally produce reporting.
+
+### Structured ideation
+
+`q-ideation-session` is an optional cross-cutting capability, never a mandatory first stage. It turns one decision into a traceable candidate space through independent generation, explicit provenance, clustered alternatives, predeclared weighted criteria, non-compensatory gates, adversarial review, and routed evidence requests. It runs `scientific`, `product`, `consulting`, and `general` profiles with `frame-problem`, `generate-options`, `stress-test-options`, or `reopen-after-evidence` intent.
+
+It produces an Ideation Register (supporting), an approved Ideation Baseline (canonical only for the frozen register version, dispositions, applied criteria and gates, dissent, and the authorized handoff), and an optional derived evaluation. All three are created and stay `Working` under the skill's ownership: the adopting workflow's root orchestrator registers the exact version and performs the lifecycle transition.
+
+Keep the three exploratory capabilities distinct: `q-ask-analyze` evaluates one already-proposed change against project truth, `q-research-workflow` reduces an external uncertainty with cited evidence, and `q-ideation-session` runs when the option set itself is the open question.
+
+The session generates options and questions but never evidence: unresolved uncertainties leave as typed evidence requests routed to `q-research-scope`, `q-code-research`, `q-code-prototype`, or a named human owner. Adoption is always an explicit orchestrator disposition, and a candidate never becomes a client fact, an authorized research question, a requirement, an ADR, scope, price, schedule, or a commitment. Its bundled offline CLIs scaffold, validate, score, and freeze the record without any network or model call. The method and its offline CLIs adapt K-Dense Inc.'s MIT-licensed `scientific-brainstorming` skill; see the skill's `THIRD_PARTY_NOTICES.md`.
 
 ### Engagement research
 
@@ -233,6 +249,7 @@ Maintenance is outside project runtime. It does not write project workflow state
 | `q-ask-project` | `q-core-contract` | Reconciles project state, artifact authority, lifecycle, and observable implementation before answering |
 | `q-ask-analyze` | `q-core-contract`, `q-ask-project` | Reuses the same alignment and evidence path before applying proposal-analysis lenses |
 | `q-code-research` | `q-core-contract` | Uses the shared cited-findings evidence contract while retaining technical-domain procedure |
+| `q-ideation-session` | `q-core-contract` | Applies snapshot authority, adoption dispositions, lifecycle ownership, and the shared ideation-baseline schema |
 | `q-report-document` | `q-core-contract`, `q-report-deck` | Also reads the Quasar presentation identity bundled in the deck skill |
 | `q-code-explore` | `q-code-grill-design` | Reads its deep-module glossary when modules, interfaces, or seams matter |
 
@@ -255,6 +272,8 @@ The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-
 | Rendered SVG/PNG/PDF | Yes when delivered | None; derived from its source |
 | Baselined report source | Yes | Canonical only for reporting selection, narrative, and approved interpretation |
 | Report Markdown/DOCX/PDF or deck PPTX/PDF | Yes when delivered | None; derived from the baselined report source |
+| Ideation Register | Yes | Supporting for session provenance, the candidate space, and raw assessments |
+| Ideation Baseline | Yes | Canonical only for the approved snapshot, dispositions, and authorized handoff; stays `Working` until an adopting workflow transitions it |
 | Research Brief | Yes | Canonical only for the approved research scope, boundaries, and budget |
 | Findings Register and Research Synthesis | Yes | Supporting for cited findings, observed coverage, and cross-finding interpretation |
 | Research Baseline | Yes | Canonical only for exact approved research artifact versions and `as_of` |
@@ -268,6 +287,7 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 |---|---|
 | Answer a bounded question from project truth | `q-ask-project` |
 | Evaluate whether a proposal fits the project | `q-ask-analyze` |
+| Explore and compare options for one decision | `q-ideation-session` |
 | Reduce an external engagement uncertainty | `q-research-workflow` |
 | Research a bounded technical claim | `q-code-research` |
 | Start or resume a proposal | `q-proposal-workflow` |
@@ -289,7 +309,7 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Produce a standalone Quasar presentation | `q-report-deck` |
 | Change or audit the workflow package | `q-maint-ai-workflow` |
 
-Groups sort the catalog and name the skills: `ask`, `proposal`, `research`, `delivery`, `plan`, `code`, `review`, `report`, `tool`, `core`, and `maint`. The manifest `group` field is authoritative — the skill name, its folder, its category folder, and the skills.sh sections all derive from it.
+Groups sort the catalog and name the skills: `ask`, `ideation`, `proposal`, `research`, `delivery`, `plan`, `code`, `review`, `report`, `tool`, `core`, and `maint`. The manifest `group` field is authoritative — the skill name, its folder, its category folder, and the skills.sh sections all derive from it.
 
 ## Anti-patterns
 
@@ -306,6 +326,7 @@ Groups sort the catalog and name the skills: `ask`, `proposal`, `research`, `del
 - Do not let a documentation audit rewrite its targets or create a parallel changelog.
 - Do not treat a universal numeric skill grade, line-count target, or pattern taxonomy as package acceptance without target authority and behavioral evidence.
 - Do not let a report renderer own report meaning or treat a rendered channel as upstream truth.
+- Do not let an ideation candidate, score, or snapshot become client evidence, a requirement, an ADR, or a commitment without the owning skill's explicit adoption.
 - Do not let Research overwrite client evidence, create a proposal commitment, or start another workflow without an explicit choice.
 - Do not treat verified source identity, claim support, and completed search coverage as the same state.
 - Do not let a delegated reporting subworkflow write global state or the artifact index.

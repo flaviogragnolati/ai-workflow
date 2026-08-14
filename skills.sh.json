@@ -26,6 +26,13 @@
       ]
     },
     {
+      "title": "Structured ideation and brainstorming",
+      "description": "Turn one decision into a traceable candidate space with independent generation, provenance, predeclared criteria, non-compensatory gates, adversarial review, routed evidence requests, and an approved snapshot the owning workflow decides to adopt.",
+      "skills": [
+        "q-ideation-session"
+      ]
+    },
+    {
       "title": "Discovery and commercial proposals",
       "description": "Turn raw client evidence into a traceable discovery brief and a canonical commercial proposal, then render it as a web, DOCX, or PDF channel.",
       "skills": [

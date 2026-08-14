@@ -16,6 +16,8 @@ Accept either:
 
 Preserve source IDs and versions. Separate confirmed facts, supported inferences, assumptions, and unresolved questions. Never turn a proposal assumption into a product confirmation.
 
+An adopted ideation snapshot may contribute one selected option, an outcome hypothesis, and its unresolved assumptions as supporting input. Revalidate problem, outcome, actors, journeys, scope, and business rules here; never copy a candidate into a requirement, and keep an unevidenced opportunity an assumption.
+
 ## Canonical output
 
 Create `docs/development-workflow/product/01-product-core.md` as an authored, canonical `Working` artifact for product intent and scope. Include:

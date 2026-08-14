@@ -1,0 +1,56 @@
+schema_version: "1.0"
+baseline:
+  baseline_id: "IB-INVALID"
+  version: ""
+  lifecycle: "Baselined"
+  profile: "product"
+  intent: "generate-options"
+  participation_mode: "facilitated-human"
+  as_of: ""
+decision_context:
+  decision_ref: "DEC-014"
+  owner_ref: "P-001"
+  decision_statement: "Which onboarding change to test first."
+  time_horizon: "Q4 2026"
+source_register:
+  artifact_id: "IS-001"
+  version: ""
+evaluation_ref: null
+criteria_applied: []
+gates_applied:
+  - gate_id: "GATE-001"
+    name: "privacy and data"
+    result: "review-required"
+    owner_ref: "P-001"
+candidate_dispositions:
+  - candidate_ref: "CAND-003"
+    kind: "solution-concept"
+    disposition: "advance"
+    rationale: ""
+    unresolved_assumption_refs: []
+    gate_refs:
+      - "GATE-001"
+    recommended_route: null
+  - candidate_ref: "CAND-003"
+    kind: "solution-concept"
+    disposition: "evidence-needed"
+    rationale: "Duplicated candidate with no routed request."
+    unresolved_assumption_refs: []
+    gate_refs:
+      - "GATE-404"
+    recommended_route:
+      skill: "q-ideation-session"
+      intended_use: "another-session"
+evidence_requests:
+  - request_id: "ERQ-001"
+    candidate_refs:
+      - "CAND-777"
+    uncertainty: "Unlinked uncertainty."
+    decision_impact: "None recorded."
+    recommended_route: "internal-brainstorm"
+dissent: []
+limitations: []
+approval:
+  approved_by: ""
+  approval_ref: ""
+  approved_at: ""

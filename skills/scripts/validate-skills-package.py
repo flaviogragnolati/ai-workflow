@@ -950,6 +950,88 @@ def research_baseline_semantics(data: Any) -> list[str]:
     return errors
 
 
+def ideation_baseline_semantics(data: Any) -> list[str]:
+    """An approved snapshot must stay traceable, gated, and non-self-adopting."""
+
+    if not isinstance(data, dict):
+        return ["ideation baseline must be a mapping"]
+
+    errors: list[str] = []
+    baseline = data.get("baseline", {})
+    if isinstance(baseline, dict):
+        for key in ("version", "as_of"):
+            if not isinstance(baseline.get(key), str) or not baseline.get(key, "").strip():
+                errors.append("ideation baseline requires non-empty %s" % key)
+    register = data.get("source_register", {})
+    if not isinstance(register, dict) or not isinstance(register.get("version"), str) or not register.get("version", "").strip():
+        errors.append("ideation baseline source_register requires an exact version")
+
+    approval = data.get("approval", {})
+    for key in ("approved_by", "approval_ref", "approved_at"):
+        value = approval.get(key) if isinstance(approval, dict) else None
+        if not isinstance(value, str) or not value.strip():
+            errors.append("an approved ideation snapshot requires a non-empty %s" % key)
+
+    gates = data.get("gates_applied", [])
+    gates = gates if isinstance(gates, list) else []
+    blocking = {"failed", "redesign-required", "review-required"}
+    gate_results = {
+        gate.get("gate_id"): gate.get("result")
+        for gate in gates
+        if isinstance(gate, dict)
+    }
+
+    requested: set[str] = set()
+    known_candidates = {
+        item.get("candidate_ref")
+        for item in data.get("candidate_dispositions", [])
+        if isinstance(item, dict)
+    }
+    for request in data.get("evidence_requests", []) if isinstance(data.get("evidence_requests"), list) else []:
+        if not isinstance(request, dict):
+            continue
+        refs = request.get("candidate_refs", [])
+        refs = refs if isinstance(refs, list) else []
+        requested.update(refs)
+        for ref in refs:
+            if ref not in known_candidates:
+                errors.append("evidence request %r references unknown candidate %r"
+                              % (request.get("request_id"), ref))
+        route = request.get("recommended_route")
+        if not isinstance(route, str) or not route.startswith("q-") or route == "q-ideation-session":
+            errors.append("evidence request %r must route to another registered skill"
+                          % request.get("request_id"))
+
+    seen: list[str] = []
+    for item in data.get("candidate_dispositions", []) if isinstance(data.get("candidate_dispositions"), list) else []:
+        if not isinstance(item, dict):
+            continue
+        candidate_ref = item.get("candidate_ref")
+        if isinstance(candidate_ref, str):
+            seen.append(candidate_ref)
+        disposition = item.get("disposition")
+        route = item.get("recommended_route")
+        if not isinstance(item.get("rationale"), str) or not item.get("rationale", "").strip():
+            errors.append("candidate %r has a disposition without a rationale" % candidate_ref)
+        for gate_ref in item.get("gate_refs", []) if isinstance(item.get("gate_refs"), list) else []:
+            if gate_ref not in gate_results:
+                errors.append("candidate %r references unknown gate %r" % (candidate_ref, gate_ref))
+            elif disposition == "advance" and gate_results.get(gate_ref) in blocking:
+                errors.append("candidate %r advances with the unresolved gate %r" % (candidate_ref, gate_ref))
+        if disposition == "advance" and (
+            not isinstance(route, dict) or not route.get("skill") or not route.get("intended_use")
+        ):
+            errors.append("advancing candidate %r requires an owner route" % candidate_ref)
+        if disposition in {"evidence-needed", "prototype-needed"} and candidate_ref not in requested:
+            errors.append("candidate %r needs evidence without a routed request" % candidate_ref)
+        if isinstance(route, dict) and route.get("skill") == "q-ideation-session":
+            errors.append("candidate %r cannot be routed back to the ideation session" % candidate_ref)
+    duplicates = sorted({item for item in seen if seen.count(item) > 1})
+    if duplicates:
+        errors.append("duplicate candidate dispositions: %s" % ", ".join(duplicates))
+    return errors
+
+
 def database_analysis_semantics(data: Any) -> list[str]:
     if not isinstance(data, dict):
         return ["database analysis must be a mapping"]
@@ -1268,6 +1350,24 @@ def acceptance_errors() -> tuple[list[str], int]:
         "S-43": [
             ("tool/q-tool-database-schema/references/document-model-review.md", "A document schema is a physical model"),
             ("tool/q-tool-database-schema/references/migration-strategies.md", "Classify rollback as"),
+        ],
+        "S-44": [
+            ("core/q-core-contract/SKILL.md", "Structured ideation is optional"),
+            ("core/q-core-contract/SKILL.md", "The adopting workflow owns the lifecycle transition"),
+            ("ideation/q-ideation-session/SKILL.md", "Never browse, cite, or change the candidate pool from unauthorized research"),
+            ("ideation/q-ideation-session/SKILL.md", "never writes `00-workflow-state.yaml`"),
+        ],
+        "S-45": [
+            ("proposal/q-proposal-workflow/SKILL.md", "adopt-as-supporting-input"),
+            ("delivery/q-delivery-workflow/SKILL.md", "never becomes a requirement, a business rule, an ADR, or a stack selection"),
+            ("plan/q-plan-product-core/SKILL.md", "never copy a candidate into a requirement"),
+            ("report/q-report-source/SKILL.md", "never as `fact`, `metric`, or accepted scope"),
+            ("ideation/q-ideation-session/references/handoffs.md", "A recommended route is a suggestion"),
+        ],
+        "S-46": [
+            ("ideation/q-ideation-session/references/evaluation-and-gates.md", "Gates are non-compensatory"),
+            ("ideation/q-ideation-session/references/method-core.md", "never a consulted stakeholder"),
+            ("ideation/q-ideation-session/references/responsible-ai.md", "no synthetic panel"),
         ],
     }
     errors: list[str] = []
@@ -1613,6 +1713,14 @@ def run() -> dict[str, Any]:
         research_baseline_semantics,
         active,
         min_invalid_errors=2,
+    ))
+    errors.extend(fixture_pair(
+        CORE_CONTRACT / "references" / "ideation-baseline.schema.yaml",
+        fixtures / "ideation-baseline.valid.yaml",
+        fixtures / "ideation-baseline.invalid.yaml",
+        ideation_baseline_semantics,
+        active,
+        min_invalid_errors=5,
     ))
 
     current_acceptance_errors, checked_scenarios = acceptance_errors()

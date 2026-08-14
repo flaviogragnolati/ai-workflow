@@ -5,7 +5,7 @@ required: [schema_version, package, workflows, skills, planned_capabilities]
 additionalProperties: false
 properties:
   schema_version:
-    const: "1.2"
+    const: "1.3"
   package:
     type: object
     required: [id, description, stack_profile, compatibility, human_guide, cross_workflow_contract, validator]
@@ -35,7 +35,7 @@ properties:
       required: [path, group, requires, status, kind, workflow, stage, invocable, execution_modes, human_interaction, persistent_outputs, transient_outputs, side_effects, approval_policy, fallback, stack_profile, contract_version]
       properties:
         path: {type: string}
-        group: {enum: [proposal, delivery, plan, code, review, report, research, ask, tool, core, maint]}
+        group: {enum: [proposal, delivery, plan, code, review, report, research, ideation, ask, tool, core, maint]}
         requires:
           type: array
           items: {type: string}

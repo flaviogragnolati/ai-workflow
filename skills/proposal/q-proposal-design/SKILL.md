@@ -33,6 +33,8 @@ Create:
 
 Treat web, DOCX, PDF, and decks as channels or derivatives. They cannot introduce new commitments.
 
+An adopted ideation snapshot supplies candidate solution, engagement, and workstream options with their unresolved assumptions and dissent. Evaluate them here against discovery evidence; an advanced candidate is never scope, methodology, price, schedule, or a commitment until this stage decides it.
+
 ## Procedure
 
 1. Verify discovery readiness and source versions.
