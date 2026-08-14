@@ -1,0 +1,30 @@
+schema_version: "1.0"
+c4_result:
+  request_id: C4-REQ-RENDER-REQUIRED
+  outcome: blocked
+  owner_skill: q-plan-architecture
+  generator_skill: q-tool-c4
+  selected_backend:
+    name: structurizr
+    capability_status: unavailable
+    validation_command: null
+    version: null
+  model_summary:
+    element_ids: [checkout, web]
+    relationship_ids: []
+    view_ids: [checkout-containers]
+  sources: []
+  renders: []
+  validation:
+    request_contract: passed
+    model_consistency: passed
+    backend_capability: unavailable
+    syntax: unavailable
+    visual_render: unavailable
+    semantic_alignment: caller-review-required
+  warnings: []
+  blockers: [A Structurizr render is required but no verified local Structurizr runtime is available]
+  provenance:
+    generator_skill: q-tool-c4
+    source_refs: [ART-ARCH-001@1.0]
+    backend: structurizr

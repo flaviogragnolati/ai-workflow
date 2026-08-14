@@ -1,0 +1,52 @@
+schema_version: "1.0"
+c4_result:
+  request_id: C4-REQ-001
+  outcome: completed
+  owner_skill: q-plan-architecture
+  generator_skill: q-tool-c4
+  selected_backend:
+    name: mermaid
+    capability_status: verified
+    validation_command: node runtime/mermaid.mjs validate 04-checkout-context.mmd
+    version: "11.16.0"
+  model_summary:
+    element_ids: [customer, checkout, web, database]
+    relationship_ids: [customer-checkout, customer-web, web-database]
+    view_ids: [checkout-context, checkout-containers]
+  sources:
+    - path: docs/development-workflow/architecture/04-checkout-context.mmd
+      format: mmd
+      view_ids: [checkout-context]
+      sha256: source-context-sha256
+      creation_mode: authored
+      semantic_authority: supporting
+      authority_scope: visual-representation
+    - path: docs/development-workflow/architecture/04-checkout-containers.mmd
+      format: mmd
+      view_ids: [checkout-containers]
+      sha256: source-containers-sha256
+      creation_mode: authored
+      semantic_authority: supporting
+      authority_scope: visual-representation
+  renders:
+    - path: docs/development-workflow/architecture/04-checkout-context.svg
+      format: svg
+      source_sha256: source-context-sha256
+      renderer: mmdc
+      renderer_version: "11.16.0"
+      sha256: render-context-sha256
+      creation_mode: derived
+      semantic_authority: none
+  validation:
+    request_contract: passed
+    model_consistency: passed
+    backend_capability: passed
+    syntax: passed
+    visual_render: passed
+    semantic_alignment: caller-review-required
+  warnings: []
+  blockers: []
+  provenance:
+    generator_skill: q-tool-c4
+    source_refs: [ART-ARCH-001@1.0]
+    backend: mermaid

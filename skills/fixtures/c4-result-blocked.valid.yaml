@@ -1,0 +1,26 @@
+schema_version: "1.0"
+c4_result:
+  request_id: C4-REQ-INVALID
+  outcome: blocked
+  owner_skill: q-tool-c4
+  generator_skill: q-tool-c4
+  selected_backend: null
+  model_summary:
+    element_ids: []
+    relationship_ids: []
+    view_ids: []
+  sources: []
+  renders: []
+  validation:
+    request_contract: failed
+    model_consistency: failed
+    backend_capability: unavailable
+    syntax: unavailable
+    visual_render: unavailable
+    semantic_alignment: failed
+  warnings: []
+  blockers: [The request does not identify an evidence-grounded system scope]
+  provenance:
+    generator_skill: q-tool-c4
+    source_refs: []
+    backend: null

@@ -35,6 +35,8 @@ If the runtime cannot produce or visually inspect a requested DOCX or PDF, repor
 
 When `approved-report-visual-intent-needs-a-mermaid-derived-asset` and `q-tool-mermaid` is installed, provide the exact report-source blocks and document profile, then retain mapping, layout, brand, and page QA here. If the tool is absent, `continue-with-the-approved-textual-visual-intent-or-block-a-required-format`.
 
+When `approved-document-visual-intent-references-an-exact-c4-source-or-view` and `q-tool-c4` is installed, request validation or rendering of the exact C4 source version and view ID for the document profile. Preserve element and relationship meaning; own only page placement, crop, caption, brand, and legibility. If the tool is absent, `use-the-approved-c4-render-or-textual-intent-and-block-any-required-missing-asset`. Never reconstruct C4 source from an SVG, PNG, PDF, or screenshot.
+
 Keep Markdown and DOCX editable, but not authoritative. Return semantic edits to `q-report-source`; after approval, regenerate every affected document and deck channel.
 
 ## Outputs and result

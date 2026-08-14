@@ -1,0 +1,106 @@
+schema_version: "1.0"
+c4_request:
+  request_id: C4-REQ-001
+  operation: create
+  caller:
+    skill_id: q-plan-architecture
+    workflow: ai-coding
+    mode: orchestrated
+  ownership:
+    owner_skill: q-plan-architecture
+    owner_workflow: ai-coding
+    creation_mode: authored
+    semantic_authority: supporting
+    authority_scope: visual-model-or-representation
+  sources:
+    - source_ref: ART-ARCH-001
+      version: "1.0"
+      evidence_class: approved
+      owner_skill: q-plan-architecture
+  scope:
+    subject: Checkout system
+    audience: Product and engineering
+    purpose: Explain the system boundary and runtime applications
+  model:
+    elements:
+      - element_id: customer
+        name: Customer
+        element_type: person
+        description: Buys products
+        external: true
+        evidence_refs: [ART-ARCH-001@1.0]
+        evidence_status: approved
+      - element_id: checkout
+        name: Checkout System
+        element_type: software-system
+        description: Completes purchases
+        evidence_refs: [ART-ARCH-001@1.0]
+        evidence_status: approved
+      - element_id: web
+        name: Web Application
+        element_type: container
+        description: Serves checkout interactions
+        parent_id: checkout
+        technology: TypeScript
+        evidence_refs: [ART-ARCH-001@1.0]
+        evidence_status: approved
+      - element_id: database
+        name: Checkout Database
+        element_type: container
+        description: Stores checkout state
+        parent_id: checkout
+        technology: PostgreSQL
+        evidence_refs: [ART-ARCH-001@1.0]
+        evidence_status: approved
+    relationships:
+      - relationship_id: customer-checkout
+        source_id: customer
+        destination_id: checkout
+        description: Completes purchases using
+        technology: HTTPS
+        evidence_refs: [ART-ARCH-001@1.0]
+        evidence_status: approved
+      - relationship_id: customer-web
+        source_id: customer
+        destination_id: web
+        description: Completes purchases using
+        technology: HTTPS
+        evidence_refs: [ART-ARCH-001@1.0]
+        evidence_status: approved
+      - relationship_id: web-database
+        source_id: web
+        destination_id: database
+        description: Reads and writes checkout state
+        technology: SQL/TLS
+        evidence_refs: [ART-ARCH-001@1.0]
+        evidence_status: approved
+  views:
+    - view_id: checkout-context
+      view_type: system-context
+      scope_ref: checkout
+      element_ids: [customer, checkout]
+      relationship_ids: [customer-checkout]
+      forbidden_inferences: [Do not add payment providers]
+    - view_id: checkout-containers
+      view_type: container
+      scope_ref: checkout
+      element_ids: [customer, web, database]
+      relationship_ids: [customer-web, web-database]
+      forbidden_inferences: [Do not infer asynchronous messaging]
+  backend:
+    preference: auto
+    required_features: [offline-render]
+    renderer_required: true
+  output:
+    source_targets:
+      - path: docs/development-workflow/architecture/04-checkout-context.mmd
+        view_ids: [checkout-context]
+      - path: docs/development-workflow/architecture/04-checkout-containers.mmd
+        view_ids: [checkout-containers]
+    render_formats: [svg]
+    profile: portable
+    overwrite: false
+  policy:
+    network: false
+    max_repair_attempts: 1
+    allow_unverified_source: false

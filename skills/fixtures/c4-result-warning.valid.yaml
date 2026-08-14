@@ -1,0 +1,37 @@
+schema_version: "1.0"
+c4_result:
+  request_id: C4-REQ-SOURCE-ONLY
+  outcome: completed_with_warnings
+  owner_skill: q-plan-architecture
+  generator_skill: q-tool-c4
+  selected_backend:
+    name: structurizr
+    capability_status: unverified
+    validation_command: null
+    version: null
+  model_summary:
+    element_ids: [checkout, web]
+    relationship_ids: []
+    view_ids: [checkout-containers]
+  sources:
+    - path: docs/development-workflow/architecture/workspace.dsl
+      format: dsl
+      view_ids: [checkout-containers]
+      sha256: source-only-sha256
+      creation_mode: authored
+      semantic_authority: supporting
+      authority_scope: visual-model
+  renders: []
+  validation:
+    request_contract: passed
+    model_consistency: passed
+    backend_capability: unavailable
+    syntax: unavailable
+    visual_render: not-requested
+    semantic_alignment: caller-review-required
+  warnings: [Structurizr source was requested and explicitly accepted without local syntax validation]
+  blockers: []
+  provenance:
+    generator_skill: q-tool-c4
+    source_refs: [ART-ARCH-001@1.0]
+    backend: structurizr

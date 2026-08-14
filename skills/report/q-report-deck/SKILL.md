@@ -43,6 +43,8 @@ Apply Quasar brand assets consistently. Prefer assertion-led slide titles, reada
 
 When `approved-deck-plan-needs-a-mermaid-derived-asset` and `q-tool-mermaid` is installed, pass only the approved visual intent and a presentation profile. Keep slide composition, brand, and visual QA here. If the tool is absent, `continue-with-the-approved-textual-visual-intent-or-block-a-required-slide-asset`.
 
+When `approved-deck-visual-intent-references-an-exact-c4-source-or-view` and `q-tool-c4` is installed, request validation or rendering of the exact C4 source version and view ID with a presentation profile. Own slide composition, crop, build, caption, brand, and visual QA only. If the tool is absent, `use-the-approved-c4-render-or-textual-intent-and-block-any-required-missing-asset`. Never redraw or reconstruct the C4 model from a derived image.
+
 ### 5. Verify and deliver
 
 Render every slide and inspect layout, overflow, contrast, consistency, data fidelity, traceability, and notes. Correct defects and rerender. Deliver the editable PPTX and requested derivatives.

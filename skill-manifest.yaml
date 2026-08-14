@@ -2,7 +2,7 @@ schema_version: "1.4"
 
 package:
   id: quasar-ai-delivery-skills
-  description: "Coordinated skills for Quasar project questions, structured ideation, engagement research, discovery, proposals, profile-driven software delivery, database schema design and review, QA, and optional reporting."
+  description: "Coordinated skills for Quasar project questions, structured ideation, engagement research, discovery, proposals, profile-driven software delivery, database schema design and review, C4 architecture views, QA, and optional reporting."
   stack_profile: project-defined
   compatibility: profile-driven
   human_guide: README.md
@@ -87,6 +87,36 @@ skills:
     fallback: return-source-and-explicit-validation-or-rendering-gap-without-false-success
     stack_profile: any
     contract_version: "1.1"
+    distribution: public
+
+  q-tool-c4:
+    path: tool/q-tool-c4
+    group: tool
+    requires: [q-core-contract]
+    uses:
+      - skill: q-tool-mermaid
+        when: selected-c4-backend-is-mermaid
+        fallback: return-c4-model-map-and-explicit-mermaid-validation-or-rendering-gap-or-select-another-verified-backend
+      - skill: q-code-explore
+        when: standalone-c4-request-needs-codebase-evidence-not-yet-supplied
+        fallback: require-a-bounded-evidence-map-and-report-the-discovery-capability-gap
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
+    persistent_outputs:
+      - {type: standalone-c4-source, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-model-or-representation}
+      - {type: standalone-c4-layout, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-layout}
+      - {type: standalone-c4-render, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
+    transient_outputs: [c4-request, c4-model-map, backend-capability-diagnostic, validation-diagnostic, render-preview]
+    side_effects: [write-project-artifacts, execute-local-capability-probe, execute-local-renderer]
+    approval_policy: local-generation-within-authorized-paths-with-explicit-overwrite-approval-and-no-runtime-install-remote-render-or-publication
+    fallback: return-evidence-grounded-c4-model-or-source-and-explicit-backend-validation-or-rendering-gap-without-false-success
+    stack_profile: project-defined
+    contract_version: "1.0"
     distribution: public
 
   q-tool-database-schema:
@@ -301,6 +331,9 @@ skills:
     group: plan
     requires: [q-core-contract, q-tool-mermaid]
     uses:
+      - skill: q-tool-c4
+        when: approved-architecture-meaning-benefits-from-c4-views-or-a-synchronized-model
+        fallback: continue-with-canonical-architecture-and-existing-mermaid-diagram-routes
       - skill: q-tool-database-schema
         when: confirmed-database-profile-needs-physical-design-or-migration-analysis
         fallback: continue-with-evidence-bounded-architecture-and-record-the-database-analysis-gap
@@ -315,6 +348,8 @@ skills:
       - {type: architecture-narrative, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: architecture}
       - {type: architecture-adrs, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: decisions}
       - {type: architecture-mermaid, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-representation}
+      - {type: architecture-c4-source, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-model-or-representation}
+      - {type: architecture-c4-layout, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-layout}
       - {type: architecture-render, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
     transient_outputs: []
     side_effects: [write-project-artifacts]
@@ -328,6 +363,9 @@ skills:
     group: plan
     requires: [q-core-contract]
     uses:
+      - skill: q-tool-c4
+        when: approved-container-scope-benefits-from-a-c4-component-view
+        fallback: continue-with-the-canonical-module-map-and-record-the-c4-capability-gap
       - skill: q-tool-mermaid
         when: approved-module-or-dependency-structure-benefits-from-a-diagram
         fallback: continue-with-canonical-module-feature-and-sequence-artifacts
@@ -342,6 +380,8 @@ skills:
       - {type: module-map, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: module-ownership}
       - {type: feature-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: feature-definition}
       - {type: technical-implementation-sequence, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: technical-ordering}
+      - {type: feature-c4-source, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-model-or-representation}
+      - {type: feature-c4-render, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
     transient_outputs: []
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-boundary-or-scope-changes
@@ -1141,6 +1181,9 @@ skills:
     group: report
     requires: [q-core-contract, q-report-deck]
     uses:
+      - skill: q-tool-c4
+        when: approved-document-visual-intent-references-an-exact-c4-source-or-view
+        fallback: use-the-approved-c4-render-or-textual-intent-and-block-any-required-missing-asset
       - skill: q-tool-mermaid
         when: approved-report-visual-intent-needs-a-mermaid-derived-asset
         fallback: continue-with-the-approved-textual-visual-intent-or-block-a-required-format
@@ -1168,6 +1211,9 @@ skills:
     group: report
     requires: [q-core-contract]
     uses:
+      - skill: q-tool-c4
+        when: approved-deck-visual-intent-references-an-exact-c4-source-or-view
+        fallback: use-the-approved-c4-render-or-textual-intent-and-block-any-required-missing-asset
       - skill: q-tool-mermaid
         when: approved-deck-plan-needs-a-mermaid-derived-asset
         fallback: continue-with-the-approved-textual-visual-intent-or-block-a-required-slide-asset

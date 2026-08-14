@@ -39,7 +39,7 @@ For `market-research`, require each material block to carry typed `evidence_refs
 4. Organize sections and stable content-block IDs.
 5. Classify each block as `fact`, `metric`, `estimate`, `interpretation`, `recommendation`, `projection`, `decision-request`, `risk`, or `next-action`.
 6. Add source references to facts, metrics, estimates, interpretations, recommendations, and projections. Ensure at least one cited source has semantic authority and an eligible lifecycle or snapshot approval. For `market-research`, also add typed evidence refs that resolve to the exact source-snapshot version.
-7. Record channel-neutral visual intent only when evidence benefits from a chart, table, diagram, or other visual. Leave pagination, slide structure, and layout to renderers.
+7. Record channel-neutral visual intent only when evidence benefits from a chart, table, diagram, or other visual. For C4, reference the exact approved source artifact/version and view ID, audience, purpose, required elements, and allowed crop or emphasis; never reconstruct a model from a derived render. Leave backend mechanics, pagination, slide structure, and layout to renderers.
 8. Validate `report-source.yaml` against the schema and reconcile duplicate or unresolved IDs.
 9. Obtain explicit semantic approval before changing lifecycle from `Working` to `Baselined`.
 

@@ -28,7 +28,8 @@ Create under `docs/development-workflow/implementation/`:
 - `05-module-map.md`;
 - `05-feature-index.yaml`;
 - feature or module specifications as needed;
-- `05-technical-implementation-sequence.md`.
+- `05-technical-implementation-sequence.md`;
+- optional C4 source as authored and supporting for visual model or representation, with any render derived and without semantic authority.
 
 The technical sequence is supporting guidance for slicing and dependency order. Never name it or treat it as a delivery roadmap.
 
@@ -44,6 +45,8 @@ The technical sequence is supporting guidance for slicing and dependency order. 
 8. Return unresolved scope, boundary, or technology decisions to their owning stage; do not update the technical foundation directly.
 
 When `approved-module-or-dependency-structure-benefits-from-a-diagram` and `q-tool-mermaid` is installed, delegate a representation of already approved modules, feature dependencies, or technical order. Keep the module map, feature index, and technical sequence authoritative. If the tool is absent, `continue-with-canonical-module-feature-and-sequence-artifacts`.
+
+When `approved-container-scope-benefits-from-a-c4-component-view` and `q-tool-c4` is installed, supply the exact confirmed container, approved modules or components, responsibilities, relationships, feature refs, and forbidden inferences. A module is not automatically a C4 component: use a Component view only inside one confirmed container and only when the mapping adds value. Keep the module map and feature specifications authoritative. If the tool is absent, `continue-with-the-canonical-module-map-and-record-the-c4-capability-gap`.
 
 ## Gate
 

@@ -1,0 +1,45 @@
+schema_version: "2.0"
+c4_result:
+  request_id: C4-BAD
+  outcome: completed
+  owner_skill: q-tool-c4
+  generator_skill: q-tool-mermaid
+  selected_backend:
+    name: d2
+    capability_status: unverified
+    validation_command: null
+    version: null
+  model_summary:
+    element_ids: [module]
+    relationship_ids: [missing-edge]
+    view_ids: [bad-view]
+  sources:
+    - path: architecture.txt
+      format: txt
+      view_ids: [bad-view]
+      sha256: bad-source
+      creation_mode: derived
+      semantic_authority: canonical
+      authority_scope: architecture
+  renders:
+    - path: architecture.jpg
+      format: jpg
+      source_sha256: absent-source
+      renderer: remote
+      renderer_version: latest
+      sha256: bad-render
+      creation_mode: authored
+      semantic_authority: supporting
+  validation:
+    request_contract: unknown
+    model_consistency: skipped
+    backend_capability: passed
+    syntax: passed
+    visual_render: passed
+    semantic_alignment: invented
+  warnings: []
+  blockers: [Ignored blocker]
+  provenance:
+    generator_skill: q-tool-mermaid
+    source_refs: []
+    backend: d2

@@ -39,6 +39,44 @@ artifacts:
       renderer: mmdc
       renderer_version: "11.16.0"
       source_sha256: "fixture-source-sha256"
+  - artifact_id: ART-004
+    artifact_type: architecture-c4-source
+    path: docs/development-workflow/architecture/workspace.dsl
+    owner_workflow: ai-coding
+    owner_skill: q-plan-architecture
+    creation_mode: authored
+    semantic_authority: supporting
+    authority_scope: visual-model
+    lifecycle: Working
+    version: "0.1"
+    source_refs: [ART-001]
+  - artifact_id: ART-005
+    artifact_type: architecture-c4-layout
+    path: docs/development-workflow/architecture/workspace.json
+    owner_workflow: ai-coding
+    owner_skill: q-plan-architecture
+    creation_mode: authored
+    semantic_authority: supporting
+    authority_scope: visual-layout
+    lifecycle: Working
+    version: "0.1"
+    source_refs: [ART-004@0.1]
+  - artifact_id: ART-006
+    artifact_type: architecture-render
+    path: docs/development-workflow/architecture/04-checkout-context.svg
+    owner_workflow: ai-coding
+    owner_skill: q-plan-architecture
+    creation_mode: derived
+    semantic_authority: none
+    authority_scope: presentation
+    lifecycle: Working
+    version: "0.1"
+    source_refs: [ART-004@0.1]
+    provenance:
+      generator_skill: q-tool-c4
+      renderer: structurizr
+      renderer_version: "fixture"
+      source_sha256: "fixture-c4-source-sha256"
   - artifact_id: ART-DESIGN-SYSTEM-001
     artifact_type: design-system-specification
     path: docs/development-workflow/experience/05b-design-system.md

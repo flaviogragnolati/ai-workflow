@@ -1,0 +1,54 @@
+schema_version: "9.9"
+c4_request:
+  request_id: C4-BAD
+  operation: publish
+  caller:
+    skill_id: q-plan-architecture
+    workflow: ai-coding
+    mode: orchestrated
+  ownership:
+    owner_skill: q-tool-c4
+    owner_workflow: shared
+    creation_mode: authored
+    semantic_authority: canonical
+    authority_scope: architecture
+  sources: []
+  scope:
+    subject: Unknown
+    audience: Everyone
+    purpose: Infer the architecture
+  model:
+    elements:
+      - element_id: module
+        name: Module
+        element_type: subsystem
+        description: Unknown module
+        evidence_refs: []
+        evidence_status: inferred
+    relationships:
+      - relationship_id: missing-edge
+        source_id: module
+        destination_id: absent
+        description: Uses
+        evidence_refs: [UNKNOWN]
+        evidence_status: inferred
+  views:
+    - view_id: bad-view
+      view_type: deployment-level-4
+      scope_ref: absent
+      element_ids: [absent]
+      relationship_ids: [unknown-edge]
+      forbidden_inferences: []
+  backend:
+    preference: d2
+    required_features: [magic-layout]
+    renderer_required: false
+  output:
+    source_path: architecture.txt
+    render_formats: [jpg]
+    profile: poster
+    overwrite: true
+  policy:
+    network: true
+    max_repair_attempts: 5
+    allow_unverified_source: true

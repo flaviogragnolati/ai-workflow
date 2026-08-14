@@ -654,6 +654,50 @@ def mermaid_runtime_errors(skills: dict[str, Any]) -> list[str]:
     return errors
 
 
+def c4_runtime_errors(skills: dict[str, Any]) -> list[str]:
+    entry = skills.get("q-tool-c4")
+    if not isinstance(entry, dict) or entry.get("status") != "active":
+        return []
+    directory = SKILLS_ROOT / str(entry.get("path", ""))
+    detector = directory / "scripts" / "detect_c4_backends.py"
+    tests = directory / "tests" / "run_tests.py"
+    required = [
+        detector,
+        tests,
+        directory / "references" / "c4-request.schema.yaml",
+        directory / "references" / "c4-result.schema.yaml",
+    ]
+    errors = [
+        "q-tool-c4: missing runtime file %s" % path.relative_to(REPO_ROOT)
+        for path in required if not path.is_file()
+    ]
+    if errors:
+        return errors
+    test = subprocess.run(
+        [sys.executable, str(tests)],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        timeout=45,
+        check=False,
+    )
+    if test.returncode != 0 or not re.search(r"q-tool-c4 tests: [1-9][0-9]* passed", test.stdout):
+        errors.append("q-tool-c4: tests failed: %s"
+                      % (test.stderr.strip() or test.stdout.strip() or test.returncode))
+    smoke = subprocess.run(
+        [sys.executable, str(detector), "--help"],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        timeout=10,
+        check=False,
+    )
+    if smoke.returncode != 0 or "without network access or installation" not in smoke.stdout:
+        errors.append("q-tool-c4: detector --help failed: %s"
+                      % (smoke.stderr.strip() or smoke.stdout.strip() or smoke.returncode))
+    return errors
+
+
 def market_analysis_runtime_errors(skills: dict[str, Any]) -> list[str]:
     entry = skills.get("q-research-market-analysis")
     if not isinstance(entry, dict) or entry.get("status") != "active":
@@ -713,7 +757,14 @@ def artifact_semantics(data: Any, active: set[str]) -> list[str]:
     token_sets: list[tuple[Any, list[Any]]] = []
     if not isinstance(data, dict):
         return ["artifact index must be a mapping"]
-    for item in data.get("artifacts", []):
+    artifacts = data.get("artifacts", [])
+    c4_sources = {
+        item.get("artifact_id")
+        for item in artifacts
+        if isinstance(item, dict) and str(item.get("artifact_type", "")).endswith("c4-source")
+    }
+    c4_layouts: list[tuple[Any, list[Any]]] = []
+    for item in artifacts:
         if not isinstance(item, dict):
             continue
         artifact_type = item.get("artifact_type")
@@ -722,6 +773,23 @@ def artifact_semantics(data: Any, active: set[str]) -> list[str]:
         elif artifact_type == "design-token-set":
             refs = item.get("source_refs")
             token_sets.append((item.get("artifact_id"), refs if isinstance(refs, list) else []))
+        if str(artifact_type).endswith("c4-source") and (
+            item.get("creation_mode") != "authored"
+            or item.get("semantic_authority") != "supporting"
+            or item.get("authority_scope") not in {"visual-model", "visual-representation"}
+        ):
+            errors.append("C4 source %r must be authored and supporting for visual-model or visual-representation"
+                          % item.get("artifact_id"))
+        if str(artifact_type).endswith("c4-layout"):
+            refs = item.get("source_refs")
+            c4_layouts.append((item.get("artifact_id"), refs if isinstance(refs, list) else []))
+            if (
+                item.get("creation_mode") != "authored"
+                or item.get("semantic_authority") != "supporting"
+                or item.get("authority_scope") != "visual-layout"
+            ):
+                errors.append("C4 layout %r must be authored and supporting only for visual-layout"
+                              % item.get("artifact_id"))
         artifact_id = item.get("artifact_id")
         if artifact_id in seen:
             errors.append("duplicate artifact_id %r" % artifact_id)
@@ -745,6 +813,9 @@ def artifact_semantics(data: Any, active: set[str]) -> list[str]:
         if not any(base_artifact_id(ref) in specifications for ref in refs):
             errors.append("design token set %r must reference its design-system specification in source_refs"
                           % artifact_id)
+    for artifact_id, refs in c4_layouts:
+        if not any(base_artifact_id(ref) in c4_sources for ref in refs):
+            errors.append("C4 layout %r must reference its C4 source in source_refs" % artifact_id)
     return errors
 
 
@@ -1482,6 +1553,165 @@ def database_analysis_semantics(data: Any) -> list[str]:
     return errors
 
 
+def c4_request_semantics(data: Any) -> list[str]:
+    request = data.get("c4_request", {}) if isinstance(data, dict) else {}
+    if not isinstance(request, dict):
+        return ["c4_request must be a mapping"]
+    model = request.get("model", {})
+    elements = model.get("elements", []) if isinstance(model, dict) else []
+    relationships = model.get("relationships", []) if isinstance(model, dict) else []
+    views = request.get("views", [])
+    errors: list[str] = []
+
+    element_ids = [item.get("element_id") for item in elements if isinstance(item, dict)]
+    relationship_ids = [item.get("relationship_id") for item in relationships if isinstance(item, dict)]
+    view_ids = [item.get("view_id") for item in views if isinstance(item, dict)]
+    element_types = {
+        item.get("element_id"): item.get("element_type")
+        for item in elements if isinstance(item, dict)
+    }
+    for label, values in (
+        ("element_id", element_ids),
+        ("relationship_id", relationship_ids),
+        ("view_id", view_ids),
+    ):
+        duplicates = sorted({value for value in values if isinstance(value, str) and values.count(value) > 1})
+        if duplicates:
+            errors.append("duplicate C4 %s values: %s" % (label, ", ".join(duplicates)))
+
+    known_elements = {value for value in element_ids if isinstance(value, str)}
+    known_relationships = {value for value in relationship_ids if isinstance(value, str)}
+    for item in elements if isinstance(elements, list) else []:
+        if not isinstance(item, dict):
+            continue
+        parent = item.get("parent_id")
+        if parent is not None and parent not in known_elements:
+            errors.append("C4 element %r has unknown parent_id %r" % (item.get("element_id"), parent))
+        expected_parent = {
+            "container": "software-system",
+            "component": "container",
+            "container-instance": "container",
+        }.get(item.get("element_type"))
+        if expected_parent and element_types.get(parent) != expected_parent:
+            errors.append("C4 %s %r requires a %s parent"
+                          % (item.get("element_type"), item.get("element_id"), expected_parent))
+    for item in relationships if isinstance(relationships, list) else []:
+        if not isinstance(item, dict):
+            continue
+        for key in ("source_id", "destination_id"):
+            if item.get(key) not in known_elements:
+                errors.append("C4 relationship %r has unknown %s %r"
+                              % (item.get("relationship_id"), key, item.get(key)))
+    for view in views if isinstance(views, list) else []:
+        if not isinstance(view, dict):
+            continue
+        unknown_elements = sorted(set(view.get("element_ids", [])) - known_elements)
+        unknown_relationships = sorted(set(view.get("relationship_ids", [])) - known_relationships)
+        if unknown_elements:
+            errors.append("C4 view %r references unknown elements: %s"
+                          % (view.get("view_id"), ", ".join(unknown_elements)))
+        if unknown_relationships:
+            errors.append("C4 view %r references unknown relationships: %s"
+                          % (view.get("view_id"), ", ".join(unknown_relationships)))
+        expected_scope = {
+            "system-context": "software-system",
+            "container": "software-system",
+            "component": "container",
+            "code": "component",
+        }.get(view.get("view_type"))
+        if expected_scope and element_types.get(view.get("scope_ref")) != expected_scope:
+            errors.append("C4 %s view %r requires a %s scope"
+                          % (view.get("view_type"), view.get("view_id"), expected_scope))
+        included = set(view.get("element_ids", []))
+        for relationship in relationships if isinstance(relationships, list) else []:
+            if not isinstance(relationship, dict) or relationship.get("relationship_id") not in view.get("relationship_ids", []):
+                continue
+            if relationship.get("source_id") not in included or relationship.get("destination_id") not in included:
+                errors.append("C4 view %r relationship %r has an endpoint outside the view"
+                              % (view.get("view_id"), relationship.get("relationship_id")))
+        if view.get("view_type") == "component":
+            for element_id in included:
+                if element_types.get(element_id) == "component":
+                    element = next(
+                        (item for item in elements if isinstance(item, dict) and item.get("element_id") == element_id),
+                        {},
+                    )
+                    if element.get("parent_id") != view.get("scope_ref"):
+                        errors.append("C4 component view %r contains component %r from another container"
+                                      % (view.get("view_id"), element_id))
+
+    targets = request.get("output", {}).get("source_targets", []) if isinstance(request.get("output"), dict) else []
+    targeted_views = [
+        view_id
+        for target in targets if isinstance(target, dict)
+        for view_id in target.get("view_ids", [])
+    ]
+    unknown_targets = sorted(set(targeted_views) - {value for value in view_ids if isinstance(value, str)})
+    missing_targets = sorted({value for value in view_ids if isinstance(value, str)} - set(targeted_views))
+    duplicates = sorted({value for value in targeted_views if targeted_views.count(value) > 1})
+    if unknown_targets:
+        errors.append("C4 output targets unknown views: %s" % ", ".join(unknown_targets))
+    if missing_targets:
+        errors.append("C4 views lack output targets: %s" % ", ".join(missing_targets))
+    if duplicates:
+        errors.append("C4 views have duplicate output targets: %s" % ", ".join(duplicates))
+
+    caller = request.get("caller", {})
+    if isinstance(caller, dict) and caller.get("mode") == "orchestrated":
+        inferred = [
+            item.get("element_id") or item.get("relationship_id")
+            for item in [*elements, *relationships]
+            if isinstance(item, dict) and item.get("evidence_status") == "inferred"
+        ]
+        if inferred:
+            errors.append("orchestrated C4 request contains unapproved inferred model items: %s"
+                          % ", ".join(str(value) for value in inferred))
+    return errors
+
+
+def c4_result_semantics(data: Any) -> list[str]:
+    result = data.get("c4_result", {}) if isinstance(data, dict) else {}
+    if not isinstance(result, dict):
+        return ["c4_result must be a mapping"]
+    errors: list[str] = []
+    outcome = result.get("outcome")
+    blockers = result.get("blockers", [])
+    warnings = result.get("warnings", [])
+    backend = result.get("selected_backend", {})
+    if outcome in {"completed", "completed_with_warnings"} and blockers:
+        errors.append("non-blocked C4 result cannot contain blockers")
+    if outcome == "completed" and warnings:
+        errors.append("completed C4 result cannot contain warnings")
+    if outcome == "completed_with_warnings" and not warnings:
+        errors.append("completed_with_warnings C4 result requires at least one warning")
+    if outcome == "blocked" and not blockers:
+        errors.append("blocked C4 result requires at least one blocker")
+    if outcome == "completed" and (
+        not isinstance(backend, dict) or backend.get("capability_status") != "verified"
+    ):
+        errors.append("completed C4 result requires a verified backend")
+    if outcome == "completed_with_warnings" and not isinstance(backend, dict):
+        errors.append("completed_with_warnings C4 result requires a selected backend")
+
+    source_hashes: set[str] = set()
+    for source in result.get("sources", []) if isinstance(result.get("sources"), list) else []:
+        if not isinstance(source, dict):
+            continue
+        source_hashes.add(source.get("sha256"))
+        expected = {
+            "mmd": "visual-representation",
+            "puml": "visual-representation",
+            "dsl": "visual-model",
+            "json": "visual-layout",
+        }.get(source.get("format"))
+        if expected and source.get("authority_scope") != expected:
+            errors.append("C4 %s source requires authority_scope %s" % (source.get("format"), expected))
+    for render in result.get("renders", []) if isinstance(result.get("renders"), list) else []:
+        if isinstance(render, dict) and render.get("source_sha256") not in source_hashes:
+            errors.append("C4 render %r references an unknown source hash" % render.get("path"))
+    return errors
+
+
 def fixture_pair(
     schema_path: Path,
     valid_path: Path,
@@ -1800,6 +2030,26 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("plan/q-plan-design-system/references/accessibility-and-governance.md", "Planning never states that the product is conformant"),
             ("review/q-review-code/SKILL.md", "never becomes a third authority axis"),
         ],
+        "S-55": [
+            ("tool/q-tool-c4/SKILL.md", "deployment is not level 4"),
+            ("tool/q-tool-c4/references/c4-model.md", "Static level 4"),
+            ("tool/q-tool-c4/references/c4-model.md", "System landscape"),
+        ],
+        "S-56": [
+            ("plan/q-plan-architecture/SKILL.md", "approved-architecture-meaning-benefits-from-c4-views-or-a-synchronized-model"),
+            ("plan/q-plan-features/SKILL.md", "A module is not automatically a C4 component"),
+            ("core/q-core-contract/SKILL.md", "caller still owns the approved people, systems, containers, components"),
+        ],
+        "S-57": [
+            ("report/q-report-source/SKILL.md", "never reconstruct a model from a derived render"),
+            ("report/q-report-document/SKILL.md", "exact C4 source version and view ID"),
+            ("report/q-report-deck/SKILL.md", "exact C4 source version and view ID"),
+        ],
+        "S-58": [
+            ("tool/q-tool-c4/SKILL.md", "never install dependencies or use a remote renderer"),
+            ("tool/q-tool-c4/references/backend-selection.md", "Select Structurizr for model reuse and view synchronization"),
+            ("tool/q-tool-c4/references/backend-selection.md", "Mermaid C4 is experimental"),
+        ],
     }
     errors: list[str] = []
     for scenario, requirements in checks.items():
@@ -2097,6 +2347,46 @@ def run() -> dict[str, Any]:
         min_invalid_errors=3,
     ))
     errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-c4" / "references" / "c4-request.schema.yaml",
+        fixtures / "c4-request.valid.yaml",
+        fixtures / "c4-request.invalid.yaml",
+        c4_request_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-c4" / "references" / "c4-result.schema.yaml",
+        fixtures / "c4-result.valid.yaml",
+        fixtures / "c4-result.invalid.yaml",
+        c4_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-c4" / "references" / "c4-result.schema.yaml",
+        fixtures / "c4-result-warning.valid.yaml",
+        fixtures / "c4-result.invalid.yaml",
+        c4_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-c4" / "references" / "c4-result.schema.yaml",
+        fixtures / "c4-result-blocked.valid.yaml",
+        fixtures / "c4-result.invalid.yaml",
+        c4_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-c4" / "references" / "c4-result.schema.yaml",
+        fixtures / "c4-result-backend-blocked.valid.yaml",
+        fixtures / "c4-result.invalid.yaml",
+        c4_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
         CORE_CONTRACT / "references" / "report-source.schema.yaml",
         fixtures / "report-source.valid.yaml",
         fixtures / "report-source.invalid.yaml",
@@ -2217,6 +2507,7 @@ def run() -> dict[str, Any]:
     errors.extend(anti_pattern_errors(skills))
     errors.extend(stray_file_errors())
     errors.extend(mermaid_runtime_errors(skills))
+    errors.extend(c4_runtime_errors(skills))
     errors.extend(market_analysis_runtime_errors(skills))
 
     return {

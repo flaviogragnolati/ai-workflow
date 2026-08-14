@@ -22,3 +22,14 @@ artifacts:
     lifecycle: Working
     version: "0.1"
     source_refs: [ART-001]
+  - artifact_id: ART-C4-BAD
+    artifact_type: architecture-c4-layout
+    path: docs/development-workflow/architecture/workspace.json
+    owner_workflow: ai-coding
+    owner_skill: q-plan-architecture
+    creation_mode: authored
+    semantic_authority: canonical
+    authority_scope: architecture
+    lifecycle: Working
+    version: "0.1"
+    source_refs: []
