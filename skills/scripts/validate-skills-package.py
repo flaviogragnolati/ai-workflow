@@ -624,6 +624,45 @@ def anti_pattern_errors(skills: dict[str, Any]) -> list[str]:
     return errors
 
 
+def skill_layout_errors(skills: dict[str, Any]) -> list[str]:
+    canonical = {
+        SKILLS_ROOT / str(entry["path"]) / "SKILL.md"
+        for entry in skills.values()
+        if isinstance(entry, dict) and isinstance(entry.get("path"), str)
+    }
+    found = {
+        path
+        for path in REPO_ROOT.rglob("SKILL.md")
+        if not any(
+            part in {".git", "node_modules", "__pycache__", ".venv"}
+            for part in path.parts
+        )
+    }
+    errors = [
+        "%s: unregistered or nested SKILL.md; keep exactly one canonical root at skills/<group>/<skill-id>"
+        % path.relative_to(REPO_ROOT)
+        for path in sorted(found - canonical)
+    ]
+
+    forbidden_root_docs = {
+        "README.md",
+        "VALIDATION.md",
+        "INTEGRATION.md",
+        "SHA256SUMS.txt",
+        "FILE-SHA256SUMS.txt",
+    }
+    for skill_file in sorted(canonical):
+        directory = skill_file.parent
+        for name in sorted(forbidden_root_docs):
+            path = directory / name
+            if path.is_file():
+                errors.append(
+                    "%s: housekeeping document must not ship at a skill root"
+                    % path.relative_to(REPO_ROOT)
+                )
+    return errors
+
+
 def stray_file_errors() -> list[str]:
     return [
         "%s: Windows alternate-data-stream artifact must not ship inside a skill" % path.relative_to(REPO_ROOT)
@@ -659,6 +698,92 @@ def mermaid_runtime_errors(skills: dict[str, Any]) -> list[str]:
         if run.returncode != 0 or "q-tool-mermaid local runtime" not in run.stdout:
             errors.append("q-tool-mermaid: runtime --help smoke failed: %s"
                           % (run.stderr.strip() or run.stdout.strip() or run.returncode))
+    return errors
+
+
+def pdf_runtime_errors(skills: dict[str, Any]) -> list[str]:
+    entry = skills.get("q-tool-pdf")
+    if not isinstance(entry, dict) or entry.get("status") != "active":
+        return []
+    directory = SKILLS_ROOT / str(entry.get("path", ""))
+    dispatcher = directory / "scripts" / "pdf"
+    python_backend = directory / "scripts" / "python" / "pdf_tool.py"
+    node_backend = directory / "scripts" / "node" / "pdf-tool.mjs"
+    static_test = directory / "tests" / "validate_static.py"
+    required = [
+        dispatcher,
+        directory / "scripts" / "pdf.ps1",
+        python_backend,
+        directory / "scripts" / "python" / "pyproject.toml",
+        node_backend,
+        directory / "scripts" / "node" / "package.json",
+        static_test,
+        directory / "tests" / "smoke_dispatcher.sh",
+        directory / "tests" / "smoke_python.sh",
+        directory / "tests" / "smoke_node.sh",
+    ]
+    errors = [
+        "q-tool-pdf: missing runtime file %s" % path.relative_to(REPO_ROOT)
+        for path in required if not path.is_file()
+    ]
+    if errors:
+        return errors
+
+    static = subprocess.run(
+        [sys.executable, str(static_test)],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        timeout=30,
+        check=False,
+    )
+    if static.returncode != 0 or "q-tool-pdf static validation passed" not in static.stdout:
+        errors.append("q-tool-pdf: static validation failed: %s"
+                      % (static.stderr.strip() or static.stdout.strip() or static.returncode))
+
+    python_help = subprocess.run(
+        [sys.executable, str(python_backend), "--help"],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        timeout=10,
+        check=False,
+    )
+    if python_help.returncode != 0 or "--overwrite" not in python_help.stdout:
+        errors.append("q-tool-pdf: Python --help smoke failed: %s"
+                      % (python_help.stderr.strip() or python_help.stdout.strip() or python_help.returncode))
+
+    bash = shutil.which("bash")
+    if bash:
+        syntax = subprocess.run(
+            [bash, "-n", str(dispatcher)],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=10,
+            check=False,
+        )
+        if syntax.returncode != 0:
+            errors.append("q-tool-pdf: dispatcher syntax failed: %s"
+                          % (syntax.stderr.strip() or syntax.stdout.strip() or syntax.returncode))
+
+    node = shutil.which("node")
+    if node:
+        for arguments, label in (
+            ([node, "--check", str(node_backend)], "Node syntax"),
+            ([node, str(node_backend), "--help"], "Node --help"),
+        ):
+            smoke = subprocess.run(
+                arguments,
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                timeout=10,
+                check=False,
+            )
+            if smoke.returncode != 0 or (label == "Node --help" and "--overwrite" not in smoke.stdout):
+                errors.append("q-tool-pdf: %s failed: %s"
+                              % (label, smoke.stderr.strip() or smoke.stdout.strip() or smoke.returncode))
     return errors
 
 
@@ -2078,6 +2203,21 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("code/q-code-research/SKILL.md", "An open technical question still belongs here"),
             ("proposal/q-proposal-discovery/SKILL.md", "Never grade a confirmed client statement as scientific evidence"),
         ],
+        "S-62": [
+            ("core/q-core-contract/SKILL.md", "Pass one `pdf_request` with exact source refs"),
+            ("tool/q-tool-pdf/SKILL.md", "The dispatcher resolves Python or Node"),
+            ("tool/q-tool-pdf/SKILL.md", "Never install a runtime or dependency"),
+            ("proposal/q-proposal-document/SKILL.md", "requested-proposal-channel-includes-pdf-generation-inspection-or-validation"),
+            ("report/q-report-document/SKILL.md", "requested-document-channel-includes-pdf-generation-inspection-or-validation"),
+            ("report/q-report-deck/SKILL.md", "requested-deck-channel-includes-pdf-export-inspection-or-validation"),
+            ("../LICENSE", "b2a92ba052dcae4ef48e850b9e31ebf75706be48"),
+            ("../LICENSE", "f6656c1256d5a8adfa37db9110046ef20bac644c"),
+        ],
+        "S-63": [
+            ("maint/q-maint-ai-workflow/SKILL.md", "Each registered skill has one canonical root"),
+            ("maint/q-maint-writing-for-agents/SKILL-MECHANICS.md", "A skill root must not contain another `SKILL.md`"),
+            ("scripts/validate-skills-package.py", "unregistered or nested SKILL.md"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():
@@ -2156,6 +2296,28 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     prototype = skills.get("q-code-prototype", {})
     conflicts = skills.get("q-code-merge-conflicts", {})
     maintenance = skills.get("q-maint-ai-workflow", {})
+    pdf_tool = skills.get("q-tool-pdf", {})
+    check(
+        "pdf-tool-active-not-planned",
+        isinstance(pdf_tool, dict)
+        and pdf_tool.get("status") == "active"
+        and "q-tool-pdf" not in planned,
+    )
+    check(
+        "pdf-tool-overwrite-is-approval-gated",
+        "overwrite" in str(pdf_tool.get("approval_policy", "")),
+    )
+    pdf_consumers = {"q-proposal-document", "q-report-document", "q-report-deck"}
+    check(
+        "pdf-tool-renderer-routing",
+        all(
+            any(
+                isinstance(use, dict) and use.get("skill") == "q-tool-pdf"
+                for use in skills.get(skill_id, {}).get("uses", [])
+            )
+            for skill_id in pdf_consumers
+        ),
+    )
     check("git-edit-does-not-authorize-maintenance-commit", not git_operation_allowed(
         maintenance, "commit", approved=True
     ))
@@ -2207,7 +2369,7 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
         conflict_class="semantically-compatible", continuation_commit=False
     ))
 
-    expected_planned = {"q-tool-document", "q-tool-spreadsheet", "q-tool-pdf"}
+    expected_planned = {"q-tool-document", "q-tool-spreadsheet"}
     check("planned-capability-set", set(planned) == expected_planned)
     check("planned-capabilities-pathless", all(
         isinstance(entry, dict)
@@ -2237,6 +2399,9 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
         and entry.get("kind") != "orchestrator"
     ]
     check("single-global-writer", not invalid_writers)
+    check("pdf-tool-is-not-a-global-writer", not global_effects.intersection(
+        pdf_tool.get("side_effects", [])
+    ))
     proposal_document = skills.get("q-proposal-document", {})
     check("proposal-document-returns-deltas", not global_effects.intersection(
         proposal_document.get("side_effects", [])
@@ -2350,6 +2515,7 @@ def package_doc_errors() -> list[str]:
             'sole repository-level license and attribution catalog',
             'Reference repositories',
             'https://github.com/K-Dense-AI/scientific-agent-skills',
+            'https://github.com/anthropics/skills',
             'https://github.com/softaworks/agent-toolkit',
             '`q-ideation-session`',
             '`q-research-market-analysis`',
@@ -2358,6 +2524,10 @@ def package_doc_errors() -> list[str]:
             '`q-review-skill`',
             '`q-tool-c4`',
             '`q-plan-design-system`',
+            '`q-tool-pdf`',
+            'b2a92ba052dcae4ef48e850b9e31ebf75706be48',
+            'f6656c1256d5a8adfa37db9110046ef20bac644c',
+            'restricted source not incorporated',
             'K-Dense Inc. adaptations',
             'Softaworks / Leonardo Flores references and adaptations',
             'Wikipedia contributors',
@@ -2755,8 +2925,10 @@ def run() -> dict[str, Any]:
     errors.extend(human_interaction_digest_errors(skills))
     errors.extend(skills_sh_errors(skills))
     errors.extend(anti_pattern_errors(skills))
+    errors.extend(skill_layout_errors(skills))
     errors.extend(stray_file_errors())
     errors.extend(mermaid_runtime_errors(skills))
+    errors.extend(pdf_runtime_errors(skills))
     errors.extend(c4_runtime_errors(skills))
     errors.extend(market_analysis_runtime_errors(skills))
 

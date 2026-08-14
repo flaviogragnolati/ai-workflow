@@ -36,7 +36,7 @@ Run `scripts/validate_document.py` and require:
 
 ## 4. Visual review
 
-Use a verified local document runtime to render and inspect every page. `q-tool-document` and `q-tool-pdf` remain planned and cannot satisfy this gate. Correct and rerender until there are no clipped elements, overlaps, missing glyphs, orphan headings, unreadable table splits, compressed rows, avoidable blank areas, misaligned brand elements, inconsistent hierarchy, or legacy logos. Block an issued format when rendering or inspection is unavailable.
+Use a verified local document runtime to render and inspect every page. `q-tool-pdf` may perform PDF mechanics and inspection only when its `doctor` output proves a viable local route for the required operation; `q-tool-document` remains planned. Correct and rerender until there are no clipped elements, overlaps, missing glyphs, orphan headings, unreadable table splits, compressed rows, avoidable blank areas, misaligned brand elements, inconsistent hierarchy, or legacy logos. Block an issued format when rendering or inspection is unavailable.
 
 ## 5. PDF and cross-format consistency
 

@@ -24,6 +24,9 @@ q-tool-database-schema:
 q-tool-humanizer:
   orchestrated: on-demand
   standalone: on-demand
+q-tool-pdf:
+  orchestrated: on-demand
+  standalone: on-demand
 q-ideation-session:
   orchestrated: decision-gated
   standalone: dialogue-led

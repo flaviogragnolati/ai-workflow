@@ -73,6 +73,7 @@ Challenge the proposal before implementation. Flag any change that creates:
 - agent instructions without a strong context pointer or completion criterion;
 - an invocation mismatch between `SKILL.md`, `agents/openai.yaml`, routing, and actual intent;
 - a maintenance capability embedded in project runtime execution;
+- a copied, staged, or nested skill tree that competes with a registered skill root;
 - placeholders, stale aliases, dead links, or empty capability folders.
 
 If the requested implementation is an anti-pattern, pause that implementation, provide concrete evidence, and recommend the smallest philosophy-compatible alternative. Proceed with a philosophy-breaking version only after the user explicitly chooses the governance change and its consequences are updated in the canonical contract, documentation, validations, and changelog.
@@ -84,11 +85,12 @@ Complete this step with one of three dispositions: compatible, compatible with n
 Make one cohesive change across the impact map. Apply these maintenance chores when relevant:
 
 - **Skill lifecycle:** align folder name, frontmatter `name` and trigger-rich `description`, imperative body, `agents/openai.yaml`, invocation mode, and manifest entry.
+- **Skill layout:** Each registered skill has one canonical root at `skills/<group>/<skill-id>/`. A skill root may contain its own functional `agents/`, `references/`, `scripts/`, `tests/`, and runtime resources, but never another `SKILL.md` or a copied integration package. Keep incoming bundles and acceptance evidence outside the repository while integrating, move only functional runtime material into the canonical root, then remove the staging copy.
 - **Routing:** update the owning workflow, orchestrator, router, README entry, and any agent context pointer that would otherwise lie.
 - **Contracts:** update schemas, fixtures, acceptance evidence, stable IDs, artifact ownership, authority, lifecycle, side effects, approvals, fallback, and stack profile together.
 - **Behavior:** add migration or compatibility guidance and re-sync affected consumers without copying the same rule into multiple files.
 - **History:** add a user-visible `CHANGELOG.md` entry under `Unreleased`; identify breaking changes and migrations explicitly.
-- **Provenance:** treat the root `LICENSE` as the sole repository-level license and attribution catalog. List every externally referenced repository there with a link, affected Quasar scope, source revision, modifications, and applicable terms. Do not create skill-root copies or per-skill notice catalogs. Preserve license files owned by bundled third-party dependencies, and require the package validator to distinguish those dependency files from forbidden skill-root duplicates before removing a superseded notice.
+- **Provenance:** incorporate every repository-owned license, third-party notice, and attribution into the single root `LICENSE`, which is the sole repository-level license and attribution catalog. When importing, adapting, or referencing external material, update that root document instead of creating a license, notice, or attribution file in an individual skill. List every externally referenced repository there with a link, affected Quasar scope, source revision, modifications, and applicable terms. Preserve license files owned by bundled third-party dependencies, and require the package validator to distinguish those dependency files from forbidden skill-root duplicates before removing a superseded notice.
 - **Removal or rename:** remove stale references, provide a transition path when consumers may still use the old ID, and avoid silent aliases.
 
 Load [`q-maint-writing-for-agents`](../q-maint-writing-for-agents/SKILL.md) before creating, restructuring, or materially editing an agent-consumed artifact. Apply its internal writing discipline inside this maintenance task's authority and write scope.

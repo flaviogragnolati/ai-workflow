@@ -14,7 +14,8 @@ imply endorsement by its authors.
 
 | Reference repository | Quasar skills informed or adapted |
 |---|---|
-| [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, and `q-review-evidence` |
+| [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, `q-review-evidence`, and `q-tool-pdf` |
+| [anthropics/skills](https://github.com/anthropics/skills) | `q-tool-pdf` |
 | [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit) | `q-ideation-session`, `q-tool-humanizer`, `q-review-skill`, `q-tool-c4`, and `q-plan-design-system` |
 
 ## Original Quasar material — MIT License
@@ -43,6 +44,37 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Anthropic PDF functional reference — restricted source not incorporated
+
+Sources consulted:
+
+- <https://github.com/K-Dense-AI/scientific-agent-skills/tree/b2a92ba052dcae4ef48e850b9e31ebf75706be48/skills/pdf>
+- <https://github.com/anthropics/skills/tree/f6656c1256d5a8adfa37db9110046ef20bac644c/skills/pdf>
+
+K-Dense repository commit consulted:
+`b2a92ba052dcae4ef48e850b9e31ebf75706be48` (2026-08-14). The PDF
+skill identifies metadata version `1.2`, Anthropic as the author, and the
+Anthropic repository as its source. Anthropic repository commit
+`f6656c1256d5a8adfa37db9110046ef20bac644c` was also consulted on
+2026-08-14.
+
+The source skill's own `LICENSE.txt` is not MIT: it governs use through the
+applicable Anthropic services agreement and states additional restrictions on
+copying, retention, derivative works, distribution, transfer, and reverse
+engineering. Those materials were reviewed only to identify the public
+functional surface of a PDF capability. No source prose, script, fixture,
+asset, form guide, reference guide, or license text was copied, translated,
+vendored, or adapted into this repository.
+
+`skills/tool/q-tool-pdf` is an original Quasar implementation. It covers the
+same public functional area with an independently designed caller-owned
+delegation contract, operation-aware Python/Node routing,
+source-preserving atomic output, explicit overwrite authorization, native-tool
+security boundaries, runtime-specific references, and deterministic smoke
+tests. Original Quasar portions remain under the repository MIT license above;
+third-party runtime dependencies retain their own licenses and are not
+vendored.
 
 ## K-Dense Inc. adaptations — MIT License
 
