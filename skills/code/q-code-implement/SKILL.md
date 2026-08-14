@@ -9,7 +9,7 @@ Use only when direction is settled. Return to the appropriate grill or planning 
 
 ## Load
 
-1. Read repository instructions, the original execution record, and the applicable technical foundation, application standards, and ADRs when they exist.
+1. Read repository instructions, the original execution record, and the applicable technical foundation, application standards, and ADRs when they exist. For interface work, read the exact `design_system_ref` version and build from its tokens and component contracts; note any declared token-validation gap rather than treating the token set as verified.
 2. Resolve acceptance criteria, scope, non-goals, dependencies, must-not-break behavior, and required approvals.
 3. Inspect the real code before editing.
 4. Discover the project's actual build, test, analysis, formatting, migration, and packaging commands. Select `q-code-tdd` only when explicitly requested or chosen. Testing remains required either way.
@@ -20,7 +20,7 @@ Use only when direction is settled. Return to the appropriate grill or planning 
 2. Implement in the required order and keep the diff inside scope.
 3. Add or update tests and documentation that the change requires.
 4. Run focused checks after each meaningful step and broader proportional checks before close.
-5. Stop on an architecture, product, stack, priority, or commercial contradiction; route an unsettled technology decision to `q-plan-tech-foundation` and do not widen the change silently.
+5. Stop on an architecture, product, stack, priority, or commercial contradiction; route an unsettled technology decision to `q-plan-tech-foundation` and a needed change to a reusable design contract to `q-plan-design-system`, and do not widen the change silently.
 
 Use parallel executors only for independent work with clear ownership. Their coordination is not a persistent project artifact.
 

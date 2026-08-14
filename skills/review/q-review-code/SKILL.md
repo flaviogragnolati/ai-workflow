@@ -15,6 +15,7 @@ Require:
 - the changed files or diff;
 - repository instructions and standards;
 - the exact technical foundation version and adopted guidance when they apply;
+- the exact `design_system_ref` version when the change touches a user interface;
 - the originating backlog item, issue, ticket, plan, specification, or acceptance criteria.
 
 If the baseline or specification is missing, state the limitation instead of inventing it. If the technical profile is missing or stale, keep generic findings separate and declare the stack-specific coverage gap.
@@ -23,10 +24,12 @@ If the baseline or specification is missing, state the limitation instead of inv
 
 Keep results separate:
 
-1. **Standards axis:** correctness, security, data integrity, failure handling, maintainability, tests, architecture, repository conventions, and applicable adopted technology guidance.
+1. **Standards axis:** correctness, security, data integrity, failure handling, maintainability, tests, architecture, repository conventions, applicable adopted technology guidance, and conformance to the referenced design system for interface changes.
 2. **Specification axis:** requested behavior, scope, acceptance criteria, non-goals, migration, and unintended changes.
 
 Use independent reviewers or parallel passes when that capability is available. Otherwise run two sequential passes with separate notes and context. Do not require a particular tool or agent name.
+
+Keep exactly these two axes. Design-system conformance is a standards criterion and may be reported as its own subsection, but it never becomes a third authority axis and never justifies reviewing beyond the changed surface. Report a missing or stale design-system reference as a coverage gap and route it to `q-plan-design-system`.
 
 ## Optional database schema review
 

@@ -19,6 +19,8 @@ Create under `docs/development-workflow/architecture/`:
 
 ADRs and narrative text own architecture decisions. The technical foundation owns stack selection and adopted technology guidance. `04-application-standards.md` references applicable guidance IDs and adds only project-specific architecture and engineering rules. Mermaid owns only the visual representation.
 
+When the product has a user interface, `04-application-standards.md` may state where presentation boundaries lie and reference the exact design-system version that governs reusable design contracts. It must not restate tokens, component contracts, or accessibility requirements owned by `q-plan-design-system`. Standards sufficient for a minimal interface are also the signal that a separate design system is not yet warranted.
+
 ## Optional database schema assistance
 
 When `confirmed-database-profile-needs-physical-design-or-migration-analysis` and `q-tool-database-schema` is installed, use `physical-design` for a candidate persistence mapping or `migration-design` for architecture-significant evolution. Supply the confirmed technical foundation version, approved domain artifacts, access patterns, NFRs, deployment constraints, and exact observed schema when one exists.

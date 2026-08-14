@@ -200,6 +200,21 @@ For a suitable greenfield web application without a mandated stack, the package 
 
 Stack-agnostic execution does not imply universal stack-specific expertise. A technical skill may continue with generic criteria and an explicit coverage gap when technology-specific guidance cannot be verified. It must block only when an unresolved decision, unmet requirement, missing execution capability, or evidence gap makes the requested approval unsafe; it must never issue a false approval.
 
+## Design system reference
+
+The design-system stage is conditional. It applies only to a product with a durable visual interface whose reusable design decisions outlive one feature; `q-plan-design-system` owns the applicability criteria and confirms the disposition. Keep three runtime states distinguishable: `not_applicable` for a product the criteria exclude, an accepted omission recorded as a decision and, when warranted, a risk, and an executed stage.
+
+When the stage applies and completes, it authors exactly two related persistent artifacts with separated authority:
+
+| Artifact | Owns |
+|---|---|
+| Design system specification | Principles, art direction, token taxonomy, component and pattern contracts, accessibility contracts, coverage, and governance. |
+| Design token set | Machine-readable token values, aliases, groups, themes, and modes. |
+
+The specification names the exact token-set ID and version and never copies its values; the token set never restates narrative decisions, inventories, or accessibility requirements. Workflow state carries one `design_system_ref` as an artifact ID and version, and that specification version resolves the compatible token set. Do not add a second global reference field.
+
+Design-system conformance is a criterion inside the standards axis of change review and codebase audit, never a third authority axis and never a reason to widen a reviewed diff. Downstream consumers load the exact referenced version; a material change makes them stale and returns reconciliation to the owner. Planning never claims accessibility conformance: it authors reusable requirements, and implementation and QA gather the evidence.
+
 ## Engagement research
 
 Engagement research is optional. `q-research-workflow` may run directly as the project root or be delegated by another registered workflow. A delegated run inherits `root_orchestrator`, `global_state_writer`, and `return_to`, returns a composite delta with `global_state_updated: false`, and never replaces the caller's active state.

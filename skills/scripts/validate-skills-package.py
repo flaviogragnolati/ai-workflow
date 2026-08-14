@@ -701,14 +701,27 @@ def market_analysis_runtime_errors(skills: dict[str, Any]) -> list[str]:
     return errors
 
 
+def base_artifact_id(reference: Any) -> str | None:
+    """`ART-001@0.2` and `ART-001` both name the same indexed artifact."""
+    return reference.split("@", 1)[0] if isinstance(reference, str) else None
+
+
 def artifact_semantics(data: Any, active: set[str]) -> list[str]:
     errors: list[str] = []
     seen: set[str] = set()
+    specifications: set[str] = set()
+    token_sets: list[tuple[Any, list[Any]]] = []
     if not isinstance(data, dict):
         return ["artifact index must be a mapping"]
     for item in data.get("artifacts", []):
         if not isinstance(item, dict):
             continue
+        artifact_type = item.get("artifact_type")
+        if artifact_type == "design-system-specification":
+            specifications.add(item.get("artifact_id"))
+        elif artifact_type == "design-token-set":
+            refs = item.get("source_refs")
+            token_sets.append((item.get("artifact_id"), refs if isinstance(refs, list) else []))
         artifact_id = item.get("artifact_id")
         if artifact_id in seen:
             errors.append("duplicate artifact_id %r" % artifact_id)
@@ -725,6 +738,13 @@ def artifact_semantics(data: Any, active: set[str]) -> list[str]:
             elif provenance.get("generator_skill") not in active:
                 errors.append("derived artifact %r has unknown provenance generator_skill %r"
                               % (artifact_id, provenance.get("generator_skill")))
+
+    # A token set is canonical only for values; the specification it belongs to
+    # must stay resolvable, because `design_system_ref` points at the pair.
+    for artifact_id, refs in token_sets:
+        if not any(base_artifact_id(ref) in specifications for ref in refs):
+            errors.append("design token set %r must reference its design-system specification in source_refs"
+                          % artifact_id)
     return errors
 
 
@@ -750,6 +770,7 @@ def workflow_state_semantics(data: Any) -> list[str]:
         "q-plan-domain-model",
         "q-plan-architecture",
         "q-plan-features",
+        "q-plan-design-system",
         "q-plan-backlog",
     }
     stage_status = data.get("stage_status", {})
@@ -759,6 +780,15 @@ def workflow_state_semantics(data: Any) -> list[str]:
     )
     if (data.get("current_stage") in downstream or foundation_completed) and not data.get("technical_foundation_ref"):
         errors.append("downstream workflow state requires technical_foundation_ref")
+
+    # The conditional design-system stage keeps three states distinguishable: an
+    # executed run always resolves a reference, and `not_applicable` never does.
+    design_status = stage_status.get("q-plan-design-system") if isinstance(stage_status, dict) else None
+    design_ref = data.get("design_system_ref")
+    if design_status in {"completed", "completed_with_warnings"} and not design_ref:
+        errors.append("a completed design-system stage requires design_system_ref")
+    if design_status == "not_applicable" and design_ref:
+        errors.append("a not_applicable design-system stage cannot carry design_system_ref")
     return errors
 
 
@@ -1749,6 +1779,26 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("report/q-report-source/SKILL.md", "typed `evidence_refs`"),
             ("report/q-report-workflow/SKILL.md", "it never searches, processes raw survey responses, recalculates market values"),
             ("core/q-core-contract/SKILL.md", "`content_profile` states the semantic source pattern"),
+        ],
+        "S-52": [
+            ("core/q-core-contract/SKILL.md", "Keep three runtime states distinguishable"),
+            ("delivery/q-delivery-workflow/SKILL.md", "does the product have a durable visual interface whose reusable design decisions outlive a single feature?"),
+            ("delivery/q-delivery-workflow/SKILL.md", "never write it as `not_applicable`"),
+            ("plan/q-plan-design-system/references/applicability-and-modes.md", "accepted omission"),
+            ("plan/q-plan-design-system/SKILL.md", "A completed assessment is not a claim that a design system exists"),
+        ],
+        "S-53": [
+            ("core/q-core-contract/SKILL.md", "Do not add a second global reference field"),
+            ("plan/q-plan-design-system/SKILL.md", "without copying a single value"),
+            ("plan/q-plan-design-system/references/dtcg-and-validation.md", "never validate an extracted or reconstructed copy"),
+            ("plan/q-plan-features/SKILL.md", "route a pattern that recurs across features to `q-plan-design-system`"),
+        ],
+        "S-54": [
+            ("plan/q-plan-design-system/SKILL.md", "author no fabricated JSON"),
+            ("plan/q-plan-design-system/SKILL.md", "`token_validation: unverified`"),
+            ("plan/q-plan-design-system/references/dtcg-and-validation.md", "Write what ran, at which version, with which result"),
+            ("plan/q-plan-design-system/references/accessibility-and-governance.md", "Planning never states that the product is conformant"),
+            ("review/q-review-code/SKILL.md", "never becomes a third authority axis"),
         ],
     }
     errors: list[str] = []

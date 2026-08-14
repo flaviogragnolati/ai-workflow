@@ -5,7 +5,8 @@ status: approved
 current_stage: q-plan-backlog
 stack_profile: t3-core
 technical_foundation_ref: null
-stage_status: {}
+design_system_ref: null
+stage_status: {q-plan-design-system: completed}
 decisions: []
 risks: []
 blockers: []

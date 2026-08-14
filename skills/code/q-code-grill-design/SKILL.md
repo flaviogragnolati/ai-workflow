@@ -15,7 +15,7 @@ Create a durable `Working` architecture document under `docs/architecture/featur
 
 ## Procedure
 
-1. Load current code, architecture, product context, the referenced technical foundation when available, decisions, and vocabulary.
+1. Load current code, architecture, product context, the referenced technical foundation when available, the exact `design_system_ref` version when the change affects a user interface, decisions, and vocabulary.
 2. Clarify intent, scenarios, scope, non-goals, constraints, and must-not-break behavior.
 3. Resolve domain boundaries, ownership, interfaces, data, consistency, security, failures, operations, evolution, and rollout.
 4. Compare viable alternatives against product requirements, NFRs, and adopted technology guidance; make trade-offs explicit.

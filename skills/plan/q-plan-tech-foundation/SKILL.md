@@ -54,6 +54,7 @@ The artifact must include:
 - adopted recommendations, pitfalls, and antipatterns with stable IDs and applicability;
 - real project commands and quality signals discovered from the repository;
 - security, privacy, testing, observability, operations, recovery, environments, deployment, and migration expectations;
+- for a product with a user interface, the visual platform, UI or component library, styling and documentation tooling, the accessibility target, and the design-token format and validator with their exact versions and real project command;
 - decisions, alternatives, trade-offs, risks, assumptions, exceptions, and unresolved items;
 - requirement, ADR, repository, and external-source traceability;
 - a reference register with documentation owner, URL, applicable version, access date, and supported guidance IDs.
@@ -61,6 +62,8 @@ The artifact must include:
 External references support the artifact; they do not choose the stack. Prefer concise paraphrases and links over copied documentation. Mark guidance unverified when its applicable version or source cannot be confirmed.
 
 ## Reconciliation and ownership
+
+`q-plan-design-system` consumes these interface selections and turns them into reusable design contracts; it never chooses the library, tooling, format, or accessibility target itself. Record `WCAG 2.2 Level AA` as the web default unless a contract, regulation, or platform requires another target, and add the platform's own standards for a non-web product. Confirm a token-format validator only when the project will genuinely run it; an absent validator is a declared coverage gap downstream, not a reason to invent a dependency.
 
 When a downstream stage discovers a conflicting technical constraint, it returns the affected requirement or decision IDs, marks the current technical foundation stale when appropriate, and routes `reconcile-and-update` here. Reconcile connected ADRs and application standards through their owners; reference them rather than copying their decisions.
 

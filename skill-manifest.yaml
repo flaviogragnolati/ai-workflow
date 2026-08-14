@@ -19,7 +19,7 @@ workflows:
   ai-coding:
     status: active
     entry_skill: q-delivery-workflow
-    planning_stages: [q-plan-product-core, q-plan-tech-foundation, q-plan-domain-model, q-plan-architecture, q-plan-features, q-plan-backlog]
+    planning_stages: [q-plan-product-core, q-plan-tech-foundation, q-plan-domain-model, q-plan-architecture, q-plan-features, q-plan-design-system, q-plan-backlog]
     includes_execution_loop: true
     includes_integral_qa: true
     delegates: [reporting]
@@ -348,6 +348,28 @@ skills:
     fallback: standalone-without-global-state-update
     stack_profile: project-defined
     contract_version: "1.0"
+
+  q-plan-design-system:
+    path: plan/q-plan-design-system
+    group: plan
+    requires: [q-core-contract]
+    status: active
+    kind: stage
+    workflow: ai-coding
+    stage: design-system
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
+    persistent_outputs:
+      - {type: design-system-specification, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: reusable-design-art-interaction-component-pattern-and-token-taxonomy-contracts}
+      - {type: design-token-set, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: machine-readable-design-token-values-aliases-groups-themes-and-modes}
+    transient_outputs: [applicability-assessment, existing-system-audit, token-validation-diagnostic]
+    side_effects: [write-project-artifacts, execute-local-validator, network-read]
+    approval_policy: user-confirms-material-brand-art-accessibility-and-cross-feature-design-decisions
+    fallback: blocked-without-confirmed-token-values-or-a-required-brand-or-accessibility-decision-warned-with-an-explicit-gap-when-token-validation-is-unavailable-and-standalone-without-global-state-update
+    stack_profile: project-defined
+    contract_version: "1.0"
+    distribution: public
 
   q-plan-product-core:
     path: plan/q-plan-product-core

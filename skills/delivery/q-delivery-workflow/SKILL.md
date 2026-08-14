@@ -11,7 +11,7 @@ Read the `q-core-contract` companion for shared governance and its `references/r
 
 1. Load project state, artifact index, baselines, decisions, risks, and open change requests.
 2. Accept either a product idea or a versioned proposal contract. Do not fabricate a commercial contract when work starts from an idea.
-3. Load `technical_foundation_ref` and its exact artifact version when it exists. Treat a legacy `stack_profile: t3-core` as project data, not a package compatibility gate.
+3. Load `technical_foundation_ref` and, for work that touches a user interface, `design_system_ref`, each at its exact artifact version when it exists. Treat a legacy `stack_profile: t3-core` as project data, not a package compatibility gate.
 4. Route missing or stale technical selections to `q-plan-tech-foundation`. Block only on an unresolved requirement, decision, execution capability, or evidence gap that makes the next action unsafe.
 
 ## Planning stages
@@ -25,9 +25,15 @@ Run only the stage needed by current state or `target_stage`:
 5. `q-plan-features`
 6. `q-plan-backlog`
 
+Stage 5b, `q-plan-design-system`, runs between stages 5 and 6 only when it applies. Existing stage numbers do not shift.
+
 Do not duplicate stage templates or domain procedure here. Validate each returned `stage_result`, then apply its delta to state and index.
 
-After `q-plan-tech-foundation` completes, reconcile the returned artifact ID and version into `technical_foundation_ref`. If stages 3-6 discover a stack contradiction, mark the referenced version stale when appropriate and route `reconcile-and-update` to its owner; do not let another stage edit the technical foundation.
+After `q-plan-tech-foundation` completes, reconcile the returned artifact ID and version into `technical_foundation_ref`. If a later stage discovers a stack contradiction, mark the referenced version stale when appropriate and route `reconcile-and-update` to its owner; do not let another stage edit the technical foundation.
+
+After `q-plan-features`, decide the design-system route from one question: does the product have a durable visual interface whose reusable design decisions outlive a single feature? Route to `q-plan-design-system` when it does or when the answer is unclear, and let that stage own the full applicability criteria and confirm the disposition. When it plainly does not — a headless API, worker, infrastructure, CLI, or throwaway prototype — record `stage_status: not_applicable`, keep `design_system_ref` null, and continue to `q-plan-backlog`.
+
+Reconcile a completed run into `design_system_ref` as an artifact ID and version, and register both the specification and its token set in the index. If the user declines an applicable stage, record that omission as a decision plus any warranted risk; never write it as `not_applicable`. Do not treat an unvalidated token set as a missing artifact: carry its declared coverage gap forward to implementation and QA.
 
 Stage 6 closes initial app-flow only when the high-level backlog contains milestones, epics, known features or workstreams, checkpoints, primary dependencies, readiness, and a selectable next front. Tickets and exhaustive task detail are not exit criteria.
 
@@ -74,7 +80,7 @@ Run integral QA on a release candidate, not on each diff. Create or update:
 - `08-delivery-manifest.yaml`;
 - `08-release-notes.md` when applicable.
 
-Cover architecture, integrations, critical flows, security, relevant NFRs, migrations, deployment, delivery documentation, adopted technology guidance, and UAT or acceptance when applicable. Use the exact `technical_foundation_ref` reviewed and disclose generic-only or unverified stack coverage. Do not treat `q-review-codebase` alone as acceptance; reconcile all relevant evidence and blockers.
+Cover architecture, integrations, critical flows, security, relevant NFRs, migrations, deployment, delivery documentation, adopted technology guidance, and UAT or acceptance when applicable. Use the exact `technical_foundation_ref` reviewed and disclose generic-only or unverified stack coverage. When the release exposes a user interface and `design_system_ref` exists, reconcile its conformance and accessibility evidence inside the standards coverage and report any unvalidated token set or stale referenced version as a gap rather than as conformance. Do not treat `q-review-codebase` alone as acceptance; reconcile all relevant evidence and blockers.
 
 `q-review-docs` is optional. Route to it when the user requests extended documentation QA, when upstream change makes drift likely, or before a baseline or release whose risk warrants a documentation pass. Supply the active artifact IDs or explicit durable scope. Keep its diagnostic transient and unregistered; route any approved remediation to the owning skill and record the implemented change in the applicable workflow changelog or change-control record.
 

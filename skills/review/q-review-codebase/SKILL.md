@@ -13,6 +13,7 @@ Load:
 
 - repository instructions, architecture, ADRs, product requirements, and application standards;
 - the exact `technical_foundation_ref` when one exists, including adopted guidance IDs and source versions;
+- the exact `design_system_ref` when the audit scope includes a user interface;
 - [`references/generic-standards.md`](references/generic-standards.md);
 - [`assets/report-template.md`](assets/report-template.md).
 
@@ -20,7 +21,7 @@ Inspect manifests, lockfiles, configuration, schemas, and executable help to ide
 
 When a selected technology lacks current adopted guidance and its idiomatic use matters to the requested scope, consult current primary sources such as official documentation, specifications, first-party source, or vendor support policy. Cite the precise source and version in the report. If that evidence cannot be verified, continue with generic and repository-grounded criteria where safe and declare the technology-specific coverage gap; do not issue a full stack-specific approval.
 
-Complete authority setup when every review lens resolves to a generic catalog ID, project guidance ID, repository convention, specification, or explicit coverage gap.
+Complete authority setup when every review lens resolves to a generic catalog ID, project guidance ID, repository convention, design-system contract ID, specification, or explicit coverage gap. When the product has an interface and no design system exists, is stale, or carries an unvalidated token set, record that as a coverage gap routed to `q-plan-design-system` rather than auditing against an unadopted design standard.
 
 When `audit-scope-includes-material-database-schema-document-model-migration-or-performance-risk` and `q-tool-database-schema` is installed, use the matching specialist mode with the fixed audit scope, observed schema, confirmed profile, and supplied workload evidence. Reconcile its transient findings into this audit's existing lenses and evidence standard; do not treat the tool as integral acceptance. If it is absent, `continue-with-generic-and-project-grounded-database-coverage-and-name-the-specialist-gap`.
 
@@ -34,7 +35,7 @@ Review applicable evidence across:
 - performance and scalability risks against accepted NFRs;
 - maintainability, module depth, and testability;
 - testing quality and critical-flow coverage;
-- accessibility and user-state behavior when the product exposes a user interface;
+- accessibility, user-state behavior, and design-system conformance when the product exposes a user interface;
 - migrations, deployment, and delivery documentation;
 - requirement and acceptance coverage for a release candidate;
 - selected technology usage against adopted project guidance and current official sources.

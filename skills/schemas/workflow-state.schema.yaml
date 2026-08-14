@@ -11,6 +11,7 @@ properties:
   current_stage: {type: [string, "null"]}
   stack_profile: {type: string}
   technical_foundation_ref: {type: [string, "null"]}
+  design_system_ref: {type: [string, "null"]}
   stage_status: {type: object}
   decisions:
     type: array

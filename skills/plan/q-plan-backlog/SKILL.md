@@ -43,7 +43,7 @@ Incorporate new information by adding, splitting, combining, reordering, deferri
 
 ## Procedure
 
-1. Load upstream baselines, existing backlog, changelog, state, decisions, risks, and delivery constraints.
+1. Load upstream baselines, existing backlog, changelog, state, decisions, risks, and delivery constraints. When `design_system_ref` exists, load that exact version and treat its downstream needs — build, adoption, and migration work — as candidate backlog input alongside features.
 2. Choose exactly one mode.
 3. Reconcile every known feature with a backlog assignment or explicit exception.
 4. Preserve stable IDs when meaning is unchanged.

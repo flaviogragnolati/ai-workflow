@@ -56,7 +56,7 @@
     },
     {
       "title": "Product and technical planning",
-      "description": "The delivery orchestrator plus six sequential stages that take a product idea to a validated backlog: product core, technical foundation, domain model, architecture, feature decomposition, and delivery planning.",
+      "description": "The delivery orchestrator plus the ordered stages that take a product idea to a validated backlog: product core, technical foundation, domain model, architecture, feature decomposition, a conditional design system, and delivery planning.",
       "skills": [
         "q-delivery-workflow",
         "q-plan-product-core",
@@ -64,6 +64,7 @@
         "q-plan-domain-model",
         "q-plan-architecture",
         "q-plan-features",
+        "q-plan-design-system",
         "q-plan-backlog"
       ]
     },

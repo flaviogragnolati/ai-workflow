@@ -13,7 +13,7 @@ discovery-proposal:
   optional_next: [ai-coding, reporting, close]
 ai-coding:
   entry_skill: q-delivery-workflow
-  planning_stages: [q-plan-product-core, q-plan-tech-foundation, q-plan-domain-model, q-plan-architecture, q-plan-features, q-plan-backlog]
+  planning_stages: [q-plan-product-core, q-plan-tech-foundation, q-plan-domain-model, q-plan-architecture, q-plan-features, q-plan-design-system, q-plan-backlog]
   delegates: [reporting]
   optional_next: [reporting, close]
 research:

@@ -13,7 +13,7 @@ Accept a backlog item, issue, ticket, architecture document, specification, or e
 
 ## Procedure
 
-1. Inspect repository instructions, the applicable technical foundation and adopted guidance, relevant code, tests, schemas, migrations, and docs.
+1. Inspect repository instructions, the applicable technical foundation and adopted guidance, the exact `design_system_ref` version for interface work, relevant code, tests, schemas, migrations, and docs.
 2. Lock objective, scope, non-goals, deferred work, and must-not-break behavior.
 3. Choose the implementation approach and strict sequence.
 4. Break work into phases and tasks grounded in exact files, functions, data, and dependencies.

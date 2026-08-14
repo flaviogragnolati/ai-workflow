@@ -40,6 +40,9 @@ q-plan-architecture:
 q-plan-features:
   orchestrated: decision-gated
   standalone: decision-gated
+q-plan-design-system:
+  orchestrated: decision-gated
+  standalone: decision-gated
 q-plan-product-core:
   orchestrated: decision-gated
   standalone: decision-gated

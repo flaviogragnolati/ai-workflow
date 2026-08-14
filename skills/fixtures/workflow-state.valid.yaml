@@ -5,7 +5,8 @@ status: working
 current_stage: q-plan-backlog
 stack_profile: t3-core
 technical_foundation_ref: "ART-TECH-001@0.2"
-stage_status: {q-plan-product-core: completed, q-plan-backlog: working}
+design_system_ref: "ART-DESIGN-SYSTEM-001@0.1"
+stage_status: {q-plan-product-core: completed, q-plan-design-system: completed, q-plan-backlog: working}
 decisions: [DEC-001]
 risks: [RSK-001]
 blockers: []

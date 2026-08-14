@@ -101,7 +101,7 @@ Use this section as a routing aid, not as a second registry. `skill-manifest.yam
 ```mermaid
 flowchart LR
     P["Propose<br/>q-proposal-workflow<br/>discovery → design → web or document"] --> G{"Accepted<br/>software scope?"}
-    G -->|"yes"| A["Plan<br/>q-delivery-workflow<br/>product → tech → domain → architecture → features → backlog"]
+    G -->|"yes"| A["Plan<br/>q-delivery-workflow<br/>product → tech → domain → architecture → features → design system? → backlog"]
     G -->|"no"| C["Commercial close or<br/>non-development execution"]
     A --> I["Iterate<br/>explore → refine → tickets? → implement → mini review"]
     I --> Q["Release<br/>integral QA → delivery"]
@@ -132,6 +132,7 @@ flowchart LR
 | Planning 3 — domain and data | `q-plan-domain-model` | Defining domain concepts, relationships, ownership, lifecycles, invariants, retention, and the supporting ERD. |
 | Planning 4 — architecture | `q-plan-architecture` | Defining system architecture, ADRs, application standards, boundaries, and supporting diagrams. |
 | Planning 5 — modules and features | `q-plan-features` | Decomposing architecture into modules, vertical slices, behaviors, dependencies, and technical sequence. |
+| Planning 5b — design system (conditional) | `q-plan-design-system` | Defining, adopting, or evolving reusable design contracts and a design token set for a product with a durable visual interface. Skipped for a headless, non-visual, or throwaway product. |
 | Planning 6 — backlog | `q-plan-backlog` | Creating the first high-level rolling-wave backlog, refining the next front, or synchronizing an approved replan. |
 | Orient before changing code | `q-code-explore` for evidence-grounded orientation; `q-code-zoom-out` for one abstraction level above the current code | Context is missing before planning, implementation, review, or explanation. Skip this step when the needed context is already available. |
 | Refine selected work | Choose one: `q-code-grill-simple`, `q-code-grill-feature`, or `q-code-grill-design`; use `q-code-implementation-plan` when direction is settled but file-level execution still needs planning | Match the depth to a small change, bounded feature, or cross-cutting architectural change. Skip refinement when the durable work item is already execution-ready. |
@@ -203,7 +204,13 @@ Planning stages:
 5. `q-plan-features`
 6. `q-plan-backlog`
 
+Stage 5b, `q-plan-design-system`, runs between stages 5 and 6 only when it applies. Existing stage numbers do not shift.
+
 Stage 6 produces the first complete high-level backlog: milestones, epics, known features or workstreams, checkpoints, dependencies, readiness, and a next selectable front. It does not require exhaustive tasks or tickets.
+
+Stage 5b is conditional. `q-plan-design-system` runs only for a product with a durable visual interface whose reusable design decisions outlive a single feature; a headless API, worker, CLI, or throwaway prototype is recorded as `not_applicable` and continues straight to backlog. When it runs, it authors two related artifacts with separated authority: `05b-design-system.md` for principles, art direction, token taxonomy, component and pattern contracts, accessibility contracts, coverage, and governance, and `05b-design-tokens.json` for the machine-readable token values, aliases, themes, and modes. Workflow state carries one `design_system_ref`, and that specification version resolves its compatible token set.
+
+The stage authors contracts, never implementation: it does not choose the UI library, write component code, produce screen wireframes, or publish to a design or package registry. `WCAG 2.2 Level AA` is the web default target, recorded by the technical foundation and turned into reusable requirements here — planning states the requirement and the expected evidence, while implementation and QA establish conformance. A token set is emitted only from confirmed values; when the project's confirmed validator cannot run, the stage records an explicit `token_validation: unverified` gap and carries it downstream rather than describing an unchecked file as validated. It is the one planning stage that declares `network-read`, because adopting an existing system may require reading its current public documentation or an authorized design library; that access is read-only and never authorizes publication, remote writes, silent installation, or sending confidential material outward. Design-system conformance is reviewed inside the standards axis of `q-review-code` and `q-review-codebase`, never as a third authority axis.
 
 `q-plan-tech-foundation` owns `02-technical-foundation.md`, the canonical project profile for stack selection, concrete versions, NFR and operational fit, adopted recommendations, pitfalls, antipatterns, and version-scoped external references. Workflow state carries its exact artifact ID and version as `technical_foundation_ref`. Later stages report contradictions and route reconciliation to the owner instead of editing the profile.
 

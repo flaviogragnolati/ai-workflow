@@ -17,7 +17,9 @@ Own:
 - vertical slices and technical dependencies;
 - approximate technical order.
 
-Do not own milestones, delivery epics, product priority, capacity, dates, or delivery roadmap. Those belong to `q-plan-backlog`.
+For a feature with a user interface, own its surfaces and the behaviour of its states: loading, empty, error, success, read-only, permission-restricted, destructive actions, density, responsive behaviour, and content requirements. Describe what each state must do, not which component renders it.
+
+Do not own milestones, delivery epics, product priority, capacity, dates, or delivery roadmap. Those belong to `q-plan-backlog`. Do not choose components, name design tokens, or define reusable visual or interaction language; route a pattern that recurs across features to `q-plan-design-system`.
 
 ## Outputs
 
@@ -45,6 +47,8 @@ When `approved-module-or-dependency-structure-benefits-from-a-diagram` and `q-to
 
 ## Gate
 
-Complete when modules and features are sufficiently defined for Stage 6 to create milestones and epics. No delivery milestone or canonical epic may be introduced here.
+Complete when modules and features are sufficiently defined for backlog planning to create milestones and epics. No delivery milestone or canonical epic may be introduced here.
+
+When the product has a durable visual interface, the recorded surfaces and states are also the input the conditional `q-plan-design-system` stage derives its inventory from. Record them; do not resolve them into a component catalogue.
 
 Return a valid `stage_result`; standalone execution does not update global state.

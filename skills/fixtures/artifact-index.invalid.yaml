@@ -11,3 +11,14 @@ artifacts:
     lifecycle: Working
     version: "0.1"
     source_refs: []
+  - artifact_id: ART-DESIGN-TOKENS-001
+    artifact_type: design-token-set
+    path: docs/development-workflow/experience/05b-design-tokens.json
+    owner_workflow: ai-coding
+    owner_skill: q-plan-design-system
+    creation_mode: authored
+    semantic_authority: canonical
+    authority_scope: machine-readable-design-token-values-aliases-groups-themes-and-modes
+    lifecycle: Working
+    version: "0.1"
+    source_refs: [ART-001]
