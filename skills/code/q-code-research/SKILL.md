@@ -25,6 +25,8 @@ Prefer the source that owns the claim: official documentation, specifications, f
 6. Set confidence from directness, authority for the claim, independence, currency, reproducibility, contradictions, and coverage; never from URL count alone.
 7. Validate the structured register against the shared cited-findings schema, then render or accompany it with concise Markdown when the repository convention requires a human-readable note.
 
+When `material-technical-claim-depends-on-benchmark-vendor-evidence-compatibility-reproducibility-or-ml-ai-evaluation` and `q-review-evidence` is installed, pass the bounded claim, exact versions and environments, inspected sources and locators, reproducibility evidence, contradictions, and coverage to the reviewer. Reconcile its transient findings into this procedure; Technical Research retains the Findings Register and assigns final confidence. An open technical question still belongs here and must not be converted into evidence review before a target claim and bounded evidence exist. If the reviewer is absent, `apply-existing-technical-confidence-factors-preserve-uncertainty-and-report-expanded-evidence-review-unavailable`.
+
 Store durable output where the repository keeps research artifacts. In orchestrated mode, return a valid stage delta with `global_state_updated: false`; in standalone mode, require later reconciliation and do not claim workflow completion. A background agent is optional execution detail, not a precondition.
 
 ## Anti-patterns

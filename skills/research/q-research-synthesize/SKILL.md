@@ -22,6 +22,8 @@ Require exact artifact IDs and versions for an authorized Research Brief and its
 5. Run a counter-evidence check: select adverse findings, articulate the strongest counterargument, test dependence on the strongest source, inspect circular sourcing, and preserve real limitations.
 6. Return the versioned `Working` synthesis and its stage delta.
 
+When `material-answer-or-implication-may-change-under-weak-inference-omitted-alternative-contradiction-circularity-or-unsupported-causality` and `q-review-evidence` is installed, provide the bounded answer or implication, its exact finding and optional analysis-result refs, adverse evidence, and coverage. Reconcile the transient diagnostic here; Synthesis retains the interpretation, strength, and final wording. Skip the reviewer for an immaterial inference already resolved by the normal counter-evidence check. If it is absent, `apply-existing-counter-evidence-and-strength-factors-preserve-uncertainty-and-report-expanded-evidence-review-unavailable`.
+
 Interpret market results by reference. Preserve their assumptions, qualifiers, scenario, reconciliation gaps, and limitations, but do not copy formulas, full matrices, series, or source records. A changed finding, assumption, calculation, scenario, or published result makes this synthesis stale.
 
 Base strength on directness, independence, currency, conflicts, contradiction, and coverage. A proposal implication remains supporting advice; it cannot create scope, price, schedule, acceptance, or another commercial commitment.

@@ -30,6 +30,9 @@ q-ask-analyze:
 q-review-docs:
   orchestrated: review-at-boundaries
   standalone: review-at-boundaries
+q-review-evidence:
+  orchestrated: review-at-boundaries
+  standalone: review-at-boundaries
 q-review-skill:
   standalone: review-at-boundaries
 q-delivery-workflow:

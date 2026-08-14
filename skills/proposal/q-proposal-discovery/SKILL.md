@@ -50,6 +50,8 @@ Create a concise follow-up question set only for gaps that materially affect pro
 6. Evaluate readiness.
 7. Validate traceability and internal consistency.
 
+When `material-supported-inference-adopted-external-research-or-quantitative-or-causal-claim-could-mislead-a-commercial-commitment` and `q-review-evidence` is installed, send only that bounded inference or claim, its exact source locators, adopted Research Baseline context when applicable, contradictions, and the commitment it could affect. Reconcile the transient diagnostic into assumptions, risks, contradictions, or `follow-up-questions`; Discovery retains readiness and the canonical brief. Never grade a confirmed client statement as scientific evidence, reuse Proposal Source `maturity` as evidence confidence, or delegate the readiness gate. If the reviewer is absent, `preserve-current-discovery-classification-add-targeted-follow-up-questions-and-report-expanded-evidence-review-unavailable`.
+
 When adopted external research changes discovered context, add its exact baseline reference through this stage's owned Discovery Brief. Never let the research workflow edit the brief directly.
 
 ## Readiness gate

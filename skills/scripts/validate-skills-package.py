@@ -2050,6 +2050,26 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("tool/q-tool-c4/references/backend-selection.md", "Select Structurizr for model reuse and view synchronization"),
             ("tool/q-tool-c4/references/backend-selection.md", "Mermaid C4 is experimental"),
         ],
+        "S-59": [
+            ("review/q-review-evidence/SKILL.md", "Distinguish a bounded review from open investigation"),
+            ("review/q-review-evidence/SKILL.md", "never load all five by default"),
+            ("review/q-review-evidence/SKILL.md", "Never edit a Findings Register"),
+            ("review/q-review-evidence/references/scientific-evidence.md", "does not replace formal peer review"),
+            ("review/q-review-evidence/THIRD_PARTY_NOTICES.md", "13385c7c4db02fdcc84a020752c07cce91ef780e"),
+            ("review/q-review-evidence/THIRD_PARTY_NOTICES.md", "MIT License"),
+        ],
+        "S-60": [
+            ("research/q-research-investigate/SKILL.md", "Investigation retains the Findings Register and assigns final confidence"),
+            ("research/q-research-synthesize/SKILL.md", "Synthesis retains the interpretation, strength, and final wording"),
+            ("code/q-code-research/SKILL.md", "Technical Research retains the Findings Register and assigns final confidence"),
+            ("proposal/q-proposal-discovery/SKILL.md", "Discovery retains readiness and the canonical brief"),
+        ],
+        "S-61": [
+            ("review/q-review-evidence/SKILL.md", "Do not use to investigate an open question"),
+            ("research/q-research-investigate/SKILL.md", "Do not add review ceremony to an immaterial finding"),
+            ("code/q-code-research/SKILL.md", "An open technical question still belongs here"),
+            ("proposal/q-proposal-discovery/SKILL.md", "Never grade a confirmed client statement as scientific evidence"),
+        ],
     }
     errors: list[str] = []
     for scenario, requirements in checks.items():

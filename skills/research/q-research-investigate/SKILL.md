@@ -38,6 +38,8 @@ Keep these states separate:
 6. Set confidence from claim fit, independence, currency, conflicts, contradictions, and coverage. Do not derive it from count alone.
 7. Validate the register against the shared cited-findings schema and return the stage delta.
 
+When `material-finding-has-non-obvious-confidence-or-bias-dependence-indirectness-conflict-or-quantitative-fragility` and `q-review-evidence` is installed, send only the bounded finding, its exact source relations and locators, applicable brief context, and declared coverage to the reviewer. Reconcile the transient diagnostic into this stage's existing factors; Investigation retains the Findings Register and assigns final confidence. Do not add review ceremony to an immaterial finding whose confidence is already obvious from the registered evidence. If the reviewer is absent, `apply-existing-investigation-factors-preserve-uncertainty-and-report-expanded-evidence-review-unavailable`.
+
 Keep source evidence here and calculations elsewhere: do not add owned market calculations, scenarios, recommendations, or analysis results to the Findings Register. Published aggregate survey or interview evidence may be registered with its disclosed method and limitations. Do not contact or recruit participants, run surveys/interviews, store PII or recordings, or process raw response-level data.
 
 When evidence is insufficient, try approved synonyms, another pertinent source class, or a scope-compatible time-window adjustment. Otherwise preserve `unsupported` and the honest coverage state. Record paywalls, authentication, robots exclusions, and unavailable resources as access limitations; never infer unseen content.
