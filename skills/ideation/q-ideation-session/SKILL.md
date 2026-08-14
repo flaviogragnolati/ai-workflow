@@ -19,11 +19,11 @@ Fix these three dimensions before generating anything; they select the vocabular
 | `intent` | `frame-problem`, `generate-options`, `stress-test-options`, `reopen-after-evidence` |
 | `participation_mode` | `facilitated-human`, `solo-assisted`, `asynchronous`, `agent-only` |
 
-Then record the decision, its owner, the input artifacts by ID and version, in-scope and out-of-scope topics, constraints classified as real, assumed, negotiable, or unknown, the time horizon, and the information classification.
+Then record the decision, its owner, formal input artifacts by ID and version, in-scope and out-of-scope topics, constraints classified as real, assumed, negotiable, or unknown, the time horizon, and the information classification. Opportunity Discovery may also record one bounded transient orientation with its producer, inspected files or artifacts, scope, date, and limitations; it has `authority: none` and does not become an artifact.
 
 Refuse to run a full session when the request is already a bounded decision with one credible option and an owner: name the owning skill instead. Refuse to record durable output when the classified information cannot be safely stored or abstracted; return the transient result and the governance gap.
 
-Complete this step when the decision, owner, three dimensions, versioned inputs, boundary, and information classification are explicit.
+Complete this step when the decision, owner, three dimensions, formal inputs and any allowed transient orientation, boundary, and information classification are explicit.
 
 ## Load only the needed route
 
@@ -40,6 +40,14 @@ Complete this step when the decision, owner, three dimensions, versioned inputs,
 | [Sources](references/sources.md) | Someone challenges the method evidence or its limits. |
 
 For `profile: general`, use the method core alone and borrow a profile's candidate kinds only when the session declares it.
+
+## Optional current-state orientation
+
+Inside Opportunity Discovery, call `q-ask-project` when `opportunity-discovery-needs-current-state-answer-from-accessible-project-context`. Treat its answer as transient orientation and `continue-with-user-supplied-current-state-context-or-stop-with-the-specific-orientation-gap` when the collaborator is unavailable.
+
+Call `q-code-explore` when `opportunity-discovery-needs-bounded-code-structure-or-behavior-orientation`. Treat its result as transient orientation and `continue-with-user-supplied-code-orientation-or-stop-with-the-specific-code-context-gap` when unavailable. Either call may follow an explicit user request or an internal route decision, but remains read-only and may not broaden the session into investigation.
+
+Record enough provenance for the durable register to identify the producer (`user`, `q-ask-project`, or `q-code-explore`), bounded question, inspected file, artifact, or session-context refs, observation date, and limitations. Do not invent an artifact ID or version for a conversation result. Reserve `reopen-after-evidence` for formal returned evidence with an exact artifact ID and version.
 
 ## Run the session
 

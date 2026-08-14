@@ -75,10 +75,17 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["artifact_id", "version", "authority", "usage"],
+        "required": ["authority", "usage"],
         "properties": {
           "artifact_id": {"type": "string"},
           "version": {"type": ["string", "null"]},
+          "orientation_id": {"type": "string"},
+          "kind": {"const": "transient-orientation"},
+          "producer": {"enum": ["user", "q-ask-project", "q-code-explore"]},
+          "scope": {"type": "string"},
+          "observed_at": {"type": "string"},
+          "source_refs": {"type": "array", "items": {"type": "string"}},
+          "limitations": {"type": "array", "items": {"type": "string"}},
           "authority": {"enum": ["canonical", "supporting", "none", "unregistered"]},
           "usage": {"type": "string"}
         }

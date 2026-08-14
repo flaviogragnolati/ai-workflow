@@ -3,7 +3,7 @@
 
 Adapted from K-Dense Inc.'s MIT-licensed `market-research-reports` `_common.py`
 at commit 13385c7c4db02fdcc84a020752c07cce91ef780e. Copyright (c) 2025
-K-Dense Inc. See ../THIRD_PARTY_NOTICES.md. Quasar adds a safe YAML-subset
+K-Dense Inc. Quasar adds a safe YAML-subset
 reader and Findings Register ID loading and removes upstream ledger concepts.
 """
 

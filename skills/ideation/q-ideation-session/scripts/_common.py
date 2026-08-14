@@ -1,7 +1,7 @@
 """Shared standard-library safety helpers for the ideation CLIs.
 
 Adapted from `scripts/_common.py` of the MIT-licensed `scientific-brainstorming`
-skill, copyright (c) 2025 K-Dense Inc. See ../THIRD_PARTY_NOTICES.md.
+skill, copyright (c) 2025 K-Dense Inc.
 Quasar changes: added `write_text` for non-JSON artifacts and routed
 `write_json` through it.
 """

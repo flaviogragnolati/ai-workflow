@@ -7,7 +7,7 @@ description: "Render approved Quasar report content into traceable Markdown, edi
 
 Render written report channels from one baselined report source. Keep the source as semantic authority and treat Markdown, DOCX, and PDF as regenerable derivatives with `semantic_authority: none`.
 
-Use the installed document skill and document runtime for DOCX/PDF generation, rendering, and visual QA. Generate Markdown directly from the approved mapping when no binary format is requested.
+Generate Markdown directly from the approved mapping. For DOCX or PDF, use only a document runtime whose generation, rendering, and inspection capabilities have been verified in the current environment. `q-tool-document` and `q-tool-pdf` are planned capabilities, not callable dependencies and not evidence that a format is available.
 
 Read the `q-core-contract` companion for shared governance and its `references/report-source.schema.yaml`, and the general identity, typography, accessibility, confidentiality, and source rules in [Quasar presentation identity](../q-report-deck/references/identidad-visual.md); if either companion is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract --skill q-report-deck`. Do not apply slide-specific canvas or layout patterns to documents.
 
@@ -21,7 +21,7 @@ Require:
 - language, confidentiality, delivery status, and applicable brand assets;
 - a document runtime capable of producing and rendering every requested binary format.
 
-If the runtime cannot produce or visually inspect a requested DOCX or PDF, report the missing requested format and block that format. Do not claim full completion from Markdown alone unless the user explicitly approves a partial release.
+If the runtime cannot produce or visually inspect a requested DOCX or PDF, report the missing requested format and block that format. Produce Markdown or another supported subset only when the user explicitly approves a partial release; name omitted formats and never claim full completion.
 
 ## Mapping and rendering
 

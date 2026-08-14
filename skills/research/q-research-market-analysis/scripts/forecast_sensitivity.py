@@ -3,7 +3,7 @@
 
 Adapted from K-Dense Inc.'s MIT-licensed `market-research-reports` script at
 commit 13385c7c4db02fdcc84a020752c07cce91ef780e. Copyright (c) 2025
-K-Dense Inc. See ../THIRD_PARTY_NOTICES.md.
+K-Dense Inc.
 """
 
 from __future__ import annotations

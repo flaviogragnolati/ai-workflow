@@ -81,7 +81,3 @@ python3 scripts/validate_market_analysis.py --help
 ## Completion
 
 Return a valid `stage_result` naming the exact brief and findings inputs, market-analysis version, selected modules, validated published result IDs, unresolved reconciliation, derived exports, project-local custom-method code, approvals, stale downstream artifacts, blockers, limitations, and one next action.
-
-## Provenance
-
-This skill adapts the measurement-first, evidence-traceable sizing, scenario, sensitivity, unit-consistency, and competitor-matrix methods plus selected offline CLI designs from K-Dense Inc.'s MIT-licensed `market-research-reports` at commit `13385c7c4db02fdcc84a020752c07cce91ef780e`. Quasar replaces the upstream source/claims ledgers and report scaffold with its Findings Register, `market-analysis.yaml`, and Reporting owners; see [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

@@ -1,4 +1,4 @@
-schema_version: "1.4"
+schema_version: "1.5"
 package:
   id: fixture
   description: Fixture
@@ -57,4 +57,5 @@ skills:
     fallback: continue-with-text
     stack_profile: any
     contract_version: "1.0"
-planned_capabilities: {}
+planned_capabilities:
+  q-tool-future: {status: planned, invocable: false}

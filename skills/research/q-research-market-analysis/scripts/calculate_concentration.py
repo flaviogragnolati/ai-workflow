@@ -2,8 +2,7 @@
 """Calculate descriptive HHI and CRn from registered market-share inputs.
 
 Original Quasar work informed by the concentration-method discussion in
-K-Dense Inc.'s MIT-licensed `market-research-reports`; see
-../THIRD_PARTY_NOTICES.md.
+K-Dense Inc.'s MIT-licensed `market-research-reports`.
 """
 
 from __future__ import annotations

@@ -12,7 +12,11 @@ npx skills add flaviogragnolati/ai-workflow --list     # inspect first
 npx skills add flaviogragnolati/ai-workflow --skill q-code-debug --skill q-review-code
 ```
 
-The installer copies one skill folder at a time into your project's agent directory, where every skill becomes a sibling of every other. Each skill is self-contained: it either bundles what it needs or declares the companion it depends on. Install the dependencies listed under [Skill dependencies](#skill-dependencies) alongside the skill that requires them; a skill whose companion is missing stops and prints the exact install command instead of proceeding on assumed rules.
+The installer copies one skill folder at a time into your project's agent directory, where every skill becomes a sibling of every other. Each skill is operationally self-contained: it either bundles what it needs or declares the companion it depends on. Install the dependencies listed under [Skill dependencies](#skill-dependencies) alongside the skill that requires them; a skill whose companion is missing stops and prints the exact install command instead of proceeding on assumed rules.
+
+[`LICENSE`](LICENSE) at the repository root is the sole package license and third-party attribution catalog. It lists the external repositories used as references, the affected Quasar skills, source revisions, adaptation scope, and applicable terms. Skill directories do not duplicate that catalog, so an isolated skill installation does not contain a local copy; licenses belonging to bundled third-party dependencies remain with those dependencies.
+
+This package remains prerelease. `CHANGELOG.md` records work under `Unreleased`; no stable package version or release tag is established by the current repository state.
 
 Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 52 are.
 
@@ -182,7 +186,7 @@ It produces an Ideation Register (supporting), an approved Ideation Baseline (ca
 
 Keep the three exploratory capabilities distinct: `q-ask-analyze` evaluates one already-proposed change against project truth, `q-research-workflow` reduces an external uncertainty with cited evidence, and `q-ideation-session` runs when the option set itself is the open question.
 
-The session generates options and questions but never evidence: unresolved uncertainties leave as typed evidence requests routed to `q-research-scope`, `q-code-research`, `q-code-prototype`, or a named human owner. Adoption is always an explicit orchestrator disposition, and a candidate never becomes a client fact, an authorized research question, a requirement, an ADR, scope, price, schedule, or a commitment. Its bundled offline CLIs scaffold, validate, score, and freeze the record without any network or model call. The method and its offline CLIs adapt K-Dense Inc.'s MIT-licensed `scientific-brainstorming` skill, and the opportunity-discovery route adapts Softaworks' MIT-licensed `game-changing-features` skill; see the skill's `THIRD_PARTY_NOTICES.md`.
+The session generates options and questions but never evidence: unresolved uncertainties leave as typed evidence requests routed to `q-research-scope`, `q-code-research`, `q-code-prototype`, or a named human owner. Adoption is always an explicit orchestrator disposition, and a candidate never becomes a client fact, an authorized research question, a requirement, an ADR, scope, price, schedule, or a commitment. Its bundled offline CLIs scaffold, validate, score, and freeze the record without any network or model call. The method and its offline CLIs adapt K-Dense Inc.'s MIT-licensed `scientific-brainstorming` skill, and the opportunity-discovery route adapts Softaworks' MIT-licensed `game-changing-features` skill; repository-level attribution is centralized in [`LICENSE`](LICENSE).
 
 ### Engagement research
 
@@ -231,7 +235,7 @@ Stage 6 produces the first complete high-level backlog: milestones, epics, known
 
 Stage 5b is conditional. `q-plan-design-system` runs only for a product with a durable visual interface whose reusable design decisions outlive a single feature; a headless API, worker, CLI, or throwaway prototype is recorded as `not_applicable` and continues straight to backlog. When it runs, it authors two related artifacts with separated authority: `05b-design-system.md` for principles, art direction, token taxonomy, component and pattern contracts, accessibility contracts, coverage, and governance, and `05b-design-tokens.json` for the machine-readable token values, aliases, themes, and modes. Workflow state carries one `design_system_ref`, and that specification version resolves its compatible token set.
 
-The stage authors contracts, never implementation: it does not choose the UI library, write component code, produce screen wireframes, or publish to a design or package registry. `WCAG 2.2 Level AA` is the web default target, recorded by the technical foundation and turned into reusable requirements here — planning states the requirement and the expected evidence, while implementation and QA establish conformance. A token set is emitted only from confirmed values; when the project's confirmed validator cannot run, the stage records an explicit `token_validation: unverified` gap and carries it downstream rather than describing an unchecked file as validated. It is the one planning stage that declares `network-read`, because adopting an existing system may require reading its current public documentation or an authorized design library; that access is read-only and never authorizes publication, remote writes, silent installation, or sending confidential material outward. Design-system conformance is reviewed inside the standards axis of `q-review-code` and `q-review-codebase`, never as a third authority axis.
+The stage authors contracts, never implementation: it does not choose the UI library, write component code, produce screen wireframes, or publish to a design or package registry. `WCAG 2.2 Level AA` is the web default target, recorded by the technical foundation and turned into reusable requirements here — planning states the requirement and the expected evidence, while implementation and QA establish conformance. A token set is emitted only from confirmed values; when the project's confirmed validator cannot run, the stage records an explicit `token_validation: unverified` gap and carries it downstream rather than describing an unchecked file as validated. Design System and Technical Foundation both declare read-only network access for their bounded current-source branches; neither may publish, mutate a remote system, install dependencies silently, or send confidential material outward. Design-system conformance is reviewed inside the standards axis of `q-review-code` and `q-review-codebase`, never as a third authority axis.
 
 `q-plan-tech-foundation` owns `02-technical-foundation.md`, the canonical project profile for stack selection, concrete versions, NFR and operational fit, adopted recommendations, pitfalls, antipatterns, and version-scoped external references. Workflow state carries its exact artifact ID and version as `technical_foundation_ref`. Later stages report contradictions and route reconciliation to the owner instead of editing the profile.
 
@@ -392,6 +396,18 @@ A completed workflow stage leaves owned artifacts, traceable IDs, declared autho
 
 ## Planned capabilities
 
-No capabilities are currently registered as planned.
+- `q-tool-document`
+
+  Future format-mechanics owner for creating, editing, rendering, and inspecting DOCX files. Proposal and Reporting retain semantic ownership.
+
+- `q-tool-spreadsheet`
+
+  Future format-mechanics owner for creating, editing, recalculating, rendering, and inspecting XLSX files. Domain owners retain formulas, assumptions, and business meaning.
+
+- `q-tool-pdf`
+
+  Future format-mechanics owner for converting, rendering, extracting, comparing, and inspecting PDF files. Source artifacts retain authority.
+
+These entries are roadmap declarations only: they have no path, folder, invocation surface, dependency edge, or active compatibility claim. Existing Proposal and Reporting skills must use a verified local runtime for a requested binary format or return an honest partial result or blocker.
 
 Run `python3 skills/scripts/validate-skills-package.py` after any package change.

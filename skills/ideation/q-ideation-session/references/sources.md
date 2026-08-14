@@ -2,7 +2,7 @@
 
 This bibliography supports process guidance. It does not show that any ideation method universally improves creativity, decision quality, or validity.
 
-**Provenance:** adapted from the dated source list of the MIT-licensed `scientific-brainstorming` skill (see `../THIRD_PARTY_NOTICES.md`), whose authors recorded a research cut-off of **2026-07-23** and checked the links on that date. Quasar has not independently re-verified each link. Verify a source directly before citing it outside this package.
+This list adapts the dated source list of `scientific-brainstorming`, whose authors recorded a research cut-off of **2026-07-23** and checked the links on that date. Quasar has not independently re-verified each link. Verify a source directly before citing it outside this package.
 
 ## Generation, blocking, fixation, and selection
 

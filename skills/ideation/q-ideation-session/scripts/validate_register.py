@@ -2,8 +2,8 @@
 
 Adapted from `scripts/validate_register.py` of the MIT-licensed
 `scientific-brainstorming` skill, copyright (c) 2025 K-Dense Inc.
-See ../THIRD_PARTY_NOTICES.md. The Quasar register schema, profile fit,
-gate, routing, and disposition checks are new.
+The Quasar register schema, profile fit, gate, routing, and disposition checks
+are new.
 """
 
 from __future__ import annotations
@@ -235,6 +235,50 @@ def semantic_errors(document: dict[str, Any]) -> tuple[list[dict[str, str]], lis
     requests = document.get("evidence_requests", [])
     gates = document.get("gate_reviews", [])
     decisions = document.get("decision_log", [])
+    input_refs = document.get("input_refs", [])
+
+    input_ids: list[str] = []
+    formal_versioned_inputs = 0
+    for index, item in enumerate(input_refs if isinstance(input_refs, list) else []):
+        if not isinstance(item, dict):
+            continue
+        path = "$.input_refs[%d]" % index
+        artifact_id = item.get("artifact_id")
+        orientation_id = item.get("orientation_id")
+        transient = item.get("kind") == "transient-orientation"
+        if transient:
+            required = (
+                "orientation_id", "producer", "scope", "observed_at",
+                "source_refs", "limitations",
+            )
+            for key in required:
+                value = item.get(key)
+                if value in (None, "", []):
+                    errors.append(_issue(f"{path}.{key}", "transient orientation requires provenance"))
+            if artifact_id is not None or item.get("version") is not None:
+                errors.append(_issue(path, "transient orientation cannot claim an artifact ID or version"))
+            if item.get("authority") != "none":
+                errors.append(_issue(f"{path}.authority", "transient orientation must have authority none"))
+            if isinstance(orientation_id, str):
+                input_ids.append(orientation_id)
+        else:
+            if not isinstance(artifact_id, str) or not artifact_id.strip():
+                errors.append(_issue(f"{path}.artifact_id", "formal input requires an artifact ID"))
+            elif orientation_id is not None:
+                errors.append(_issue(path, "formal input cannot also be a transient orientation"))
+            else:
+                input_ids.append(artifact_id)
+            if isinstance(item.get("version"), str) and item["version"].strip():
+                formal_versioned_inputs += 1
+
+    duplicated_inputs = _duplicates(input_ids)
+    if duplicated_inputs:
+        errors.append(_issue("$.input_refs", "duplicate input IDs: %s" % ", ".join(duplicated_inputs)))
+    if session.get("intent") == "reopen-after-evidence" and formal_versioned_inputs == 0:
+        errors.append(_issue(
+            "$.input_refs",
+            "reopen-after-evidence requires a formal artifact ID and exact version",
+        ))
 
     candidate_ids = _identifiers(candidates, "candidate_id")
     assumption_ids = _identifiers(assumptions, "assumption_id")

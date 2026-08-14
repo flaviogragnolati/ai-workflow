@@ -5,7 +5,7 @@ description: "Plan, create, edit, or review branded Quasar presentations for rep
 
 # Generate a Quasar deck
 
-Use the installed presentation skill for PowerPoint inspection, generation, rendering, and visual QA. Read the `q-core-contract` companion for shared governance; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Use `references/identidad-visual.md` and the assets in this skill for Quasar narrative and brand rules.
+Use only a presentation runtime whose PowerPoint generation, rendering, and inspection capabilities are verified in the current environment. `q-tool-document` and `q-tool-pdf` are planned capabilities, not callable dependencies and not evidence that PPTX or PDF is available. Read the `q-core-contract` companion for shared governance; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Use `references/identidad-visual.md` and the assets in this skill for Quasar narrative and brand rules.
 
 ## Authority and inputs
 
@@ -47,7 +47,7 @@ When `approved-deck-visual-intent-references-an-exact-c4-source-or-view` and `q-
 
 ### 5. Verify and deliver
 
-Render every slide and inspect layout, overflow, contrast, consistency, data fidelity, traceability, and notes. Correct defects and rerender. Deliver the editable PPTX and requested derivatives.
+Render every slide and inspect layout, overflow, contrast, consistency, data fidelity, traceability, and notes. Correct defects and rerender. If the verified runtime cannot create or inspect a requested PPTX or PDF, block that format and offer plan-only or another supported partial result for explicit approval; never claim the missing output. Deliver only verified requested derivatives.
 
 When invoked inside a project, register the deck and its provenance in the artifact index through the owning orchestrator. If a source inconsistency appears, report it or create a change request; do not rewrite upstream meaning.
 

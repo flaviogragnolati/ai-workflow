@@ -2,7 +2,7 @@
 """Validate Quasar market-analysis structure and cross-field lineage.
 
 Original Quasar work. The validation approach is informed by K-Dense Inc.'s
-MIT-licensed `market-research-reports`; see ../THIRD_PARTY_NOTICES.md.
+MIT-licensed `market-research-reports`.
 """
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-schema_version: "1.4"
+schema_version: "1.5"
 package:
   id: fixture
   description: Fixture
@@ -50,6 +50,9 @@ skills:
       - skill: q-tool-missing
         when: unknown-use
         fallback: stop
+      - skill: q-tool-planned
+        when: planned-tool-is-treated-as-active
+        fallback: stop
     status: active
     kind: stage
     workflow: fixture
@@ -64,4 +67,5 @@ skills:
     fallback: stop
     stack_profile: any
     contract_version: "1.0"
-planned_capabilities: {}
+planned_capabilities:
+  q-tool-planned: {status: planned, invocable: true, path: tool/q-tool-planned}

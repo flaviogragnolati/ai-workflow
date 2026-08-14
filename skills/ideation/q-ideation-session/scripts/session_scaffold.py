@@ -2,7 +2,6 @@
 
 Adapted from `scripts/session_scaffold.py` of the MIT-licensed
 `scientific-brainstorming` skill, copyright (c) 2025 K-Dense Inc.
-See ../THIRD_PARTY_NOTICES.md.
 """
 
 from __future__ import annotations

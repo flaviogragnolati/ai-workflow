@@ -44,7 +44,7 @@ Evaluate every applicable lens against exact evidence:
 | Progressive disclosure | Is shared procedure in `SKILL.md` and branch-only material behind precise load conditions? | Critical reference content is orphaned, or irrelevant resources load on every route. |
 | Safety and compatibility | Are untrusted input, secrets, destructive or external effects, platform limits, and unsupported coverage handled where they arise? | The skill silently broadens authority or claims support it cannot verify. |
 | Completion and verification | Can a fresh agent distinguish success, warning, and blocker from inspectable evidence? | A document-shaped output or passing parser is mistaken for task completion. |
-| Packaging and provenance | Do identity, dependencies, metadata, bundled resources, notices, and derived views agree? | Installation breaks, metadata lies, or incorporated material loses provenance. |
+| Packaging and provenance | Do identity, dependencies, metadata, bundled resources, license authority, notices, and derived views agree? If the package declares a root-only catalog, does that catalog cover the skill without a duplicate at the skill root while leaving dependency-owned licenses intact? | Installation breaks, metadata lies, the package contradicts its license policy, or incorporated material loses provenance. |
 
 Classify a passage as context waste only when removing it preserves the skill's non-obvious knowledge, route, constraint, and completion criteria. Do not assume that every model or harness has the same prior knowledge.
 
@@ -100,9 +100,3 @@ Complete the review when the declared scope is exhausted, every actionable findi
 | 3 | Assumed model knowledge | Content is removed only because one reviewer believes a model already knows it. | Prove that removal preserves domain knowledge, routing, constraints, and completion signals. |
 | 4 | Editing during diagnosis | The reviewer fixes the target and erases reproducible evidence. | Keep review read-only and route approved remediation to the owner. |
 | 5 | Leaked behavior test | The test agent receives the expected answer or prior diagnosis. | Supply only realistic prompts, target artifacts, and the context a consumer would receive. |
-
-## Provenance
-
-This framework is conceptually informed by Softaworks' MIT-licensed [Skill Judge](https://github.com/softaworks/agent-toolkit/tree/main/skills/skill-judge), particularly its focus on context value, progressive disclosure, freedom calibration, and practical usability. Quasar does not adopt its fixed 120-point grade, model-specific prior-knowledge assumptions, or claimed universal pattern taxonomy; current target authorities and observable behavior govern this diagnostic.
-
-Source attribution: Skill Judge, copyright (c) 2026 Leonardo Flores, under the repository's [MIT License](https://github.com/softaworks/agent-toolkit/blob/main/LICENSE).

@@ -36,6 +36,7 @@ Apply the complete `q-review-skill` procedure to each in-scope skill using this 
 - internal companions have a strong conditional pointer and no user invocation surface;
 - public skills remain installable with declared public dependencies and one-level portable resources;
 - no skill duplicates shared governance, another skill's procedure, or a derived view;
+- the root `LICENSE` is the sole repository-level license and attribution catalog, lists externally referenced repositories and affected skills, and has no duplicate at a registered skill root; dependency-owned license files remain untouched;
 - outputs, side effects, approvals, fallbacks, stack coverage, and semantic authority match observable behavior;
 - every branch has a demanded completion criterion and one truthful next action.
 
@@ -45,7 +46,7 @@ Complete this step when all applicable quality lenses and trigger paths have evi
 
 ## 4. Reconcile and accept
 
-Apply approved corrections through the authoritative owner first, using `q-maint-writing-for-agents` for agent-consumed artifacts, then synchronize connected views. Preserve third-party notices for copied or substantially adapted material and retain a concise provenance pointer when external concepts materially shape the result.
+Apply approved corrections through the authoritative owner first, using `q-maint-writing-for-agents` for agent-consumed artifacts, then synchronize connected views. Preserve third-party notices for copied or substantially adapted material in the root `LICENSE`; keep its reference-repository table, affected-skill scope, revisions, modifications, and applicable terms complete. Do not create per-skill license or notice catalogs. Preserve dependency-owned license files in place.
 
 Use findings rather than a numeric grade as the gate:
 

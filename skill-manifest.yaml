@@ -1,4 +1,4 @@
-schema_version: "1.4"
+schema_version: "1.5"
 
 package:
   id: quasar-ai-delivery-skills
@@ -163,6 +163,13 @@ skills:
     path: ideation/q-ideation-session
     group: ideation
     requires: [q-core-contract]
+    uses:
+      - skill: q-ask-project
+        when: opportunity-discovery-needs-current-state-answer-from-accessible-project-context
+        fallback: continue-with-user-supplied-current-state-context-or-stop-with-the-specific-orientation-gap
+      - skill: q-code-explore
+        when: opportunity-discovery-needs-bounded-code-structure-or-behavior-orientation
+        fallback: continue-with-user-supplied-code-orientation-or-stop-with-the-specific-code-context-gap
     status: active
     kind: tool
     workflow: shared
@@ -485,7 +492,7 @@ skills:
     persistent_outputs:
       - {type: technical-foundation, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: stack-selection-versioned-guidance-nfr-and-operations}
     transient_outputs: [stack-options-analysis]
-    side_effects: [write-project-artifacts]
+    side_effects: [write-project-artifacts, network-read]
     approval_policy: user-confirms-stack-and-architecture-driving-decisions
     fallback: requirements-driven-recommendation-or-explicit-coverage-gap
     stack_profile: project-defined
@@ -720,7 +727,7 @@ skills:
   q-code-prototype:
     path: code/q-code-prototype
     group: code
-    requires: []
+    requires: [q-core-contract]
     status: active
     kind: tool
     workflow: shared
@@ -730,9 +737,9 @@ skills:
     human_interaction: {standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [prototype]
-    side_effects: [write-throwaway-artifacts]
-    approval_policy: no-production-or-external-effects
-    fallback: analysis-only
+    side_effects: [write-throwaway-artifacts, git-create-branch, git-create-worktree, git-stage, git-commit]
+    approval_policy: explicit-user-approval-for-repository-branch-worktree-and-commit-scope-with-no-original-worktree-data-remote-or-cleanup-mutation
+    fallback: return-a-prototype-plan-or-analysis-without-git-mutation
     stack_profile: any
     contract_version: "1.0"
 
@@ -876,7 +883,7 @@ skills:
   q-code-merge-conflicts:
     path: code/q-code-merge-conflicts
     group: code
-    requires: []
+    requires: [q-core-contract]
     status: active
     kind: tool
     workflow: ai-coding
@@ -886,9 +893,9 @@ skills:
     human_interaction: {standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [conflict-analysis]
-    side_effects: [write-code]
-    approval_policy: preserve-both-intents-and-stop-on-semantic-ambiguity
-    fallback: report-unresolved-conflicts
+    side_effects: [write-code, write-tests, git-stage, git-continue-operation, git-commit]
+    approval_policy: resolve-compatible-conflicts-with-explicit-path-scoped-stage-and-operation-scoped-continue-and-commit-approval
+    fallback: stop-on-semantic-incompatibility-or-return-resolved-unstaged-paths-and-pending-git-effects
     stack_profile: any
     contract_version: "1.0"
 
@@ -1076,7 +1083,7 @@ skills:
   q-proposal-document:
     path: proposal/q-proposal-document
     group: proposal
-    requires: [q-core-contract]
+    requires: [q-core-contract, q-proposal-design]
     status: active
     kind: stage
     workflow: discovery-proposal
@@ -1173,7 +1180,7 @@ skills:
   q-maint-ai-workflow:
     path: maint/q-maint-ai-workflow
     group: maint
-    requires: [q-maint-writing-for-agents]
+    requires: [q-maint-writing-for-agents, q-core-contract]
     status: active
     kind: tool
     workflow: maintenance
@@ -1184,7 +1191,7 @@ skills:
     persistent_outputs: []
     transient_outputs: [impact-map, validation-evidence]
     side_effects: [write-package-files]
-    approval_policy: user-authorizes-package-maintenance-and-governance-changes-require-explicit-confirmation
+    approval_policy: user-authorizes-package-writes-governance-changes-require-confirmation-and-git-mutations-require-separate-operation-scoped-approval
     fallback: read-only-audit-or-block-on-governance-change
     stack_profile: any
     contract_version: "1.0"
@@ -1291,4 +1298,7 @@ skills:
     stack_profile: any
     contract_version: "1.0"
 
-planned_capabilities: {}
+planned_capabilities:
+  q-tool-document: {status: planned, invocable: false}
+  q-tool-spreadsheet: {status: planned, invocable: false}
+  q-tool-pdf: {status: planned, invocable: false}

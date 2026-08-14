@@ -80,6 +80,47 @@ def test_valid_register() -> None:
     check(report["statistics"]["dispositions"] == 3, "every candidate carries a disposition")
 
 
+def test_transient_orientation() -> None:
+    document = load_valid()
+    document["input_refs"].append({
+        "orientation_id": "ORI-001",
+        "kind": "transient-orientation",
+        "producer": "q-code-explore",
+        "scope": "checkout module structure and observed state transitions",
+        "observed_at": "2026-08-14",
+        "source_refs": ["src/checkout/state.ts", "src/checkout/routes.ts"],
+        "limitations": ["No runtime trace was inspected."],
+        "authority": "none",
+        "usage": "opportunity-current-state",
+    })
+    report = validate_register.validate_register(document, SCHEMA)
+    check(report["valid"], "traceable transient orientation is accepted")
+
+    user_supplied = copy.deepcopy(document)
+    user_supplied["input_refs"][-1]["orientation_id"] = "ORI-002"
+    user_supplied["input_refs"][-1]["producer"] = "user"
+    user_supplied["input_refs"][-1]["source_refs"] = ["session current-state context"]
+    report = validate_register.validate_register(user_supplied, SCHEMA)
+    check(report["valid"], "traceable user-supplied orientation is accepted")
+
+    invalid = copy.deepcopy(document)
+    invalid["input_refs"][-1]["limitations"] = []
+    report = validate_register.validate_register(invalid, SCHEMA)
+    check(
+        not report["valid"] and "requires provenance" in messages(report),
+        "transient orientation without limitations is rejected",
+    )
+
+    invalid = copy.deepcopy(document)
+    invalid["session"]["intent"] = "reopen-after-evidence"
+    invalid["input_refs"] = [invalid["input_refs"][-1]]
+    report = validate_register.validate_register(invalid, SCHEMA)
+    check(
+        not report["valid"] and "formal artifact ID and exact version" in messages(report),
+        "transient orientation cannot satisfy reopen-after-evidence",
+    )
+
+
 def mutated(mutate) -> dict:
     document = load_valid()
     mutate(document)
@@ -261,6 +302,7 @@ def main() -> int:
     try:
         test_scaffold()
         test_valid_register()
+        test_transient_orientation()
         test_rejections()
         test_matrix()
         test_freeze()

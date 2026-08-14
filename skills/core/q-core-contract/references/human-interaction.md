@@ -5,6 +5,10 @@ declared conversation cadence without loading the full package registry. It has
 no independent authority: the manifest owns the mapping and the cross-workflow
 contract defines the values. The package validator rejects any drift.
 
+Conversation cadence never grants a side effect. For Git operations, apply the
+canonical `Git operations` section in `q-core-contract`; this digest does not
+restate or expand those permissions.
+
 ```yaml
 q-core-contract:
   internal: none

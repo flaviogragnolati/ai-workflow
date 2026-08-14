@@ -1,6 +1,6 @@
 # English AI-writing pattern reference
 
-Load this reference only for English segments handled by `detect` or `rewrite`. The families describe contextual tendencies, not banned words or proof of authorship. Require accumulation, density, or a clear rhetorical effect. Attribution and license details for the adapted taxonomy are in [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
+Load this reference only for English segments handled by `detect` or `rewrite`. The families describe contextual tendencies, not banned words or proof of authorship. Require accumulation, density, or a clear rhetorical effect.
 
 Do not use this file as a general clarity checklist. Generic wordiness and hedging belong to the `C` families in `clarity-en.md`.
 

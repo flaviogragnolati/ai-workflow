@@ -1,6 +1,6 @@
 # Spanish AI-writing pattern reference
 
-Load this reference only for Spanish segments handled by `detect` or `rewrite`. This is a native Spanish catalog, not a translation of the English watch list. Treat every signal as contextual evidence, never as a banned expression or proof of authorship. Attribution and license details for the adapted taxonomy are in [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
+Load this reference only for Spanish segments handled by `detect` or `rewrite`. This is a native Spanish catalog, not a translation of the English watch list. Treat every signal as contextual evidence, never as a banned expression or proof of authorship.
 
 Generic wordiness, bureaucratic filler, calques, avoidable passive voice, and nominalization belong to the `C` families in `clarity-es.md`; do not duplicate them here.
 

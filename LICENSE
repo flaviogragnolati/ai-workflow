@@ -1,6 +1,30 @@
+# Quasar AI Delivery Skills license and third-party attributions
+
+This file is the sole repository-level license and attribution catalog. Skill
+directories must not contain copies of this catalog. License files shipped by
+third-party dependencies remain with those dependencies and are not duplicates
+of this file.
+
+## Reference repositories
+
+Some Quasar skills were adapted from or conceptually informed by material in
+the following repositories. The detailed scope, revision, modifications, and
+applicable license terms follow in this file. Listing a repository does not
+imply endorsement by its authors.
+
+| Reference repository | Quasar skills informed or adapted |
+|---|---|
+| [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, and `q-review-evidence` |
+| [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit) | `q-ideation-session`, `q-tool-humanizer`, `q-review-skill`, `q-tool-c4`, and `q-plan-design-system` |
+
+## Original Quasar material — MIT License
+
+Unless a portion is identified under a third-party section below, the package
+is licensed as follows.
+
 MIT License
 
-Copyright (c) 2026 Quasar AI Delivery Skills contributors (original and modified portions)
+Copyright (c) 2026 Quasar AI Delivery Skills contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,5 +44,106 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Third-party and separately licensed portions are identified in the applicable
-THIRD_PARTY_NOTICES.md files. Those notices and licenses govern those portions.
+## K-Dense Inc. adaptations — MIT License
+
+Source repository: <https://github.com/K-Dense-AI/scientific-agent-skills>
+
+Commit consulted: `13385c7c4db02fdcc84a020752c07cce91ef780e`
+(2026-08-13). The source repository uses `LICENSE.md`; the source skill
+frontmatter also declares MIT.
+
+| Source skill | Quasar scope and modifications |
+|---|---|
+| `skills/scientific-brainstorming` (metadata version `1.1`) | `skills/ideation/q-ideation-session/scripts/_common.py`, `session_scaffold.py`, `validate_register.py`, and `evaluate_matrix.py`; `references/method-core.md`, `evaluation-and-gates.md`, `responsible-ai.md`, and `sources.md`. Quasar generalized scientific ideas to profile-scoped candidates, replaced literature search with typed handoffs, added decision and information governance, and retained scientific gates only in the scientific profile. The register schema, baseline freeze, profile references, and handoffs are original Quasar work. |
+| `skills/market-research-reports` (metadata version `1.2`) | `skills/research/q-research-market-analysis/SKILL.md`; `references/measurement-and-sizing.md`, `forecast-and-sensitivity.md`, `competitor-and-concentration.md`, and `methods-and-ethics.md`; `scripts/_common.py`, `calculate_market_sizing.py`, `forecast_sensitivity.py`, `check_unit_consistency.py`, and `validate_competitor_matrix.py`. Quasar replaced upstream ledgers and report scaffolds with Quasar IDs and owners, removed source acquisition and participant operations, and added bounded offline validation, calculation lineage, and single-writer limits. The market-analysis schema, custom methods, concentration calculator, tests, fixtures, and example are original Quasar work. |
+| `skills/scientific-critical-thinking` (metadata version `1.2`) | `skills/review/q-review-evidence/SKILL.md` and its five files under `references/`. Quasar rewrote selected appraisal concepts as a bounded, read-only business, engineering, scientific, or clinical evidence diagnostic; added claim-fit and caller-ownership rules; and made detailed lenses conditional. Invocation metadata is original Quasar work. |
+
+MIT License
+
+Copyright (c) 2025 K-Dense Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## Softaworks / Leonardo Flores references and adaptations — MIT License
+
+Source repository: <https://github.com/softaworks/agent-toolkit>
+
+Commit consulted: `3027f20f3181758385a1bb8c022d4041dfb4de84`
+(2026-03-05). The adapted source skills are MIT-licensed.
+
+| Source skill | Quasar scope and modifications |
+|---|---|
+| [`game-changing-features`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/game-changing-features) | `skills/ideation/q-ideation-session/references/opportunity-discovery.md` and three criteria in `references/profile-product.md`. Quasar retained divergence scaffolding, three effort/impact scales, ten coverage categories, and unsticking prompts while replacing emoji scores, stack-rank decisions, in-session investigation, output paths, and “10x” branding with evidence requests, declared criteria, gates, and owner dispositions. |
+| [`humanizer`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/humanizer) and [`writing-clearly-and-concisely`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/writing-clearly-and-concisely) | `skills/tool/q-tool-humanizer/SKILL.md` and `references/patterns-en.md`, `patterns-es.md`, `clarity-en.md`, and `clarity-es.md`. Quasar split detection, rewrite, and improvement; added English/Spanish routing, meaning-preservation and bounded-write rules; replaced authorship verdicts with localized indicators; and rewrote examples. Invocation metadata is original Quasar work. The upstream `humanizer` credits the original skill by [@blader](https://github.com/blader/humanizer). |
+| [`skill-judge`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/skill-judge) | `skills/review/q-review-skill/SKILL.md`. Quasar retained the useful context-value, progressive-disclosure, freedom-calibration, and practical-usability lenses while replacing the fixed score and universal assumptions with evidence, severity, target authority, and behavioral checks. No source text, grading table, or code was incorporated. |
+| [`c4-architecture`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/c4-architecture) | `skills/tool/q-tool-c4/SKILL.md`. The original Quasar implementation was conceptually informed by the source, then verified against official C4 and renderer documentation. No source text, template, or code was incorporated. |
+| [`design-system-starter`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/design-system-starter) | `skills/plan/q-plan-design-system/SKILL.md`. The source motivated the capability; Quasar rewrote it against its own planning, authority, artifact, validation, and lifecycle contracts. No source text, checklist, template, or code was incorporated. |
+
+MIT License
+
+Copyright (c) 2026 Leonardo Flores
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## Wikipedia contributors — CC BY-SA 4.0
+
+The descriptive H1–H9 taxonomy, its caution against binary detection, and the
+separation between surface indicators and evidence problems in
+`skills/tool/q-tool-humanizer/references/patterns-en.md` and `patterns-es.md`
+adapt these pages:
+
+- [Wikipedia:Signs of AI writing, revision 1369279283](https://en.wikipedia.org/w/index.php?oldid=1369279283&title=Wikipedia%3ASigns_of_AI_writing), 14 August 2026.
+- [Wikipedia:WikiProject AI Cleanup, revision 1369089165](https://en.wikipedia.org/w/index.php?oldid=1369089165&title=Wikipedia%3AWikiProject_AI_Cleanup), 13 August 2026.
+
+Authors are the Wikipedia contributors identified in each page history. These
+adapted portions are licensed under the [Creative Commons
+Attribution-ShareAlike 4.0 International license](https://creativecommons.org/licenses/by-sa/4.0/).
+Quasar condensed and generalized the field guide, assigned stable H IDs,
+removed Wikipedia-only policy and markup procedures, added bilingual and
+owner-routing rules, and replaced source examples with original examples. No
+endorsement by Wikipedia or its contributors is implied. Original Quasar
+material outside those adapted portions remains under the Quasar MIT license.
+
+## William Strunk Jr. — public-domain principles
+
+The C1–C9 taxonomy in
+`skills/tool/q-tool-humanizer/references/clarity-en.md` and `clarity-es.md` is
+conceptually informed by composition principles in William Strunk Jr.'s early
+*The Elements of Style*. The source skill identifies the 1918 text; [Project
+Gutenberg ebook 37134](https://www.gutenberg.org/ebooks/37134) provides a 1920
+edition and marks it public domain in the United States. Quasar incorporates no
+verbatim Strunk prose, examples, usage chapter, manuscript-formatting chapter,
+or historically dated word list. It distills selected principles through
+original modern examples and independently adapts them for Spanish.

@@ -5,7 +5,7 @@ required: [schema_version, package, workflows, skills, planned_capabilities]
 additionalProperties: false
 properties:
   schema_version:
-    const: "1.4"
+    const: "1.5"
   package:
     type: object
     required: [id, description, stack_profile, compatibility, human_guide, cross_workflow_contract, validator]
@@ -96,7 +96,34 @@ properties:
         side_effects:
           type: array
           minItems: 1
-          items: {type: string}
+          items:
+            enum:
+              - none
+              - execute-local-capability-probe
+              - execute-local-renderer
+              - execute-local-scripts
+              - execute-local-validator
+              - git-create-branch
+              - git-create-worktree
+              - git-stage
+              - git-continue-operation
+              - git-commit
+              - git-push
+              - git-delete-ref
+              - network-read
+              - update-original-execution-record
+              - write-artifact-index
+              - write-authorized-agent-artifacts
+              - write-authorized-package-files
+              - write-code
+              - write-package-files
+              - write-project-artifacts
+              - write-project-state
+              - write-review-artifact
+              - write-tests
+              - write-throwaway-artifacts
+              - write-tracker-or-markdown-tickets
+              - write-workspace-artifact
         approval_policy: {type: string}
         fallback: {type: string}
         stack_profile: {enum: [project-defined, t3-core, any]}
@@ -107,6 +134,7 @@ properties:
     additionalProperties:
       type: object
       required: [status, invocable]
+      additionalProperties: false
       properties:
         status: {const: planned}
         invocable: {const: false}

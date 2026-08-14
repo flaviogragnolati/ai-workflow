@@ -6,15 +6,15 @@ Use inside `profile: product` when the subject is an existing product, service, 
 
 - `profile: product`, `intent: generate-options`. Run a separate `frame-problem` session first when the outcome the product should improve is itself unclear; `reopen-after-evidence` applies unchanged once requested evidence returns.
 - Any `participation_mode`.
-- Required inputs: at least one versioned artifact carrying the product's current state — a `q-ask-project` answer, a `q-code-explore` orientation, approved discovery or product-core material, or product documentation — registered by ID and version.
+- Required inputs: at least one current-state input. Prefer an approved artifact or versioned product documentation. When the missing orientation can be answered from already accessible project context or bounded code evidence, this route may optionally call `q-ask-project` or `q-code-explore` as declared in the parent skill.
 
-Without a current-state input the sweep invents the product it is improving. Stop and name the missing input instead of generating from memory.
+Record a collaborator answer or sufficient user-supplied context as `kind: transient-orientation`, `authority: none`, with a stable orientation ID, producer, bounded scope, observation date, inspected file, artifact, or session-context refs, usage, and limitations. It may orient the session without an artifact version; it never becomes evidence or a second project truth source. Without an approved artifact, a traceable transient orientation, or sufficient user-supplied context, stop and name the missing input instead of generating from memory.
 
-Complete this step when the decision, its owner, the three dimensions, and at least one versioned current-state input are recorded.
+Complete this step when the decision, its owner, the three dimensions, and at least one traceable current-state input are recorded.
 
 ## Evidence discipline
 
-The session never investigates (anti-pattern 5). Current-state understanding is an input produced before the session, never an activity inside it.
+The session never investigates (anti-pattern 5). Current-state understanding is either an existing input or bounded read-only orientation produced by an optional collaborator; the session itself never browses or turns that answer into evidence.
 
 - Every generated opportunity is an `opportunity-hypothesis` with `opportunity_evidence.status: assumed` unless a `source_refs` entry to an approved artifact justifies `evidenced`.
 - Every claim about current value, usage, adoption, cost, or user complaints traces to a declared input or is recorded as an assumption in its matching category.

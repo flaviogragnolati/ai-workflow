@@ -101,7 +101,3 @@ Complete when the result schema is valid, model and views reconcile, output auth
 - Route exact Mermaid encoding and rendering to `q-tool-mermaid` after C4 meaning is fixed; route a generic non-C4 diagram directly to that tool.
 - Let `q-report-source` own report visual intent and document/deck skills own channel layout. Reuse exact approved C4 sources or views; never reconstruct meaning from a render.
 - Do not publish, install a runtime, call a remote renderer, write global state, or overwrite an existing artifact without the applicable authorization.
-
-## Provenance
-
-This skill is an original Quasar implementation conceptually informed by Softaworks' MIT-licensed `c4-architecture` skill at commit `3027f20f3181758385a1bb8c022d4041dfb4de84`. It corrects abstraction against the official C4 model, separates semantic ownership from diagram tooling, and adds capability-based Mermaid, Structurizr DSL, and C4-PlantUML routing. No external text, template, or code is incorporated.

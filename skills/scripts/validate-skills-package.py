@@ -37,7 +37,7 @@ SKILLS_SH_SCHEMA_URL = "https://skills.sh/schemas/skills.sh.schema.json"
 CORE_CONTRACT = SKILLS_ROOT / "core" / "q-core-contract"
 ROUTING_DIGEST = CORE_CONTRACT / "references" / "routing.md"
 HUMAN_INTERACTION_DIGEST = CORE_CONTRACT / "references" / "human-interaction.md"
-IGNORED_PATH_PARTS = {".git", "node_modules", "__pycache__", ".venv"}
+IGNORED_PATH_PARTS = {".git", "node_modules", "__pycache__", ".venv", "tmp"}
 
 
 def ignored_path(path: Path) -> bool:
@@ -150,6 +150,25 @@ def anchors(path: Path) -> set[str]:
     return found
 
 
+def local_link_errors(path: Path, raw: str, root: Path) -> list[str]:
+    if ignored_path(path):
+        return []
+    href = raw.strip().split()[0].strip("<>")
+    if href.startswith(("http://", "https://", "mailto:")):
+        return []
+    target_text, _, anchor = href.partition("#")
+    target = path if not target_text else (path.parent / target_text).resolve()
+    try:
+        target.relative_to(root.resolve())
+    except ValueError:
+        return ["%s: local link escapes package: %s" % (path, href)]
+    if not target.exists():
+        return ["%s: broken local link: %s" % (path, href)]
+    if anchor and target.suffix.lower() == ".md" and anchor not in anchors(target):
+        return ["%s: missing anchor %r in %s" % (path, anchor, target)]
+    return []
+
+
 def link_errors(root: Path) -> tuple[list[str], int]:
     errors: list[str] = []
     checked = 0
@@ -159,21 +178,10 @@ def link_errors(root: Path) -> tuple[list[str], int]:
             continue
         text = path.read_text(encoding="utf-8-sig")
         for raw in pattern.findall(text):
-            href = raw.strip().split()[0].strip("<>")
-            if href.startswith(("http://", "https://", "mailto:")):
+            if raw.strip().split()[0].strip("<>").startswith(("http://", "https://", "mailto:")):
                 continue
             checked += 1
-            target_text, _, anchor = href.partition("#")
-            target = path if not target_text else (path.parent / target_text).resolve()
-            try:
-                target.relative_to(root.resolve())
-            except ValueError:
-                errors.append("%s: local link escapes package: %s" % (path, href))
-                continue
-            if not target.exists():
-                errors.append("%s: broken local link: %s" % (path, href))
-            elif anchor and target.suffix.lower() == ".md" and anchor not in anchors(target):
-                errors.append("%s: missing anchor %r in %s" % (path, anchor, target))
+            errors.extend(local_link_errors(path, raw, root))
     return errors, checked
 
 
@@ -1764,7 +1772,7 @@ def manifest_use_fixture_errors(schema: dict[str, Any], fixtures: Path) -> list[
     return errors
 
 
-def acceptance_errors() -> tuple[list[str], int]:
+def contract_marker_errors() -> tuple[list[str], int]:
     checks = {
         "S-01": [
             ("proposal/q-proposal-workflow/SKILL.md", "accepted_without_development"),
@@ -2001,8 +2009,8 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("research/q-research-investigate/SKILL.md", "Published aggregate survey or interview evidence"),
         ],
         "S-50": [
-            ("research/q-research-market-analysis/THIRD_PARTY_NOTICES.md", "13385c7c4db02fdcc84a020752c07cce91ef780e"),
-            ("research/q-research-market-analysis/THIRD_PARTY_NOTICES.md", "MIT License"),
+            ("../LICENSE", "13385c7c4db02fdcc84a020752c07cce91ef780e"),
+            ("../LICENSE", "MIT License"),
             ("research/q-research-market-analysis/SKILL.md", "make no network, model, database, or image call"),
         ],
         "S-51": [
@@ -2055,8 +2063,8 @@ def acceptance_errors() -> tuple[list[str], int]:
             ("review/q-review-evidence/SKILL.md", "never load all five by default"),
             ("review/q-review-evidence/SKILL.md", "Never edit a Findings Register"),
             ("review/q-review-evidence/references/scientific-evidence.md", "does not replace formal peer review"),
-            ("review/q-review-evidence/THIRD_PARTY_NOTICES.md", "13385c7c4db02fdcc84a020752c07cce91ef780e"),
-            ("review/q-review-evidence/THIRD_PARTY_NOTICES.md", "MIT License"),
+            ("../LICENSE", "13385c7c4db02fdcc84a020752c07cce91ef780e"),
+            ("../LICENSE", "MIT License"),
         ],
         "S-60": [
             ("research/q-research-investigate/SKILL.md", "Investigation retains the Findings Register and assigns final confidence"),
@@ -2072,13 +2080,214 @@ def acceptance_errors() -> tuple[list[str], int]:
         ],
     }
     errors: list[str] = []
-    for scenario, requirements in checks.items():
+    for marker, requirements in checks.items():
         for relative, phrase in requirements:
             path = (REPO_ROOT / relative) if relative == "skill-manifest.yaml" else (SKILLS_ROOT / relative)
             text = path.read_text(encoding="utf-8-sig")
             if phrase not in text:
-                errors.append("%s: missing acceptance evidence %r in %s" % (scenario, phrase, relative))
+                errors.append("%s: missing contract marker %r in %s" % (marker, phrase, relative))
     return errors, len(checks)
+
+
+GIT_EFFECTS = {
+    "create-branch": "git-create-branch",
+    "create-worktree": "git-create-worktree",
+    "stage": "git-stage",
+    "continue": "git-continue-operation",
+    "commit": "git-commit",
+    "push": "git-push",
+    "delete-ref": "git-delete-ref",
+}
+
+
+def git_operation_allowed(
+    entry: dict[str, Any],
+    operation: str,
+    *,
+    approved: bool,
+    branch_scoped: bool = True,
+    isolated_worktree: bool = True,
+    exact_paths: bool = True,
+    preserves_existing: bool = True,
+    conflict_class: str | None = None,
+    continuation_commit: bool = False,
+    commit_approved: bool = False,
+) -> bool:
+    """Evaluate the declarative Git contract without performing a Git mutation."""
+    effect = GIT_EFFECTS.get(operation)
+    if effect is None or effect not in entry.get("side_effects", []) or not approved:
+        return False
+    if not branch_scoped or not preserves_existing:
+        return False
+    if operation == "stage" and not exact_paths:
+        return False
+    if conflict_class == "semantically-incompatible":
+        return False
+    if (
+        operation == "continue"
+        and "git-commit" in entry.get("side_effects", [])
+        and not commit_approved
+    ):
+        return False
+    if (
+        operation == "commit"
+        and "git-continue-operation" in entry.get("side_effects", [])
+        and not continuation_commit
+    ):
+        return False
+    if "git-create-worktree" in entry.get("side_effects", []) and not isolated_worktree:
+        return False
+    return True
+
+
+def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
+    """Run positive and negative policy cases separately from textual markers."""
+    errors: list[str] = []
+    checked = 0
+    skills = manifest.get("skills", {}) if isinstance(manifest, dict) else {}
+    planned = manifest.get("planned_capabilities", {}) if isinstance(manifest, dict) else {}
+
+    def check(label: str, condition: bool) -> None:
+        nonlocal checked
+        checked += 1
+        if not condition:
+            errors.append("behavior %s failed" % label)
+
+    prototype = skills.get("q-code-prototype", {})
+    conflicts = skills.get("q-code-merge-conflicts", {})
+    maintenance = skills.get("q-maint-ai-workflow", {})
+    check("git-edit-does-not-authorize-maintenance-commit", not git_operation_allowed(
+        maintenance, "commit", approved=True
+    ))
+    check("prototype-authorized-isolated-commit", git_operation_allowed(
+        prototype, "commit", approved=True, branch_scoped=True,
+        isolated_worktree=True, preserves_existing=True
+    ))
+    check("prototype-original-worktree-write-blocked", not git_operation_allowed(
+        prototype, "commit", approved=True, isolated_worktree=False
+    ))
+    check("prototype-unapproved-commit-blocked", not git_operation_allowed(
+        prototype, "commit", approved=False
+    ))
+    check("prototype-unscoped-branch-blocked", not git_operation_allowed(
+        prototype, "commit", approved=True, branch_scoped=False
+    ))
+    check("prototype-existing-state-must-be-preserved", not git_operation_allowed(
+        prototype, "commit", approved=True, preserves_existing=False
+    ))
+    check("prototype-push-blocked", not git_operation_allowed(
+        prototype, "push", approved=True
+    ))
+    check("mechanical-conflict-exact-stage", git_operation_allowed(
+        conflicts, "stage", approved=True, exact_paths=True,
+        conflict_class="mechanical"
+    ))
+    check("broad-conflict-stage-blocked", not git_operation_allowed(
+        conflicts, "stage", approved=True, exact_paths=False,
+        conflict_class="mechanical"
+    ))
+    check("semantic-incompatibility-stops", not git_operation_allowed(
+        conflicts, "continue", approved=True, commit_approved=True,
+        conflict_class="semantically-incompatible"
+    ))
+    check("compatible-conflict-can-continue-after-approval", git_operation_allowed(
+        conflicts, "continue", approved=True, commit_approved=True,
+        conflict_class="semantically-compatible"
+    ))
+    check("continue-without-commit-approval-blocked", not git_operation_allowed(
+        conflicts, "continue", approved=True, commit_approved=False,
+        conflict_class="semantically-compatible"
+    ))
+    check("unapproved-continue-blocked", not git_operation_allowed(
+        conflicts, "continue", approved=False,
+        conflict_class="semantically-compatible"
+    ))
+    check("separate-conflict-commit-blocked", not git_operation_allowed(
+        conflicts, "commit", approved=True,
+        conflict_class="semantically-compatible", continuation_commit=False
+    ))
+
+    expected_planned = {"q-tool-document", "q-tool-spreadsheet", "q-tool-pdf"}
+    check("planned-capability-set", set(planned) == expected_planned)
+    check("planned-capabilities-pathless", all(
+        isinstance(entry, dict)
+        and entry == {"status": "planned", "invocable": False}
+        for entry in planned.values()
+    ))
+    check("planned-capability-folders-absent", all(
+        not any(path.name == skill_id for path in SKILLS_ROOT.rglob("*"))
+        for skill_id in planned
+    ))
+    consumed = []
+    for skill_id, entry in skills.items():
+        if not isinstance(entry, dict):
+            continue
+        targets = list(entry.get("requires", []))
+        targets.extend(
+            use.get("skill") for use in entry.get("uses", []) if isinstance(use, dict)
+        )
+        consumed.extend((skill_id, target) for target in targets if target in planned)
+    check("planned-capabilities-not-actively-consumed", not consumed)
+
+    global_effects = {"write-project-state", "write-artifact-index"}
+    invalid_writers = [
+        skill_id for skill_id, entry in skills.items()
+        if isinstance(entry, dict)
+        and global_effects.intersection(entry.get("side_effects", []))
+        and entry.get("kind") != "orchestrator"
+    ]
+    check("single-global-writer", not invalid_writers)
+    proposal_document = skills.get("q-proposal-document", {})
+    check("proposal-document-returns-deltas", not global_effects.intersection(
+        proposal_document.get("side_effects", [])
+    ))
+
+    git_contract_violations = []
+    for skill_id, entry in skills.items():
+        if not isinstance(entry, dict):
+            continue
+        effects = set(entry.get("side_effects", []))
+        if effects.intersection(GIT_EFFECTS.values()):
+            policy = entry.get("approval_policy", "")
+            if "q-core-contract" not in entry.get("requires", []) or "approval" not in policy:
+                git_contract_violations.append(skill_id)
+    check("git-effects-have-core-and-approval-policy", not git_contract_violations)
+
+    canonical = REPO_ROOT / "LICENSE"
+    skill_root_catalog_errors = []
+    for skill_id, entry in skills.items():
+        if not isinstance(entry, dict):
+            continue
+        skill_root = SKILLS_ROOT / str(entry.get("path", ""))
+        for filename in ("LICENSE", "THIRD_PARTY_NOTICES.md"):
+            if (skill_root / filename).is_file():
+                skill_root_catalog_errors.append("%s/%s" % (skill_id, filename))
+    check(
+        "license-and-notice-catalog-is-root-only",
+        canonical.is_file() and not skill_root_catalog_errors,
+    )
+    check(
+        "license-copy-generator-is-absent",
+        not (SKILLS_ROOT / "scripts" / "sync-skill-licenses.py").exists(),
+    )
+
+    tdd_paths = [
+        SKILLS_ROOT / "code" / "q-code-tdd" / "SKILL.md",
+        SKILLS_ROOT / "code" / "q-code-tdd" / "agents" / "openai.yaml",
+    ]
+    forbidden_tdd_trigger = "red-green-" + "refactor"
+    check("tdd-red-green-metadata-consistency", all(
+        forbidden_tdd_trigger not in path.read_text(encoding="utf-8-sig").lower()
+        for path in tdd_paths
+    ))
+
+    check("tmp-broken-link-is-ignored", not local_link_errors(
+        REPO_ROOT / "tmp" / "link-scope.md", "missing.md", REPO_ROOT
+    ))
+    check("distributed-broken-link-fails", bool(local_link_errors(
+        SKILLS_ROOT / "fixtures" / "link-scope.md", "missing.md", REPO_ROOT
+    )))
+    return errors, checked
 
 
 def readme_planned_errors(planned: set[str]) -> list[str]:
@@ -2136,7 +2345,24 @@ def package_doc_errors() -> list[str]:
     license_path = REPO_ROOT / 'LICENSE'
     if license_path.is_file():
         text = license_path.read_text(encoding='utf-8-sig')
-        for phrase in ('MIT License',):
+        for phrase in (
+            'MIT License',
+            'sole repository-level license and attribution catalog',
+            'Reference repositories',
+            'https://github.com/K-Dense-AI/scientific-agent-skills',
+            'https://github.com/softaworks/agent-toolkit',
+            '`q-ideation-session`',
+            '`q-research-market-analysis`',
+            '`q-review-evidence`',
+            '`q-tool-humanizer`',
+            '`q-review-skill`',
+            '`q-tool-c4`',
+            '`q-plan-design-system`',
+            'K-Dense Inc. adaptations',
+            'Softaworks / Leonardo Flores references and adaptations',
+            'Wikipedia contributors',
+            'William Strunk Jr.',
+        ):
             if phrase not in text:
                 errors.append('LICENSE is missing required notice %r' % phrase)
 
@@ -2176,6 +2402,8 @@ def run() -> dict[str, Any]:
             "checked_skills": 0,
             "checked_references": 0,
             "checked_artifacts": 0,
+            "checked_contract_markers": 0,
+            "checked_behavior_cases": 0,
         }
     errors.extend(schema_errors(manifest, schema, "manifest"))
     skills = manifest.get("skills", {}) if isinstance(manifest, dict) else {}
@@ -2517,8 +2745,10 @@ def run() -> dict[str, Any]:
         min_invalid_errors=5,
     ))
 
-    current_acceptance_errors, checked_scenarios = acceptance_errors()
-    errors.extend(current_acceptance_errors)
+    current_marker_errors, checked_contract_markers = contract_marker_errors()
+    errors.extend(current_marker_errors)
+    current_behavior_errors, checked_behavior_cases = behavior_errors(manifest)
+    errors.extend(current_behavior_errors)
     errors.extend(readme_planned_errors(set(planned)))
     errors.extend(package_doc_errors())
     errors.extend(routing_digest_errors(workflows))
@@ -2537,7 +2767,8 @@ def run() -> dict[str, Any]:
         "checked_skills": len(skills),
         "checked_references": checked_references,
         "checked_artifacts": checked_artifacts,
-        "checked_scenarios": checked_scenarios,
+        "checked_contract_markers": checked_contract_markers,
+        "checked_behavior_cases": checked_behavior_cases,
     }
 
 
@@ -2550,7 +2781,13 @@ def emit_yaml(result: dict[str, Any]) -> None:
             print("%s:" % key)
             for value in result[key]:
                 print("  - %s" % json.dumps(value, ensure_ascii=False))
-    for key in ("checked_skills", "checked_references", "checked_artifacts", "checked_scenarios"):
+    for key in (
+        "checked_skills",
+        "checked_references",
+        "checked_artifacts",
+        "checked_contract_markers",
+        "checked_behavior_cases",
+    ):
         print("%s: %s" % (key, result[key]))
 
 

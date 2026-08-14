@@ -2,8 +2,8 @@
 
 Adapted from `scripts/evaluate_matrix.py` of the MIT-licensed
 `scientific-brainstorming` skill, copyright (c) 2025 K-Dense Inc.
-See ../THIRD_PARTY_NOTICES.md. Quasar changes: candidate vocabulary and
-explicit `gate_*` columns that stay outside the compensatory score.
+Quasar changes: candidate vocabulary and explicit `gate_*` columns that stay
+outside the compensatory score.
 """
 
 from __future__ import annotations

@@ -2,7 +2,7 @@
 
 Load this reference only for English `improve` work, or for a `rewrite` that explicitly includes clarity and concision. Apply each principle to the supplied meaning; do not use the reference to add facts, simplify away uncertainty, or flatten a deliberate authorial voice.
 
-These principles are a compact, modern Quasar adaptation of public-domain composition ideas associated with William Strunk's early *The Elements of Style*, supplemented by original examples. Provenance is recorded in [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
+These principles are a compact, modern Quasar adaptation of public-domain composition ideas associated with William Strunk's early *The Elements of Style*, supplemented by original examples.
 
 ## C1 active-voice
 

@@ -9,6 +9,8 @@ metadata:
 
 Act as the package housekeeper. Preserve a small, composable, evidence-driven workflow while making the requested change coherent across every affected contract surface. Operate on the `SKILLS` package, never on a project's runtime workflow state or artifact index.
 
+Read the `q-core-contract` companion before any Git inspection or separately requested Git mutation. Package-write authorization does not authorize staging, committing, continuing an operation, pushing, opening a pull request, or deleting a ref; apply its operation-scoped Git policy and stop before any unapproved effect.
+
 ## Philosophy
 
 Use these invariants as the design filter for every change:
@@ -86,7 +88,7 @@ Make one cohesive change across the impact map. Apply these maintenance chores w
 - **Contracts:** update schemas, fixtures, acceptance evidence, stable IDs, artifact ownership, authority, lifecycle, side effects, approvals, fallback, and stack profile together.
 - **Behavior:** add migration or compatibility guidance and re-sync affected consumers without copying the same rule into multiple files.
 - **History:** add a user-visible `CHANGELOG.md` entry under `Unreleased`; identify breaking changes and migrations explicitly.
-- **Provenance:** preserve applicable notices and update `LICENSE` or attribution only when the legal scope or incorporated material changes.
+- **Provenance:** treat the root `LICENSE` as the sole repository-level license and attribution catalog. List every externally referenced repository there with a link, affected Quasar scope, source revision, modifications, and applicable terms. Do not create skill-root copies or per-skill notice catalogs. Preserve license files owned by bundled third-party dependencies, and require the package validator to distinguish those dependency files from forbidden skill-root duplicates before removing a superseded notice.
 - **Removal or rename:** remove stale references, provide a transition path when consumers may still use the old ID, and avoid silent aliases.
 
 Load [`q-maint-writing-for-agents`](../q-maint-writing-for-agents/SKILL.md) before creating, restructuring, or materially editing an agent-consumed artifact. Apply its internal writing discipline inside this maintenance task's authority and write scope.

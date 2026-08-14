@@ -24,3 +24,5 @@ Obtain explicit authorization before publishing to an external tracker. When no 
 7. Record created ticket IDs back in the originating backlog or plan.
 
 Tickets are durable `Working` execution records. `q-code-implement` updates each original ticket with status, change summary, acceptance coverage, tests, mini-review result, deviations, and follow-ups. It does not create a parallel durable summary.
+
+Ticket creation never stages or commits repository changes. A later commit is a separate Git operation outside this skill and requires its own explicit authorization.

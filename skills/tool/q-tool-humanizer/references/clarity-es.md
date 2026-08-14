@@ -2,7 +2,7 @@
 
 Load this reference only for Spanish `improve` work, or for a `rewrite` that explicitly includes clarity and concision. The guidance is written for Spanish syntax and usage; it is not a translation of `clarity-en.md`. Apply it to the supplied meaning without adding facts, deleting qualifications, or imposing one regional variety.
 
-The `C` families adapt general public-domain composition principles to Spanish with original Quasar examples. They also incorporate language-clear practices such as reducing bureaucratic filler, unnecessary nominalization, false cognates, delayed gerunds, and ambiguous anaphora. Provenance is recorded in [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
+The `C` families adapt general public-domain composition principles to Spanish with original Quasar examples. They also incorporate language-clear practices such as reducing bureaucratic filler, unnecessary nominalization, false cognates, delayed gerunds, and ambiguous anaphora.
 
 ## C1 active-voice
 
