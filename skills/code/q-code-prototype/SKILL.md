@@ -7,14 +7,14 @@ description: Build an isolated throwaway prototype to answer one design question
 
 A prototype is **throwaway code that answers a question**. The question decides the shape.
 
-Read the `q-core-contract` companion and its Git operations policy; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Build only in a newly authorized branch and worktree. Never modify, stash, reset, stage, or clean the original worktree.
+Read the `q-core-contract` companion, its Git operations policy, and `references/git-worktrees.md` for the worktree mechanics that policy governs; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Build only in an authorized prototype branch and isolated worktree, newly created unless the current checkout is already a disposable workspace for this prototype. Never modify, stash, reset, stage, or clean the original worktree.
 
 ## Isolate before building
 
-1. Inspect the repository root, base branch, existing branches and worktrees, and the original worktree's dirty, staged, and untracked state without changing them.
-2. Propose one `prototype/<slug>` branch and one explicit temporary worktree path. Obtain authorization for `git-create-branch` and `git-create-worktree`, naming the repository, base, branch, and path. Editing permission alone is insufficient.
+1. Inspect the repository root, base branch, existing branches and worktrees, and the original worktree's dirty, staged, and untracked state without changing them. Resolve whether the current checkout is already a linked worktree rather than a submodule, per `references/git-worktrees.md`; if it is, reuse it only when it is already a disposable workspace for this prototype, and otherwise place the new worktree outside it instead of nesting.
+2. Propose one `prototype/<slug>` branch and one explicit temporary worktree path, following that reference's priority order — outside the repository, or an in-repository path already verified as ignored, never by editing `.gitignore` — and prefer the harness's native worktree mechanism when one exists. Obtain authorization for `git-create-branch` and `git-create-worktree`, naming the repository, base, branch, and path. Editing permission alone is insufficient.
 3. Create only the authorized branch and worktree. Recheck that every prototype write resolves inside the new worktree and that the original dirty, staged, untracked, and data state is unchanged.
-4. If isolation cannot be established, return a prototype plan or analysis without writing code.
+4. If isolation is unauthorized, technically denied, or impossible, return a prototype plan or analysis without writing code, naming which of the three occurred with the exact pending effect or error.
 
 ## Pick a branch
 

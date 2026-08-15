@@ -91,6 +91,8 @@ Never infer Git authorization from permission to edit files. Before any mutation
 
 If the required operation is not authorized, stop before the mutation and return the exact pending effect, target, repository state, and safe next action. Approval to commit never implies push, pull-request, merge, cleanup, branch deletion, or publication approval.
 
+Before creating an isolated workspace, detect whether the current checkout is already a linked worktree — compare the resolved `--git-dir` with `--git-common-dir` after ruling out a submodule superproject — and never nest another one inside it. Prefer the harness's native worktree mechanism when one exists; use `git worktree add` only as the fallback. Place a new worktree outside the repository or under a path already verified as ignored; never edit `.gitignore`, stage, or commit to make a path eligible. Report a technically denied creation separately from an unauthorized one. Mechanics: [worktree isolation](references/git-worktrees.md).
+
 ## Stage result
 
 Return this structure from every orchestrated or standalone stage:
