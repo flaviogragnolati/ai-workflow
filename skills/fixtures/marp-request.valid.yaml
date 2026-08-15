@@ -1,0 +1,50 @@
+schema_version: "1.0"
+request_id: marp-request-001
+operation: render
+caller:
+  skill_id: q-report-deck
+  workflow: reporting
+  mode: orchestrated
+owner_skill: q-report-deck
+sources:
+  - ref: report-source-v3
+    artifact_id: report-source
+    version: "3"
+    path: /workspace/artifacts/report-source.yaml
+    sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+deck:
+  source_path: /workspace/deck/report.md
+  approved_plan_ref: quasar-deck-plan-v2
+  formats: [source, html, pdf]
+  theme:
+    path: /workspace/deck/quasar.css
+    sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  asset_roots: [/workspace/deck/assets]
+roots:
+  input: [/workspace/deck, /workspace/artifacts]
+  output: [/workspace/output]
+output:
+  source_path: /workspace/output/report.md
+  render_dir: /workspace/output
+  basename: report
+  overwrite: false
+  approval_ref: approval-marp-sidecar-01
+  persist_sidecar: true
+  sidecar_path: /workspace/output/report.marp-result.json
+forbidden_semantic_changes: [new-claims, changed-numbers, changed-recommendations]
+policy:
+  network_allowed: false
+  raw_html: disabled
+  allow_local_files: true
+  config_allowed: false
+  custom_engine_allowed: false
+  plugins_allowed: false
+runtime:
+  browser: auto
+  browser_path: null
+validation:
+  structural: true
+  assets: true
+  notes: true
+  rendered: true
+  visual: true

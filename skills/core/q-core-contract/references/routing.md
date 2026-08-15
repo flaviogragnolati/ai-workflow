@@ -26,6 +26,7 @@ research:
 reporting:
   entry_skill: q-report-workflow
   content_profiles: [general, market-research]
+  deck_formats: [marp-source, html, pdf, pptx, image-set]
   stages: [q-report-source]
   renderers: [q-report-document, q-report-deck]
   optional_next: [return-to-caller, close]

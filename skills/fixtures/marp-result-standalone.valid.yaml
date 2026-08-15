@@ -1,0 +1,58 @@
+schema_version: "1.0"
+request_id: marp-request-standalone-001
+outcome: completed
+owner_skill: standalone-caller
+generator_skill: q-tool-marp
+operation: create
+runtime:
+  node: v24.15.0
+  marp_cli: null
+  browser: null
+inputs:
+  - ref: approved-content
+    path: /workspace/input/approved-content.md
+    sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+outputs:
+  - type: marp-source
+    path: /workspace/output/deck.md
+    sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    media_type: text/markdown
+    creation_mode: authored
+    semantic_authority: supporting
+    authority_scope: slide-representation
+  - type: theme
+    path: /workspace/output/neutral.css
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+    media_type: text/css
+    creation_mode: authored
+    semantic_authority: supporting
+    authority_scope: slide-representation
+validation:
+  structural: passed
+  assets: passed
+  network: passed
+  html: passed
+  notes: passed
+  rendered: not-required
+  visual: not-required
+  release_readiness: not-assessed
+speaker_notes:
+  source_count: 4
+  html: not-requested
+  pdf: not-requested
+  pptx: not-requested
+  images: not-requested
+persistent_writes:
+  - /workspace/output/deck.md
+  - /workspace/output/neutral.css
+capability_gaps: []
+warnings: []
+blockers: []
+reconciliation_required: true
+provenance:
+  source_refs: [approved-content]
+  theme:
+    path: /workspace/output/neutral.css
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+  assets: []
+  command: author-and-validate-without-render

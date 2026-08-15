@@ -1,8 +1,8 @@
-schema_version: "1.7"
+schema_version: "1.8"
 
 package:
   id: quasar-ai-delivery-skills
-  description: "Coordinated skills for Quasar project questions, structured ideation, engagement research, evidence review, discovery, proposals, profile-driven software delivery, bilingual prose humanization and clarity editing, database schema design and review, C4 architecture views, runtime-neutral document, spreadsheet, PPTX, and PDF operations, QA, and optional reporting."
+  description: "Coordinated skills for Quasar project questions, structured ideation, engagement research, evidence review, discovery, proposals, profile-driven software delivery, bilingual prose humanization and clarity editing, database schema design and review, C4 architecture views, runtime-neutral Marp, document, spreadsheet, PPTX, and PDF operations, QA, and optional reporting."
   stack_profile: project-defined
   compatibility: profile-driven
   human_guide: README.md
@@ -40,6 +40,7 @@ workflows:
     renderers: [q-report-document, q-report-deck]
     report_types: [progress, feature, milestone, release, completion, consulting, executive, custom]
     content_profiles: [general, market-research]
+    deck_formats: [marp-source, html, pdf, pptx, image-set]
     optional_next: [return-to-caller, close]
   maintenance:
     status: active
@@ -64,7 +65,7 @@ skills:
     approval_policy: read-only-governance-reference-with-no-project-or-package-writes
     fallback: report-the-missing-governance-reference-instead-of-assuming-shared-rules
     stack_profile: any
-    contract_version: "1.4"
+    contract_version: "1.5"
     distribution: public
 
   q-tool-mermaid:
@@ -87,6 +88,28 @@ skills:
     fallback: return-source-and-explicit-validation-or-rendering-gap-without-false-success
     stack_profile: any
     contract_version: "1.1"
+    distribution: public
+
+  q-tool-marp:
+    path: tool/q-tool-marp
+    group: tool
+    requires: [q-core-contract]
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
+    persistent_outputs:
+      - {type: standalone-marp-source, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: slide-representation}
+      - {type: standalone-marp-render, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
+    transient_outputs: [marp-request, marp-result, capability-diagnostic, validation-diagnostic, render-preview]
+    side_effects: [write-project-artifacts, execute-local-capability-probe, execute-local-validator, execute-local-renderer]
+    approval_policy: local-marp-generation-within-authorized-roots-and-explicit-approval-for-overwrite-or-persisted-provenance-sidecar-with-no-runtime-install-network-remote-render-publication-or-global-state-write
+    fallback: return-the-editable-marp-source-and-an-explicit-validation-or-rendering-gap-without-false-success
+    stack_profile: any
+    contract_version: "1.0"
     distribution: public
 
   q-tool-c4:
@@ -1328,7 +1351,7 @@ skills:
     approval_policy: user-confirms-source-snapshot-report-meaning-requested-channels-and-release-with-separate-publication-approval
     fallback: source-gap-diagnostic-or-explicit-partial-release-when-a-renderer-is-unavailable
     stack_profile: any
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-report-source:
     path: report/q-report-source
@@ -1391,6 +1414,9 @@ skills:
     group: report
     requires: [q-core-contract]
     uses:
+      - skill: q-tool-marp
+        when: requested-deck-channel-includes-marp-source-html-pdf-pptx-or-image-rendering
+        fallback: use-only-a-separately-verified-local-marp-route-or-block-the-marp-channel-and-require-explicit-partial-release
       - skill: q-tool-pptx
         when: requested-deck-channel-includes-pptx-mechanics-creation-editing-inspection-or-validation
         fallback: use-only-a-separately-verified-local-pptx-route-or-block-the-deck-and-require-explicit-partial-release
@@ -1412,13 +1438,16 @@ skills:
     human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: quasar-deck-plan, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: presentation-plan}
+      - {type: quasar-deck-marp-source, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: editable-presentation-source}
+      - {type: quasar-deck-html, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
+      - {type: quasar-deck-image-set, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
       - {type: quasar-deck-pptx, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
       - {type: quasar-deck-pdf, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
-    transient_outputs: [render-previews]
+    transient_outputs: [render-previews, marp-validation]
     side_effects: [write-project-artifacts]
     approval_policy: explicit-plan-approval-before-generation-and-separate-publication-approval
     fallback: plan-only
     stack_profile: any
-    contract_version: "1.1"
+    contract_version: "1.2"
 
 planned_capabilities: {}

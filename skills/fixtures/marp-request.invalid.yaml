@@ -1,0 +1,45 @@
+schema_version: "9.0"
+request_id: ""
+operation: publish
+caller:
+  skill_id: ""
+  workflow: null
+  mode: orchestrated
+owner_skill: ""
+sources: []
+deck:
+  source_path: /outside/deck.md
+  approved_plan_ref: ""
+  formats: [server, pptx-editable]
+  theme:
+    path: https://example.com/theme.css
+    sha256: short
+  asset_roots: []
+roots:
+  input: []
+  output: []
+output:
+  source_path: /outside/deck.md
+  render_dir: null
+  basename: ""
+  overwrite: true
+  approval_ref: null
+  persist_sidecar: true
+  sidecar_path: null
+forbidden_semantic_changes: invalid
+policy:
+  network_allowed: true
+  raw_html: arbitrary
+  allow_local_files: true
+  config_allowed: true
+  custom_engine_allowed: true
+  plugins_allowed: true
+runtime:
+  browser: safari
+  browser_path: 42
+validation:
+  structural: false
+  assets: false
+  notes: false
+  rendered: false
+  visual: false

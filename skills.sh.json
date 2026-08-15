@@ -19,9 +19,10 @@
     },
     {
       "title": "Shared tools",
-      "description": "Cross-cutting tools for bilingual prose editing, database design evidence, C4 architecture models and views, editable structural diagrams, Word documents, spreadsheets, PowerPoint files, and runtime-neutral PDF mechanics while owning stages retain project meaning.",
+      "description": "Cross-cutting tools for bilingual prose editing, database design evidence, C4 architecture models and views, editable structural diagrams and Marp presentations, Word documents, spreadsheets, PowerPoint files, and runtime-neutral PDF mechanics while owning stages retain project meaning.",
       "skills": [
         "q-tool-mermaid",
+        "q-tool-marp",
         "q-tool-c4",
         "q-tool-database-schema",
         "q-tool-humanizer",
@@ -122,7 +123,7 @@
     },
     {
       "title": "Reporting and presentations",
-      "description": "Synthesize approved project artifacts into one versioned report source, then render Markdown, DOCX, PDF, and branded PowerPoint channels without losing traceability.",
+      "description": "Synthesize approved project artifacts into one versioned report source, then render Markdown, DOCX, PDF, editable Marp source, HTML, images, and branded presentation channels without losing traceability.",
       "skills": [
         "q-report-workflow",
         "q-report-source",

@@ -429,7 +429,7 @@ def routing_digest_body(workflows: dict[str, Any]) -> str:
             continue
         lines.append("%s:" % workflow_id)
         lines.append("  entry_skill: %s" % entry.get("entry_skill"))
-        for key in ("profiles", "content_profiles", "stages", "planning_stages", "renderers", "current_tools", "delegates"):
+        for key in ("profiles", "content_profiles", "deck_formats", "stages", "planning_stages", "renderers", "current_tools", "delegates"):
             route = entry.get(key)
             if route:
                 lines.append("  %s: [%s]" % (key, ", ".join(route)))
@@ -548,7 +548,7 @@ def workflow_profile_semantics(workflows: dict[str, Any]) -> list[str]:
     for workflow_id, entry in workflows.items():
         if not isinstance(entry, dict):
             continue
-        for key in ("profiles", "content_profiles"):
+        for key in ("profiles", "content_profiles", "deck_formats"):
             values = entry.get(key, [])
             if not isinstance(values, list):
                 continue
@@ -579,6 +579,10 @@ def workflow_profile_semantics(workflows: dict[str, Any]) -> list[str]:
     reporting = workflows.get("reporting", {})
     if isinstance(reporting, dict) and reporting.get("content_profiles") not in (None, ["general", "market-research"]):
         errors.append("reporting content_profiles must preserve general and market-research")
+    if isinstance(reporting, dict) and reporting.get("deck_formats") not in (
+        None, ["marp-source", "html", "pdf", "pptx", "image-set"]
+    ):
+        errors.append("reporting deck_formats must preserve Marp source and rendered channel formats")
     return errors
 
 
@@ -698,6 +702,67 @@ def mermaid_runtime_errors(skills: dict[str, Any]) -> list[str]:
         if run.returncode != 0 or "q-tool-mermaid local runtime" not in run.stdout:
             errors.append("q-tool-mermaid: runtime --help smoke failed: %s"
                           % (run.stderr.strip() or run.stdout.strip() or run.returncode))
+    return errors
+
+
+def marp_runtime_errors(skills: dict[str, Any]) -> list[str]:
+    entry = skills.get("q-tool-marp")
+    if not isinstance(entry, dict) or entry.get("status") != "active":
+        return []
+    directory = SKILLS_ROOT / str(entry.get("path", ""))
+    runtime = directory / "runtime"
+    required = [
+        runtime / "package.json",
+        runtime / "package-lock.json",
+        runtime / "marp.mjs",
+        runtime / "lib" / "runtime.mjs",
+        runtime / "lib" / "validate.mjs",
+        runtime / "lib" / "render.mjs",
+        directory / "tests" / "run-tests.mjs",
+        directory / "tests" / "trigger-cases.json",
+        directory / "references" / "marp-request.schema.yaml",
+        directory / "references" / "marp-result.schema.yaml",
+        directory / "references" / "integration-contract.md",
+        directory / "assets" / "themes" / "neutral.css",
+        directory / "assets" / "templates" / "template-neutral.md",
+    ]
+    errors = [
+        "q-tool-marp: missing runtime file %s" % path.relative_to(REPO_ROOT)
+        for path in required if not path.is_file()
+    ]
+    if errors:
+        return errors
+
+    try:
+        package = json.loads((runtime / "package.json").read_text(encoding="utf-8-sig"))
+        lock = json.loads((runtime / "package-lock.json").read_text(encoding="utf-8-sig"))
+    except Exception as exc:
+        return ["q-tool-marp: invalid package metadata (%s)" % exc]
+    pinned = package.get("dependencies", {}).get("@marp-team/marp-cli")
+    locked = lock.get("packages", {}).get("node_modules/@marp-team/marp-cli", {}).get("version")
+    if pinned != "4.5.0" or locked != "4.5.0":
+        errors.append("q-tool-marp: Marp CLI must be pinned and locked at 4.5.0")
+
+    node = shutil.which("node")
+    if not node:
+        errors.append("q-tool-marp: Node is required to verify the declared runtime")
+        return errors
+    for command, expected, label, timeout in (
+        ([node, "--check", str(runtime / "marp.mjs")], None, "runtime syntax", 10),
+        ([node, str(runtime / "marp.mjs"), "--help"], "q-tool-marp local runtime", "runtime --help", 20),
+        ([node, str(directory / "tests" / "run-tests.mjs")], "q-tool-marp tests passed", "runtime tests", 60),
+    ):
+        run = subprocess.run(
+            command,
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=timeout,
+            check=False,
+        )
+        if run.returncode != 0 or (expected and expected not in run.stdout):
+            errors.append("q-tool-marp: %s failed: %s"
+                          % (label, run.stderr.strip() or run.stdout.strip() or run.returncode))
     return errors
 
 
@@ -2306,6 +2371,117 @@ def pptx_result_semantics(result: Any) -> list[str]:
     return errors
 
 
+def marp_request_semantics(request: Any) -> list[str]:
+    if not isinstance(request, dict):
+        return []
+    errors: list[str] = []
+    operation = request.get("operation")
+    caller = request.get("caller", {})
+    deck = request.get("deck", {})
+    output = request.get("output", {})
+    policy = request.get("policy", {})
+    if isinstance(caller, dict) and caller.get("mode") == "orchestrated" and not caller.get("workflow"):
+        errors.append("orchestrated Marp request requires a workflow")
+    if isinstance(output, dict):
+        if output.get("overwrite") is True and not output.get("approval_ref"):
+            errors.append("Marp overwrite requires an approval_ref")
+        if output.get("persist_sidecar") is True and (
+            not output.get("sidecar_path") or not output.get("approval_ref")
+        ):
+            errors.append("persistent Marp sidecar requires a path and approval_ref")
+        if operation == "create" and not output.get("source_path"):
+            errors.append("Marp create requires an output source_path")
+    if isinstance(deck, dict):
+        if operation in {"revise", "validate", "render"} and not deck.get("source_path"):
+            errors.append("Marp revise, validate, and render require deck.source_path")
+        formats = deck.get("formats", [])
+        if isinstance(formats, list) and any(item != "source" for item in formats):
+            if not isinstance(output, dict) or not output.get("render_dir"):
+                errors.append("Marp rendered formats require output.render_dir")
+        if isinstance(formats, list) and len(formats) != len(set(formats)):
+            errors.append("Marp formats cannot contain duplicates")
+        if isinstance(policy, dict) and policy.get("allow_local_files") is True and not deck.get("asset_roots"):
+            errors.append("Marp local files require explicit asset roots")
+    if isinstance(policy, dict):
+        if policy.get("network_allowed") is not False:
+            errors.append("Marp network_allowed must be false")
+        if any(policy.get(key) is not False for key in ("config_allowed", "custom_engine_allowed", "plugins_allowed")):
+            errors.append("Marp config, custom engine, and plugins must be disabled")
+    if isinstance(caller, dict) and caller.get("skill_id") == "q-report-deck" and request.get("owner_skill") != "q-report-deck":
+        errors.append("Report Deck Marp request must preserve q-report-deck ownership")
+    return errors
+
+
+def marp_result_semantics(result: Any) -> list[str]:
+    if not isinstance(result, dict):
+        return []
+    errors: list[str] = []
+    outcome = result.get("outcome")
+    operation = result.get("operation")
+    outputs = result.get("outputs", [])
+    warnings = result.get("warnings", [])
+    blockers = result.get("blockers", [])
+    gaps = result.get("capability_gaps", [])
+    runtime = result.get("runtime", {})
+    validation = result.get("validation", {})
+    output_paths = [
+        item.get("path") for item in outputs
+        if isinstance(item, dict) and isinstance(item.get("path"), str)
+    ] if isinstance(outputs, list) else []
+    persistent_writes = result.get("persistent_writes", [])
+    if len(output_paths) != len(set(output_paths)):
+        errors.append("Marp output paths cannot contain duplicates")
+    if isinstance(persistent_writes, list) and len(persistent_writes) != len(set(persistent_writes)):
+        errors.append("Marp persistent_writes cannot contain duplicates")
+    if isinstance(persistent_writes, list) and any(path not in persistent_writes for path in output_paths):
+        errors.append("every persisted Marp output must appear in persistent_writes")
+    if outcome in {"completed", "completed_with_warnings"} and blockers:
+        errors.append("non-blocked Marp result cannot contain blockers")
+    if outcome == "completed" and warnings:
+        errors.append("completed Marp result cannot contain warnings")
+    if outcome == "completed" and gaps:
+        errors.append("completed Marp result cannot contain capability gaps")
+    if outcome == "completed_with_warnings" and not warnings and not gaps:
+        errors.append("completed_with_warnings Marp result requires a warning or capability gap")
+    if outcome == "blocked" and not blockers:
+        errors.append("blocked Marp result requires at least one blocker")
+    if outcome in {"completed", "completed_with_warnings"} and operation in {"create", "revise", "render"} and not outputs:
+        errors.append("completed Marp file operation requires at least one output")
+    if result.get("reconciliation_required") is not True:
+        errors.append("Marp result must require caller reconciliation")
+    if isinstance(runtime, dict):
+        rendered_outputs = any(
+            isinstance(item, dict) and item.get("type") in {"html", "pdf", "pptx", "png-title", "png"}
+            for item in outputs if isinstance(outputs, list)
+        )
+        browser_backed = any(
+            isinstance(item, dict) and item.get("type") in {"pdf", "pptx", "png-title", "png"}
+            for item in outputs if isinstance(outputs, list)
+        )
+        if browser_backed and not runtime.get("browser"):
+            errors.append("browser-backed Marp outputs require a proven browser")
+        if rendered_outputs and not runtime.get("marp_cli"):
+            errors.append("rendered Marp outputs require an observed Marp CLI version")
+    if outcome in {"completed", "completed_with_warnings"} and operation == "render":
+        if not isinstance(validation, dict) or validation.get("rendered") != "passed":
+            errors.append("completed Marp render requires passed rendered validation")
+    if isinstance(validation, dict) and outcome == "completed" and validation.get("release_readiness") == "blocked":
+        errors.append("completed Marp result cannot be release-blocked")
+    for output in outputs if isinstance(outputs, list) else []:
+        if not isinstance(output, dict):
+            continue
+        output_type = output.get("type")
+        if result.get("owner_skill") == "q-report-deck":
+            if output.get("creation_mode") != "derived" or output.get("semantic_authority") != "none":
+                errors.append("Report Deck Marp outputs must be derived with no semantic authority")
+        elif output_type in {"marp-source", "theme", "asset"}:
+            if output.get("creation_mode") != "authored" or output.get("semantic_authority") != "supporting":
+                errors.append("standalone Marp source bundle must be authored and supporting")
+        elif output.get("creation_mode") != "derived" or output.get("semantic_authority") != "none":
+            errors.append("Marp renders must be derived with no semantic authority")
+    return errors
+
+
 def fixture_pair(
     schema_path: Path,
     valid_path: Path,
@@ -2703,6 +2879,15 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("report/q-report-deck/SKILL.md", "requested-deck-channel-includes-pptx-mechanics-creation-editing-inspection-or-validation"),
             ("../LICENSE", "PPTX functional reference — restricted source not incorporated"),
         ],
+        "S-67": [
+            ("core/q-core-contract/SKILL.md", "Pass one `marp_request` with the exact source refs"),
+            ("tool/q-tool-marp/SKILL.md", "Never install the runtime during a skill execution"),
+            ("tool/q-tool-marp/SKILL.md", "standard Marp PPTX distinct from a native object-editable PPTX"),
+            ("tool/q-tool-marp/SKILL.md", "source/output collision"),
+            ("report/q-report-deck/SKILL.md", "requested-deck-channel-includes-marp-source-html-pdf-pptx-or-image-rendering"),
+            ("report/q-report-deck/references/identidad-visual.md", "Markdown, theme CSS y assets locales editables y regenerables"),
+            ("../LICENSE", "Marp presentation reference and runtime"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():
@@ -2783,6 +2968,7 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     maintenance = skills.get("q-maint-ai-workflow", {})
     document_tool = skills.get("q-tool-document", {})
     pdf_tool = skills.get("q-tool-pdf", {})
+    marp_tool = skills.get("q-tool-marp", {})
     pptx_tool = skills.get("q-tool-pptx", {})
     spreadsheet_tool = skills.get("q-tool-spreadsheet", {})
     check(
@@ -2895,6 +3081,37 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
         "pptx-tool-does-not-own-global-state",
         all(effect not in pptx_tool.get("side_effects", [])
             for effect in ("write-project-state", "write-artifact-index")),
+    )
+    check(
+        "marp-tool-active-not-planned",
+        isinstance(marp_tool, dict)
+        and marp_tool.get("status") == "active"
+        and marp_tool.get("distribution", "public") == "public"
+        and "q-tool-marp" not in planned,
+    )
+    check(
+        "marp-tool-overwrite-and-sidecar-are-approval-gated",
+        "overwrite" in str(marp_tool.get("approval_policy", ""))
+        and "sidecar" in str(marp_tool.get("approval_policy", "")),
+    )
+    check(
+        "marp-tool-report-deck-routing",
+        any(
+            isinstance(use, dict)
+            and use.get("skill") == "q-tool-marp"
+            and use.get("when") == "requested-deck-channel-includes-marp-source-html-pdf-pptx-or-image-rendering"
+            for use in skills.get("q-report-deck", {}).get("uses", [])
+        ),
+    )
+    check(
+        "marp-tool-does-not-own-global-state",
+        all(effect not in marp_tool.get("side_effects", [])
+            for effect in ("write-project-state", "write-artifact-index")),
+    )
+    check(
+        "marp-tool-is-offline",
+        "network-read" not in marp_tool.get("side_effects", [])
+        and "no-runtime-install-network-remote-render-publication" in str(marp_tool.get("approval_policy", "")),
     )
     check("git-edit-does-not-authorize-maintenance-commit", not git_operation_allowed(
         maintenance, "commit", approved=True
@@ -3107,6 +3324,7 @@ def package_doc_errors() -> list[str]:
             '`q-plan-design-system`',
             '`q-tool-document`',
             '`q-tool-pdf`',
+            '`q-tool-marp`',
             '`q-tool-pptx`',
             '`q-tool-spreadsheet`',
             'b2a92ba052dcae4ef48e850b9e31ebf75706be48',
@@ -3115,6 +3333,8 @@ def package_doc_errors() -> list[str]:
             'DOCX functional reference — restricted source not incorporated',
             'XLSX functional reference — restricted source not incorporated',
             'PPTX functional reference — restricted source not incorporated',
+            'Marp presentation reference and runtime',
+            'https://github.com/marp-team/marp-cli',
             'K-Dense Inc. adaptations',
             'Softaworks / Leonardo Flores references and adaptations',
             'Wikipedia contributors',
@@ -3488,6 +3708,38 @@ def run() -> dict[str, Any]:
         min_invalid_errors=10,
     ))
     errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-marp" / "references" / "marp-request.schema.yaml",
+        fixtures / "marp-request.valid.yaml",
+        fixtures / "marp-request.invalid.yaml",
+        marp_request_semantics,
+        active,
+        min_invalid_errors=12,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-marp" / "references" / "marp-result.schema.yaml",
+        fixtures / "marp-result.valid.yaml",
+        fixtures / "marp-result.invalid.yaml",
+        marp_result_semantics,
+        active,
+        min_invalid_errors=12,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-marp" / "references" / "marp-result.schema.yaml",
+        fixtures / "marp-result-blocked.valid.yaml",
+        fixtures / "marp-result.invalid.yaml",
+        marp_result_semantics,
+        active,
+        min_invalid_errors=12,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-marp" / "references" / "marp-result.schema.yaml",
+        fixtures / "marp-result-standalone.valid.yaml",
+        fixtures / "marp-result.invalid.yaml",
+        marp_result_semantics,
+        active,
+        min_invalid_errors=12,
+    ))
+    errors.extend(fixture_pair(
         CORE_CONTRACT / "references" / "report-source.schema.yaml",
         fixtures / "report-source.valid.yaml",
         fixtures / "report-source.invalid.yaml",
@@ -3611,6 +3863,7 @@ def run() -> dict[str, Any]:
     errors.extend(skill_layout_errors(skills))
     errors.extend(stray_file_errors())
     errors.extend(mermaid_runtime_errors(skills))
+    errors.extend(marp_runtime_errors(skills))
     errors.extend(document_runtime_errors(skills))
     errors.extend(spreadsheet_runtime_errors(skills))
     errors.extend(pptx_runtime_errors(skills))

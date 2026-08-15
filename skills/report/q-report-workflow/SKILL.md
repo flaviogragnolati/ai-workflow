@@ -1,6 +1,6 @@
 ---
 name: q-report-workflow
-description: "Orchestrate sequential Quasar reporting from versioned project artifacts into an approved structured source and requested Markdown, DOCX, PDF, or PowerPoint channels. Use for progress, feature, milestone, release, completion, consulting, executive, or custom report types, including a market-research content profile with typed evidence refs, cross-workflow traceability, root-writer reconciliation, channel QA, and explicit release approval. Requires the q-core-contract companion."
+description: "Orchestrate sequential Quasar reporting from versioned project artifacts into an approved structured source and requested Markdown, DOCX, Marp, HTML, PDF, image, or PowerPoint channels. Use for progress, feature, milestone, release, completion, consulting, executive, or custom report types, including a market-research content profile with typed evidence refs, cross-workflow traceability, root-writer reconciliation, channel QA, and explicit release approval. Requires the q-core-contract companion."
 ---
 
 # Reporting workflow
@@ -60,7 +60,7 @@ For `market-research`, require exact typed evidence refs and approved snapshot v
 5. Obtain explicit approval before treating the report source as `Baselined`.
 6. Run the requested renderers sequentially against that exact source version:
    - `q-report-document` for Markdown, DOCX, and report PDF;
-   - `q-report-deck` for PPTX and deck PDF.
+   - `q-report-deck` for an editable Marp source bundle and requested HTML, PDF, standard Marp PPTX, image-set, or native object-editable PPTX outputs.
 7. Validate each renderer result and its content, provenance, and render-based QA evidence.
 8. Obtain release approval, create an immutable `reporting-release.yaml` referencing exact source and output versions, and keep publication or external sending separately approval-gated.
 9. Reconcile state and index when root; otherwise return the composite delta to the root orchestrator and preserve `return_to`.
@@ -82,7 +82,7 @@ When an upstream version changes after rendering, mark affected report channels 
 | 1 | Authoring report meaning in the orchestrator | The coordinator writes conclusions instead of routing `q-report-source`. | Delegate semantic synthesis and reconcile its approved version. |
 | 2 | Rewriting upstream truth through reporting | A report correction silently changes project status, commitments, or accepted scope. | Return the change to the upstream owner and regenerate from a new approved source. |
 | 3 | Treating a renderer as a semantic editor | A slide or DOCX edit becomes the report's new meaning. | Route semantic edits to `q-report-source` and mark affected channels stale. |
-| 4 | Calling a partial channel set complete | Missing DOCX, PDF, or deck output is hidden because one renderer succeeded. | Preserve completed channels and require explicit partial-release approval or report the blocker. |
+| 4 | Calling a partial channel set complete | A requested DOCX, PDF, Marp source, HTML, image, or deck output is hidden because one renderer succeeded. | Preserve completed channels and require explicit partial-release approval or report the blocker. |
 | 5 | Reporting recalculates research | The orchestrator derives a new market result from a CSV export. | Return the calculation to Market Analysis and report only promoted `published_results`. |
 
 ## Fallback and completion

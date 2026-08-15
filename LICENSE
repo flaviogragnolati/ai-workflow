@@ -16,7 +16,8 @@ imply endorsement by its authors.
 |---|---|
 | [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, `q-review-evidence`, `q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, and `q-tool-spreadsheet` |
 | [anthropics/skills](https://github.com/anthropics/skills) | `q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, and `q-tool-spreadsheet` |
-| [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit) | `q-ideation-session`, `q-tool-humanizer`, `q-review-skill`, `q-tool-c4`, and `q-plan-design-system` |
+| [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit) | `q-ideation-session`, `q-tool-humanizer`, `q-review-skill`, `q-tool-c4`, `q-plan-design-system`, and `q-tool-marp` |
+| [marp-team/marp-cli](https://github.com/marp-team/marp-cli) | `q-tool-marp` local runtime dependency |
 
 ## Original Quasar material — MIT License
 
@@ -44,6 +45,44 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Marp presentation reference and runtime
+
+The implementation plan for `skills/tool/q-tool-marp` was conceptually informed
+by Softaworks' MIT-licensed
+[`marp-slide`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/marp-slide)
+skill at commit `3027f20f3181758385a1bb8c022d4041dfb4de84`
+(2026-03-05). Quasar retained only general public ideas about Markdown slide
+authoring, Marp directives, image composition, theme CSS, and presentation
+quality. The request/result contracts, authority model, offline path and
+content security policy, capability probe, renderer, tests, schemas, fixtures,
+and all prose are independent Quasar work. No Softaworks source text, script,
+CSS, template, or other asset was copied or translated. The neutral and Quasar
+themes and templates are original, written from the official Marp/Marpit
+specification and, for the branded variant, Quasar's existing presentation
+identity. The Softaworks MIT terms and copyright notice appear in their
+complete form later in this catalog.
+
+The local runtime pins
+[`@marp-team/marp-cli` 4.5.0](https://github.com/marp-team/marp-cli/tree/v4.5.0)
+in `package.json` and `package-lock.json`. Marp CLI is Copyright (c) 2018 Marp
+team and is licensed under the MIT License. It and its transitive packages are
+installed dependencies rather than vendored source; their package-owned
+license files remain with them after `npm ci`. The Quasar wrapper never
+implicitly installs dependencies or browsers and never authorizes network
+access, remote assets, publication, or arbitrary Marp config.
+
+An `npm audit --omit=dev` run on 2026-08-15 reported four high-severity findings
+through `@marp-team/marp-cli` -> `puppeteer-core` ->
+`@puppeteer/browsers` -> `extract-zip` 2.0.1 for
+[`GHSA-jmr9-qjv8-65gv`](https://github.com/advisories/GHSA-jmr9-qjv8-65gv).
+No corrected `extract-zip` release was available in the pinned dependency tree;
+the automated proposal was an incompatible Marp CLI downgrade. This repository
+records a bounded exception instead: `q-tool-marp` never invokes browser
+download or ZIP extraction, accepts no archive input, uses only an already
+installed browser after a real local smoke test, and runs offline. The finding
+still remains a declared dependency risk and must be reassessed when the pin is
+updated.
 
 ## Anthropic PDF functional reference — restricted source not incorporated
 
@@ -213,6 +252,7 @@ Commit consulted: `3027f20f3181758385a1bb8c022d4041dfb4de84`
 | [`skill-judge`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/skill-judge) | `skills/review/q-review-skill/SKILL.md`. Quasar retained the useful context-value, progressive-disclosure, freedom-calibration, and practical-usability lenses while replacing the fixed score and universal assumptions with evidence, severity, target authority, and behavioral checks. No source text, grading table, or code was incorporated. |
 | [`c4-architecture`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/c4-architecture) | `skills/tool/q-tool-c4/SKILL.md`. The original Quasar implementation was conceptually informed by the source, then verified against official C4 and renderer documentation. No source text, template, or code was incorporated. |
 | [`design-system-starter`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/design-system-starter) | `skills/plan/q-plan-design-system/SKILL.md`. The source motivated the capability; Quasar rewrote it against its own planning, authority, artifact, validation, and lifecycle contracts. No source text, checklist, template, or code was incorporated. |
+| [`marp-slide`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/marp-slide) | `skills/tool/q-tool-marp/SKILL.md` and its authoring, syntax, image, theme, runtime, and quality references. Quasar retained general method topics, then independently rewrote them around caller ownership, structured contracts, offline validation, capability-gated local rendering, and reproducible provenance. No source text, code, CSS, template, or asset was incorporated. |
 
 MIT License
 

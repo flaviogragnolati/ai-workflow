@@ -1,0 +1,71 @@
+schema_version: "1.0"
+request_id: marp-request-001
+outcome: completed
+owner_skill: q-report-deck
+generator_skill: q-tool-marp
+operation: render
+runtime:
+  node: v24.15.0
+  marp_cli: 4.5.0
+  browser:
+    kind: chrome
+    path: /usr/bin/google-chrome
+    version: Google Chrome 140.0.0
+    smoke_render: passed
+inputs:
+  - ref: report-source-v3
+    path: /workspace/deck/report.md
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+outputs:
+  - type: marp-source
+    path: /workspace/output/report.md
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+    media_type: text/markdown
+    creation_mode: derived
+    semantic_authority: none
+    authority_scope: presentation
+  - type: html
+    path: /workspace/output/report.html
+    sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+    media_type: text/html
+    creation_mode: derived
+    semantic_authority: none
+    authority_scope: presentation
+  - type: pdf
+    path: /workspace/output/report.pdf
+    sha256: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+    media_type: application/pdf
+    creation_mode: derived
+    semantic_authority: none
+    authority_scope: presentation
+validation:
+  structural: passed
+  assets: passed
+  network: passed
+  html: passed
+  notes: passed
+  rendered: passed
+  visual: passed
+  release_readiness: ready
+speaker_notes:
+  source_count: 5
+  html: preserved
+  pdf: preserved
+  pptx: not-requested
+  images: not-requested
+persistent_writes:
+  - /workspace/output/report.md
+  - /workspace/output/report.html
+  - /workspace/output/report.pdf
+  - /workspace/output/report.marp-result.json
+capability_gaps: []
+warnings: []
+blockers: []
+reconciliation_required: true
+provenance:
+  source_refs: [report-source-v3]
+  theme:
+    path: /workspace/deck/quasar.css
+    sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  assets: []
+  command: node runtime/marp.mjs render report.md --format html,pdf

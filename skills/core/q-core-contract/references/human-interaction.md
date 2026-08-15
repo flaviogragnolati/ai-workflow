@@ -15,6 +15,9 @@ q-core-contract:
 q-tool-mermaid:
   orchestrated: on-demand
   standalone: on-demand
+q-tool-marp:
+  orchestrated: on-demand
+  standalone: on-demand
 q-tool-c4:
   orchestrated: on-demand
   standalone: on-demand

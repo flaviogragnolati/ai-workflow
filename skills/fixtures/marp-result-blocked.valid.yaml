@@ -1,0 +1,49 @@
+schema_version: "1.0"
+request_id: marp-request-002
+outcome: blocked
+owner_skill: q-report-deck
+generator_skill: q-tool-marp
+operation: render
+runtime:
+  node: v24.15.0
+  marp_cli: 4.5.0
+  browser: null
+inputs:
+  - ref: report-source-v3
+    path: /workspace/deck/report.md
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+outputs:
+  - type: marp-source
+    path: /workspace/output/report.md
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+    media_type: text/markdown
+    creation_mode: derived
+    semantic_authority: none
+    authority_scope: presentation
+validation:
+  structural: passed
+  assets: passed
+  network: passed
+  html: passed
+  notes: passed
+  rendered: unavailable
+  visual: unavailable
+  release_readiness: blocked
+speaker_notes:
+  source_count: 5
+  html: not-requested
+  pdf: unverified
+  pptx: not-requested
+  images: not-requested
+persistent_writes: [/workspace/output/report.md]
+capability_gaps: [missing-browser]
+warnings: []
+blockers: [required-pdf-render-unavailable]
+reconciliation_required: true
+provenance:
+  source_refs: [report-source-v3]
+  theme:
+    path: /workspace/deck/quasar.css
+    sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  assets: []
+  command: capability-probe-only

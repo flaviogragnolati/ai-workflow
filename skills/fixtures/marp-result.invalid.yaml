@@ -1,0 +1,50 @@
+schema_version: "2.0"
+request_id: ""
+outcome: completed
+owner_skill: ""
+generator_skill: q-tool-pptx
+operation: publish
+runtime:
+  node: ""
+  marp_cli: null
+  browser:
+    kind: safari
+    path: ""
+    version: ""
+    smoke_render: failed
+inputs: []
+outputs:
+  - type: pdf
+    path: ""
+    sha256: short
+    media_type: ""
+    creation_mode: authored
+    semantic_authority: supporting
+    authority_scope: slide-representation
+validation:
+  structural: failed
+  assets: failed
+  network: failed
+  html: failed
+  notes: failed
+  rendered: failed
+  visual: failed
+  release_readiness: ready
+speaker_notes:
+  source_count: -1
+  html: invented
+  pdf: invented
+  pptx: invented
+  images: preserved
+persistent_writes: invalid
+capability_gaps: [unreported-gap]
+warnings: [contradicts-completed]
+blockers: [contradicts-completed]
+reconciliation_required: false
+provenance:
+  source_refs: invalid
+  theme:
+    path: ""
+    sha256: short
+  assets: invalid
+  command: ""
