@@ -19,7 +19,7 @@
     },
     {
       "title": "Shared tools",
-      "description": "Cross-cutting tools for bilingual prose editing, database design evidence, C4 architecture models and views, editable structural diagrams, Word documents, spreadsheets, and runtime-neutral PDF mechanics while owning stages retain project meaning.",
+      "description": "Cross-cutting tools for bilingual prose editing, database design evidence, C4 architecture models and views, editable structural diagrams, Word documents, spreadsheets, PowerPoint files, and runtime-neutral PDF mechanics while owning stages retain project meaning.",
       "skills": [
         "q-tool-mermaid",
         "q-tool-c4",
@@ -27,6 +27,7 @@
         "q-tool-humanizer",
         "q-tool-document",
         "q-tool-pdf",
+        "q-tool-pptx",
         "q-tool-spreadsheet"
       ]
     },

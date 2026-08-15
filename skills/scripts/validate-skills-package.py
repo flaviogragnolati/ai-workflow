@@ -951,6 +951,86 @@ def spreadsheet_runtime_errors(skills: dict[str, Any]) -> list[str]:
     return errors
 
 
+def pptx_runtime_errors(skills: dict[str, Any]) -> list[str]:
+    entry = skills.get("q-tool-pptx")
+    if not isinstance(entry, dict) or entry.get("status") != "active":
+        return []
+    directory = SKILLS_ROOT / str(entry.get("path", ""))
+    dispatcher = directory / "scripts" / "pptx"
+    python_backend = directory / "scripts" / "python" / "pptx_tool.py"
+    node_backend = directory / "scripts" / "node" / "pptx-tool.mjs"
+    static_test = directory / "tests" / "validate_static.py"
+    required = [
+        dispatcher,
+        directory / "scripts" / "pptx.ps1",
+        python_backend,
+        directory / "scripts" / "python" / "pyproject.toml",
+        node_backend,
+        directory / "scripts" / "node" / "package.json",
+        static_test,
+        directory / "tests" / "trigger-cases.json",
+        directory / "references" / "pptx-request.schema.yaml",
+        directory / "references" / "pptx-result.schema.yaml",
+    ]
+    errors = [
+        "q-tool-pptx: missing runtime file %s" % path.relative_to(REPO_ROOT)
+        for path in required if not path.is_file()
+    ]
+    if errors:
+        return errors
+
+    for command, expected, label in (
+        ([sys.executable, str(static_test)], "q-tool-pptx static validation passed", "static validation"),
+        ([sys.executable, str(python_backend), "--help"], "--overwrite", "Python --help"),
+    ):
+        run = subprocess.run(
+            command,
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=30,
+            check=False,
+        )
+        if run.returncode != 0 or expected not in run.stdout:
+            errors.append("q-tool-pptx: %s failed: %s"
+                          % (label, run.stderr.strip() or run.stdout.strip() or run.returncode))
+
+    bash = shutil.which("bash")
+    if bash:
+        syntax = subprocess.run(
+            [bash, "-n", str(dispatcher)],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=10,
+            check=False,
+        )
+        if syntax.returncode != 0:
+            errors.append("q-tool-pptx: dispatcher syntax failed: %s"
+                          % (syntax.stderr.strip() or syntax.stdout.strip() or syntax.returncode))
+
+    node = shutil.which("node")
+    if node:
+        for arguments, label, expected in (
+            ([node, "--check", str(node_backend)], "Node syntax", None),
+            ([node, str(node_backend), "--help"], "Node --help", "--overwrite"),
+        ):
+            smoke = subprocess.run(
+                arguments,
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                timeout=10,
+                check=False,
+            )
+            if smoke.returncode != 0 or (expected and expected not in smoke.stdout):
+                errors.append("q-tool-pptx: %s failed: %s"
+                              % (label, smoke.stderr.strip() or smoke.stdout.strip() or smoke.returncode))
+    else:
+        errors.append("q-tool-pptx: Node is required to verify the declared dual-runtime backend")
+    return errors
+
+
 def c4_runtime_errors(skills: dict[str, Any]) -> list[str]:
     entry = skills.get("q-tool-c4")
     if not isinstance(entry, dict) or entry.get("status") != "active":
@@ -2146,6 +2226,86 @@ def spreadsheet_result_semantics(result: Any) -> list[str]:
     return errors
 
 
+def pptx_request_semantics(request: Any) -> list[str]:
+    if not isinstance(request, dict):
+        return []
+    errors: list[str] = []
+    operation = request.get("operation")
+    presentation_type = request.get("presentation_type")
+    output = request.get("output", {})
+    validation = request.get("validation", {})
+    caller = request.get("caller", {})
+    if isinstance(caller, dict) and caller.get("mode") == "orchestrated" and not caller.get("workflow"):
+        errors.append("orchestrated PPTX request requires a workflow")
+    output_path = None
+    if isinstance(output, dict):
+        output_path = output.get("path")
+        if output.get("overwrite") is True and not output.get("approval_ref"):
+            errors.append("PPTX overwrite requires an approval_ref")
+        if operation in {"extract-text", "extract-notes", "select", "replace-text", "create", "contact-sheet"} and not output_path:
+            errors.append("PPTX file-output operation requires an output path")
+        if operation in {"extract-media", "render"} and not output.get("validation_dir"):
+            errors.append("PPTX directory-output operation requires a validation_dir")
+        for source in request.get("sources", []) if isinstance(request.get("sources"), list) else []:
+            if isinstance(source, dict) and output_path and source.get("path") == output_path:
+                errors.append("PPTX input and output must be distinct")
+                break
+    if operation == "render" and isinstance(validation, dict) and validation.get("rendered") is not True:
+        errors.append("PPTX render requires rendered validation")
+    if operation in {"select", "replace-text"} and presentation_type != "pptx":
+        errors.append("PPTX selection and text replacement require pptx input")
+    if operation == "create" and isinstance(output_path, str) and Path(output_path).suffix.lower() != ".pptx":
+        errors.append("PPTX creation requires a .pptx output")
+    if operation == "create" and not isinstance(request.get("design_constraints"), dict):
+        errors.append("PPTX creation requires design_constraints")
+    if presentation_type in {"potx", "ppsx"} and operation in {"select", "replace-text", "create"}:
+        errors.append("POTX and PPSX inputs are read-only")
+    security = request.get("security", {})
+    if isinstance(security, dict) and operation in {"select", "replace-text", "create", "render", "contact-sheet"}:
+        active = [
+            name for name in ("macros", "external_relationships", "embedded_objects", "signatures", "protection")
+            if security.get(name) is True
+        ]
+        if active:
+            errors.append("PPTX operation is blocked by security flags: %s" % ", ".join(active))
+    return errors
+
+
+def pptx_result_semantics(result: Any) -> list[str]:
+    if not isinstance(result, dict):
+        return []
+    errors: list[str] = []
+    outcome = result.get("outcome")
+    operation = result.get("operation")
+    outputs = result.get("outputs", [])
+    warnings = result.get("warnings", [])
+    blockers = result.get("blockers", [])
+    gaps = result.get("capability_gaps", [])
+    validation = result.get("validation", {})
+    if outcome in {"completed", "completed_with_warnings"} and blockers:
+        errors.append("non-blocked PPTX result cannot contain blockers")
+    if outcome == "completed" and warnings:
+        errors.append("completed PPTX result cannot contain warnings")
+    if outcome == "completed" and gaps:
+        errors.append("completed PPTX result cannot contain capability gaps")
+    if outcome == "completed_with_warnings" and not warnings and not gaps:
+        errors.append("completed_with_warnings PPTX result requires a warning or capability gap")
+    if outcome == "blocked" and not blockers:
+        errors.append("blocked PPTX result requires at least one blocker")
+    output_operations = {"extract-text", "extract-notes", "extract-media", "select", "replace-text", "create", "render", "contact-sheet"}
+    if outcome in {"completed", "completed_with_warnings"} and operation in output_operations and not outputs:
+        errors.append("completed PPTX output operation requires at least one output")
+    if outcome == "blocked" and result.get("runtime") is None and outputs:
+        errors.append("PPTX result blocked before runtime selection cannot contain outputs")
+    if outcome in {"completed", "completed_with_warnings"} and operation == "render":
+        if not isinstance(validation, dict) or validation.get("rendered") != "passed":
+            errors.append("completed PPTX render requires passed rendered validation")
+    if outcome == "completed" and operation == "create":
+        if not isinstance(validation, dict) or validation.get("structural") != "passed" or validation.get("rendered") != "passed":
+            errors.append("completed PPTX creation requires passed structural and rendered validation")
+    return errors
+
+
 def fixture_pair(
     schema_path: Path,
     valid_path: Path,
@@ -2535,6 +2695,14 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("research/q-research-market-analysis/SKILL.md", "requested-market-analysis-derived-export-is-xlsx"),
             ("../LICENSE", "XLSX functional reference — restricted source not incorporated"),
         ],
+        "S-66": [
+            ("core/q-core-contract/SKILL.md", "Pass one `pptx_request` with exact source refs"),
+            ("tool/q-tool-pptx/SKILL.md", "Never install a runtime or dependency"),
+            ("tool/q-tool-pptx/SKILL.md", "Refuse input/output collisions even with `--overwrite`"),
+            ("tool/q-tool-pptx/SKILL.md", "pptx-validation-needs-pdf-structure-or-rendered-page-inspection"),
+            ("report/q-report-deck/SKILL.md", "requested-deck-channel-includes-pptx-mechanics-creation-editing-inspection-or-validation"),
+            ("../LICENSE", "PPTX functional reference — restricted source not incorporated"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():
@@ -2615,6 +2783,7 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     maintenance = skills.get("q-maint-ai-workflow", {})
     document_tool = skills.get("q-tool-document", {})
     pdf_tool = skills.get("q-tool-pdf", {})
+    pptx_tool = skills.get("q-tool-pptx", {})
     spreadsheet_tool = skills.get("q-tool-spreadsheet", {})
     check(
         "document-tool-active-not-planned",
@@ -2691,6 +2860,40 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     check(
         "spreadsheet-tool-does-not-own-global-state",
         all(effect not in spreadsheet_tool.get("side_effects", [])
+            for effect in ("write-project-state", "write-artifact-index")),
+    )
+    check(
+        "pptx-tool-active-not-planned",
+        isinstance(pptx_tool, dict)
+        and pptx_tool.get("status") == "active"
+        and pptx_tool.get("distribution", "public") == "public"
+        and "q-tool-pptx" not in planned,
+    )
+    check(
+        "pptx-tool-overwrite-is-approval-gated",
+        "overwrite" in str(pptx_tool.get("approval_policy", "")),
+    )
+    check(
+        "pptx-tool-pdf-is-optional",
+        any(
+            isinstance(use, dict)
+            and use.get("skill") == "q-tool-pdf"
+            and use.get("when") == "pptx-validation-needs-pdf-structure-or-rendered-page-inspection"
+            for use in pptx_tool.get("uses", [])
+        ),
+    )
+    check(
+        "pptx-tool-report-deck-routing",
+        any(
+            isinstance(use, dict)
+            and use.get("skill") == "q-tool-pptx"
+            and use.get("when") == "requested-deck-channel-includes-pptx-mechanics-creation-editing-inspection-or-validation"
+            for use in skills.get("q-report-deck", {}).get("uses", [])
+        ),
+    )
+    check(
+        "pptx-tool-does-not-own-global-state",
+        all(effect not in pptx_tool.get("side_effects", [])
             for effect in ("write-project-state", "write-artifact-index")),
     )
     check("git-edit-does-not-authorize-maintenance-commit", not git_operation_allowed(
@@ -2904,12 +3107,14 @@ def package_doc_errors() -> list[str]:
             '`q-plan-design-system`',
             '`q-tool-document`',
             '`q-tool-pdf`',
+            '`q-tool-pptx`',
             '`q-tool-spreadsheet`',
             'b2a92ba052dcae4ef48e850b9e31ebf75706be48',
             'f6656c1256d5a8adfa37db9110046ef20bac644c',
             'restricted source not incorporated',
             'DOCX functional reference — restricted source not incorporated',
             'XLSX functional reference — restricted source not incorporated',
+            'PPTX functional reference — restricted source not incorporated',
             'K-Dense Inc. adaptations',
             'Softaworks / Leonardo Flores references and adaptations',
             'Wikipedia contributors',
@@ -3251,6 +3456,38 @@ def run() -> dict[str, Any]:
         min_invalid_errors=10,
     ))
     errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-pptx" / "references" / "pptx-request.schema.yaml",
+        fixtures / "pptx-request.valid.yaml",
+        fixtures / "pptx-request.invalid.yaml",
+        pptx_request_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-pptx" / "references" / "pptx-result.schema.yaml",
+        fixtures / "pptx-result.valid.yaml",
+        fixtures / "pptx-result.invalid.yaml",
+        pptx_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-pptx" / "references" / "pptx-result.schema.yaml",
+        fixtures / "pptx-result-blocked.valid.yaml",
+        fixtures / "pptx-result.invalid.yaml",
+        pptx_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-pptx" / "references" / "pptx-result.schema.yaml",
+        fixtures / "pptx-result-readonly.valid.yaml",
+        fixtures / "pptx-result.invalid.yaml",
+        pptx_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
         CORE_CONTRACT / "references" / "report-source.schema.yaml",
         fixtures / "report-source.valid.yaml",
         fixtures / "report-source.invalid.yaml",
@@ -3376,6 +3613,7 @@ def run() -> dict[str, Any]:
     errors.extend(mermaid_runtime_errors(skills))
     errors.extend(document_runtime_errors(skills))
     errors.extend(spreadsheet_runtime_errors(skills))
+    errors.extend(pptx_runtime_errors(skills))
     errors.extend(pdf_runtime_errors(skills))
     errors.extend(c4_runtime_errors(skills))
     errors.extend(market_analysis_runtime_errors(skills))

@@ -30,6 +30,9 @@ q-tool-document:
 q-tool-pdf:
   orchestrated: on-demand
   standalone: on-demand
+q-tool-pptx:
+  orchestrated: on-demand
+  standalone: on-demand
 q-tool-spreadsheet:
   orchestrated: on-demand
   standalone: on-demand

@@ -1,0 +1,28 @@
+schema_version: "2.0"
+request_id: ""
+outcome: completed
+owner_skill: ""
+generator_skill: q-tool-pdf
+runtime: bun
+operation: create-anything
+slide_scope: 9
+inputs: []
+outputs:
+  - path: ""
+    media_type: ""
+    creation_mode: authored
+    semantic_authority: canonical
+validation:
+  structural: passed
+  rendered: failed
+  inspected_slides: [0]
+preserved_semantics: none
+intentional_changes: none
+accepted_losses: none
+capability_gaps: [unreported-gap]
+warnings: [contradicts-completed]
+blockers: [contradicts-completed]
+provenance:
+  source_refs: invalid
+  command: 42
+  tools: invalid

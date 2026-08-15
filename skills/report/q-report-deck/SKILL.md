@@ -5,7 +5,7 @@ description: "Plan, create, edit, or review branded Quasar presentations for rep
 
 # Generate a Quasar deck
 
-Use only a presentation runtime whose PowerPoint generation, rendering, and inspection capabilities are verified in the current environment. `q-tool-pdf` is an optional collaborator for exported-PDF mechanics and validation, not evidence that PPTX export or PDF rendering is available; `q-tool-document` does not own PowerPoint files. Read the `q-core-contract` companion for shared governance; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Use `references/identidad-visual.md` and the assets in this skill for Quasar narrative and brand rules.
+Own the presentation plan, narrative, brand, release, and source traceability here. Use only presentation mechanics whose creation, rendering, and inspection capabilities are verified in the current environment. `q-tool-pptx` is the optional PPTX mechanics collaborator; `q-tool-pdf` is the optional exported-PDF mechanics and validation collaborator; neither proves that a required renderer exists or acquires presentation meaning. `q-tool-document` does not own PowerPoint files. Read the `q-core-contract` companion for shared governance; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Use `references/identidad-visual.md` and the assets in this skill for Quasar narrative and brand rules.
 
 ## Authority and inputs
 
@@ -45,9 +45,11 @@ When `approved-deck-plan-needs-a-mermaid-derived-asset` and `q-tool-mermaid` is 
 
 When `approved-deck-visual-intent-references-an-exact-c4-source-or-view` and `q-tool-c4` is installed, request validation or rendering of the exact C4 source version and view ID with a presentation profile. Own slide composition, crop, build, caption, brand, and visual QA only. If the tool is absent, `use-the-approved-c4-render-or-textual-intent-and-block-any-required-missing-asset`. Never redraw or reconstruct the C4 model from a derived image.
 
+When `requested-deck-channel-includes-pptx-mechanics-creation-editing-inspection-or-validation` and `q-tool-pptx` is installed, pass one schema-valid `pptx_request` containing the approved plan and exact source versions, preservation and forbidden-change rules, authorized distinct output, runtime policy, security flags, and structural/rendered validation demand. Keep narrative, claims, slide purpose and order, visual identity, release approval, and artifact deltas here; the tool owns only bounded local package mechanics and returns a derived `pptx_result` with no semantic authority. If the tool is absent, `use-only-a-separately-verified-local-pptx-route-or-block-the-deck-and-require-explicit-partial-release`.
+
 ### 5. Verify and deliver
 
-Render every slide and inspect layout, overflow, contrast, consistency, data fidelity, traceability, and notes. Correct defects and rerender. If the verified runtime cannot create or inspect a requested PPTX or PDF, block that format and offer plan-only or another supported partial result for explicit approval; never claim the missing output. Deliver only verified requested derivatives.
+Render every slide and inspect layout, overflow, contrast, consistency, data fidelity, traceability, and notes. Correct defects and rerender. Use `q-tool-pptx` for the same request's PPTX structural and rendered evidence when delegated; reconcile its warnings against the approved plan before release. If the verified runtime cannot create or inspect a requested PPTX or PDF, block that format and offer plan-only or another supported partial result for explicit approval; never claim the missing output. Deliver only verified requested derivatives.
 
 When `requested-deck-channel-includes-pdf-export-inspection-or-validation` and `q-tool-pdf` is installed, pass its `pdf_request` the exact plan and source versions, exported deck PDF path, required page and text checks, and a distinct validation-output directory. Keep slide meaning, PPTX export, brand, release approval, and artifact deltas here. If the tool is absent, `use-only-a-separately-verified-local-pdf-route-or-block-the-deck-pdf-and-require-explicit-partial-release`.
 

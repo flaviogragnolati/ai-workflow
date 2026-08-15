@@ -1,0 +1,44 @@
+schema_version: "1.0"
+request_id: pptx-request-001
+operation: create
+caller:
+  skill_id: q-report-deck
+  workflow: reporting
+  mode: orchestrated
+owner_skill: q-report-deck
+sources:
+  - ref: report-source-v3
+    artifact_id: report-source
+    version: "3"
+    path: artifacts/report-source.yaml
+    sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+presentation_type: pptx
+work_classification: derived-deliverable
+intended_result: Render the approved report narrative as a derived PPTX deck.
+slide_scope: all-approved-slides
+design_constraints:
+  template_ref: quasar-deck-template-v2
+  palette: [quasar-primary, quasar-accent]
+  typography: [approved-quasar-deck-type-scale]
+  slide_size: wide-16:9
+  layout_mandates: [assertion-led-titles, source-refs-in-notes]
+output:
+  path: artifacts/report-deck.pptx
+  validation_dir: artifacts/report-deck-validation
+  overwrite: false
+  approval_ref: null
+preservation_requirements: [approved-claims, approved-slide-order, source-citations]
+forbidden_semantic_changes: [new-claims, changed-numbers, changed-recommendations]
+runtime: auto
+validation:
+  structural: true
+  rendered: true
+  inspect_slides: [1, 2, 8]
+security:
+  macros: false
+  external_relationships: false
+  embedded_objects: false
+  signatures: false
+  protection: false
+  sensitive_content: false
+  retention_policy: project-default

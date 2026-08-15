@@ -1,0 +1,24 @@
+schema_version: "1.0"
+request_id: pptx-request-002
+outcome: completed
+owner_skill: q-tool-pptx
+generator_skill: q-tool-pptx
+runtime: node
+operation: inspect
+slide_scope: all
+inputs: [incoming-template-v1]
+outputs: []
+validation:
+  structural: passed
+  rendered: not-required
+  inspected_slides: []
+preserved_semantics: [source-byte-integrity]
+intentional_changes: []
+accepted_losses: []
+capability_gaps: []
+warnings: []
+blockers: []
+provenance:
+  source_refs: [incoming-template-v1]
+  command: q-tool-pptx inspect template.potx
+  tools: [node, jszip, fast-xml-parser]

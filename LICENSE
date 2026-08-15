@@ -14,8 +14,8 @@ imply endorsement by its authors.
 
 | Reference repository | Quasar skills informed or adapted |
 |---|---|
-| [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, `q-review-evidence`, `q-tool-document`, `q-tool-pdf`, and `q-tool-spreadsheet` |
-| [anthropics/skills](https://github.com/anthropics/skills) | `q-tool-document`, `q-tool-pdf`, and `q-tool-spreadsheet` |
+| [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, `q-review-evidence`, `q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, and `q-tool-spreadsheet` |
+| [anthropics/skills](https://github.com/anthropics/skills) | `q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, and `q-tool-spreadsheet` |
 | [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit) | `q-ideation-session`, `q-tool-humanizer`, `q-review-skill`, `q-tool-c4`, and `q-plan-design-system` |
 
 ## Original Quasar material — MIT License
@@ -133,6 +133,35 @@ The Node dependency metadata overrides ExcelJS's transitive UUID package to
 the overridden temporary tree reported zero known vulnerabilities on
 2026-08-14. Those separately installed dependencies retain their own licenses
 and are not vendored.
+
+## PPTX functional reference — restricted source not incorporated
+
+Sources identified by the incoming PPTX implementation plan and preliminary
+bundle, and consulted only for their public functional boundary:
+
+- <https://github.com/K-Dense-AI/scientific-agent-skills/tree/b2a92ba052dcae4ef48e850b9e31ebf75706be48/skills/pptx>
+- <https://github.com/anthropics/skills/tree/f6656c1256d5a8adfa37db9110046ef20bac644c/skills/pptx>
+
+The incoming plan identified the source as Anthropic-derived and subject to a
+non-MIT license with restrictions on copying, retention, derivative works,
+distribution, transfer, and reverse engineering. The bundle was therefore
+treated only as a functional requirements input. No source prose, script,
+fixture, guide, asset, or license text from those reference skills was copied,
+translated, vendored, or adapted into the registered skill.
+
+`skills/tool/q-tool-pptx` is an original Quasar implementation. It uses a
+caller-owned request/result contract; operation-aware, capability-checked local
+Python and Node routes; bounded untrusted ZIP/XML inspection; distinct atomic
+outputs; read-only handling for POTX and PPSX; explicit overwrite authorization;
+no macro, embedded-content, or external-relationship execution; isolated local
+rendering when available; and deterministic cross-runtime tests. Separately
+installed python-pptx, Pillow, JSZip, fast-xml-parser, LibreOffice,
+and Poppler retain their own licenses and are not vendored.
+PptxGenJS 4.0.1 was evaluated but is not declared or used: its transitive
+`image-size` dependency was affected by `GHSA-w3rx-r6r6-pgpr` and
+`GHSA-5p2g-fcmc-qvqq`, with no corrected `image-size` release available on
+2026-08-14. The resulting Node dependency tree reported zero known
+vulnerabilities in `npm audit --omit=dev` on that date.
 
 ## K-Dense Inc. adaptations — MIT License
 

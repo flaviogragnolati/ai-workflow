@@ -1,0 +1,29 @@
+schema_version: "1.0"
+request_id: pptx-request-001
+outcome: completed
+owner_skill: q-report-deck
+generator_skill: q-tool-pptx
+runtime: python
+operation: create
+slide_scope: all-approved-slides
+inputs: [report-source-v3]
+outputs:
+  - path: artifacts/report-deck.pptx
+    sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    media_type: application/vnd.openxmlformats-officedocument.presentationml.presentation
+    creation_mode: derived
+    semantic_authority: none
+validation:
+  structural: passed
+  rendered: passed
+  inspected_slides: [1, 2, 8]
+preserved_semantics: [approved-claims, approved-slide-order, source-citations]
+intentional_changes: [mapped-approved-content-to-slide-layouts]
+accepted_losses: []
+capability_gaps: []
+warnings: []
+blockers: []
+provenance:
+  source_refs: [report-source-v3]
+  command: q-tool-pptx create
+  tools: [python, python-pptx]

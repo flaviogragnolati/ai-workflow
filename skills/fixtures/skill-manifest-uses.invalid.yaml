@@ -1,4 +1,4 @@
-schema_version: "1.6"
+schema_version: "1.7"
 package:
   id: fixture
   description: Fixture

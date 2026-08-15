@@ -1,0 +1,24 @@
+schema_version: "1.0"
+request_id: pptx-request-003
+outcome: blocked
+owner_skill: q-report-deck
+generator_skill: q-tool-pptx
+runtime: null
+operation: create
+slide_scope: all-approved-slides
+inputs: [report-source-v3]
+outputs: []
+validation:
+  structural: unavailable
+  rendered: unavailable
+  inspected_slides: []
+preserved_semantics: []
+intentional_changes: []
+accepted_losses: []
+capability_gaps: [no-capability-verified-local-pptx-backend]
+warnings: []
+blockers: [required-pptx-channel-cannot-be-produced]
+provenance:
+  source_refs: [report-source-v3]
+  command: capability-probe-only
+  tools: []

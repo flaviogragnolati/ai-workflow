@@ -1,8 +1,8 @@
-schema_version: "1.6"
+schema_version: "1.7"
 
 package:
   id: quasar-ai-delivery-skills
-  description: "Coordinated skills for Quasar project questions, structured ideation, engagement research, evidence review, discovery, proposals, profile-driven software delivery, bilingual prose humanization and clarity editing, database schema design and review, C4 architecture views, runtime-neutral document, spreadsheet, and PDF operations, QA, and optional reporting."
+  description: "Coordinated skills for Quasar project questions, structured ideation, engagement research, evidence review, discovery, proposals, profile-driven software delivery, bilingual prose humanization and clarity editing, database schema design and review, C4 architecture views, runtime-neutral document, spreadsheet, PPTX, and PDF operations, QA, and optional reporting."
   stack_profile: project-defined
   compatibility: profile-driven
   human_guide: README.md
@@ -64,7 +64,7 @@ skills:
     approval_policy: read-only-governance-reference-with-no-project-or-package-writes
     fallback: report-the-missing-governance-reference-instead-of-assuming-shared-rules
     stack_profile: any
-    contract_version: "1.3"
+    contract_version: "1.4"
     distribution: public
 
   q-tool-mermaid:
@@ -205,6 +205,32 @@ skills:
     fallback: route-between-python-and-node-before-writing-or-return-an-explicit-capability-or-semantic-preservation-gap
     stack_profile: any
     contract_version: "1.1"
+    distribution: public
+
+  q-tool-pptx:
+    path: tool/q-tool-pptx
+    group: tool
+    requires: [q-core-contract]
+    uses:
+      - skill: q-tool-pdf
+        when: pptx-validation-needs-pdf-structure-or-rendered-page-inspection
+        fallback: use-a-separately-verified-local-renderer-or-report-the-presentation-visual-validation-gap
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: on-demand}
+    persistent_outputs:
+      - {type: standalone-pptx-output, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: pptx-presentation-or-format-transformation}
+      - {type: standalone-pptx-extraction, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: extracted-presentation-evidence}
+    transient_outputs: [pptx-request, runtime-capability-diagnostic, structural-validation, render-preview]
+    side_effects: [write-project-artifacts, execute-local-capability-probe, execute-local-scripts, execute-local-renderer]
+    approval_policy: local-pptx-operations-within-authorized-paths-and-explicit-approval-for-overwrite-or-sensitive-presentation-handling-with-no-runtime-install-remote-conversion-macro-execution-publication-or-global-state-write
+    fallback: route-between-python-and-node-before-writing-or-return-an-explicit-format-render-or-semantic-preservation-gap
+    stack_profile: any
+    contract_version: "1.0"
     distribution: public
 
   q-tool-spreadsheet:
@@ -1365,6 +1391,9 @@ skills:
     group: report
     requires: [q-core-contract]
     uses:
+      - skill: q-tool-pptx
+        when: requested-deck-channel-includes-pptx-mechanics-creation-editing-inspection-or-validation
+        fallback: use-only-a-separately-verified-local-pptx-route-or-block-the-deck-and-require-explicit-partial-release
       - skill: q-tool-pdf
         when: requested-deck-channel-includes-pdf-export-inspection-or-validation
         fallback: use-only-a-separately-verified-local-pdf-route-or-block-the-deck-pdf-and-require-explicit-partial-release
@@ -1390,6 +1419,6 @@ skills:
     approval_policy: explicit-plan-approval-before-generation-and-separate-publication-approval
     fallback: plan-only
     stack_profile: any
-    contract_version: "1.0"
+    contract_version: "1.1"
 
 planned_capabilities: {}

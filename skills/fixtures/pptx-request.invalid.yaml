@@ -1,0 +1,31 @@
+schema_version: "9.9"
+request_id: ""
+operation: mutate-anything
+caller:
+  skill_id: ""
+  mode: batch
+owner_skill: ""
+sources: []
+presentation_type: pptm
+work_classification: arbitrary
+intended_result: ""
+slide_scope: 4
+design_constraints: invalid
+output:
+  path: deck.potx
+  overwrite: true
+preservation_requirements: none
+forbidden_semantic_changes: none
+runtime: bun
+validation:
+  structural: yes
+  rendered: no
+  inspect_slides: [0]
+security:
+  macros: true
+  external_relationships: true
+  embedded_objects: true
+  signatures: true
+  protection: true
+  sensitive_content: false
+  retention_policy: null
