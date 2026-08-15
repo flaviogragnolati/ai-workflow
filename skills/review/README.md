@@ -1,0 +1,46 @@
+# Review and QA guide
+
+The `review` group holds six read-only quality capabilities. Each returns findings, a diagnostic, or an audit for its exact scope. None silently fixes what it finds, owns acceptance, or writes workflow state or the artifact index.
+
+This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.yaml) is the registry; each `SKILL.md` owns its procedure.
+
+## Where each review attaches
+
+```mermaid
+flowchart TB
+    CH["One implemented change"] --> RC["q-review-code<br/>standards and specification axes"]
+    CH --> RM["q-review-comments<br/>comment and docstring accuracy"]
+    REL["Release candidate"] --> RB["q-review-codebase<br/>formal codebase audit"]
+    RB --> DW["q-delivery-workflow reconciles<br/>all release evidence"]
+    DOC["Durable project documentation"] --> RD["q-review-docs<br/>drift and authority diagnostic"]
+    EV["Supplied claim or evidence package"] --> RE["q-review-evidence<br/>confidence, bias, reasoning, quantitative sanity"]
+    SK["Agent Skill or package slice"] --> RS["q-review-skill<br/>read-only skill diagnostic"]
+```
+
+## When to use each skill
+
+| Skill | Use it when |
+|---|---|
+| [`q-review-code`](q-review-code/SKILL.md) | Checking one change for technical and specification conformance after implementation. Design-system conformance is a criterion inside its standards axis. |
+| [`q-review-comments`](q-review-comments/SKILL.md) | Checking the accuracy of comments and docstrings affected by the same change. |
+| [`q-review-codebase`](q-review-codebase/SKILL.md) | Auditing a codebase or release candidate across architecture, integration, critical flows, security, NFRs, migration, deployment, and documentation. The audit alone is not release acceptance. |
+| [`q-review-docs`](q-review-docs/SKILL.md) | Auditing durable project documentation for structural breakage, authority errors, traceability gaps, contradictions, and drift. |
+| [`q-review-evidence`](q-review-evidence/SKILL.md) | Auditing a supplied business, engineering, scientific, or clinical claim for confidence, bias, reasoning, quantitative, or methodological limits — without investigating the open question itself. |
+| [`q-review-skill`](q-review-skill/SKILL.md) | Auditing an Agent Skill or a bounded package slice for activation, authority, context value, disclosure, safety, packaging, provenance, and behavior. |
+
+## Evidence review as a collaborator
+
+Four skills may call `q-review-evidence` through declared `uses` triggers: Research Investigation for a material finding with non-obvious confidence, Research Synthesis for a fragile material inference, Technical Research for benchmark, vendor, compatibility, reproducibility, or ML/AI claims, and Proposal Discovery for a claim that could mislead a commercial commitment. Every caller keeps its own artifact, confidence, and decision; when the reviewer is absent, the caller applies its existing factors and names the gap.
+
+Scientific criteria (study hierarchies, GRADE, risk-of-bias instruments) load only for scientific or clinical material or an explicit request. A diagnostic is never peer review, certification, or professional medical or legal advice.
+
+## Boundaries
+
+- A review reports findings; fixes are separate, explicitly authorized work that returns to the owning skill.
+- A codebase audit is input to release acceptance; [`q-delivery-workflow`](../delivery/README.md) owns the acceptance decision.
+- A requested numeric skill score is a disclosed heuristic, never package acceptance.
+- Use `q-maint-ai-workflow`, not `q-review-docs`, for documentation owned by this package.
+
+## Integration with the other groups
+
+The mini review (`q-review-code` plus `q-review-comments`) closes every iteration of the [development loop](../code/README.md). The codebase audit feeds integral QA in the [delivery workflow](../delivery/README.md). Evidence review serves [research](../research/README.md) and [proposal](../proposal/README.md) callers. For this repository's own skills, `q-review-skill` provides the public diagnostic and the internal maintenance companions own remediation and acceptance.

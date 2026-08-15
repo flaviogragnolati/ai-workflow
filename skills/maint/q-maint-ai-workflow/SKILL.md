@@ -86,7 +86,7 @@ Make one cohesive change across the impact map. Apply these maintenance chores w
 
 - **Skill lifecycle:** align folder name, frontmatter `name` and trigger-rich `description`, imperative body, `agents/openai.yaml`, invocation mode, and manifest entry.
 - **Skill layout:** Each registered skill has one canonical root at `skills/<group>/<skill-id>/`. A skill root may contain its own functional `agents/`, `references/`, `scripts/`, `tests/`, and runtime resources, but never another `SKILL.md` or a copied integration package. Keep incoming bundles and acceptance evidence outside the repository while integrating, move only functional runtime material into the canonical root, then remove the staging copy.
-- **Routing:** update the owning workflow, orchestrator, router, README entry, and any agent context pointer that would otherwise lie.
+- **Routing:** update the owning workflow, orchestrator, router, root `README.md`, any affected `skills/<group>/README.md` guide, and any agent context pointer that would otherwise lie.
 - **Contracts:** update schemas, fixtures, acceptance evidence, stable IDs, artifact ownership, authority, lifecycle, side effects, approvals, fallback, and stack profile together.
 - **Behavior:** add migration or compatibility guidance and re-sync affected consumers without copying the same rule into multiple files.
 - **History:** add a user-visible `CHANGELOG.md` entry under `Unreleased`; identify breaking changes and migrations explicitly.

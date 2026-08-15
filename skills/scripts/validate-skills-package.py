@@ -3276,6 +3276,37 @@ def readme_planned_errors(planned: set[str]) -> list[str]:
     return errors
 
 
+def group_readme_errors(skills: dict[str, Any]) -> list[str]:
+    """Group guides are optional, but an existing guide must stay complete.
+
+    Every active public skill in a group must be named in that group's
+    README.md, and the root README must link every existing group guide.
+    """
+    errors: list[str] = []
+    members: dict[str, list[str]] = {}
+    for skill_id, entry in sorted(skills.items()):
+        if not isinstance(entry, dict) or entry.get("status") != "active":
+            continue
+        if entry.get("distribution", "public") == "internal":
+            continue
+        members.setdefault(str(entry.get("group", "")), []).append(skill_id)
+
+    root_text = (REPO_ROOT / "README.md").read_text(encoding="utf-8-sig")
+    for group in sorted(members):
+        guide = SKILLS_ROOT / group / "README.md"
+        if not guide.is_file():
+            continue
+        text = guide.read_text(encoding="utf-8-sig")
+        for skill_id in members[group]:
+            if skill_id not in text:
+                errors.append("skills/%s/README.md omits the active public skill %s"
+                              % (group, skill_id))
+        if "skills/%s/README.md" % group not in root_text:
+            errors.append("README.md does not link the existing group guide skills/%s/README.md"
+                          % group)
+    return errors
+
+
 def package_doc_errors() -> list[str]:
     errors: list[str] = []
     required = ('AGENTS.md', 'CLAUDE.md', 'CHANGELOG.md', 'LICENSE')
@@ -3859,6 +3890,7 @@ def run() -> dict[str, Any]:
     errors.extend(routing_digest_errors(workflows))
     errors.extend(human_interaction_digest_errors(skills))
     errors.extend(skills_sh_errors(skills))
+    errors.extend(group_readme_errors(skills))
     errors.extend(anti_pattern_errors(skills))
     errors.extend(skill_layout_errors(skills))
     errors.extend(stray_file_errors())
