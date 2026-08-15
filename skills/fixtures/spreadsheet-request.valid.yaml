@@ -1,0 +1,42 @@
+schema_version: "1.0"
+request_id: spreadsheet-request-001
+operation: recalculate
+caller:
+  skill_id: q-report-source
+  workflow: reporting
+  mode: orchestrated
+owner_skill: q-report-source
+sources:
+  - ref: artifact:financial-model@3
+    artifact_id: financial-model
+    version: "3"
+    path: /workspace/financial-model.xlsx
+    sha256: null
+workbook_type: xlsx
+intended_result: Recalculate the approved model without changing formulas or assumptions.
+output:
+  path: /workspace/financial-model-recalculated.xlsx
+  overwrite: false
+  approval_ref: null
+  validation_dir: null
+preservation_requirements:
+  - Preserve formulas, worksheet names, styles, and number formats.
+formula_requirements:
+  - Recalculate every formula with the selected local engine.
+forbidden_semantic_changes:
+  - Do not change formulas, assumptions, figures, or business labels.
+runtime: auto
+validation:
+  structural: true
+  formulas: true
+  rendered: false
+  inspect_all_sheets: true
+security:
+  macros: false
+  external_links: false
+  data_connections: false
+  embedded_objects: false
+  signatures: false
+  protection: false
+  sensitive_content: false
+  retention_policy: null

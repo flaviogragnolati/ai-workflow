@@ -1,0 +1,33 @@
+schema_version: "2.0"
+request_id: 5
+outcome: completed
+owner_skill: false
+generator_skill: another-tool
+runtime: deno
+operation: execute-macros
+inputs: input.xlsx
+outputs:
+  - path: 99
+    media_type: false
+    creation_mode: authored
+    semantic_authority: canonical
+    surprise: true
+validation:
+  structural: maybe
+  formulas: broken
+  rendered: yes
+  formula_count: -1
+  formula_error_count: -2
+  missing_cached_values: -3
+preserved_semantics: unchanged
+intentional_changes: none
+capability_gaps: unavailable
+warnings:
+  - warning contradicts completed
+blockers:
+  - blocker contradicts completed
+provenance:
+  source_refs: source
+  command: 1
+  tools: tools
+unexpected: true

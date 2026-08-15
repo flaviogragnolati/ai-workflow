@@ -1,0 +1,32 @@
+schema_version: "1.0"
+request_id: spreadsheet-request-002
+outcome: blocked
+owner_skill: q-report-source
+generator_skill: q-tool-spreadsheet
+runtime: null
+operation: recalculate
+inputs:
+  - /workspace/financial-model.xlsx
+outputs: []
+validation:
+  structural: not-required
+  formulas: unavailable
+  rendered: not-required
+  calculation_engine: null
+  formula_count: 0
+  formula_sha256: null
+  formula_error_count: 0
+  missing_cached_values: 0
+  external_formula_count: 0
+  inspected_sheets: []
+preserved_semantics: []
+intentional_changes: []
+capability_gaps:
+  - No compatible local calculation engine is available.
+warnings: []
+blockers:
+  - LibreOffice is required for recalculation and is unavailable.
+provenance:
+  source_refs: [artifact:financial-model@3]
+  command: spreadsheet recalculate
+  tools: []

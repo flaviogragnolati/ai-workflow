@@ -1,0 +1,26 @@
+schema_version: "2.0"
+request_id: 42
+operation: execute-macros
+caller:
+  skill_id: 9
+  extra: forbidden
+owner_skill: [q-report-source]
+sources: []
+workbook_type: pptx
+intended_result: false
+output:
+  path: 12
+  overwrite: "yes"
+  surprise: true
+preservation_requirements: preserve-everything
+formula_requirements: 7
+forbidden_semantic_changes: forbidden
+runtime: deno
+validation:
+  structural: "yes"
+  rendered: maybe
+  surprise: true
+security:
+  macros: execute
+  unknown: true
+unexpected: true

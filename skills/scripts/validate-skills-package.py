@@ -869,6 +869,88 @@ def document_runtime_errors(skills: dict[str, Any]) -> list[str]:
     return errors
 
 
+def spreadsheet_runtime_errors(skills: dict[str, Any]) -> list[str]:
+    entry = skills.get("q-tool-spreadsheet")
+    if not isinstance(entry, dict) or entry.get("status") != "active":
+        return []
+    directory = SKILLS_ROOT / str(entry.get("path", ""))
+    dispatcher = directory / "scripts" / "spreadsheet"
+    python_backend = directory / "scripts" / "python" / "spreadsheet_tool.py"
+    node_backend = directory / "scripts" / "node" / "spreadsheet-tool.mjs"
+    static_test = directory / "tests" / "validate_static.py"
+    runtime_test = directory / "tests" / "run_tests.py"
+    required = [
+        dispatcher,
+        directory / "scripts" / "spreadsheet.ps1",
+        python_backend,
+        directory / "scripts" / "python" / "pyproject.toml",
+        node_backend,
+        directory / "scripts" / "node" / "package.json",
+        static_test,
+        runtime_test,
+        directory / "references" / "spreadsheet-request.schema.yaml",
+        directory / "references" / "spreadsheet-result.schema.yaml",
+    ]
+    errors = [
+        "q-tool-spreadsheet: missing runtime file %s" % path.relative_to(REPO_ROOT)
+        for path in required if not path.is_file()
+    ]
+    if errors:
+        return errors
+
+    for command, expected, label, timeout in (
+        ([sys.executable, str(static_test)], "q-tool-spreadsheet static validation passed", "static validation", 30),
+        ([sys.executable, str(runtime_test)], "q-tool-spreadsheet tests:", "runtime tests", 45),
+        ([sys.executable, str(python_backend), "--help"], "--overwrite", "Python --help", 10),
+    ):
+        run = subprocess.run(
+            command,
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=timeout,
+            check=False,
+        )
+        if run.returncode != 0 or expected not in run.stdout:
+            errors.append("q-tool-spreadsheet: %s failed: %s"
+                          % (label, run.stderr.strip() or run.stdout.strip() or run.returncode))
+
+    bash = shutil.which("bash")
+    if bash:
+        syntax = subprocess.run(
+            [bash, "-n", str(dispatcher)],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=10,
+            check=False,
+        )
+        if syntax.returncode != 0:
+            errors.append("q-tool-spreadsheet: dispatcher syntax failed: %s"
+                          % (syntax.stderr.strip() or syntax.stdout.strip() or syntax.returncode))
+
+    node = shutil.which("node")
+    if node:
+        for arguments, label, expected in (
+            ([node, "--check", str(node_backend)], "Node syntax", None),
+            ([node, str(node_backend), "--help"], "Node --help", "--overwrite"),
+        ):
+            smoke = subprocess.run(
+                arguments,
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                timeout=10,
+                check=False,
+            )
+            if smoke.returncode != 0 or (expected and expected not in smoke.stdout):
+                errors.append("q-tool-spreadsheet: %s failed: %s"
+                              % (label, smoke.stderr.strip() or smoke.stdout.strip() or smoke.returncode))
+    else:
+        errors.append("q-tool-spreadsheet: Node is required to verify the declared dual-runtime backend")
+    return errors
+
+
 def c4_runtime_errors(skills: dict[str, Any]) -> list[str]:
     entry = skills.get("q-tool-c4")
     if not isinstance(entry, dict) or entry.get("status") != "active":
@@ -1971,6 +2053,99 @@ def document_result_semantics(result: Any) -> list[str]:
     return errors
 
 
+def spreadsheet_request_semantics(request: Any) -> list[str]:
+    if not isinstance(request, dict):
+        return []
+    errors: list[str] = []
+    operation = request.get("operation")
+    workbook_type = request.get("workbook_type")
+    output = request.get("output", {})
+    validation = request.get("validation", {})
+    caller = request.get("caller", {})
+    if isinstance(caller, dict) and caller.get("mode") == "orchestrated" and not caller.get("workflow"):
+        errors.append("orchestrated spreadsheet request requires a workflow")
+    if isinstance(output, dict):
+        if output.get("overwrite") is True and not output.get("approval_ref"):
+            errors.append("spreadsheet overwrite requires an approval_ref")
+        if operation in {"extract", "create", "edit", "convert", "recalculate"} and not output.get("path"):
+            errors.append("spreadsheet output operation requires an output path")
+        if operation == "render" and not output.get("validation_dir"):
+            errors.append("spreadsheet render requires a validation_dir")
+        output_path = output.get("path")
+        for source in request.get("sources", []) if isinstance(request.get("sources"), list) else []:
+            if isinstance(source, dict) and output_path and source.get("path") == output_path:
+                errors.append("spreadsheet input and output must be distinct")
+                break
+        output_suffix = Path(output_path).suffix.lower() if isinstance(output_path, str) else ""
+    else:
+        output_suffix = ""
+    if operation == "render" and isinstance(validation, dict) and validation.get("rendered") is not True:
+        errors.append("spreadsheet render requires rendered validation")
+    if operation == "recalculate" and isinstance(validation, dict) and validation.get("formulas") is not True:
+        errors.append("spreadsheet recalculation requires formula validation")
+    if operation in {"create", "edit", "recalculate", "render"} and workbook_type != "xlsx":
+        errors.append("spreadsheet create, edit, recalculate, and render require xlsx")
+    if operation == "inspect" and workbook_type in {"csv", "tsv"}:
+        errors.append("delimited text does not support workbook inspection")
+    allowed_readonly_conversion = operation == "convert" and output_suffix in {".csv", ".tsv"}
+    if (workbook_type in {"xlsm", "xltm", "xltx"}
+            and operation not in {"inspect", "extract", "check"}
+            and not allowed_readonly_conversion):
+        errors.append("macro-enabled and template spreadsheets are read-only")
+    security = request.get("security", {})
+    if isinstance(security, dict) and operation in {"edit", "recalculate", "render"}:
+        active = [
+            name for name in ("macros", "external_links", "data_connections", "embedded_objects", "signatures", "protection")
+            if security.get(name) is True
+        ]
+        if active:
+            errors.append("spreadsheet operation is blocked by security flags: %s" % ", ".join(active))
+    return errors
+
+
+def spreadsheet_result_semantics(result: Any) -> list[str]:
+    if not isinstance(result, dict):
+        return []
+    errors: list[str] = []
+    outcome = result.get("outcome")
+    operation = result.get("operation")
+    outputs = result.get("outputs", [])
+    warnings = result.get("warnings", [])
+    blockers = result.get("blockers", [])
+    gaps = result.get("capability_gaps", [])
+    validation = result.get("validation", {})
+    if outcome in {"completed", "completed_with_warnings"} and blockers:
+        errors.append("non-blocked spreadsheet result cannot contain blockers")
+    if outcome == "completed" and warnings:
+        errors.append("completed spreadsheet result cannot contain warnings")
+    if outcome == "completed" and gaps:
+        errors.append("completed spreadsheet result cannot contain capability gaps")
+    if outcome == "completed_with_warnings" and not warnings and not gaps:
+        errors.append("completed_with_warnings spreadsheet result requires a warning or capability gap")
+    if outcome == "blocked" and not blockers:
+        errors.append("blocked spreadsheet result requires at least one blocker")
+    output_operations = {"extract", "create", "edit", "convert", "recalculate", "render"}
+    if outcome in {"completed", "completed_with_warnings"} and operation in output_operations and not outputs:
+        errors.append("completed spreadsheet output operation requires at least one output")
+    if outcome == "blocked" and result.get("runtime") is None and outputs:
+        errors.append("spreadsheet result blocked before runtime selection cannot contain outputs")
+    if outcome in {"completed", "completed_with_warnings"} and operation == "recalculate":
+        if not isinstance(validation, dict) or validation.get("formulas") != "passed":
+            errors.append("completed spreadsheet recalculation requires passed formula validation")
+    if outcome in {"completed", "completed_with_warnings"} and operation == "render":
+        if not isinstance(validation, dict) or validation.get("rendered") != "passed":
+            errors.append("completed spreadsheet render requires passed rendered validation")
+    if outcome in {"completed", "completed_with_warnings"} and isinstance(validation, dict):
+        formula_count = validation.get("formula_count", 0)
+        if validation.get("formulas") == "passed" and formula_count and not validation.get("formula_sha256"):
+            errors.append("passed spreadsheet formula validation requires a formula-set hash")
+        if validation.get("formulas") == "passed" and validation.get("formula_error_count", 0):
+            errors.append("passed spreadsheet formula validation cannot contain formula errors")
+        if operation in {"recalculate", "render"} and validation.get("external_formula_count", 0):
+            errors.append("spreadsheet engine execution cannot complete with external-data formulas")
+    return errors
+
+
 def fixture_pair(
     schema_path: Path,
     valid_path: Path,
@@ -2250,7 +2425,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("research/q-research-market-analysis/SKILL.md", "Skip this stage for a general-profile run"),
         ],
         "S-48": [
-            ("research/q-research-market-analysis/SKILL.md", "JSON/CSV output is transient"),
+            ("research/q-research-market-analysis/SKILL.md", "JSON/CSV/XLSX output is transient"),
             ("research/q-research-market-analysis/SKILL.md", "promoted to `published_results`"),
             ("report/q-report-source/SKILL.md", "derived export as the only semantic support"),
         ],
@@ -2352,6 +2527,14 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("report/q-report-document/SKILL.md", "requested-report-docx-mechanics-need-creation-inspection-editing-comment-redline-conversion-or-validation"),
             ("../LICENSE", "DOCX functional reference — restricted source not incorporated"),
         ],
+        "S-65": [
+            ("core/q-core-contract/SKILL.md", "Pass one `spreadsheet_request` with exact source refs"),
+            ("tool/q-tool-spreadsheet/SKILL.md", "Never install a runtime or dependency"),
+            ("tool/q-tool-spreadsheet/SKILL.md", "creation_mode: derived"),
+            ("tool/q-tool-spreadsheet/SKILL.md", "spreadsheet-validation-needs-pdf-structure-or-rendered-page-inspection"),
+            ("research/q-research-market-analysis/SKILL.md", "requested-market-analysis-derived-export-is-xlsx"),
+            ("../LICENSE", "XLSX functional reference — restricted source not incorporated"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():
@@ -2432,6 +2615,7 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     maintenance = skills.get("q-maint-ai-workflow", {})
     document_tool = skills.get("q-tool-document", {})
     pdf_tool = skills.get("q-tool-pdf", {})
+    spreadsheet_tool = skills.get("q-tool-spreadsheet", {})
     check(
         "document-tool-active-not-planned",
         isinstance(document_tool, dict)
@@ -2474,6 +2658,40 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
             )
             for skill_id in pdf_consumers
         ),
+    )
+    check(
+        "spreadsheet-tool-active-not-planned",
+        isinstance(spreadsheet_tool, dict)
+        and spreadsheet_tool.get("status") == "active"
+        and spreadsheet_tool.get("distribution", "public") == "public"
+        and "q-tool-spreadsheet" not in planned,
+    )
+    check(
+        "spreadsheet-tool-overwrite-is-approval-gated",
+        "overwrite" in str(spreadsheet_tool.get("approval_policy", "")),
+    )
+    check(
+        "spreadsheet-tool-pdf-is-optional",
+        any(
+            isinstance(use, dict)
+            and use.get("skill") == "q-tool-pdf"
+            and use.get("when") == "spreadsheet-validation-needs-pdf-structure-or-rendered-page-inspection"
+            for use in spreadsheet_tool.get("uses", [])
+        ),
+    )
+    check(
+        "spreadsheet-tool-market-analysis-routing",
+        any(
+            isinstance(use, dict)
+            and use.get("skill") == "q-tool-spreadsheet"
+            and use.get("when") == "requested-market-analysis-derived-export-is-xlsx"
+            for use in skills.get("q-research-market-analysis", {}).get("uses", [])
+        ),
+    )
+    check(
+        "spreadsheet-tool-does-not-own-global-state",
+        all(effect not in spreadsheet_tool.get("side_effects", [])
+            for effect in ("write-project-state", "write-artifact-index")),
     )
     check("git-edit-does-not-authorize-maintenance-commit", not git_operation_allowed(
         maintenance, "commit", approved=True
@@ -2526,7 +2744,7 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
         conflict_class="semantically-compatible", continuation_commit=False
     ))
 
-    expected_planned = {"q-tool-spreadsheet"}
+    expected_planned: set[str] = set()
     check("planned-capability-set", set(planned) == expected_planned)
     check("planned-capabilities-pathless", all(
         isinstance(entry, dict)
@@ -2686,10 +2904,12 @@ def package_doc_errors() -> list[str]:
             '`q-plan-design-system`',
             '`q-tool-document`',
             '`q-tool-pdf`',
+            '`q-tool-spreadsheet`',
             'b2a92ba052dcae4ef48e850b9e31ebf75706be48',
             'f6656c1256d5a8adfa37db9110046ef20bac644c',
             'restricted source not incorporated',
             'DOCX functional reference — restricted source not incorporated',
+            'XLSX functional reference — restricted source not incorporated',
             'K-Dense Inc. adaptations',
             'Softaworks / Leonardo Flores references and adaptations',
             'Wikipedia contributors',
@@ -2999,6 +3219,38 @@ def run() -> dict[str, Any]:
         min_invalid_errors=10,
     ))
     errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-spreadsheet" / "references" / "spreadsheet-request.schema.yaml",
+        fixtures / "spreadsheet-request.valid.yaml",
+        fixtures / "spreadsheet-request.invalid.yaml",
+        spreadsheet_request_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-spreadsheet" / "references" / "spreadsheet-result.schema.yaml",
+        fixtures / "spreadsheet-result.valid.yaml",
+        fixtures / "spreadsheet-result.invalid.yaml",
+        spreadsheet_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-spreadsheet" / "references" / "spreadsheet-result.schema.yaml",
+        fixtures / "spreadsheet-result-blocked.valid.yaml",
+        fixtures / "spreadsheet-result.invalid.yaml",
+        spreadsheet_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-spreadsheet" / "references" / "spreadsheet-result.schema.yaml",
+        fixtures / "spreadsheet-result-readonly.valid.yaml",
+        fixtures / "spreadsheet-result.invalid.yaml",
+        spreadsheet_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
         CORE_CONTRACT / "references" / "report-source.schema.yaml",
         fixtures / "report-source.valid.yaml",
         fixtures / "report-source.invalid.yaml",
@@ -3123,6 +3375,7 @@ def run() -> dict[str, Any]:
     errors.extend(stray_file_errors())
     errors.extend(mermaid_runtime_errors(skills))
     errors.extend(document_runtime_errors(skills))
+    errors.extend(spreadsheet_runtime_errors(skills))
     errors.extend(pdf_runtime_errors(skills))
     errors.extend(c4_runtime_errors(skills))
     errors.extend(market_analysis_runtime_errors(skills))

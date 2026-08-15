@@ -1,6 +1,6 @@
 # Quasar AI delivery skills
 
-This package coordinates project questions and proposal analysis, optional structured ideation, optional general or market engagement research, read-only evidence review, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, optional reporting, and shared bilingual prose-editing, database-schema, C4 architecture, structural-diagram, Word-document, and PDF tooling. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
+This package coordinates project questions and proposal analysis, optional structured ideation, optional general or market engagement research, read-only evidence review, discovery, commercial proposals, product definition, profile-driven software development, quality assurance, delivery, optional reporting, and shared bilingual prose-editing, database-schema, C4 architecture, structural-diagram, Word-document, spreadsheet, and PDF tooling. Start with `skill-manifest.yaml`; it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
 
 ## Install
 
@@ -18,7 +18,7 @@ The installer copies one skill folder at a time into your project's agent direct
 
 This package remains prerelease. `CHANGELOG.md` records work under `Unreleased`; no stable package version or release tag is established by the current repository state.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 54 are.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 55 are.
 
 `skills.sh.json` groups the catalog on the skills.sh repository page. It is a derived presentation of the manifest `group` field — sections may merge groups, but the validator requires every public skill to appear in exactly one. `skill-manifest.yaml` stays the authority for what exists, what `group` it belongs to, what it `requires` or optionally `uses`, and what `distribution` it has.
 
@@ -46,7 +46,7 @@ Use $q-ideation-session to explore options for this decision before Discovery, P
 Use $q-ideation-session to discover improvement opportunities in an existing product before deciding what to build next.
 ```
 
-Invoke a shared tool directly for bounded prose editing, database analysis, Word or PDF operations, or an editable architecture or structural diagram:
+Invoke a shared tool directly for bounded prose editing, database analysis, Word, spreadsheet, or PDF operations, or an editable architecture or structural diagram:
 
 ```text
 Use $q-tool-database-schema to review this PostgreSQL migration from the supplied schema and rollout constraints without executing it.
@@ -55,6 +55,7 @@ Use $q-tool-mermaid to create a sequence diagram for this authentication flow an
 Use $q-tool-humanizer to detect AI-writing patterns in this Spanish proposal, rewrite it naturally, or make it clearer without changing facts.
 Use $q-tool-document to inspect, comment on, redline, accept changes in, convert, or validate this DOCX with the available Python or Node backend.
 Use $q-tool-pdf to inspect, transform, fill, or validate this PDF with the available Python or Node backend.
+Use $q-tool-spreadsheet to inspect, edit, recalculate, render, convert, or validate this XLSX with the available Python or Node backend.
 ```
 
 Do not invoke an orchestrator and a stage as two independent writers. The orchestrator treats the named stage as `target_stage`, delegates domain work, validates the returned delta, and remains the only writer of workflow state and artifact index.
@@ -158,12 +159,13 @@ flowchart LR
 | Create or export a Mermaid diagram | `q-tool-mermaid` | Creating, revising, validating, repairing, rendering, or compiling Mermaid while the caller retains domain meaning. |
 | Work with a Word document | `q-tool-document` | Inspecting, extracting, creating, exactly editing, commenting, redlining, accepting changes, converting, rendering, or validating DOCX/DOTX through a capability-verified Python or Node route while the caller retains document meaning. |
 | Work with a PDF | `q-tool-pdf` | Inspecting, extracting, creating, transforming, filling, securing, rendering, OCRing, or validating a PDF through an operation-aware Python or Node route while the caller retains document meaning. |
+| Work with a spreadsheet | `q-tool-spreadsheet` | Inspecting, extracting, creating, boundedly editing, converting, recalculating, rendering, or validating XLSX through a capability-verified Python or Node route while the caller retains formulas, assumptions, figures, and business meaning. |
 | Detect, humanize, or clarify prose | `q-tool-humanizer` | Reporting clustered AI-writing indicators or revising English and Spanish text without changing facts, citations, commitments, or semantic ownership. |
 | Route a report | `q-report-workflow` | Producing a progress, feature, milestone, release, completion, consulting, executive, or custom report from approved artifact versions. |
 | Define report meaning | `q-report-source` | Synthesizing the approved source bundle into one traceable reporting narrative before rendering. |
 | Render report channels | `q-report-document` for Markdown/DOCX/PDF; `q-report-deck` for PPTX/deck PDF | Rendering the same baselined report-source version into the requested written or presentation channels. |
 
-Use supporting skills only when their trigger appears: `q-code-research` for a bounded technical Findings Register from versioned primary evidence, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-tool-humanizer` for transient AI-pattern detection, meaning-preserving humanization, or clarity editing in English and Spanish; `q-tool-database-schema` for read-only physical schema, document-model, migration, and supplied-evidence performance assistance; `q-tool-c4` for C4 abstraction, synchronized views, backend selection, and verified C4 rendering; `q-tool-mermaid` for editable Mermaid diagrams and verified local exports; `q-tool-document` for source-preserving DOCX/DOTX mechanics and structural/rendered validation through a verified local Python or Node route; `q-tool-pdf` for source-preserving PDF mechanics and structural/rendered validation through a verified local Python or Node route; `q-review-evidence` for a bounded read-only critique of supplied claims and evidence; `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question; and `q-review-skill` for a read-only diagnostic of an Agent Skill or an explicitly bounded package slice.
+Use supporting skills only when their trigger appears: `q-code-research` for a bounded technical Findings Register from versioned primary evidence, `q-code-prototype` for a throwaway experiment, `q-code-explain` when the immediately preceding technical explanation needs a clearer bridge, and `q-code-handoff` when pausing or transferring work. Use `q-tool-humanizer` for transient AI-pattern detection, meaning-preserving humanization, or clarity editing in English and Spanish; `q-tool-database-schema` for read-only physical schema, document-model, migration, and supplied-evidence performance assistance; `q-tool-c4` for C4 abstraction, synchronized views, backend selection, and verified C4 rendering; `q-tool-mermaid` for editable Mermaid diagrams and verified local exports; `q-tool-document` for source-preserving DOCX/DOTX mechanics and structural/rendered validation through a verified local Python or Node route; `q-tool-pdf` for source-preserving PDF mechanics and structural/rendered validation through a verified local Python or Node route; `q-tool-spreadsheet` for source-preserving XLSX mechanics plus structural, formula, and rendered validation through a verified local Python or Node route; `q-review-evidence` for a bounded read-only critique of supplied claims and evidence; `q-review-docs` for optional read-only QA of durable project documentation before a risky baseline or release, after upstream change, or when documentation health is in question; and `q-review-skill` for a read-only diagnostic of an Agent Skill or an explicitly bounded package slice.
 
 Three companions are not user entry points: coordinated workflows and the project-question skills load `q-core-contract` for shared governance; package maintenance loads the internal `q-maint-writing-for-agents` when agent-consumed artifacts change and `q-maint-skill-quality` when skills or invocation metadata are created, materially changed, or audited. Use `q-maint-ai-workflow` outside project runtime whenever this package, its skills, routing, contracts, metadata, fixtures, validators, or explanatory documentation must be changed or audited.
 
@@ -204,7 +206,7 @@ The session generates options and questions but never evidence: unresolved uncer
 
 The Research Baseline is canonical only for the approved snapshot. Its claims, analysis, and synthesis remain supporting evidence, and it never declares `report-ready`. A directly invoked root run may close without Proposal; starting Proposal or Reporting requires an explicit choice. A Proposal-delegated run is adopted as `external-research`, retained independently, or deferred through an explicit disposition, and Research never edits the Discovery Brief.
 
-`market-analysis.yaml` is the only new semantic artifact. JSON/CSV calculation workspaces are transient unless explicitly persisted as derived exports with no semantic authority; a value must be promoted into `published_results` before Synthesis or Reporting can use it. The package does not include primary-fieldwork capability, participant contact, survey/interview operation, PII or recording storage, or raw response-level survey processing. Published aggregate evidence may be registered and interpreted within its disclosed method limits.
+`market-analysis.yaml` is the only new semantic artifact. JSON/CSV/XLSX calculation workspaces are transient unless explicitly persisted as derived exports with no semantic authority; a requested XLSX export may delegate workbook mechanics to `q-tool-spreadsheet`, but its exact values and formulas remain owned by Market Analysis. A value must be promoted into `published_results` before Synthesis or Reporting can use it. The package does not include primary-fieldwork capability, participant contact, survey/interview operation, PII or recording storage, or raw response-level survey processing. Published aggregate evidence may be registered and interpreted within its disclosed method limits.
 
 `q-code-research` remains a separate technical capability for official documentation, specifications, source code, APIs, compatibility, and versioned behavior during planning or delivery. It shares the cited-findings contract but not the engagement workflow or synthesis procedure.
 
@@ -297,6 +299,7 @@ Maintenance is outside project runtime. It does not write project workflow state
 | `q-tool-humanizer` | `q-core-contract` | Applies transient-output, external-content, single-writer, and artifact-write approval rules to supplied prose without owning durable meaning |
 | `q-tool-document` | `q-core-contract` | Applies caller ownership, derived-output authority, local-runtime, overwrite, exact-edit, revision, validation, and single-writer rules to DOCX/DOTX mechanics |
 | `q-tool-pdf` | `q-core-contract` | Applies caller ownership, derived-output authority, local-runtime, overwrite, security-sensitive operation, validation, and single-writer rules to PDF mechanics |
+| `q-tool-spreadsheet` | `q-core-contract` | Applies caller ownership, derived-output authority, local-runtime, overwrite, formula, macro, external-connection, validation, and single-writer rules to spreadsheet mechanics |
 | `q-ask-project` | `q-core-contract` | Reconciles project state, artifact authority, lifecycle, and observable implementation before answering |
 | `q-ask-analyze` | `q-core-contract`, `q-ask-project` | Reuses the same alignment and evidence path before applying proposal-analysis lenses |
 | `q-code-research` | `q-core-contract` | Uses the shared cited-findings evidence contract while retaining technical-domain procedure |
@@ -326,6 +329,7 @@ The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-
 | Rendered SVG/PNG/PDF | Yes when delivered | None; derived from its source |
 | Document transformation or extraction produced by `q-tool-document` | Yes when explicitly persisted | None; derived from exact caller-owned sources with runtime and validation provenance |
 | PDF transformation or extraction produced by `q-tool-pdf` | Yes when explicitly persisted | None; derived from exact caller-owned sources with runtime and validation provenance |
+| Spreadsheet transformation, extraction, or render produced by `q-tool-spreadsheet` | Yes when explicitly persisted | None; derived from exact caller-owned sources with runtime, calculation-engine, and validation provenance |
 | Baselined report source | Yes | Canonical only for reporting selection, narrative, and approved interpretation |
 | Report Markdown/DOCX/PDF or deck PPTX/PDF | Yes when delivered | None; derived from the baselined report source |
 | Ideation Register | Yes | Supporting for session provenance, the candidate space, and raw assessments |
@@ -333,6 +337,7 @@ The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-
 | Research Brief | Yes | Canonical only for the approved research scope, boundaries, and budget |
 | Findings Register and Research Synthesis | Yes | Supporting for cited findings, observed coverage, and cross-finding interpretation |
 | Market Analysis | Yes | Supporting for owned methods, assumptions, calculations, scenarios, reconciliation, and promoted published results; subordinate to brief and findings |
+| JSON/CSV/XLSX Market Analysis export | Yes when explicitly persisted | None; derived from exact Market Analysis calculation or published-result refs |
 | Research Baseline | Yes | Canonical only for exact approved research artifact versions and `as_of` |
 | Release candidate, integral validation, delivery manifest | Yes | Canonical for release/delivery scope |
 
@@ -366,6 +371,7 @@ Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient`
 | Create, validate, render, or compile Mermaid | `q-tool-mermaid` |
 | Inspect, extract, create, exactly edit, comment, redline, accept changes, convert, render, or validate DOCX/DOTX through Python or Node | `q-tool-document` |
 | Inspect, extract, create, transform, fill, secure, render, OCR, or validate a PDF through Python or Node | `q-tool-pdf` |
+| Inspect, extract, create, edit, convert, recalculate, render, or validate XLSX through Python or Node | `q-tool-spreadsheet` |
 | Detect clustered AI-writing indicators, humanize prose, or improve English or Spanish clarity without changing meaning | `q-tool-humanizer` |
 | Produce a traced project report or report deck | `q-report-workflow` |
 | Render an approved report source as Markdown, DOCX, and PDF | `q-report-document` |
@@ -390,9 +396,10 @@ Groups sort the catalog and name the skills: `ask`, `ideation`, `proposal`, `res
 - Do not let evidence review become open investigation, mutate a caller's artifact or confidence, apply scientific hierarchies universally, or present a bounded diagnostic as certification.
 - Do not treat a universal numeric skill grade, line-count target, or pattern taxonomy as package acceptance without target authority and behavioral evidence.
 - Do not let a report renderer own report meaning or treat a rendered channel as upstream truth.
+- Do not let spreadsheet mechanics choose formulas, assumptions, figures, financial conventions, or business meaning, or treat cached formula values or a LibreOffice conversion as proof of Excel fidelity.
 - Do not let an ideation candidate, score, or snapshot become client evidence, a requirement, an ADR, or a commitment without the owning skill's explicit adoption.
 - Do not let Research overwrite client evidence, create a proposal commitment, or start another workflow without an explicit choice.
-- Do not let Market Analysis invent evidence, operate primary fieldwork, process raw survey responses, or let a derived JSON/CSV export become semantic truth.
+- Do not let Market Analysis invent evidence, operate primary fieldwork, process raw survey responses, or let a derived JSON/CSV/XLSX export become semantic truth.
 - Do not let market-research Reporting search or recalculate; require promoted results and typed evidence refs.
 - Do not treat verified source identity, claim support, and completed search coverage as the same state.
 - Do not let a delegated reporting subworkflow write global state or the artifact index.
@@ -406,10 +413,6 @@ A completed workflow stage leaves owned artifacts, traceable IDs, declared autho
 
 ## Planned capabilities
 
-- `q-tool-spreadsheet`
-
-  Future format-mechanics owner for creating, editing, recalculating, rendering, and inspecting XLSX files. Domain owners retain formulas, assumptions, and business meaning.
-
-This entry is a roadmap declaration only: it has no path, folder, invocation surface, dependency edge, or active compatibility claim. Existing owners must use a verified local runtime for a requested spreadsheet format or return an honest partial result or blocker. The active `q-tool-document` and `q-tool-pdf` entries standardize Word-document and PDF mechanics but do not make the planned XLSX capability available.
+No capabilities are currently declared as planned.
 
 Run `python3 skills/scripts/validate-skills-package.py` after any package change.

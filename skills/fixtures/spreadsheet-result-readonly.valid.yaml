@@ -1,0 +1,33 @@
+schema_version: "1.0"
+request_id: spreadsheet-request-003
+outcome: completed_with_warnings
+owner_skill: q-report-source
+generator_skill: q-tool-spreadsheet
+runtime: node
+operation: inspect
+inputs:
+  - /workspace/signed-model.xlsm
+outputs: []
+validation:
+  structural: passed
+  formulas: passed
+  rendered: not-required
+  calculation_engine: null
+  formula_count: 6
+  formula_sha256: abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789
+  formula_error_count: 0
+  missing_cached_values: 2
+  external_formula_count: 0
+  inspected_sheets: [Summary]
+preserved_semantics:
+  - The source package was not modified.
+intentional_changes: []
+capability_gaps:
+  - Macro-enabled workbooks are read-only and cached values are not recalculated.
+warnings:
+  - Two formula cells have no cached value.
+blockers: []
+provenance:
+  source_refs: [artifact:signed-model@1]
+  command: spreadsheet --runtime node inspect
+  tools: [node, exceljs]

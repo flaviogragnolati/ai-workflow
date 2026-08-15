@@ -1,0 +1,37 @@
+schema_version: "1.0"
+request_id: spreadsheet-request-001
+outcome: completed
+owner_skill: q-report-source
+generator_skill: q-tool-spreadsheet
+runtime: python
+operation: recalculate
+inputs:
+  - /workspace/financial-model.xlsx
+outputs:
+  - path: /workspace/financial-model-recalculated.xlsx
+    sha256: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    media_type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    creation_mode: derived
+    semantic_authority: none
+validation:
+  structural: passed
+  formulas: passed
+  rendered: not-required
+  calculation_engine: LibreOffice Calc 26.2
+  formula_count: 18
+  formula_sha256: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+  formula_error_count: 0
+  missing_cached_values: 0
+  external_formula_count: 0
+  inspected_sheets: [Assumptions, Model, Summary]
+preserved_semantics:
+  - Formulas and assumptions are unchanged.
+intentional_changes:
+  - Formula caches were recalculated by LibreOffice Calc 26.2.
+capability_gaps: []
+warnings: []
+blockers: []
+provenance:
+  source_refs: [artifact:financial-model@3]
+  command: spreadsheet --runtime python recalculate
+  tools: [python, openpyxl, soffice]

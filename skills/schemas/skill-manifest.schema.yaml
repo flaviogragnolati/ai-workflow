@@ -5,7 +5,7 @@ required: [schema_version, package, workflows, skills, planned_capabilities]
 additionalProperties: false
 properties:
   schema_version:
-    const: "1.5"
+    const: "1.6"
   package:
     type: object
     required: [id, description, stack_profile, compatibility, human_guide, cross_workflow_contract, validator]
@@ -127,7 +127,7 @@ properties:
         approval_policy: {type: string}
         fallback: {type: string}
         stack_profile: {enum: [project-defined, t3-core, any]}
-        contract_version: {enum: ["1.0", "1.1", "1.2", "2.0"]}
+        contract_version: {enum: ["1.0", "1.1", "1.2", "1.3", "2.0"]}
         distribution: {enum: [public, internal]}
   planned_capabilities:
     type: object
