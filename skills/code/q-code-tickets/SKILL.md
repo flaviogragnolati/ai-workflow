@@ -19,7 +19,7 @@ Obtain explicit authorization before publishing to an external tracker. When no 
 2. Confirm tracker, publication mode, and distribution boundary.
 3. Cut vertical tracer-bullet tickets with explicit dependency edges.
 4. Make each ticket executable cold: objective, context, scope, non-goals, affected areas, guardrails, acceptance criteria, verification, dependencies, and source links. Carry the exact `design_system_ref` version into any interface ticket, because a cold executor cannot infer the design contracts from the ticket alone.
-5. Review coverage and sequencing with the user.
+5. Self-check the set before review: every source requirement and acceptance criterion maps to a ticket, no ticket contains a step a cold executor cannot act on, and names, signatures, paths, and schemas match across tickets. Then review coverage and sequencing with the user.
 6. Publish or write only after the required approval.
 7. Record created ticket IDs back in the originating backlog or plan.
 

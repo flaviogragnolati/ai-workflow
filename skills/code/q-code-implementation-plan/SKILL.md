@@ -16,16 +16,17 @@ Accept a backlog item, issue, ticket, architecture document, specification, or e
 1. Inspect repository instructions, the applicable technical foundation and adopted guidance, the exact `design_system_ref` version for interface work, relevant code, tests, schemas, migrations, and docs.
 2. Lock objective, scope, non-goals, deferred work, and must-not-break behavior.
 3. Choose the implementation approach and strict sequence.
-4. Break work into phases and tasks grounded in exact files, functions, data, and dependencies.
+4. Map the files to create, modify, and test with each file's responsibility, then break work into phases and tasks grounded in that map plus exact functions, data, and dependencies. Take module boundaries from the settled design; do not redesign them here.
 5. Identify pitfalls, compatibility concerns, migrations, observability, security, and rollback.
 6. Define acceptance criteria and proportional verification using commands discovered from the project rather than assumed tooling.
 7. Mark assumptions and blockers honestly.
-8. Write one durable `Working` plan.
+8. Self-review the draft against its source before writing it: every source requirement and acceptance criterion maps to a task; every task is executable cold, so a step the executor cannot act on ("add appropriate error handling", "same as task N", a name no task defines) is a defect to fix, not an open question; and every name, signature, path, and schema a task defines matches what later tasks use.
+9. Write one durable `Working` plan.
 
 When `settled-work-needs-engine-specific-schema-or-migration-sequencing` and `q-tool-database-schema` is installed, use `schema-review` to ground the current relational state, `document-model-review` for a document model, or `migration-design` for the proposed transition. Supply exact repository evidence and the confirmed profile. Incorporate accepted sequencing, validation, recovery, and execution ownership into this plan; keep the specialist analysis transient. If the tool is absent, `continue-with-observed-repository-evidence-and-mark-the-specialist-database-gap`.
 
 ## Required content
 
-Include objective, target outcome, source references, scope, non-goals, deferred work, current system context, approach, assumptions, ordered phases, detailed tasks, cross-cutting concerns, pitfalls, testing, rollout and rollback, documentation, risks, open questions, definition of done, and executor instructions.
+Include objective, target outcome, source references, scope, non-goals, deferred work, current system context, approach, assumptions, file map, ordered phases, detailed tasks naming the contracts they define or consume, cross-cutting concerns, pitfalls, testing, rollout and rollback, documentation, risks, open questions, definition of done, and executor instructions.
 
 This plan is not an implementation diary. It may be baselined, archived, or superseded. If tickets later absorb execution, `q-code-implement` updates the tickets rather than appending a parallel execution log here.

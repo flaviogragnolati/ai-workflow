@@ -17,6 +17,7 @@ imply endorsement by its authors.
 | [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, `q-review-evidence`, `q-tool-web-markdown`, `q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, and `q-tool-spreadsheet` |
 | [anthropics/skills](https://github.com/anthropics/skills) | `q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, and `q-tool-spreadsheet` |
 | [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit) | `q-ideation-session`, `q-tool-humanizer`, `q-review-skill`, `q-tool-c4`, `q-plan-design-system`, `q-tool-marp`, and `q-tool-web-markdown` |
+| [obra/superpowers](https://github.com/obra/superpowers) | `q-code-implementation-plan` and `q-code-tickets` |
 | [marp-team/marp-cli](https://github.com/marp-team/marp-cli) | `q-tool-marp` local runtime dependency |
 | [leonardocouy/web2md](https://github.com/leonardocouy/web2md) | `q-tool-web-markdown` browser-capture behavior reference; not a dependency |
 | [microsoft/markitdown](https://github.com/microsoft/markitdown) | `q-tool-web-markdown` comparative conversion-scope reference; not a dependency |
@@ -287,6 +288,34 @@ Commit consulted: `3027f20f3181758385a1bb8c022d4041dfb4de84`
 MIT License
 
 Copyright (c) 2026 Leonardo Flores
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## Obra / Jesse Vincent reference — MIT License
+
+| Source | Quasar scope and modifications |
+|---|---|
+| [`writing-plans`](https://github.com/obra/superpowers/tree/b36e0829c6d0140e93cfef2ca599b1b07d4a7797/skills/writing-plans) | `skills/code/q-code-implementation-plan/SKILL.md` procedure steps 4 and 8 and its required content, and `skills/code/q-code-tickets/SKILL.md` procedure step 5, at the conceptual level only. Quasar adopted three ideas — a consolidated file map, a self-run coverage / placeholder / name-consistency review before writing the durable record, and exact task contracts instead of implementation code — and rewrote them in its own vocabulary. It did not adopt the source's TDD step granularity, embedded code per step, checkbox tracking, fixed header, plan location, decomposition guidance, or execution handoff menu, which conflict with the package's optional-TDD, no-diary, and single-owner rules. No source text, template, or code was incorporated. |
+
+MIT License
+
+Copyright (c) 2025 Jesse Vincent
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
