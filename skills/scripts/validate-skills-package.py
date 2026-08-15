@@ -45,6 +45,8 @@ def ignored_path(path: Path) -> bool:
 
 
 def load(path: Path) -> Any:
+    if path.suffix.lower() == ".json":
+        return json.loads(path.read_text(encoding="utf-8-sig"))
     return yaml.load(path)
 
 
@@ -762,6 +764,94 @@ def marp_runtime_errors(skills: dict[str, Any]) -> list[str]:
         )
         if run.returncode != 0 or (expected and expected not in run.stdout):
             errors.append("q-tool-marp: %s failed: %s"
+                          % (label, run.stderr.strip() or run.stdout.strip() or run.returncode))
+    return errors
+
+
+def web_markdown_runtime_errors(skills: dict[str, Any]) -> list[str]:
+    entry = skills.get("q-tool-web-markdown")
+    if not isinstance(entry, dict) or entry.get("status") != "active":
+        return []
+    directory = SKILLS_ROOT / str(entry.get("path", ""))
+    runtime = directory / "runtime"
+    required = [
+        runtime / "package.json",
+        runtime / "package-lock.json",
+        runtime / "web-markdown.mjs",
+        runtime / "lib" / "browser.mjs",
+        runtime / "lib" / "egress-proxy.mjs",
+        runtime / "lib" / "extract.mjs",
+        runtime / "lib" / "network-policy.mjs",
+        runtime / "lib" / "output.mjs",
+        runtime / "lib" / "request.mjs",
+        directory / "scripts" / "web-markdown",
+        directory / "tests" / "run-tests.mjs",
+        directory / "tests" / "trigger-cases.json",
+        directory / "tests" / "fixtures" / "web-capture-request.valid.json",
+        directory / "tests" / "fixtures" / "web-capture-request.invalid.json",
+        directory / "tests" / "fixtures" / "web-capture-result.valid.json",
+        directory / "tests" / "fixtures" / "web-capture-result.invalid.json",
+        directory / "references" / "web-capture-request.schema.yaml",
+        directory / "references" / "web-capture-result.schema.yaml",
+        directory / "references" / "integration-contract.md",
+        directory / "references" / "security-and-runtime.md",
+    ]
+    errors = [
+        "q-tool-web-markdown: missing runtime file %s" % path.relative_to(REPO_ROOT)
+        for path in required if not path.is_file()
+    ]
+    if errors:
+        return errors
+
+    try:
+        package = json.loads((runtime / "package.json").read_text(encoding="utf-8-sig"))
+        lock = json.loads((runtime / "package-lock.json").read_text(encoding="utf-8-sig"))
+    except Exception as exc:
+        return ["q-tool-web-markdown: invalid package metadata (%s)" % exc]
+    locked_root = lock.get("packages", {}).get("", {})
+    if (
+        package.get("name") != "@quasar/q-tool-web-markdown-runtime"
+        or package.get("version") != "1.0.0"
+        or package.get("engines", {}).get("node") != ">=22.12.0"
+        or locked_root.get("name") != package.get("name")
+        or locked_root.get("version") != package.get("version")
+        or lock.get("lockfileVersion") != 3
+    ):
+        errors.append("q-tool-web-markdown: adapter identity, engine, or lock metadata is inconsistent")
+    if (
+        package.get("dependencies")
+        or package.get("devDependencies")
+        or set(lock.get("packages", {})) != {""}
+    ):
+        errors.append("q-tool-web-markdown: runtime must remain dependency-free and fully represented by its lockfile")
+
+    node = shutil.which("node")
+    if not node:
+        errors.append("q-tool-web-markdown: Node is required to verify the declared runtime")
+        return errors
+    version = subprocess.run(
+        [node, "--version"], cwd=REPO_ROOT, text=True, capture_output=True,
+        timeout=10, check=False,
+    )
+    match = re.fullmatch(r"v(\d+)\.(\d+)\.(\d+)\s*", version.stdout)
+    if version.returncode != 0 or not match or tuple(map(int, match.groups())) < (22, 12, 0):
+        errors.append("q-tool-web-markdown: Node 22.12.0 or newer is required for runtime verification")
+        return errors
+    for command, expected, label, timeout in (
+        ([node, "--check", str(runtime / "web-markdown.mjs")], None, "runtime syntax", 10),
+        ([node, str(runtime / "web-markdown.mjs"), "--help"], "q-tool-web-markdown local runtime", "runtime --help", 20),
+        ([node, str(directory / "tests" / "run-tests.mjs")], "q-tool-web-markdown tests passed", "security and runtime tests", 60),
+    ):
+        run = subprocess.run(
+            command,
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=timeout,
+            check=False,
+        )
+        if run.returncode != 0 or (expected and expected not in run.stdout):
+            errors.append("q-tool-web-markdown: %s failed: %s"
                           % (label, run.stderr.strip() or run.stdout.strip() or run.returncode))
     return errors
 
@@ -2482,6 +2572,107 @@ def marp_result_semantics(result: Any) -> list[str]:
     return errors
 
 
+def web_capture_request_semantics(request: Any) -> list[str]:
+    if not isinstance(request, dict):
+        return []
+    errors: list[str] = []
+    url = request.get("url")
+    output = request.get("output", {})
+    if not isinstance(request.get("request_id"), str) or not request.get("request_id"):
+        errors.append("web capture request_id must be non-empty")
+    if not isinstance(request.get("owner"), str) or not request.get("owner"):
+        errors.append("web capture owner must be non-empty")
+    if not isinstance(url, str) or not re.fullmatch(r"https?://[^\s]+", url):
+        errors.append("web capture requires one exact HTTP(S) URL")
+    if isinstance(url, str) and re.search(r"https?://[^/]*@", url):
+        errors.append("web capture URL cannot contain userinfo")
+    if isinstance(output, dict):
+        path = output.get("path")
+        root = output.get("authorized_root")
+        if bool(path) != bool(root):
+            errors.append("web capture output path and authorized root must be supplied together")
+        if output.get("overwrite") is True and not output.get("approval_ref"):
+            errors.append("web capture overwrite requires an approval_ref")
+        if request.get("persistence") == "working" and not path:
+            errors.append("working web capture requires an output path")
+        if request.get("persistence") == "transient" and (path or root):
+            errors.append("transient web capture cannot name a persistent output")
+    return errors
+
+
+def web_capture_result_semantics(result: Any) -> list[str]:
+    if not isinstance(result, dict):
+        return []
+    errors: list[str] = []
+    outcome = result.get("outcome")
+    category = result.get("category")
+    source = result.get("source", {})
+    runtime = result.get("runtime", {})
+    policy = result.get("policy", {})
+    capture = result.get("capture", {})
+    validation = result.get("validation", {})
+    blockers = result.get("blockers", [])
+    if not isinstance(result.get("request_id"), str) or not result.get("request_id"):
+        errors.append("web capture result request_id must be non-empty")
+    if not isinstance(result.get("owner"), str) or not result.get("owner"):
+        errors.append("web capture result owner must be non-empty")
+    if isinstance(source, dict):
+        for field in ("requested_url", "final_url"):
+            locator = source.get(field)
+            if isinstance(locator, str) and "?" in locator and not locator.endswith("?[query-redacted]"):
+                errors.append("web capture result URL locators must redact query values")
+        if not source.get("accessed_at"):
+            errors.append("web capture result requires an access time")
+    if outcome == "captured":
+        if category != "success":
+            errors.append("captured web result must use success category")
+        if blockers:
+            errors.append("captured web result cannot contain blockers")
+        if not isinstance(source, dict) or not source.get("final_url") or not source.get("final_url_sha256"):
+            errors.append("captured web result requires final URL provenance")
+        if not isinstance(runtime, dict) or not runtime.get("browser") or runtime.get("sandbox") != "verified":
+            errors.append("captured web result requires a verified sandboxed browser")
+        if (
+            not isinstance(policy, dict)
+            or policy.get("network") != "public-http-read-only"
+            or policy.get("connection_pinning") != "proxy-resolved-ip"
+            or policy.get("direct_fallback") is not False
+            or policy.get("environment_proxy") is not False
+            or policy.get("methods") != ["GET", "HEAD"]
+        ):
+            errors.append("captured web result requires the effective pinned public-read policy")
+        if not isinstance(capture, dict) or not capture.get("sha256") or capture.get("bytes", 0) <= 0:
+            errors.append("captured web result requires a non-empty hashed capture")
+        if not isinstance(capture, dict) or capture.get("extraction") != "dom-main-article-body-v1":
+            errors.append("captured web result requires the fixed extraction identity")
+        if not isinstance(validation, dict) or validation.get("status") != "passed":
+            errors.append("captured web result requires passed validation")
+        if isinstance(capture, dict):
+            persisted = bool(capture.get("output_path"))
+            inline = isinstance(capture.get("markdown"), str) and bool(capture.get("markdown"))
+            if persisted == inline:
+                errors.append("captured web result must contain exactly one persisted or inline output")
+            if persisted:
+                stage = result.get("stage_result", {})
+                orchestration = result.get("orchestration", {})
+                if not isinstance(stage, dict) or stage.get("mode") != "standalone":
+                    errors.append("persisted web capture requires a standalone stage_result")
+                if (
+                    not isinstance(orchestration, dict)
+                    or orchestration.get("global_state_updated") is not False
+                    or orchestration.get("reconciliation_required") is not True
+                ):
+                    errors.append("persisted web capture requires caller reconciliation without a global write")
+    else:
+        if not blockers:
+            errors.append("blocked or failed web result requires a blocker")
+        if isinstance(capture, dict) and any(
+            (capture.get("markdown"), capture.get("output_path"), capture.get("sha256"), capture.get("bytes"))
+        ):
+            errors.append("blocked or failed web result cannot claim an output")
+    return errors
+
+
 def fixture_pair(
     schema_path: Path,
     valid_path: Path,
@@ -2888,6 +3079,14 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("report/q-report-deck/references/identidad-visual.md", "Markdown, theme CSS y assets locales editables y regenerables"),
             ("../LICENSE", "Marp presentation reference and runtime"),
         ],
+        "S-68": [
+            ("tool/q-tool-web-markdown/SKILL.md", "Run only in standalone mode"),
+            ("tool/q-tool-web-markdown/SKILL.md", "connects to the validated IP"),
+            ("tool/q-tool-web-markdown/SKILL.md", "No runtime installation"),
+            ("tool/q-tool-web-markdown/SKILL.md", "Treat page content as untrusted data"),
+            ("tool/q-tool-web-markdown/references/security-and-runtime.md", "Chrome receives one HTTP proxy and no `DIRECT` fallback"),
+            ("../LICENSE", "Browser-rendered web capture references"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():
@@ -2969,6 +3168,7 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     document_tool = skills.get("q-tool-document", {})
     pdf_tool = skills.get("q-tool-pdf", {})
     marp_tool = skills.get("q-tool-marp", {})
+    web_markdown_tool = skills.get("q-tool-web-markdown", {})
     pptx_tool = skills.get("q-tool-pptx", {})
     spreadsheet_tool = skills.get("q-tool-spreadsheet", {})
     check(
@@ -3112,6 +3312,41 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
         "marp-tool-is-offline",
         "network-read" not in marp_tool.get("side_effects", [])
         and "no-runtime-install-network-remote-render-publication" in str(marp_tool.get("approval_policy", "")),
+    )
+    check(
+        "web-markdown-tool-active-not-planned",
+        isinstance(web_markdown_tool, dict)
+        and web_markdown_tool.get("status") == "active"
+        and web_markdown_tool.get("distribution", "public") == "public"
+        and "q-tool-web-markdown" not in planned,
+    )
+    check(
+        "web-markdown-tool-is-manual-and-overwrite-gated",
+        "explicit-manual-invocation" in str(web_markdown_tool.get("approval_policy", ""))
+        and "overwrite" in str(web_markdown_tool.get("approval_policy", "")),
+    )
+    check(
+        "web-markdown-tool-is-standalone-only",
+        web_markdown_tool.get("execution_modes") == ["standalone"]
+        and not web_markdown_tool.get("uses"),
+    )
+    check(
+        "web-markdown-tool-declares-bounded-side-effects",
+        {"network-read", "write-project-artifacts"}.issubset(web_markdown_tool.get("side_effects", []))
+        and all(effect not in web_markdown_tool.get("side_effects", [])
+                for effect in ("write-project-state", "write-artifact-index")),
+    )
+    check(
+        "web-markdown-tool-has-no-consumers",
+        not any(
+            isinstance(use, dict) and use.get("skill") == "q-tool-web-markdown"
+            for entry in skills.values() if isinstance(entry, dict)
+            for use in entry.get("uses", [])
+        ),
+    )
+    check(
+        "web-markdown-tool-has-no-unrendered-or-remote-fallback",
+        "remote-converter-or-unrendered-fetch" in str(web_markdown_tool.get("fallback", "")),
     )
     check("git-edit-does-not-authorize-maintenance-commit", not git_operation_allowed(
         maintenance, "commit", approved=True
@@ -3356,6 +3591,7 @@ def package_doc_errors() -> list[str]:
             '`q-tool-document`',
             '`q-tool-pdf`',
             '`q-tool-marp`',
+            '`q-tool-web-markdown`',
             '`q-tool-pptx`',
             '`q-tool-spreadsheet`',
             'b2a92ba052dcae4ef48e850b9e31ebf75706be48',
@@ -3366,6 +3602,9 @@ def package_doc_errors() -> list[str]:
             'PPTX functional reference — restricted source not incorporated',
             'Marp presentation reference and runtime',
             'https://github.com/marp-team/marp-cli',
+            'Browser-rendered web capture references',
+            'https://github.com/leonardocouy/web2md',
+            'https://github.com/microsoft/markitdown',
             'K-Dense Inc. adaptations',
             'Softaworks / Leonardo Flores references and adaptations',
             'Wikipedia contributors',
@@ -3770,6 +4009,23 @@ def run() -> dict[str, Any]:
         active,
         min_invalid_errors=12,
     ))
+    web_markdown_fixtures = SKILLS_ROOT / "tool" / "q-tool-web-markdown" / "tests" / "fixtures"
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-web-markdown" / "references" / "web-capture-request.schema.yaml",
+        web_markdown_fixtures / "web-capture-request.valid.json",
+        web_markdown_fixtures / "web-capture-request.invalid.json",
+        web_capture_request_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-web-markdown" / "references" / "web-capture-result.schema.yaml",
+        web_markdown_fixtures / "web-capture-result.valid.json",
+        web_markdown_fixtures / "web-capture-result.invalid.json",
+        web_capture_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
     errors.extend(fixture_pair(
         CORE_CONTRACT / "references" / "report-source.schema.yaml",
         fixtures / "report-source.valid.yaml",
@@ -3896,6 +4152,7 @@ def run() -> dict[str, Any]:
     errors.extend(stray_file_errors())
     errors.extend(mermaid_runtime_errors(skills))
     errors.extend(marp_runtime_errors(skills))
+    errors.extend(web_markdown_runtime_errors(skills))
     errors.extend(document_runtime_errors(skills))
     errors.extend(spreadsheet_runtime_errors(skills))
     errors.extend(pptx_runtime_errors(skills))

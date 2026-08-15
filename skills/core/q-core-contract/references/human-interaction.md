@@ -18,6 +18,8 @@ q-tool-mermaid:
 q-tool-marp:
   orchestrated: on-demand
   standalone: on-demand
+q-tool-web-markdown:
+  standalone: on-demand
 q-tool-c4:
   orchestrated: on-demand
   standalone: on-demand

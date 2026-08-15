@@ -18,7 +18,7 @@ The installer copies one skill folder at a time into your project's agent direct
 
 This package remains prerelease. `CHANGELOG.md` records work under `Unreleased`; no stable package version or release tag is established by the current repository state.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 57 are. `skills.sh.json` groups the catalog on the skills.sh repository page as a derived presentation of the manifest `group` field.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 58 are. `skills.sh.json` groups the catalog on the skills.sh repository page as a derived presentation of the manifest `group` field.
 
 ## Philosophy
 
@@ -50,7 +50,7 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `code` | 16 | The development loop: orient, refine, implement, and handle trouble | [code guide](skills/code/README.md) |
 | `review` | 6 | Read-only QA for changes, releases, documentation, evidence, and skills | [review guide](skills/review/README.md) |
 | `report` | 4 | Approved artifacts to a traced report and its rendered channels | [report guide](skills/report/README.md) |
-| `tool` | 9 | Format and diagram mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
+| `tool` | 10 | Format, web-capture, and diagram mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
 | `core` | 1 | The shared governance companion every coordinated skill reads | see [Skill dependencies](#skill-dependencies) |
 | `maint` | 3 | Package maintenance; internal, not distributed | see [Package maintenance](#package-maintenance) |
 
@@ -128,6 +128,7 @@ Use $q-ask-project to answer how this project currently handles tenant isolation
 Use $q-ideation-session to explore options for this decision before committing scope.
 Use $q-review-evidence to audit this vendor benchmark without changing it.
 Use $q-tool-mermaid to create a sequence diagram for this authentication flow and save the source and SVG.
+Use $q-tool-web-markdown with https://example.com/page to capture this JavaScript-rendered public page as derived Markdown.
 Use $q-tool-document to inspect, redline, or validate this DOCX with the available Python or Node backend.
 ```
 
@@ -165,6 +166,7 @@ The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-
 | Diagram source: Mermaid, C4, or Structurizr DSL | Yes when persisted | Supporting for visual representation or model; never canonical domain or architecture meaning |
 | Structurizr JSON with manual layout | Yes when persisted | Supporting only for visual layout; tied to the exact model version and not hand-edited |
 | Standalone Marp Markdown, theme, and local assets | Yes when explicitly persisted | Supporting for slide representation; never canonical narrative, brand, or release meaning |
+| Browser-rendered web capture | Yes when explicitly persisted | None; derived from one exact public URL and access time with redacted runtime, network-policy, and validation provenance |
 | Format-tool transformation, extraction, or render (`q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, `q-tool-spreadsheet`, `q-tool-marp`), and any rendered SVG/PNG/PDF | Yes when explicitly persisted or delivered | None; derived from exact caller-owned sources with runtime and validation provenance |
 | Baselined report source | Yes | Canonical only for reporting selection, narrative, and approved interpretation |
 | Rendered report channels: Markdown, DOCX, PDF, Marp bundle, PPTX | Yes when delivered | None; derived from the baselined report source |
@@ -212,7 +214,7 @@ Ceremony and side effects:
 - Do not create empty folders for planned capabilities.
 - Do not commit or publish through a read-only or unapproved execution mode.
 
-Tool-specific boundaries — Marp, PPTX, spreadsheet, and database — live in the [shared tools guide](skills/tool/README.md).
+Tool-specific boundaries — web capture, Marp, PPTX, spreadsheet, and database — live in the [shared tools guide](skills/tool/README.md).
 
 ## Package maintenance
 

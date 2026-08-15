@@ -14,10 +14,12 @@ imply endorsement by its authors.
 
 | Reference repository | Quasar skills informed or adapted |
 |---|---|
-| [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, `q-review-evidence`, `q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, and `q-tool-spreadsheet` |
+| [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, `q-review-evidence`, `q-tool-web-markdown`, `q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, and `q-tool-spreadsheet` |
 | [anthropics/skills](https://github.com/anthropics/skills) | `q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, and `q-tool-spreadsheet` |
-| [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit) | `q-ideation-session`, `q-tool-humanizer`, `q-review-skill`, `q-tool-c4`, `q-plan-design-system`, and `q-tool-marp` |
+| [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit) | `q-ideation-session`, `q-tool-humanizer`, `q-review-skill`, `q-tool-c4`, `q-plan-design-system`, `q-tool-marp`, and `q-tool-web-markdown` |
 | [marp-team/marp-cli](https://github.com/marp-team/marp-cli) | `q-tool-marp` local runtime dependency |
+| [leonardocouy/web2md](https://github.com/leonardocouy/web2md) | `q-tool-web-markdown` browser-capture behavior reference; not a dependency |
+| [microsoft/markitdown](https://github.com/microsoft/markitdown) | `q-tool-web-markdown` comparative conversion-scope reference; not a dependency |
 
 ## Original Quasar material — MIT License
 
@@ -83,6 +85,33 @@ download or ZIP extraction, accepts no archive input, uses only an already
 installed browser after a real local smoke test, and runs offline. The finding
 still remains a declared dependency risk and must be reassessed when the pin is
 updated.
+
+## Browser-rendered web capture references
+
+The implementation plan for `skills/tool/q-tool-web-markdown` was conceptually
+informed by Softaworks' MIT-licensed
+[`web-to-markdown`](https://github.com/softaworks/agent-toolkit/blob/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/web-to-markdown/SKILL.md)
+skill at commit `3027f20f3181758385a1bb8c022d4041dfb4de84`
+(2026-03-05) and by the public browser-backed behavior of MIT-licensed
+[`leonardocouy/web2md` 1.2.0](https://github.com/leonardocouy/web2md/tree/b0978b5f4c83b87876588e903d3036370dd27ad7).
+Quasar retained only the general idea of manually turning one rendered web page
+into Markdown. No upstream source text, code, dependency, package, browser
+binary, fixture, asset, or output was copied, translated, vendored, or adapted.
+
+K-Dense's
+[`markitdown` skill](https://github.com/K-Dense-AI/scientific-agent-skills/blob/4226ca8052b89b471ab4eedead6e04b0b6aa08ef/skills/markitdown/SKILL.md)
+at commit `4226ca8052b89b471ab4eedead6e04b0b6aa08ef` and Microsoft's
+MIT-licensed [`MarkItDown` 0.1.6](https://github.com/microsoft/markitdown/tree/v0.1.6)
+were consulted only to compare conversion scope and security patterns. Quasar
+did not incorporate their document converters, parsers, cloud or plugin routes,
+scripts, prose, fixtures, or dependencies.
+
+The shipped runtime is original, dependency-free Quasar code. It uses Node's
+standard library to drive an already installed Chrome-family browser through
+the Chrome DevTools Protocol and to enforce a connection-pinning local proxy.
+It neither invokes nor depends on `web2md` or MarkItDown. Original Quasar
+portions remain under the repository MIT license above; the installed browser
+and Node runtime retain their own licenses.
 
 ## Anthropic PDF functional reference — restricted source not incorporated
 
@@ -253,6 +282,7 @@ Commit consulted: `3027f20f3181758385a1bb8c022d4041dfb4de84`
 | [`c4-architecture`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/c4-architecture) | `skills/tool/q-tool-c4/SKILL.md`. The original Quasar implementation was conceptually informed by the source, then verified against official C4 and renderer documentation. No source text, template, or code was incorporated. |
 | [`design-system-starter`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/design-system-starter) | `skills/plan/q-plan-design-system/SKILL.md`. The source motivated the capability; Quasar rewrote it against its own planning, authority, artifact, validation, and lifecycle contracts. No source text, checklist, template, or code was incorporated. |
 | [`marp-slide`](https://github.com/softaworks/agent-toolkit/tree/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/marp-slide) | `skills/tool/q-tool-marp/SKILL.md` and its authoring, syntax, image, theme, runtime, and quality references. Quasar retained general method topics, then independently rewrote them around caller ownership, structured contracts, offline validation, capability-gated local rendering, and reproducible provenance. No source text, code, CSS, template, or asset was incorporated. |
+| [`web-to-markdown`](https://github.com/softaworks/agent-toolkit/blob/3027f20f3181758385a1bb8c022d4041dfb4de84/skills/web-to-markdown/SKILL.md) | `skills/tool/q-tool-web-markdown/SKILL.md` only at the conceptual capability level. Quasar independently designed a manual-only contract, original browser driver and extractor, connection-pinning egress proxy, safe persistence, schemas, fixtures, trigger cases, and tests. No source prose, code, dependency, or asset was incorporated. |
 
 MIT License
 
