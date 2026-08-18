@@ -431,7 +431,7 @@ def routing_digest_body(workflows: dict[str, Any]) -> str:
             continue
         lines.append("%s:" % workflow_id)
         lines.append("  entry_skill: %s" % entry.get("entry_skill"))
-        for key in ("profiles", "content_profiles", "deck_formats", "stages", "planning_stages", "renderers", "current_tools", "delegates"):
+        for key in ("profiles", "content_profiles", "deck_formats", "stages", "planning_stages", "release_stages", "renderers", "current_tools", "delegates"):
             route = entry.get(key)
             if route:
                 lines.append("  %s: [%s]" % (key, ", ".join(route)))
@@ -3160,6 +3160,12 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("tool/q-tool-web-markdown/references/security-and-runtime.md", "Chrome receives one HTTP proxy and no `DIRECT` fallback"),
             ("../LICENSE", "Browser-rendered web capture references"),
         ],
+        "S-69": [
+            ("core/q-core-contract/SKILL.md", "Release engineering"),
+            ("delivery/q-delivery-workflow/SKILL.md", "Route release engineering to"),
+            ("delivery/q-delivery-release/SKILL.md", "possible, partial, or impossible"),
+            ("review/q-review-release/SKILL.md", "never modifies the release candidate"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():
@@ -3756,7 +3762,7 @@ def run() -> dict[str, Any]:
                         errors.append("administrative workflow %s entry_skill %r must be a tool" % (workflow_id, entry_skill))
                 elif entry.get("kind") != "orchestrator":
                     errors.append("workflow %s entry_skill %r is not an orchestrator" % (workflow_id, entry_skill))
-            for route_key in ("stages", "planning_stages", "renderers", "current_tools"):
+            for route_key in ("stages", "planning_stages", "release_stages", "renderers", "current_tools"):
                 route = workflow_entry.get(route_key, [])
                 if not isinstance(route, list):
                     errors.append("workflow %s.%s must be a list" % (workflow_id, route_key))

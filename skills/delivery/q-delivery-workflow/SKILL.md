@@ -1,6 +1,6 @@
 ---
 name: q-delivery-workflow
-description: "Orchestrate Quasar product planning, profile-driven implementation, change-scoped review, integral QA, and delivery. Use to start, resume, route, or validate the full AI coding workflow, execute a named planning stage, coordinate development from a backlog item, or recover project state. Requires the q-core-contract companion."
+description: "Orchestrate Quasar product planning, profile-driven implementation, change-scoped review, release engineering, integral QA, and delivery. Use to start, resume, route, or validate the full AI coding workflow, execute a named planning stage, coordinate development from a backlog item, or recover project state. Requires the q-core-contract companion."
 ---
 
 # AI coding workflow
@@ -72,18 +72,23 @@ For each backlog item the user selects — or confirms from the backlog's next r
 
 Backlog changes discovered during development return to `q-plan-backlog` in `targeted-refinement` or `replan-and-synchronize` mode. When a grill-design result lists a canonical planning artifact under `stale_artifacts` — architecture, features, domain model, technical foundation, or design system — route reconciliation to that owning stage before the affected slice enters implementation; the feature architecture document never replaces the planning version.
 
-## Integral QA and delivery
+## Release, integral QA, and delivery
 
-Run integral QA on a release candidate, not on each diff. Create or update:
+Route release engineering to `q-delivery-release` and integral validation to `q-review-release`; author no release artifact here. Run integral QA on a release candidate, not on each diff.
 
-- `07-release-candidate.yaml`;
-- `07-integral-validation.md`;
-- `08-delivery-manifest.yaml`;
-- `08-release-notes.md` when applicable.
+1. When the backlog front or a milestone marks a releasable increment, route `q-delivery-release` in `form-release-candidate` mode; on user confirmation mark `07-release-candidate.yaml` `Baselined`.
+2. Route `q-review-codebase` over the release candidate scope.
+3. Route `q-delivery-release` in `execute-release` and `coordinate-uat` modes; every environment and operation needs its own explicit approval, and human-executed steps enter the evidence with provenance.
+4. Route `q-review-release` with the release candidate, audit, evidence, and the exact `technical_foundation_ref` and `design_system_ref`; mark `07-integral-validation.md` `Baselined` when it returns.
+5. Decide acceptance: on `ready`, or on `ready_with_accepted_risks` with the user's confirmation of each risk, route `q-delivery-release` in `close-delivery` mode and mark `08-delivery-manifest.yaml` `Released`; on `blocked`, return each finding to its owner through the development loop and form a new release candidate version.
 
-Cover architecture, integrations, critical flows, security, relevant NFRs, migrations, deployment, delivery documentation, adopted technology guidance, and UAT or acceptance when applicable. Use the exact `technical_foundation_ref` reviewed and disclose generic-only or unverified stack coverage. When the release exposes a user interface and `design_system_ref` exists, reconcile its conformance and accessibility evidence inside the standards coverage and report any unvalidated token set or stale referenced version as a gap rather than as conformance. Do not treat `q-review-codebase` alone as acceptance; reconcile all relevant evidence and blockers.
+Do not treat `q-review-codebase` alone as acceptance; the validation reconciles all relevant evidence and blockers, and the acceptance decision is recorded here.
 
 `q-review-docs` is optional. Route to it when the user requests extended documentation QA, when upstream change makes drift likely, or before a baseline or release whose risk warrants a documentation pass. Supply the active artifact IDs or explicit durable scope. Keep its diagnostic transient and unregistered; route any approved remediation to the owning skill and record the implemented change in the applicable workflow changelog or change-control record.
+
+## Incidents and hotfixes
+
+When a defect or incident is reported against a `Released` version, record it as a change-control entry with the impacted release, severity, and decision owner, and keep the released version immutable. Route diagnosis to `q-code-debug`, or `q-code-fix` when the cause is confirmed, scoped to that release's exact commit or tag, then the mini review. Route `q-delivery-release` to form and execute a hotfix release candidate — `release_kind: hotfix`, base the released version — and `q-review-release` at proportional scope; deliver the result as a new version. A rollback is a release operation formed, executed, and evidenced by `q-delivery-release`. Return the root cause to `q-plan-backlog` in `targeted-refinement` mode when the hotfix was a mitigation.
 
 ## Reporting checkpoints
 
@@ -112,6 +117,7 @@ On resume, rebuild context from state, index, baselines, decisions, risks, block
 | 3 | Treating one audit as release acceptance | A clean `q-review-codebase` report is used as the whole delivery gate. | Reconcile tests, UAT, security, deployment, profile freshness, and other applicable evidence. |
 | 4 | Writing a second execution diary | Implementation scratch notes become a durable record beside the selected item or ticket. | Update the original durable execution source and keep coordination transient. |
 | 5 | Loop output outside the state machinery | A grill plan, ticket set, or implementation close is written and the loop moves on without a validated `stage_result`, so the artifact never enters the index. | Treat every loop step as a stage: validate its delta and reconcile it before the next step. |
+| 6 | Executing or accepting a release on inferred approval | A staging approval is read as production approval, or a clean audit becomes the delivery decision. | Obtain per-environment approval, reconcile the validation verdict, and record the acceptance decision. |
 
 ## Completion response
 

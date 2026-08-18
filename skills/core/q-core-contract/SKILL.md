@@ -204,12 +204,18 @@ Treat these as durable when they exist:
 - the selected backlog item;
 - a workflow implementation plan created before execution;
 - tracker or Markdown tickets;
-- release-candidate, integral-validation, delivery-manifest, and release-note artifacts;
+- release-candidate, release-evidence, integral-validation, delivery-manifest, and release-note artifacts, owned by `q-delivery-release` and `q-review-release`;
 - the original issue or explicit execution record when no ticket exists.
 
 Treat the implementer's scratchpad, internal plan, delegation messages, and subagent coordination as transient. `q-code-implement` must update the original durable execution record and must not create a second durable work diary.
 
 Tickets and TDD are optional. Verification proportional to the change and its acceptance criteria is required. After implementation and verification, run a change-scoped technical review and comment/docstring review. Run integral QA later against a release candidate.
+
+## Release engineering
+
+A release candidate names an exact base commit or tag, the included execution records at exact versions, target environments in order, migrations with a reversibility disposition (`possible`, `partial`, or `impossible` with its restore path or forward-fix), configuration and secret names — never values — a rollout and rollback plan, the UAT scope, and the evidence checklist integral validation will reconcile. `q-delivery-release` forms, executes, and closes it; `q-review-release` validates it; the root orchestrator decides acceptance and transitions lifecycles.
+
+Deployment and migration are external effects: each environment and operation needs its own explicit approval, production is never inferred from a lower environment, and a step the agent could not execute is recorded as human-executed evidence with provenance, never as agent evidence. A hotfix or rollback is a new release candidate over the released version; a `Released` version is never edited in place. Release tags, branches, and pushes are Git mutations requested as user actions under the Git operations section.
 
 ## Stack compatibility
 

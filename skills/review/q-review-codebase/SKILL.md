@@ -1,11 +1,11 @@
 ---
 name: q-review-codebase
-description: "Audit a codebase, module, feature, or release candidate against generic engineering standards, the project's versioned technical foundation, repository conventions, and applicable official technology guidance. Use for evidence-based integral quality assessment; not for one diff or for applying fixes. Part of the Quasar AI delivery skills."
+description: "Audit a codebase, module, feature, or release candidate against generic engineering standards, the project's versioned technical foundation, repository conventions, and applicable official technology guidance. Use for an evidence-based quality audit; not for one diff, for applying fixes, or for the release verdict that reconciles this audit with test, deployment, and UAT evidence, which belongs to q-review-release. Part of the Quasar AI delivery skills."
 ---
 
 # Codebase review
 
-Produce a broad, evidence-backed quality audit without changing code. Use `q-review-code` for one diff and `q-review-comments` for comment quality alone.
+Read the `q-core-contract` companion for shared governance; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Produce a broad, evidence-backed quality audit without changing code. Use `q-review-code` for one diff and `q-review-comments` for comment quality alone.
 
 ## Establish review authority
 
@@ -68,4 +68,8 @@ Complete when every retained finding is reproducible and source-backed, every ap
 | 3 | Silencing independent corroboration | Multiple reproducible paths to one defect are collapsed until important breadth disappears. | Deduplicate the finding while retaining materially distinct evidence and affected paths. |
 | 4 | Approving beyond verified coverage | Generic checks are presented as full stack-specific assurance. | State the technology coverage gap and limit the approval to verified evidence. |
 
-This report is supporting quality evidence. Integral acceptance remains an orchestrator decision reconciled with tests, UAT, security, deployment, technical-profile freshness, and other evidence.
+This report is supporting quality evidence. `q-review-release` reconciles it with tests, UAT, security, deployment, technical-profile freshness, and other evidence into the integral validation; the acceptance decision belongs to `q-delivery-workflow` and the user.
+
+## Stage result
+
+Return a valid `stage_result`: the audit in `authored_outputs` with type, path, `Working` lifecycle, `supporting` authority, and its reviewed source IDs; release blockers in `blockers`; risks in `risks_added_or_updated`; generic-only or unverified stack coverage in `warnings`; the applicable owner of the highest-severity finding as `next_recommended_action`. Never author a fix, and never write workflow state or the artifact index. In standalone mode set `global_state_updated: false` and `reconciliation_required: true` and persist the result beside the audit as the contract's standalone-persistence rule requires.

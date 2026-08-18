@@ -20,6 +20,7 @@ workflows:
     status: active
     entry_skill: q-delivery-workflow
     planning_stages: [q-plan-product-core, q-plan-tech-foundation, q-plan-domain-model, q-plan-architecture, q-plan-features, q-plan-design-system, q-plan-backlog]
+    release_stages: [q-delivery-release, q-review-release]
     includes_execution_loop: true
     includes_integral_qa: true
     delegates: [reporting]
@@ -419,6 +420,30 @@ skills:
     contract_version: "1.0"
     distribution: public
 
+  q-review-release:
+    path: review/q-review-release
+    group: review
+    requires: [q-core-contract]
+    uses:
+      - skill: q-review-docs
+        when: release-scope-warrants-documentation-qa-before-acceptance
+        fallback: continue-with-the-delivery-documentation-lens-of-the-codebase-audit-and-record-the-documentation-qa-gap
+    status: active
+    kind: quality
+    workflow: ai-coding
+    stage: integral-qa
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: review-at-boundaries, standalone: review-at-boundaries}
+    persistent_outputs:
+      - {type: integral-validation, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: release-quality}
+    transient_outputs: [validation-notes]
+    side_effects: [write-review-artifact]
+    approval_policy: no-code-change-no-release-execution-and-no-external-publication
+    fallback: blocked-verdict-with-named-evidence-gaps
+    stack_profile: project-defined
+    contract_version: "1.1"
+
   q-review-skill:
     path: review/q-review-skill
     group: review
@@ -459,13 +484,37 @@ skills:
     persistent_outputs:
       - {type: workflow-state, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: workflow-runtime}
       - {type: artifact-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: artifact-inventory}
-      - {type: release-candidate, lifecycle: Baselined, creation_mode: authored, semantic_authority: canonical, authority_scope: release-candidate}
-      - {type: integral-validation, lifecycle: Baselined, creation_mode: authored, semantic_authority: canonical, authority_scope: release-quality}
-      - {type: delivery-manifest, lifecycle: Released, creation_mode: authored, semantic_authority: canonical, authority_scope: delivery}
     transient_outputs: [routing-plan, internal-delegation]
-    side_effects: [write-project-state, write-artifact-index, write-project-artifacts]
-    approval_policy: user-confirms-commercial-impact-priority-and-release
+    side_effects: [write-project-state, write-artifact-index]
+    approval_policy: user-confirms-commercial-impact-priority-release-acceptance-and-hotfix-scope
     fallback: block-on-unresolved-requirement-or-coverage-gap
+    stack_profile: project-defined
+    contract_version: "1.1"
+
+  q-delivery-release:
+    path: delivery/q-delivery-release
+    group: delivery
+    requires: [q-core-contract]
+    uses:
+      - skill: q-tool-database-schema
+        when: release-candidate-includes-a-schema-or-data-migration-with-material-operational-risk
+        fallback: continue-with-the-migration-plan-in-the-implementation-record-and-declare-the-specialist-migration-gap
+    status: active
+    kind: stage
+    workflow: ai-coding
+    stage: release
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
+    persistent_outputs:
+      - {type: release-candidate, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: release-composition}
+      - {type: release-evidence, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: release-execution-evidence}
+      - {type: delivery-manifest, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: delivered-scope}
+      - {type: release-notes, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: release-communication}
+    transient_outputs: [environment-checks, deployment-log-scratch]
+    side_effects: [write-project-artifacts, execute-local-scripts, deploy-to-approved-environment, execute-approved-migration]
+    approval_policy: explicit-approval-per-environment-and-operation-and-production-never-inferred-from-a-lower-environment
+    fallback: record-human-executed-evidence-and-declare-the-execution-capability-gap
     stack_profile: project-defined
     contract_version: "1.1"
 
@@ -650,7 +699,7 @@ skills:
   q-review-codebase:
     path: review/q-review-codebase
     group: review
-    requires: []
+    requires: [q-core-contract]
     uses:
       - skill: q-tool-database-schema
         when: audit-scope-includes-material-database-schema-document-model-migration-or-performance-risk

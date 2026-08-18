@@ -102,6 +102,8 @@ properties:
           items:
             enum:
               - none
+              - deploy-to-approved-environment
+              - execute-approved-migration
               - execute-local-capability-probe
               - execute-local-renderer
               - execute-local-scripts

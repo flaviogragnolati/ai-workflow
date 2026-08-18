@@ -18,7 +18,7 @@ The installer copies one skill folder at a time into your project's agent direct
 
 This package remains prerelease. `CHANGELOG.md` records work under `Unreleased`; no stable package version or release tag is established by the current repository state.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 57 are. `skills.sh.json` groups the catalog on the skills.sh repository page as a derived presentation of the manifest `group` field.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 59 are. `skills.sh.json` groups the catalog on the skills.sh repository page as a derived presentation of the manifest `group` field.
 
 ## Philosophy
 
@@ -45,10 +45,10 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `ideation` | 1 | Optional structured exploration of one decision's option space | below |
 | `proposal` | 5 | Client evidence to discovery brief, canonical proposal, and web/document channels | [proposal guide](skills/proposal/README.md) |
 | `research` | 5 | A named external uncertainty to an approved, cited baseline | [research guide](skills/research/README.md) |
-| `delivery` | 1 | The orchestrator that routes planning, iteration, QA, and delivery | [delivery guide](skills/delivery/README.md) |
+| `delivery` | 2 | The orchestrator that routes planning, iteration, release, QA, and delivery, plus release engineering | [delivery guide](skills/delivery/README.md) |
 | `plan` | 7 | Ordered planning stages from product intent to a validated backlog | [plan guide](skills/plan/README.md) |
 | `code` | 15 | The development loop: orient, refine, implement, and handle trouble | [code guide](skills/code/README.md) |
-| `review` | 6 | QA that never modifies its target: changes, releases, documentation, evidence, and skills | [review guide](skills/review/README.md) |
+| `review` | 7 | QA that never modifies its target: changes, releases, documentation, evidence, and skills | [review guide](skills/review/README.md) |
 | `report` | 4 | Approved artifacts to a traced report and its rendered channels | [report guide](skills/report/README.md) |
 | `tool` | 10 | Format, web-capture, and diagram mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
 | `core` | 1 | The shared governance companion every coordinated skill reads | see [Skill dependencies](#skill-dependencies) |
@@ -84,7 +84,7 @@ flowchart TB
     PLN --> COD
     COD -->|"next backlog item"| COD
     COD --> REV
-    REV --> SHIP["delivery"]
+    REV --> SHIP["delivery<br/>release engineering and manifest"]
     PRO -. "optional checkpoint" .-> REP["report<br/>traced reports and decks"]
     COD -. "optional checkpoint" .-> REP
     SHIP -. "optional" .-> REP
@@ -138,7 +138,7 @@ Every group guide lists all of its skills with a when-to-use table.
 
 `invocable` and `distribution` are independent. `invocable: false` means a skill is a companion rather than a user entry point; `distribution: internal` means it is not offered to consumers. `q-core-contract` is a **public companion**: never invoked directly, always shipped alongside the skills that read it.
 
-`requires` in the manifest lists what a skill cannot work without, exactly, per skill. Two patterns cover most of the catalog: every orchestrator, stage, renderer, shared tool, development-loop skill that authors or updates a durable record, and the ask, ideation, research, prototype, merge-conflict, and evidence capabilities require `q-core-contract`; the remaining standalone code and review helpers require nothing. Five cases need more than that:
+`requires` in the manifest lists what a skill cannot work without, exactly, per skill. Two patterns cover most of the catalog: every orchestrator, stage, renderer, shared tool, development-loop skill that authors or updates a durable record, quality skill that persists an audit or a validation, and the ask, ideation, research, prototype, merge-conflict, and evidence capabilities require `q-core-contract`; the remaining standalone code and review helpers require nothing. Five cases need more than that:
 
 | Skill | Requires | Why |
 |---|---|---|
@@ -177,7 +177,7 @@ The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-
 | Market Analysis | Yes | Supporting for owned methods, assumptions, calculations, scenarios, and promoted published results; subordinate to brief and findings |
 | JSON/CSV/XLSX Market Analysis export | Yes when explicitly persisted | None; derived from exact Market Analysis calculation or published-result refs |
 | Research Baseline | Yes | Canonical only for exact approved research artifact versions and `as_of` |
-| Release candidate, integral validation, delivery manifest | Yes | Canonical for release/delivery scope |
+| Release candidate, release evidence, integral validation, delivery manifest, release notes | Yes | Canonical for release composition, release quality, and delivered scope; evidence supporting; notes derived |
 
 Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient` as defined in the shared contract.
 

@@ -99,3 +99,30 @@ artifacts:
     lifecycle: Working
     version: "0.1"
     source_refs: ["ART-DESIGN-SYSTEM-001@0.1"]
+  - artifact_id: ART-RC-001
+    artifact_type: release-candidate
+    path: docs/development-workflow/release/RC-001/07-release-candidate.yaml
+    owner_workflow: ai-coding
+    owner_skill: q-delivery-release
+    creation_mode: authored
+    semantic_authority: canonical
+    authority_scope: release-composition
+    lifecycle: Working
+    version: "0.1"
+    source_refs: [ART-001]
+  - artifact_id: ART-RELEASE-NOTES-001
+    artifact_type: release-notes
+    path: docs/development-workflow/release/RC-001/08-release-notes.md
+    owner_workflow: ai-coding
+    owner_skill: q-delivery-release
+    creation_mode: derived
+    semantic_authority: none
+    authority_scope: release-communication
+    lifecycle: Working
+    version: "0.1"
+    source_refs: ["ART-RC-001@0.1"]
+    provenance:
+      generator_skill: q-delivery-release
+      renderer: authored-view
+      renderer_version: "fixture"
+      source_sha256: "fixture-release-manifest-sha256"

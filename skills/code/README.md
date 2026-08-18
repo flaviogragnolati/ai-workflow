@@ -32,7 +32,7 @@ flowchart TB
     MC --> IM
     IM --> MR["Mini review<br/>q-review-code + q-review-comments"]
     MR -->|"next item"| SEL
-    MR --> RC["Release candidate<br/>(delivery group)"]
+    MR --> RC["Release candidate<br/>(q-delivery-release, delivery group)"]
 ```
 
 Skip any step whose purpose is already met: orientation when context exists, refinement when the item is execution-ready, tickets for a single executor. Verification proportional to risk is always required; TDD is opt-in.

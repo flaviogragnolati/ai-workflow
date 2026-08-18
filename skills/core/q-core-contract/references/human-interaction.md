@@ -54,10 +54,16 @@ q-review-docs:
 q-review-evidence:
   orchestrated: review-at-boundaries
   standalone: review-at-boundaries
+q-review-release:
+  orchestrated: review-at-boundaries
+  standalone: review-at-boundaries
 q-review-skill:
   standalone: review-at-boundaries
 q-delivery-workflow:
   orchestrated: decision-gated
+q-delivery-release:
+  orchestrated: decision-gated
+  standalone: decision-gated
 q-plan-backlog:
   orchestrated: decision-gated
   standalone: decision-gated
