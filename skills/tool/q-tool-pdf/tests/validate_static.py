@@ -38,6 +38,8 @@ REQUIRED_SKILL_FILES = {
     "references/integration-contract.md",
     "references/node.md",
     "references/operations.md",
+    "references/pdf-request.schema.yaml",
+    "references/pdf-result.schema.yaml",
     "references/python.md",
     "references/runtime-routing.md",
     "references/troubleshooting.md",

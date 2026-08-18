@@ -21,6 +21,8 @@ Never serialize passwords or private field values into the request. Pass secrets
 
 For a generated Proposal or Report PDF, name the exact canonical source version. The renderer remains the owner; this tool must not revise content, branding intent, commitments, report status, or release state to make conversion easier.
 
+Validate the request against [`pdf-request.schema.yaml`](pdf-request.schema.yaml).
+
 Complete the request when the tool can identify one authorized source set, one output target, one runtime policy, every preservation requirement, and the validation evidence the caller needs.
 
 ## Result
@@ -35,6 +37,8 @@ Return one `pdf_result` with:
 - structural and visual validation states, inspected pages, and any unavailable check;
 - preserved semantics, intentional changes, accepted losses, warnings, and blockers;
 - provenance linking the exact source refs and command contract.
+
+Validate the result against [`pdf-result.schema.yaml`](pdf-result.schema.yaml).
 
 Use `completed_with_warnings` only when every required output exists and is usable but a non-required check is unavailable or an accepted limitation remains. Use `blocked` for an unsupported or unauthorized operation, missing required runtime or renderer, structural failure, required visual-validation gap, ambiguous form mapping, semantic-preservation conflict, or missing requested output.
 

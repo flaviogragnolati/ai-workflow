@@ -1,0 +1,25 @@
+schema_version: "1.0"
+request_id: pdf-req-002
+outcome: blocked
+owner_skill: q-report-document
+generator_skill: q-tool-pdf
+runtime: null
+operation: ocr
+page_scope: "1-4"
+inputs: [reports/report.pdf]
+outputs: []
+validation:
+  structural: not-required
+  rendered: unavailable
+  inspected_pages: []
+  unavailable_checks: [rendered-page-inspection]
+preserved_semantics: []
+intentional_changes: []
+accepted_losses: []
+capability_gaps: [ocr-engine-unavailable]
+warnings: []
+blockers: [required-ocr-runtime-unavailable]
+provenance:
+  source_refs: [report-source-002@1]
+  command: scripts/pdf ocr
+  tools: []

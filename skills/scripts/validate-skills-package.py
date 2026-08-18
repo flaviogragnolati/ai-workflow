@@ -876,6 +876,8 @@ def pdf_runtime_errors(skills: dict[str, Any]) -> list[str]:
         directory / "tests" / "smoke_dispatcher.sh",
         directory / "tests" / "smoke_python.sh",
         directory / "tests" / "smoke_node.sh",
+        directory / "references" / "pdf-request.schema.yaml",
+        directory / "references" / "pdf-result.schema.yaml",
     ]
     errors = [
         "q-tool-pdf: missing runtime file %s" % path.relative_to(REPO_ROOT)
@@ -2244,6 +2246,77 @@ def c4_result_semantics(data: Any) -> list[str]:
     return errors
 
 
+def pdf_request_semantics(request: Any) -> list[str]:
+    if not isinstance(request, dict):
+        return []
+    errors: list[str] = []
+    operation = request.get("operation")
+    output = request.get("output", {})
+    validation = request.get("validation", {})
+    caller = request.get("caller", {})
+    security = request.get("security", {})
+    mutating = {
+        "merge", "select", "split", "rotate", "crop", "watermark", "form-fill",
+        "repair", "linearize", "decrypt", "encrypt", "ocr", "create",
+    }
+    directory_outputs = {"split", "render", "extract-images"}
+    if isinstance(output, dict):
+        if output.get("overwrite") is True and not output.get("approval_ref"):
+            errors.append("pdf overwrite requires an approval_ref")
+        if operation in mutating and not output.get("path"):
+            errors.append("pdf mutation requires an output path")
+        if operation in directory_outputs and not output.get("output_dir"):
+            errors.append("pdf directory-producing operation requires an output_dir")
+    if operation == "render" and isinstance(validation, dict) and validation.get("rendered") is not True:
+        errors.append("pdf render requires rendered validation")
+    if isinstance(caller, dict) and caller.get("mode") == "orchestrated":
+        if not caller.get("workflow"):
+            errors.append("orchestrated pdf request requires a caller workflow")
+        for source in request.get("sources", []) if isinstance(request.get("sources"), list) else []:
+            if isinstance(source, dict) and not (source.get("artifact_id") and source.get("version")):
+                errors.append("orchestrated pdf source requires an artifact_id and version")
+    if isinstance(security, dict):
+        for field in security:
+            if "password" in field or "secret_value" in field:
+                errors.append("pdf request must not serialize secret %r" % field)
+    return errors
+
+
+def pdf_result_semantics(result: Any) -> list[str]:
+    if not isinstance(result, dict):
+        return []
+    errors: list[str] = []
+    outcome = result.get("outcome")
+    outputs = result.get("outputs", [])
+    warnings = result.get("warnings", [])
+    blockers = result.get("blockers", [])
+    gaps = result.get("capability_gaps", [])
+    losses = result.get("accepted_losses", [])
+    if outcome in {"completed", "completed_with_warnings"} and blockers:
+        errors.append("non-blocked pdf result cannot contain blockers")
+    if outcome == "completed" and warnings:
+        errors.append("completed pdf result cannot contain warnings")
+    if outcome == "completed" and losses:
+        errors.append("completed pdf result cannot contain accepted losses")
+    if outcome == "completed_with_warnings" and not warnings and not gaps and not losses:
+        errors.append("completed_with_warnings pdf result requires a warning, capability gap, or accepted loss")
+    if outcome == "blocked" and not blockers:
+        errors.append("blocked pdf result requires at least one blocker")
+    output_operations = {
+        "extract-text", "extract-tables", "extract-images", "merge", "select", "split",
+        "rotate", "crop", "watermark", "form-list", "form-fill", "render", "repair",
+        "linearize", "decrypt", "encrypt", "ocr", "create",
+    }
+    if outcome in {"completed", "completed_with_warnings"} and result.get("operation") in output_operations and not outputs:
+        errors.append("completed pdf mutation, extraction, or render requires at least one output")
+    if outcome == "blocked" and result.get("runtime") is None and outputs:
+        errors.append("pdf result blocked before runtime selection cannot contain outputs")
+    for output in outputs if isinstance(outputs, list) else []:
+        if isinstance(output, dict) and (output.get("creation_mode") != "derived" or output.get("semantic_authority") != "none"):
+            errors.append("pdf output %r must be derived with no semantic authority" % output.get("path"))
+    return errors
+
+
 def document_request_semantics(request: Any) -> list[str]:
     if not isinstance(request, dict):
         return []
@@ -3035,8 +3108,8 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("core/q-core-contract/SKILL.md", "Pass one `pdf_request` with exact source refs"),
             ("tool/q-tool-pdf/SKILL.md", "The dispatcher resolves Python or Node"),
             ("tool/q-tool-pdf/SKILL.md", "Never install a runtime or dependency"),
-            ("proposal/q-proposal-document/SKILL.md", "requested-proposal-channel-includes-pdf-generation-inspection-or-validation"),
-            ("report/q-report-document/SKILL.md", "requested-document-channel-includes-pdf-generation-inspection-or-validation"),
+            ("proposal/q-proposal-document/SKILL.md", "requested-proposal-channel-includes-pdf-inspection-or-validation"),
+            ("report/q-report-document/SKILL.md", "requested-document-channel-includes-pdf-inspection-or-validation"),
             ("report/q-report-deck/SKILL.md", "requested-deck-channel-includes-pdf-export-inspection-or-validation"),
             ("../LICENSE", "b2a92ba052dcae4ef48e850b9e31ebf75706be48"),
             ("../LICENSE", "f6656c1256d5a8adfa37db9110046ef20bac644c"),
@@ -3878,6 +3951,30 @@ def run() -> dict[str, Any]:
         fixtures / "c4-result-backend-blocked.valid.yaml",
         fixtures / "c4-result.invalid.yaml",
         c4_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-pdf" / "references" / "pdf-request.schema.yaml",
+        fixtures / "pdf-request.valid.yaml",
+        fixtures / "pdf-request.invalid.yaml",
+        pdf_request_semantics,
+        active,
+        min_invalid_errors=8,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-pdf" / "references" / "pdf-result.schema.yaml",
+        fixtures / "pdf-result.valid.yaml",
+        fixtures / "pdf-result.invalid.yaml",
+        pdf_result_semantics,
+        active,
+        min_invalid_errors=10,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-pdf" / "references" / "pdf-result.schema.yaml",
+        fixtures / "pdf-result-blocked.valid.yaml",
+        fixtures / "pdf-result.invalid.yaml",
+        pdf_result_semantics,
         active,
         min_invalid_errors=10,
     ))

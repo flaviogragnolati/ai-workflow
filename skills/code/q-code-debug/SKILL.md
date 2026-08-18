@@ -22,6 +22,6 @@ Load repository instructions, the current technical foundation when available, a
 
 When `database-performance-failure-has-supplied-query-plan-or-metric-evidence` and `q-tool-database-schema` is installed, pass the sanitized query shape, schema, confirmed profile, plan, metrics, distributions, and environment to `performance-review`. Keep hypothesis testing and every command execution here; the specialist only analyzes supplied evidence. If it is absent, `continue-with-evidence-led-debugging-and-mark-specialist-database-analysis-unavailable`.
 
-Use `q-code-fix` when the cause and correction are already confirmed. Escalate to refinement when the change alters product behavior, architecture, or a cross-module contract.
+Use `q-code-fix` when the cause and correction are already confirmed. When the correction alters product behavior, architecture, or a cross-module contract, the work stops being defect work: record the reclassification in the durable execution record and escalate it as a change request to the grill level that matches its scope (`q-code-grill-simple`, `q-code-grill-feature`, or `q-code-grill-design`).
 
 Do not treat a throwaway reproduction, scratchpad, or internal plan as a durable artifact.

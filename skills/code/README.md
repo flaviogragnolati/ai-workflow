@@ -52,7 +52,7 @@ Skip any step whose purpose is already met: orientation when context exists, ref
 | [`q-code-tdd`](q-code-tdd/SKILL.md) | Running an explicitly chosen red-green loop during implementation. |
 | [`q-code-fix`](q-code-fix/SKILL.md) | Applying a confirmed narrow correction. |
 | [`q-code-debug`](q-code-debug/SKILL.md) | Diagnosing a failure whose cause is unknown, with reproduction first. |
-| [`q-code-merge-conflicts`](q-code-merge-conflicts/SKILL.md) | Resolving an active merge or rebase conflict with operation-scoped Git approval. |
+| [`q-code-merge-conflicts`](q-code-merge-conflicts/SKILL.md) | Resolving an active merge or rebase conflict with operation-scoped Git approval. Standalone-only: the implementer or user invokes it during the loop; the orchestrator does not route to it. |
 | [`q-code-research`](q-code-research/SKILL.md) | Building a cited technical Findings Register from official documentation, specifications, source code, or APIs. |
 | [`q-code-prototype`](q-code-prototype/SKILL.md) | Running a throwaway experiment in an isolated branch and worktree. |
 | [`q-code-explain`](q-code-explain/SKILL.md) | Rephrasing the immediately preceding technical explanation more clearly. |

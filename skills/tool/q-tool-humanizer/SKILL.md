@@ -120,7 +120,7 @@ Detection completes when every retained finding is localizable, contextual, fami
 3. Resolve vague or unsupported language using the locked evidence only. If removing attribution would strengthen the claim, leave the passage unchanged and report the source gap.
 4. Keep quotations and citation targets byte-for-byte unless the caller separately authorizes a source-owned correction. Report every `H9` signal outside the rewritten prose.
 5. Compare the revision against the immutable inventory. Check that no fact appeared, disappeared, changed value, changed polarity, lost a condition, or gained stronger certainty.
-6. If a supplied file is the target, return the revision in conversation by default. Write or overwrite only when the caller has explicitly requested the named path and the current execution permits it; preserve the file's existing format and unrelated content.
+6. If a supplied file is the target, return the revision in conversation by default. Write or overwrite only when the caller has explicitly requested the named path and the current execution permits it; preserve the file's existing format and unrelated content. A file written to a new path is a derived `humanized-text-file` with `semantic_authority: none`; an in-place overwrite of a caller-owned artifact keeps that artifact's type and is reported in `updated_outputs`. The caller registers every delta.
 
 Rewrite completes when all in-scope `H` clusters are removed, retained as intentional, or named as unresolved; the source language and requested voice remain stable; and the change summary records a clean or failed immutable-content check.
 

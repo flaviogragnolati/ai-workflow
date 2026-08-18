@@ -1,0 +1,29 @@
+schema_version: "1.0"
+request_id: pdf-req-001
+outcome: completed
+owner_skill: q-proposal-document
+generator_skill: q-tool-pdf
+runtime: python
+operation: render
+page_scope: all
+inputs: [proposals/proposal.pdf]
+outputs:
+  - path: proposals/.pdf-validation/page-1.png
+    sha256: abc123
+    creation_mode: derived
+    semantic_authority: none
+validation:
+  structural: passed
+  rendered: passed
+  inspected_pages: [1, 2, 3]
+  unavailable_checks: []
+preserved_semantics: [pagination, tables]
+intentional_changes: []
+accepted_losses: []
+capability_gaps: []
+warnings: []
+blockers: []
+provenance:
+  source_refs: [proposal-source-001@3]
+  command: scripts/pdf render
+  tools: [python-3.12, pypdfium2]

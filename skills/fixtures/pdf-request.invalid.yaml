@@ -1,0 +1,24 @@
+schema_version: "2.0"
+request_id: 7
+operation: publish
+caller:
+  skill_id: q-proposal-document
+  mode: background
+owner_skill: q-proposal-document
+sources: wrong
+classification: 4
+page_scope: 12
+intended_result: false
+output:
+  overwrite: yes
+  approval_ref: null
+preservation_requirements: false
+forbidden_semantic_changes: wrong
+runtime: deno
+validation:
+  structural: maybe
+  rendered: false
+security:
+  encryption: false
+  password: hunter2
+unknown: true

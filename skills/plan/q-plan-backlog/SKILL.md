@@ -15,7 +15,7 @@ Create under `docs/development-workflow/backlog/`:
 - `06-backlog-changelog.md`: structural change history;
 - `06-backlog.md` and `06-milestones.md`: derived views with no semantic authority.
 
-The backlog owns milestones, epics, feature assignment, delivery dependencies, checkpoints, proposed priority, readiness, related risks and decisions, and the next recommended front.
+The backlog owns milestones, epics, feature assignment, delivery dependencies, checkpoints, proposed priority, readiness, related risks and decisions, and the next recommended front. It also owns capacity assumptions, target dates, and the delivery roadmap only when the user supplies or approves them; it never estimates effort or invents dates, and without approved dates the derived Gantt view is simply unavailable.
 
 ## Modes
 

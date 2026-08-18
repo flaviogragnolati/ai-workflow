@@ -1,0 +1,26 @@
+schema_version: "1.1"
+request_id: 1
+outcome: success
+owner_skill: q-report-document
+generator_skill: q-tool-document
+runtime: deno
+operation: publish
+page_scope: 3
+inputs: wrong
+outputs:
+  - path: reports/report.pdf
+    creation_mode: authored
+    semantic_authority: canonical
+validation:
+  structural: okay
+  rendered: maybe
+preserved_semantics: wrong
+intentional_changes: wrong
+accepted_losses: wrong
+capability_gaps: wrong
+warnings: wrong
+blockers: wrong
+provenance:
+  source_refs: wrong
+  command: 4
+extra: true

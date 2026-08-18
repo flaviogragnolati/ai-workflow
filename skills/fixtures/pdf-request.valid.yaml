@@ -1,0 +1,38 @@
+schema_version: "1.0"
+request_id: pdf-req-001
+operation: render
+caller:
+  skill_id: q-proposal-document
+  workflow: proposal
+  mode: orchestrated
+owner_skill: q-proposal-document
+owner_workflow: proposal
+sources:
+  - artifact_id: proposal-source-001
+    version: "3"
+    path: proposals/proposal.pdf
+    sha256: null
+classification: released-commercial-deliverable
+page_scope: all
+intended_result: rendered-page-evidence-for-visual-fidelity-review
+output:
+  path: null
+  output_dir: proposals/.pdf-validation
+  overwrite: false
+  approval_ref: null
+  validation_dir: proposals/.pdf-validation
+preservation_requirements: [pagination, tables, fonts, links]
+forbidden_semantic_changes: [new-facts, changed-commitments, changed-prices]
+runtime: auto
+validation:
+  structural: true
+  rendered: true
+  inspected_pages: [1, 2, 3]
+security:
+  encryption: false
+  signatures: false
+  redaction: false
+  flattening: false
+  sensitive_fields: false
+  retention_policy: transient-validation-only
+  secret_env_names: []

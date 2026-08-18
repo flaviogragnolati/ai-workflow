@@ -1,6 +1,6 @@
 ---
 name: q-code-grill-simple
-description: "Run a short alignment for a small, well-contained change and create a reduced durable implementation plan. Use for a component, page, function, or simple flow that needs no more than five material questions; escalate when scope spans modules or architecture. Do not use for a defect report, even one that names the file: route a confirmed cause to q-code-fix and an unconfirmed one to q-code-debug. Part of the Quasar AI delivery skills."
+description: "Run a short alignment for a small, well-contained change and create a reduced durable implementation plan. Use for a component, page, function, or simple flow that needs no more than five material questions; escalate when scope spans modules or architecture. Do not use for a defect report, even one that names the file, unless q-code-fix or q-code-debug already reclassified it as a behavior change: route a confirmed cause to q-code-fix and an unconfirmed one to q-code-debug. Part of the Quasar AI delivery skills."
 ---
 
 # Simple grill

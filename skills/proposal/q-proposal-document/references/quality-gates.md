@@ -50,7 +50,7 @@ Use a verified local document runtime to render and inspect every page. `q-tool-
 
 - Classify mapping as authored/supporting and outputs as derived/none.
 - Record sources, hashes, generator, date, and `do_not_edit`.
-- Return `artifact_index_delta`, `state_delta`, `traceability_delta`, `decision_delta`, and `risk_delta` with `global_state_updated: false` and `reconciliation_required: true`.
+- Return `authored_outputs`, `derived_outputs`, `updated_outputs`, `traceability_delta`, `decisions_added_or_updated`, and `risks_added_or_updated` with `global_state_updated: false` and `reconciliation_required: true`.
 - Let only the root orchestrator reconcile those deltas into the artifact index, workflow state, traceability, decisions, and risks.
 - Mark stale outputs when the source changes.
 - Preserve immutable releases.

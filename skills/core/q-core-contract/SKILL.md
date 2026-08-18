@@ -301,6 +301,8 @@ An owning skill may delegate spreadsheet inspection, extraction, bounded creatio
 
 Keep every persisted spreadsheet output, extraction, conversion, or render derived with `semantic_authority: none` and exact generation provenance. Macro-enabled and template formats (`.xlsm`, `.xltm`, and `.xltx`) are read-only in the current contract; mutating operations require `.xlsx`, CSV, or TSV as explicitly allowed by the selected operation. `q-tool-spreadsheet` may optionally use `q-tool-pdf` only for a transient verification PDF; neither tool acquires the caller's released spreadsheet or source meaning.
 
+If the optional spreadsheet tool is unavailable, use only a separately verified local spreadsheet route or block the affected output and name the exact format, calculation, rendering, or preservation gap. Never treat an active skill entry, a successful ZIP check, a cached formula value, or a LibreOffice conversion as proof of Microsoft Excel calculation or visual fidelity.
+
 ## PPTX delegation
 
 An owning skill may delegate PPTX inspection, extraction, bounded creation and editing, slide selection, rendering, contact-sheet generation, and structural or visual validation to `q-tool-pptx`. The caller retains narrative, claims, numbers, slide purpose and order, visual identity, approved source versions, lifecycle, release decisions, authorized paths, preservation requirements, and every artifact-index delta. Pass one `pptx_request` with exact source refs, presentation type, intended result, slide scope, preservation requirements, forbidden semantic changes, output and overwrite policy, runtime policy, security flags, and required structural and rendered evidence.
@@ -308,8 +310,6 @@ An owning skill may delegate PPTX inspection, extraction, bounded creation and e
 `q-tool-pptx` owns operation-aware selection between verified local Python and Node backends, safe ZIP/package mechanics, atomic distinct-output writes, structural checks, isolated local rendering, rendered inspection, and operation provenance. It never installs dependencies, uses a remote converter, executes macros or embedded content, follows external relationships, chooses or rewrites narrative or presentation meaning, approves a release, publishes, or writes workflow state or the artifact index. A runtime executable without the operation's declared package and native capabilities is not a supported route.
 
 Keep every persisted PPTX output, extraction, or render derived with `semantic_authority: none` and exact generation provenance. `.potx` and `.ppsx` are read-only in the current contract; mutating operations require a separately converted, verified, and distinct `.pptx` working copy. Legacy `.ppt`, macro-bearing `.pptm`, encrypted, protected, signed, malformed, or over-limit packages are unsupported. `q-tool-pptx` may optionally use `q-tool-pdf` only for structure or rendered-page inspection of an already exported validation PDF; neither tool acquires the caller's deck meaning or export ownership. When a required local PPTX route is unavailable, return an honest capability gap and let the owner request explicit partial release.
-
-If the optional spreadsheet tool is unavailable, use only a separately verified local spreadsheet route or block the affected output and name the exact format, calculation, rendering, or preservation gap. Never treat an active skill entry, a successful ZIP check, a cached formula value, or a LibreOffice conversion as proof of Microsoft Excel calculation or visual fidelity.
 
 ## Marp delegation
 
@@ -320,10 +320,6 @@ An owning skill may delegate Marp Markdown validation, theme and asset checks, c
 Keep a standalone Marp Markdown source, newly created theme, and persisted bundle assets authored and supporting for `slide-representation`; keep its renders derived with `semantic_authority: none`. In Reporting, `q-report-deck` owns the Marp Markdown, exact theme CSS, local asset bundle, reproducible render command, and every render as derived presentation artifacts with no semantic authority because `q-report-source` remains the semantic owner. Preserve the source bundle to satisfy Marp-channel editability. Standard Marp PPTX is a valid derived delivery format even though its slide contents are rendered images; when editable PowerPoint objects are required, route to `q-tool-pptx` instead. The experimental `--pptx-editable` route is unsupported.
 
 If a requested browser-backed format is unavailable, return the validated editable source plus the exact capability gap and let the owner request explicit partial release. Never claim a render, note-preservation property, visual check, or release readiness that was not verified.
-
-### Manual DOCX reconciliation
-
-Do not implement partial hashes or editable-field tracking in this version. When a proposal DOCX is edited manually, reintroduce the edited file to `q-proposal-document`, reconcile it with canonical sources, and regenerate affected derivatives.
 
 ## Validation
 

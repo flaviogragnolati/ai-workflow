@@ -72,6 +72,10 @@ skills:
     path: tool/q-tool-mermaid
     group: tool
     requires: [q-core-contract]
+    uses:
+      - skill: q-code-explore
+        when: whole-codebase-discovery-is-needed-before-diagramming
+        fallback: require-a-bounded-evidence-map-or-structured-code-map-from-the-owner-and-report-the-discovery-gap
     status: active
     kind: tool
     workflow: shared
@@ -84,7 +88,7 @@ skills:
       - {type: standalone-mermaid-render, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: presentation}
     transient_outputs: [diagram-request, validation-diagnostic, repair-log, render-preview]
     side_effects: [write-project-artifacts, execute-local-renderer]
-    approval_policy: local-generation-within-authorized-paths-and-explicit-approval-for-overwrite-remote-render-or-publication
+    approval_policy: local-generation-within-authorized-paths-with-explicit-overwrite-approval-and-no-runtime-install-remote-render-or-publication
     fallback: return-source-and-explicit-validation-or-rendering-gap-without-false-success
     stack_profile: any
     contract_version: "1.1"
@@ -159,7 +163,7 @@ skills:
     side_effects: [write-project-artifacts, execute-local-capability-probe, execute-local-renderer]
     approval_policy: local-generation-within-authorized-paths-with-explicit-overwrite-approval-and-no-runtime-install-remote-render-or-publication
     fallback: return-evidence-grounded-c4-model-or-source-and-explicit-backend-validation-or-rendering-gap-without-false-success
-    stack_profile: project-defined
+    stack_profile: any
     contract_version: "1.0"
     distribution: public
 
@@ -194,7 +198,8 @@ skills:
     invocable: true
     execution_modes: [orchestrated, standalone]
     human_interaction: {orchestrated: on-demand, standalone: on-demand}
-    persistent_outputs: []
+    persistent_outputs:
+      - {type: humanized-text-file, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: prose-presentation}
     transient_outputs: [humanization-report, rewritten-text, change-summary]
     side_effects: [write-project-artifacts]
     approval_policy: conversation-output-by-default-with-explicit-authorization-for-writing-or-overwriting-a-named-project-artifact
@@ -684,7 +689,7 @@ skills:
     persistent_outputs: []
     transient_outputs: [standards-review, specification-review]
     side_effects: [none]
-    approval_policy: read-only-unless-user-separately-authorizes-fixes
+    approval_policy: read-only-findings-only-fixes-return-to-the-owning-skill
     fallback: sequential-two-axis-review
     stack_profile: project-defined
     contract_version: "1.0"
@@ -864,7 +869,7 @@ skills:
     transient_outputs: [planning-notes]
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-scope-and-sequencing
-    fallback: return-to-q-code-grill-design
+    fallback: return-to-q-code-grill-design-or-q-code-grill-feature
     stack_profile: project-defined
     contract_version: "1.0"
 
@@ -1061,7 +1066,7 @@ skills:
     persistent_outputs: []
     transient_outputs: [comment-review]
     side_effects: [none]
-    approval_policy: read-only-unless-user-separately-authorizes-fixes
+    approval_policy: read-only-findings-only-fixes-return-to-the-owning-skill
     fallback: workspace-copy-is-source-of-truth
     stack_profile: any
     contract_version: "1.0"
@@ -1237,7 +1242,7 @@ skills:
         when: requested-proposal-docx-mechanics-need-inspection-editing-comment-redline-conversion-or-validation
         fallback: use-only-a-separately-verified-local-document-route-or-block-the-docx-and-require-explicit-partial-release
       - skill: q-tool-pdf
-        when: requested-proposal-channel-includes-pdf-generation-inspection-or-validation
+        when: requested-proposal-channel-includes-pdf-inspection-or-validation
         fallback: use-only-a-separately-verified-local-pdf-route-or-block-the-pdf-and-require-explicit-partial-release
     status: active
     kind: stage
@@ -1403,7 +1408,7 @@ skills:
         when: requested-report-docx-mechanics-need-creation-inspection-editing-comment-redline-conversion-or-validation
         fallback: use-only-a-separately-verified-local-document-route-or-block-the-docx-and-require-explicit-partial-release
       - skill: q-tool-pdf
-        when: requested-document-channel-includes-pdf-generation-inspection-or-validation
+        when: requested-document-channel-includes-pdf-inspection-or-validation
         fallback: use-only-a-separately-verified-local-pdf-route-or-block-the-pdf-and-require-explicit-partial-release
       - skill: q-tool-c4
         when: approved-document-visual-intent-references-an-exact-c4-source-or-view

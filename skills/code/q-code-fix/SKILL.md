@@ -11,11 +11,11 @@ Load the repository's instructions, applicable technical foundation, and actual 
 
 1. Confirm the reported cause in the real code.
 2. Map the blast radius and must-not-break behavior.
-3. Stop if the correction crosses modules, changes a contract, or requires product or architecture decisions.
+3. Stop if the correction crosses modules, changes a contract, or requires product or architecture decisions; see the reclassification rule below.
 4. Apply the smallest complete fix.
 5. Add or update regression coverage.
 6. Run focused tests and other proportional checks discovered from project configuration.
 7. Run the required mini review.
 8. Update the original durable execution record.
 
-Do not use this path to hide a feature or design change. Use `q-code-debug` when the cause is uncertain. Keep internal notes transient.
+Do not use this path to hide a feature or design change. Use `q-code-debug` when the cause is uncertain. Keep internal notes transient. A correction that alters product behavior, architecture, or a cross-module contract is reclassified as a change: record that in the durable execution record and escalate it to the grill level that matches its scope.

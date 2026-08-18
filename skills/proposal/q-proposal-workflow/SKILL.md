@@ -83,7 +83,7 @@ When a DOCX is edited manually, reintroduce it through `q-proposal-document` for
 |---|---|---|---|
 | 1 | Performing stage substance here | The orchestrator rewrites discovery evidence or proposal terms instead of routing their owners. | Delegate the named stage and reconcile its validated delta. |
 | 2 | Letting external research override the client | A Research Baseline silently replaces contrary client evidence or accepted commercial meaning. | Keep research supporting and route any proposed meaning change through Discovery or Proposal Design. |
-| 3 | Auto-adopting a returned snapshot | A Research Baseline or ideation snapshot becomes proposal input because the delegated work finished. | Obtain and record one explicit adoption, retention, deferral, or rejection disposition. |
+| 3 | Auto-adopting a returned snapshot | A Research Baseline or ideation snapshot becomes proposal input because the delegated work finished. | Obtain and record one explicit disposition: adoption, retention, or deferral for a Research Baseline; adoption, retention, deferral, or rejection for an ideation snapshot. |
 | 4 | Treating a channel as the proposal owner | A web or document edit becomes the new commercial source. | Return semantic edits to `q-proposal-design` and regenerate the channel. |
 
 ## Completion

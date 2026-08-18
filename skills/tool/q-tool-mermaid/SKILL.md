@@ -43,7 +43,7 @@ Read [diagram selection](references/diagram-selection.md) when the type is not e
 - [architecture](references/types/architecture.md) for deployment and service topology;
 - [Gantt](references/types/gantt.md) for approved schedules or derived delivery views.
 
-Read [code to diagram](references/code-to-diagram.md) only for a small supplied snippet or a structured map returned by a code owner. For a whole codebase, delegate discovery to `q-code-explore` or the applicable planning/design owner before diagramming.
+Read [code to diagram](references/code-to-diagram.md) only for a small supplied snippet or a structured map returned by a code owner. When `whole-codebase-discovery-is-needed-before-diagramming` and `q-code-explore` is installed, delegate discovery to it or to the applicable planning/design owner before diagramming. If it is absent, `require-a-bounded-evidence-map-or-structured-code-map-from-the-owner-and-report-the-discovery-gap`.
 
 Author stable IDs, explicit relationship labels, `accTitle`, and `accDescr` when the grammar supports them. Keep each diagram focused and preserve all approved source identifiers that matter for review. Read [authoring quality](references/authoring-quality.md), [accessibility](references/accessibility.md), or [complexity and layout](references/complexity-and-layout.md) only when that concern is active.
 

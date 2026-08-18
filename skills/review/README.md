@@ -1,6 +1,6 @@
 # Review and QA guide
 
-The `review` group holds six read-only quality capabilities. Each returns findings, a diagnostic, or an audit for its exact scope. None silently fixes what it finds, owns acceptance, or writes workflow state or the artifact index.
+The `review` group holds six quality capabilities that never modify their target. Each returns findings, a diagnostic, or an audit for its exact scope; only `q-review-codebase` persists its audit as an authored, supporting artifact. None silently fixes what it finds, owns acceptance, or writes workflow state or the artifact index.
 
 This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.yaml) is the registry; each `SKILL.md` owns its procedure.
 
