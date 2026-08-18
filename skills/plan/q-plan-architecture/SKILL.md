@@ -46,6 +46,6 @@ Treat the returned analysis as transient advice. Reconcile accepted ownership, c
 
 ## Gate
 
-Complete when the architecture can guide module ownership and implementation without hidden critical decisions and every applied technology rule resolves to the referenced technical foundation version. Return to product, technical, or domain stages when an upstream contradiction is found; never edit their owned artifacts directly.
+Complete when the architecture can guide module ownership and implementation without hidden critical decisions and every applied technology rule resolves to the referenced technical foundation version. Return to product, technical, or domain stages when an upstream contradiction is found; never edit their owned artifacts directly. When a downstream refinement or implementation marks an owned artifact stale, reconcile here by creating a new version — never rewrite a `Baselined` version in place — and record the driving change as an ADR.
 
 Return a valid `stage_result`; only the orchestrator reconciles state and index.

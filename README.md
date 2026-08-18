@@ -47,7 +47,7 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `research` | 5 | A named external uncertainty to an approved, cited baseline | [research guide](skills/research/README.md) |
 | `delivery` | 1 | The orchestrator that routes planning, iteration, QA, and delivery | [delivery guide](skills/delivery/README.md) |
 | `plan` | 7 | Ordered planning stages from product intent to a validated backlog | [plan guide](skills/plan/README.md) |
-| `code` | 16 | The development loop: orient, refine, implement, and handle trouble | [code guide](skills/code/README.md) |
+| `code` | 15 | The development loop: orient, refine, implement, and handle trouble | [code guide](skills/code/README.md) |
 | `review` | 6 | QA that never modifies its target: changes, releases, documentation, evidence, and skills | [review guide](skills/review/README.md) |
 | `report` | 4 | Approved artifacts to a traced report and its rendered channels | [report guide](skills/report/README.md) |
 | `tool` | 10 | Format, web-capture, and diagram mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |

@@ -39,9 +39,9 @@ Stage 6 closes initial app-flow only when the high-level backlog contains milest
 
 ## Exploration and orientation
 
-Route to `q-code-explore` when the user asks for a high-level understanding of a codebase, module, feature, or document, or when a specific question requires repository-grounded orientation before another stage. Supply the current target and question as its lens. Treat its summary as transient context: do not register it as an artifact, use it as stage-completion evidence, or run it as routine ceremony when the needed context is already available.
+Route to `q-code-explore` when the user asks for a high-level understanding of a codebase, module, feature, or document, for a map exactly one abstraction level above a named code location, or when a specific question requires repository-grounded orientation before another stage. Supply the current target and question as its lens. Treat its summary as transient context: do not register it as an artifact, use it as stage-completion evidence, or run it as routine ceremony when the needed context is already available.
 
-Use `q-code-zoom-out` instead for a map exactly one abstraction level above current code, `q-code-research` for bounded technical questions and a durable Findings Register that follows the shared cited-findings contract, and `q-review-codebase` for a formal quality audit. Technical research may return an orchestrated delta, but it does not run the engagement-research workflow or open Proposal.
+Use `q-code-research` for bounded technical questions and a durable Findings Register that follows the shared cited-findings contract, and `q-review-codebase` for a formal quality audit. Technical research may return an orchestrated delta, but it does not run the engagement-research workflow or open Proposal.
 
 When `user-requests-standalone-database-schema-migration-or-performance-analysis` and `q-tool-database-schema` is installed, route the bounded read-only request to it without changing active stage ownership. Route domain meaning to `q-plan-domain-model`, stack selection to `q-plan-tech-foundation`, durable physical decisions to `q-plan-architecture`, execution to implementation or debugging, and audit findings to the applicable review owner. If the tool is absent, `route-to-the-current-domain-architecture-refinement-debug-or-review-owner-with-database-capability-gap`.
 
@@ -69,7 +69,7 @@ For each selected backlog item:
 9. Correct failures and update the original durable record: ticket when present, otherwise the selected backlog item, issue, or explicit plan. Route any newly required technology selection back to `q-plan-tech-foundation`.
 10. Integrate or continue. Do not create a parallel durable implementation diary.
 
-Backlog changes discovered during development return to `q-plan-backlog` in `targeted-refinement` or `replan-and-synchronize` mode.
+Backlog changes discovered during development return to `q-plan-backlog` in `targeted-refinement` or `replan-and-synchronize` mode. When a grill-design result lists a canonical planning artifact under `stale_artifacts` — architecture, features, domain model, technical foundation, or design system — route reconciliation to that owning stage before the affected slice enters implementation; the feature architecture document never replaces the planning version.
 
 ## Integral QA and delivery
 

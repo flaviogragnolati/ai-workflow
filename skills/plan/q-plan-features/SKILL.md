@@ -50,7 +50,7 @@ When `approved-container-scope-benefits-from-a-c4-component-view` and `q-tool-c4
 
 ## Gate
 
-Complete when modules and features are sufficiently defined for backlog planning to create milestones and epics. No delivery milestone or canonical epic may be introduced here.
+Complete when modules and features are sufficiently defined for backlog planning to create milestones and epics. No delivery milestone or canonical epic may be introduced here. When a downstream refinement or implementation marks the module map or a feature specification stale, reconcile here by creating a new version — never rewrite a `Baselined` version in place.
 
 When the product has a durable visual interface, the recorded surfaces and states are also the input the conditional `q-plan-design-system` stage derives its inventory from. Record them; do not resolve them into a component catalogue.
 

@@ -9,7 +9,7 @@ Own the presentation plan, narrative, brand, release, and source traceability he
 
 ## Authority and inputs
 
-When running as a reporting channel, require one schema-valid, `Baselined` report source and consume the same version used by every requested channel. In broader standalone use, consume only approved or baselined sources. An explicitly marked draft may be used for planning, but not for a released PPTX or PDF. Record source IDs, versions, and authority. Do not turn a chart, summary, simulation, or speaker note into a new upstream commitment.
+When running as a reporting channel, require one schema-valid, `Baselined` report source and consume the same version used by every requested channel. In broader standalone use, consume only approved or baselined sources. An explicitly marked draft may be used for planning, but not for a released PPTX or PDF. Record source IDs, versions, and authority. Do not turn a chart, summary, simulation, or speaker note into a new upstream commitment. A proposal deck is this same channel over the exact approved proposal source version delegated by `q-proposal-workflow`; it never becomes a proposal channel or a commercial release, and its semantic edits return to `q-proposal-design`.
 
 The presentation plan is authored and supporting. The Marp Markdown, exact theme CSS, local assets, HTML, PPTX, PDF, and image outputs are presentation artifacts derived from approved report meaning with `semantic_authority: none`. Preserve Markdown, CSS, assets, render command, hashes, and versions as the editable and regenerable Marp source bundle.
 

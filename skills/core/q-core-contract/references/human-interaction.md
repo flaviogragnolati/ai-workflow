@@ -147,8 +147,6 @@ q-maint-writing-for-agents:
   internal: none
 q-maint-skill-quality:
   internal: none
-q-code-zoom-out:
-  standalone: on-demand
 q-proposal-design:
   orchestrated: decision-gated
   standalone: decision-gated

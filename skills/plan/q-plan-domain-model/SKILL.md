@@ -48,6 +48,6 @@ Reconcile accepted feedback about identity, cardinality, ownership, invariants, 
 
 ## Gate
 
-Complete when every critical concept has a definition and owner, important relationships and invariants are textual, data authority is explicit, and diagrams match the narrative. A physical schema is not an exit criterion. Block on contradictions that would invalidate architecture, not on unresolved index or DDL syntax.
+Complete when every critical concept has a definition and owner, important relationships and invariants are textual, data authority is explicit, and diagrams match the narrative. A physical schema is not an exit criterion. Block on contradictions that would invalidate architecture, not on unresolved index or DDL syntax. When a downstream refinement or implementation marks the domain model or dictionary stale, reconcile here by creating a new version — never rewrite a `Baselined` version in place.
 
 Return a valid `stage_result`; standalone execution requires later orchestration reconciliation.

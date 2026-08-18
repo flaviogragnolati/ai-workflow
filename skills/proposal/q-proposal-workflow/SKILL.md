@@ -71,6 +71,8 @@ At an approved proposal, commercial-close, consulting, or other reporting checkp
 
 Remain the global state writer and reconcile the composite reporting delta after it returns. Reporting is optional and does not determine discovery or proposal completion. After commercial close, reporting may instead run as the next root workflow.
 
+A presentation deck of an approved proposal is produced through this same reporting delegation — report type `executive` or `custom` over the exact approved `02-proposal-source.yaml` version — never as a proposal channel: the deck is derived with no commercial authority, does not enter the commercial release, and its semantic edits return to `q-proposal-design`.
+
 ## Change control and manual edits
 
 Keep accepted commercial releases immutable. Use change requests for subsequent scope, price, schedule, or commitment changes.

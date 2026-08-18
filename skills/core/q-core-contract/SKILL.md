@@ -189,6 +189,8 @@ When new information affects an accepted or baselined upstream artifact:
 4. Obtain the approval required by the manifest before changing priority, scope, price, schedule, or another commitment.
 5. Regenerate derived outputs from the corrected canonical source.
 
+A downstream stage or development-loop refinement that finds a contradiction with, or an accepted change to, a canonical planning artifact reports it, marks the referenced version stale, and routes reconciliation to the owning stage; it never edits that artifact or authors a competing canonical statement of the same meaning. An artifact canonical for a narrower scope — a feature architecture document, an implementation plan — yields to the current planning version it references.
+
 A gate may return work to the owning stage. Record the return in state, a decision/risk register, or a change request. Diagrams may show this with one shared feedback note instead of one arrow per gate.
 
 ## Durable and transient development records

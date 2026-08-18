@@ -39,7 +39,7 @@ Read [diagram selection](references/diagram-selection.md) when the type is not e
 - [ER](references/types/er.md) for approved entities and cardinalities;
 - [state](references/types/state.md) for approved lifecycles and transitions;
 - [class](references/types/class.md) for types and static relationships;
-- [C4](references/types/c4.md) for software context and container views;
+- [C4](references/types/c4.md) for a software context or container view whose elements are already fixed by the owner or by `q-tool-c4`;
 - [architecture](references/types/architecture.md) for deployment and service topology;
 - [Gantt](references/types/gantt.md) for approved schedules or derived delivery views.
 
@@ -80,4 +80,4 @@ Complete the operation when requested artifacts and checks are evidenced, author
 
 ## Boundaries
 
-Use a project owner to decide business or technical meaning, a report or proposal renderer to decide channel layout and brand, a data-visualization tool for quantitative charts, and the editor's Mermaid preview for interactive viewing. This skill does not create full design documents, explore entire repositories, use `mermaid.ink`, publish assets, or mutate global workflow records.
+Use a project owner to decide business or technical meaning, a report or proposal renderer to decide channel layout and brand, a data-visualization tool for quantitative charts, and the editor's Mermaid preview for interactive viewing. This skill does not create full design documents, explore entire repositories, use `mermaid.ink`, publish assets, or mutate global workflow records. C4 *modeling* — choosing levels or views, keeping several views consistent, deciding element identity, or selecting a C4 backend — belongs to `q-tool-c4`; this skill only encodes and renders a C4 view that an owner or `q-tool-c4` has already fixed, and `q-tool-c4` delegates that encoding back here.

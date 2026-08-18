@@ -11,7 +11,13 @@ This is the deepest refinement level: `q-code-grill-design > q-code-grill-featur
 
 Use this skill when work changes boundaries, domain concepts, major interfaces, operational architecture, security model, or rollout strategy across modules. De-escalate when the work is bounded.
 
-Create a durable `Working` architecture document under `docs/architecture/features/` plus necessary ADRs. Do not create a low-level implementation plan or execution log.
+Create a durable `Working` architecture document at `docs/development-workflow/architecture/features/<feature-slug>.md` plus necessary ADRs in the same ADR location `q-plan-architecture` uses under `docs/development-workflow/architecture/`, continuing that ADR numbering and naming this document as the ADR source. Do not create a low-level implementation plan or execution log.
+
+## Precedence and return to planning
+
+This document is canonical only for `feature-architecture`: the architecture of this change. It yields to the current planning versions it cites — architecture narrative and ADRs (`q-plan-architecture`), module map and feature specifications (`q-plan-features`), domain model and dictionary (`q-plan-domain-model`), technical foundation (`q-plan-tech-foundation`), and design system (`q-plan-design-system`).
+
+When the accepted design contradicts or changes one of them, do not restate the new meaning as canonical here. Record the affected artifact ID and version and the proposed change in this document's decisions section, list that artifact under `stale_artifacts` in the returned delta, and let the orchestrator route reconciliation to the owning stage; the affected slice does not enter implementation until the owner's new version exists. In standalone use, report the same contradiction to the user as pending reconciliation.
 
 ## Procedure
 

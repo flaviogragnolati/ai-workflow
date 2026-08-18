@@ -23,7 +23,7 @@ flowchart LR
 | [`q-report-workflow`](q-report-workflow/SKILL.md) | Routing a progress, feature, milestone, release, completion, consulting, executive, or custom report from explicit artifact IDs and versions. `content_profile: general` or `market-research` selects the semantic source pattern. |
 | [`q-report-source`](q-report-source/SKILL.md) | Synthesizing the approved source bundle into one reporting narrative before any rendering. Canonical only for selection, narrative, and approved interpretation. |
 | [`q-report-document`](q-report-document/SKILL.md) | Rendering a baselined report source as Markdown, DOCX, and PDF. |
-| [`q-report-deck`](q-report-deck/SKILL.md) | Rendering a baselined report source, or a standalone Quasar presentation, as an editable Marp bundle, HTML, images, PPTX, or PDF. |
+| [`q-report-deck`](q-report-deck/SKILL.md) | Rendering a baselined report source, or a standalone Quasar presentation — including a proposal deck delegated by the proposal workflow — as an editable Marp bundle, HTML, images, PPTX, or PDF. |
 
 ## Delegation and ownership
 

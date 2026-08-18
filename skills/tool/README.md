@@ -43,6 +43,7 @@ A tool never installs a runtime silently, never reaches a remote converter, and 
 
 - Invoke `q-tool-web-markdown` only by its exact name with one exact public URL. It does not auto-trigger from links, authenticate, crawl, bypass controls, summarize, judge evidence, or give its Markdown semantic authority.
 - Do not use `q-tool-marp` to decide report narrative, brand, slide purpose, release, or publication, and do not describe a standard Marp PPTX as object-editable.
+- `q-tool-mermaid` encodes a C4 view only after `q-tool-c4` or the owner has fixed it; C4 modeling, view selection, cross-view consistency, and backend choice belong to `q-tool-c4`.
 - Do not use `q-tool-pptx` to decide a deck's narrative, claims, brand, slide purpose, release, or publication; route those decisions to the owning renderer or upstream content owner.
 - Do not let spreadsheet mechanics choose formulas, assumptions, figures, financial conventions, or business meaning, or treat cached formula values or a LibreOffice conversion as proof of Excel fidelity.
 - Do not let transient database candidates choose the engine, overwrite semantic or architecture owners, or execute database commands.

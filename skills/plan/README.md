@@ -20,7 +20,7 @@ flowchart TB
     S4 -. "later evidence invalidates<br/>a technical choice" .-> S2
 ```
 
-Stage 5b is conditional and does not shift the other stage numbers. Any later stage that contradicts an upstream artifact reports the contradiction and routes reconciliation to the owner instead of editing it.
+Stage 5b is conditional and does not shift the other stage numbers. Any later stage or development-loop refinement that contradicts an upstream artifact reports the contradiction and routes reconciliation to the owner, which reconciles by creating a new version instead of editing the baselined one.
 
 ## When to use each skill
 

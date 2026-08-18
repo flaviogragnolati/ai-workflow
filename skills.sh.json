@@ -78,10 +78,9 @@
     },
     {
       "title": "Understand a codebase",
-      "description": "Orient in unfamiliar code before changing it: locate the relevant surface, map one abstraction level up, explain behavior, and research external ground truth.",
+      "description": "Orient in unfamiliar code before changing it: locate the relevant surface, zoom out one level, explain behavior, and research external ground truth.",
       "skills": [
         "q-code-explore",
-        "q-code-zoom-out",
         "q-code-explain",
         "q-code-research",
         "q-review-codebase"

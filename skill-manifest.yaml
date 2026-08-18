@@ -802,7 +802,7 @@ skills:
     execution_modes: [orchestrated, standalone]
     human_interaction: {orchestrated: dialogue-led, standalone: dialogue-led}
     persistent_outputs:
-      - {type: feature-implementation-plan, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: feature-execution}
+      - {type: implementation-plan, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: planned-execution}
     transient_outputs: [interview-notes]
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-feature-scope-and-approach
@@ -1188,29 +1188,6 @@ skills:
     stack_profile: any
     contract_version: "1.0"
     distribution: internal
-
-  q-code-zoom-out:
-    path: code/q-code-zoom-out
-    group: code
-    requires: []
-    uses:
-      - skill: q-tool-mermaid
-        when: user-requests-a-transient-higher-level-module-map
-        fallback: return-the-textual-module-map-and-state-the-visual-capability-gap
-    status: active
-    kind: tool
-    workflow: shared
-    stage: null
-    invocable: true
-    execution_modes: [standalone]
-    human_interaction: {standalone: on-demand}
-    persistent_outputs: []
-    transient_outputs: [module-map-explanation]
-    side_effects: [none]
-    approval_policy: read-only
-    fallback: textual-call-map
-    stack_profile: any
-    contract_version: "1.0"
 
   q-proposal-design:
     path: proposal/q-proposal-design

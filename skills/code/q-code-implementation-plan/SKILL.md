@@ -1,11 +1,11 @@
 ---
 name: q-code-implementation-plan
-description: "Produce a concrete, repository-grounded execution plan for settled work without writing code. Use to plan a feature, refactor, migration, integration, or fix after direction is known, with ordered file-level steps, acceptance criteria, testing, rollout, and rollback. Part of the Quasar AI delivery skills."
+description: "Produce a concrete, repository-grounded execution plan for settled work without writing code. Use to plan a feature, refactor, migration, integration, or fix after direction is known — behavior, scope, and integration already decided — with ordered file-level steps, acceptance criteria, testing, rollout, and rollback; when material behavior or scope questions are still open, use q-code-grill-feature for bounded work or q-code-grill-design for cross-cutting work instead. Part of the Quasar AI delivery skills."
 ---
 
 # Implementation plan
 
-Use this skill when architecture and product direction are settled. Return to `q-code-grill-design` or `q-code-grill-feature` when material design decisions remain.
+Use this skill when architecture and product direction are settled and no material behavior, scope, or integration question is open. Return to `q-code-grill-design` or `q-code-grill-feature` when material design or alignment decisions remain. A grill that ends in a plan writes this same `implementation-plan` artifact; do not write a second plan for the same item.
 
 ## Inputs
 

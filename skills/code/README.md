@@ -9,7 +9,7 @@ This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.
 ```mermaid
 flowchart TB
     SEL["Selected backlog item,<br/>issue, or ticket"] --> OR{"Context available?"}
-    OR -->|"no"| EX["q-code-explore<br/>or q-code-zoom-out"]
+    OR -->|"no"| EX["q-code-explore"]
     OR -->|"yes"| RF{"Refinement needed?"}
     EX --> RF
     RF -->|"small change"| G1["q-code-grill-simple"]
@@ -41,12 +41,11 @@ Skip any step whose purpose is already met: orientation when context exists, ref
 
 | Skill | Use it when |
 |---|---|
-| [`q-code-explore`](q-code-explore/SKILL.md) | Orienting in unfamiliar code with evidence-grounded findings before planning, implementing, reviewing, or explaining. |
-| [`q-code-zoom-out`](q-code-zoom-out/SKILL.md) | Mapping one abstraction level above the current code. |
+| [`q-code-explore`](q-code-explore/SKILL.md) | Orienting in unfamiliar code with evidence-grounded findings — including one abstraction level above a named location — before planning, implementing, reviewing, or explaining. |
 | [`q-code-grill-simple`](q-code-grill-simple/SKILL.md) | Aligning a small scoped change into a short plan. |
-| [`q-code-grill-feature`](q-code-grill-feature/SKILL.md) | Aligning a bounded feature into an implementation plan. |
+| [`q-code-grill-feature`](q-code-grill-feature/SKILL.md) | Aligning a bounded feature into an implementation plan when behavior, scope, integration, or acceptance questions are still open. |
 | [`q-code-grill-design`](q-code-grill-design/SKILL.md) | Aligning a cross-cutting architectural change through a deep interview. |
-| [`q-code-implementation-plan`](q-code-implementation-plan/SKILL.md) | Planning file-level execution when direction is already settled. |
+| [`q-code-implementation-plan`](q-code-implementation-plan/SKILL.md) | Planning file-level execution when direction is already settled and no material alignment question is open. |
 | [`q-code-tickets`](q-code-tickets/SKILL.md) | Distributing settled work as durable tickets across executors, sessions, or a tracker. |
 | [`q-code-implement`](q-code-implement/SKILL.md) | Executing a ready backlog item, issue, ticket, or plan with proportional verification. |
 | [`q-code-tdd`](q-code-tdd/SKILL.md) | Running an explicitly chosen red-green loop during implementation. |
@@ -61,7 +60,9 @@ Skip any step whose purpose is already met: orientation when context exists, ref
 ## Boundaries
 
 - An implementation scratchpad or internal delegation is never a durable project plan; durable plans come from the grills or the implementation plan.
+- `q-code-grill-feature` and `q-code-implementation-plan` write the same artifact type (`implementation-plan`, canonical for `planned-execution`). The difference is the entry condition, not the output: the grill is a dialogue-led alignment for work with open behavior, scope, integration, or acceptance questions and adds the alignment record to the plan; the implementation plan is decision-gated planning of settled work. One item gets one plan.
 - Tickets and TDD are optional by default; making them mandatory is an anti-pattern.
+- A `q-code-grill-design` feature architecture document is canonical only for that change: it lives under the planning docs root, shares the planning ADR home, yields to the planning versions it cites, and returns a contradiction to the owning planning stage instead of overriding it.
 - `q-code-research` shares the cited-findings contract with engagement research but not its workflow (see the [research guide](../research/README.md)).
 
 ## Integration with the other groups
