@@ -720,7 +720,7 @@ skills:
   q-code-grill-design:
     path: code/q-code-grill-design
     group: code
-    requires: []
+    requires: [q-core-contract]
     uses:
       - skill: q-tool-mermaid
         when: approved-feature-architecture-needs-a-structural-diagram
@@ -789,7 +789,7 @@ skills:
   q-code-grill-feature:
     path: code/q-code-grill-feature
     group: code
-    requires: []
+    requires: [q-core-contract]
     uses:
       - skill: q-tool-database-schema
         when: bounded-feature-has-material-physical-schema-or-migration-risk
@@ -833,7 +833,7 @@ skills:
   q-code-implement:
     path: code/q-code-implement
     group: code
-    requires: []
+    requires: [q-core-contract]
     status: active
     kind: tool
     workflow: ai-coding
@@ -852,7 +852,7 @@ skills:
   q-code-implementation-plan:
     path: code/q-code-implementation-plan
     group: code
-    requires: []
+    requires: [q-core-contract]
     uses:
       - skill: q-tool-database-schema
         when: settled-work-needs-engine-specific-schema-or-migration-sequencing
@@ -1093,7 +1093,7 @@ skills:
   q-code-grill-simple:
     path: code/q-code-grill-simple
     group: code
-    requires: []
+    requires: [q-core-contract]
     status: active
     kind: tool
     workflow: ai-coding
@@ -1132,7 +1132,7 @@ skills:
   q-code-tickets:
     path: code/q-code-tickets
     group: code
-    requires: []
+    requires: [q-core-contract]
     status: active
     kind: tool
     workflow: ai-coding

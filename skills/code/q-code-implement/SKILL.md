@@ -7,6 +7,8 @@ description: "Execute settled work from a ready backlog item, issue, ticket, or 
 
 Use only when direction is settled. Return to the appropriate grill or planning skill if the source is missing, contradictory, or materially incomplete.
 
+Read the `q-core-contract` companion for shared governance and its stage-result schema; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`.
+
 ## Load
 
 1. Read repository instructions, the original execution record, and the applicable technical foundation, application standards, and ADRs when they exist. For interface work, read the exact `design_system_ref` version and build from its tokens and component contracts; note any declared token-validation gap rather than treating the token set as verified.
@@ -43,3 +45,7 @@ Update only the original durable record:
 Record status, change summary, acceptance coverage, test evidence, mini-review result, deviations, decisions, blockers, and follow-ups. Do not create a second durable implementation diary.
 
 Return changed files, checks, review result, residual risk, record updated, and next action.
+
+## Stage result
+
+Also return a valid `stage_result` with no `authored_outputs`: the updated durable record in `updated_outputs`; a decision taken during execution in `decisions_added_or_updated`; a planning artifact the change contradicted under `stale_artifacts`; unmet acceptance or a failed check in `blockers`; the mini-review result and residual risk in `warnings`. Do not register scratchpads, internal plans, or delegation messages as outputs. In standalone mode set `global_state_updated: false` and `reconciliation_required: true` and persist the result beside the updated record as the contract's standalone-persistence rule requires; never write workflow state or the artifact index.

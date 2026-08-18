@@ -7,6 +7,8 @@ description: "Run a short alignment for a small, well-contained change and creat
 
 This is the lightest refinement level.
 
+Read the `q-core-contract` companion for shared governance and its stage-result schema; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`.
+
 ## Procedure
 
 1. Inspect the relevant code, project context, and applicable technical foundation or repository standards. When the change touches a user interface and `design_system_ref` exists, load that exact version and reuse its contracts instead of inventing local styling.
@@ -21,3 +23,7 @@ This is the lightest refinement level.
 Create one `Working` reduced implementation plan with objective, alignment, scope and non-goals, integration points, ordered steps, edge cases, tests, assumptions, open questions, and definition of done.
 
 Do not include an execution log. `q-code-implement` keeps its internal plan transient and updates the original durable execution record.
+
+## Stage result
+
+Return a valid `stage_result`: the reduced plan in `authored_outputs` with its type, path, `Working` lifecycle, and source item ID; the backlog item, issue, or request it refines in `traceability_delta`; an escalation to a deeper grill or a hand-off to `q-code-fix` or `q-code-debug` as `next_recommended_action`. In standalone mode set `global_state_updated: false` and `reconciliation_required: true` and persist the result beside the plan as the contract's standalone-persistence rule requires; never write workflow state or the artifact index.

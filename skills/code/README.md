@@ -64,6 +64,7 @@ Skip any step whose purpose is already met: orientation when context exists, ref
 - Tickets and TDD are optional by default; making them mandatory is an anti-pattern.
 - A `q-code-grill-design` feature architecture document is canonical only for that change: it lives under the planning docs root, shares the planning ADR home, yields to the planning versions it cites, and returns a contradiction to the owning planning stage instead of overriding it.
 - `q-code-research` shares the cited-findings contract with engagement research but not its workflow (see the [research guide](../research/README.md)).
+- Every loop skill that authors or updates a durable record — the three grills, the implementation plan, tickets, and implement — returns a `stage_result`. Orchestrated, the delivery workflow reconciles it before the next step; standalone, the skill persists it beside the artifact so a later orchestrated run can.
 
 ## Integration with the other groups
 

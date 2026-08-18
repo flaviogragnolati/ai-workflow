@@ -7,6 +7,8 @@ description: "Run deep architectural alignment for a large or cross-cutting chan
 
 This is the deepest refinement level: `q-code-grill-design > q-code-grill-feature > q-code-grill-simple`. Read `GLOSSARY.md`; use `DESIGN-IT-TWICE.md` or `DEEPENING.md` only when the relevant decision needs them.
 
+Read the `q-core-contract` companion for shared governance and its stage-result schema; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`.
+
 ## Boundary
 
 Use this skill when work changes boundaries, domain concepts, major interfaces, operational architecture, security model, or rollout strategy across modules. De-escalate when the work is bounded.
@@ -42,3 +44,7 @@ When `cross-cutting-change-has-material-physical-schema-or-migration-risk` and `
 Include status, sources, scope, current context, proposed architecture, data and contracts, security, operations, decisions and ADRs, alternatives, risks, assumptions, open questions, high-level rollout, and next skill.
 
 The document may later be baselined or superseded. `q-code-implement` must not use it as a work diary.
+
+## Stage result
+
+Return a valid `stage_result`: the feature architecture document and each ADR in `authored_outputs` with type, path, `Working` lifecycle, and source IDs; every contradicted planning artifact under `stale_artifacts` exactly as the Precedence and return to planning section requires; risks in `risks_added_or_updated`; the next slice and its refinement depth as `next_recommended_action`. In standalone mode set `global_state_updated: false` and `reconciliation_required: true` and persist the result beside the architecture document as the contract's standalone-persistence rule requires; never write workflow state or the artifact index.

@@ -51,7 +51,7 @@ When `user-requests-structured-ideation-before-product-core-opportunity-discover
 
 ## Development loop
 
-For each selected backlog item:
+For each backlog item the user selects — or confirms from the backlog's next recommended front — record its ID in workflow state as the active development front, then:
 
 1. Check whether it is sufficiently defined and load the referenced technical foundation, application standards, and relevant ADRs.
 2. If refinement is needed, choose one depth:
@@ -68,6 +68,7 @@ For each selected backlog item:
    - `q-review-comments` for affected comments and docstrings.
 9. Correct failures and update the original durable record: ticket when present, otherwise the selected backlog item, issue, or explicit plan. Route any newly required technology selection back to `q-plan-tech-foundation`.
 10. Integrate or continue. Do not create a parallel durable implementation diary.
+11. Validate every `stage_result` the loop returns — from each grill, implementation plan, ticket set, and implementation close — and apply its delta before selecting the next step or item: register authored plans, tickets, and feature architecture documents in the artifact index as `Working` with their declared authority; record decisions and ADRs; route each `stale_artifacts` entry to its owning stage; update the durable record reference and the active front; carry `next_recommended_action` into the next routing decision.
 
 Backlog changes discovered during development return to `q-plan-backlog` in `targeted-refinement` or `replan-and-synchronize` mode. When a grill-design result lists a canonical planning artifact under `stale_artifacts` — architecture, features, domain model, technical foundation, or design system — route reconciliation to that owning stage before the affected slice enters implementation; the feature architecture document never replaces the planning version.
 
@@ -100,7 +101,7 @@ When technical work affects accepted commercial scope, price, schedule, or commi
 4. Block affected work until the required decision.
 5. Regenerate derivatives after approval.
 
-On resume, rebuild context from state, index, baselines, decisions, risks, blockers, housekeeping, and the exact technical foundation version. Do not reopen closed decisions without new evidence.
+On resume, rebuild context from state, index, baselines, decisions, risks, blockers, housekeeping, the exact technical foundation version, and any persisted standalone stage results: validate each sidecar the contract's standalone-persistence rule defines, apply its delta, and delete it before continuing. Do not reopen closed decisions without new evidence.
 
 ## Anti-patterns
 
@@ -110,6 +111,7 @@ On resume, rebuild context from state, index, baselines, decisions, risks, block
 | 2 | Mandatory refinement ceremony | Every backlog item is forced through a grill, tickets, and TDD regardless of readiness or risk. | Use only the refinement and verification that the item actually needs. |
 | 3 | Treating one audit as release acceptance | A clean `q-review-codebase` report is used as the whole delivery gate. | Reconcile tests, UAT, security, deployment, profile freshness, and other applicable evidence. |
 | 4 | Writing a second execution diary | Implementation scratch notes become a durable record beside the selected item or ticket. | Update the original durable execution source and keep coordination transient. |
+| 5 | Loop output outside the state machinery | A grill plan, ticket set, or implementation close is written and the loop moves on without a validated `stage_result`, so the artifact never enters the index. | Treat every loop step as a stage: validate its delta and reconcile it before the next step. |
 
 ## Completion response
 

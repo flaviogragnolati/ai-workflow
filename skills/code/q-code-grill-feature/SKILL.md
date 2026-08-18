@@ -7,6 +7,8 @@ description: "Align a bounded but non-trivial feature through a dialogue and end
 
 This is the middle refinement level. Inspect the real repository and existing domain language before asking questions.
 
+Read the `q-core-contract` companion for shared governance and its stage-result schema; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`.
+
 ## Procedure
 
 1. Confirm the objective, user-visible outcome, source backlog or requirement IDs, and must-not-break behavior.
@@ -24,3 +26,7 @@ When `bounded-feature-has-material-physical-schema-or-migration-risk` and `q-too
 Create one `Working` implementation plan: the same artifact type `q-code-implementation-plan` writes (`implementation-plan`, canonical for `planned-execution`) with the same required content — objective, target outcome, source references, scope, non-goals, deferred work, current context, approach, assumptions, file map, ordered phases and tasks, cross-cutting concerns, pitfalls, testing, rollout and rollback, documentation, risks, open questions, definition of done, and executor instructions — plus this grill's alignment record: resolved questions, rejected options, and any durable terminology change.
 
 Do not add an execution log. When execution begins, `q-code-implement` updates the original ticket or execution record, not this plan as a work diary.
+
+## Stage result
+
+Return a valid `stage_result`: the implementation plan in `authored_outputs` with its type, path, `Working` lifecycle, and source item ID; the backlog item, issue, or requirement it refines in `traceability_delta`; any ADR or durable decision in `decisions_added_or_updated`; a planning artifact the aligned scope contradicts under `stale_artifacts` with the proposed change, never restated as canonical here; a stack selection routed to `q-plan-tech-foundation` or a reusable pattern routed to `q-plan-design-system` in `next_recommended_action` or `required_user_actions`. In standalone mode set `global_state_updated: false` and `reconciliation_required: true` and persist the result beside the plan as the contract's standalone-persistence rule requires; never write workflow state or the artifact index.

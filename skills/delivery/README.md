@@ -25,10 +25,10 @@ flowchart TB
 | Concern | How it works |
 |---|---|
 | Routing | Selects the next planning stage, backlog item, loop step, QA, or delivery action; a named `target_stage` runs one stage only. |
-| Single writer | Stages return deltas; only the orchestrator writes `00-workflow-state.yaml` and `00-artifact-index.yaml`. |
+| Single writer | Stages return deltas; only the orchestrator writes `00-workflow-state.yaml` and `00-artifact-index.yaml`. The development loop returns deltas too: each grill, plan, ticket set, and implementation close returns a `stage_result` that is reconciled before the next step. |
 | Runtime references | Carries `technical_foundation_ref` and `design_system_ref` so later stages load exact approved versions. |
 | Release | Reconciles the codebase audit with integration, migration, deployment, and acceptance evidence; the audit alone is not acceptance. |
-| Recovery | Rebuilds a consistent state when runtime records and artifacts have drifted. |
+| Recovery | Rebuilds a consistent state when runtime records and artifacts have drifted, including standalone stage results persisted beside their artifacts. |
 
 ## Integration with the other groups
 

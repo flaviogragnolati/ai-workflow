@@ -95,7 +95,7 @@ Before creating an isolated workspace, detect whether the current checkout is al
 
 ## Stage result
 
-Return this structure from every orchestrated or standalone stage:
+Return this structure from every orchestrated or standalone stage, including each development-loop skill that authors or updates a durable record:
 
 ```yaml
 schema_version: "1.0"
@@ -124,6 +124,10 @@ orchestration:
 Use `completed`, `completed_with_warnings`, or `blocked` for `outcome`. A stage always reports `global_state_updated: false`; only the orchestrator changes it to true after applying the delta. In standalone mode, keep `reconciliation_required: true`.
 
 Validate the result against `references/stage-result.schema.yaml`.
+
+### Standalone persistence
+
+When a standalone run writes or updates a persistent project artifact, also persist the returned `stage_result` as a sidecar file `<primary-artifact-path>.stage-result.yaml` beside the primary authored or updated project file; when the only durable record lives outside the repository, such as an external tracker, write it beside the plan or backlog file that record links to. The sidecar is the stage's own domain file: it never touches `00-workflow-state.yaml` or `00-artifact-index.yaml`. On the next orchestrated run or resume, the root orchestrator discovers sidecars under the project's artifact roots, validates each against the schema, applies its delta to state and index, and deletes it; a sidecar that still exists is pending reconciliation by definition. A transient output never gets a sidecar.
 
 ## Artifact ownership and authority
 
