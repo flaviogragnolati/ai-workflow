@@ -1,6 +1,6 @@
 # Ask guide
 
-The `ask` group answers a bounded question about a project as it already is. Both skills are read-only: they consume project documentation, workflow state, decisions, and observable implementation, and return conversation output that is never registered, never versioned, and never a stage completion. Use them to decide what to do next — not to do it.
+The `ask` group answers a bounded question about a project as it already is. Both skills are read-only: they consume project documentation, workflow state, decisions, and observable implementation — plus current primary external sources only for facts the project does not own — and return conversation output that is never registered, never versioned, and never a stage completion. Use them to decide what to do next — not to do it.
 
 This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.yaml) is the registry; each `SKILL.md` owns its procedure.
 
@@ -9,9 +9,10 @@ This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.
 ```mermaid
 flowchart TB
     Q["One bounded question about the project as it is"] --> A["q-ask-project<br/>evidence-grounded answer"]
-    A -->|"the question is 'should we do X?'"| N["q-ask-analyze<br/>multidimensional assessment of one proposed change"]
-    A -. "transient answer + suggested route" .-> R["The owning workflow decides whether to start"]
-    N -. "transient assessment + suggested route" .-> R
+    P["One already-proposed change: 'should we do X?'"] --> N["q-ask-analyze<br/>multidimensional assessment"]
+    N -->|"requires, for the evidence path"| A
+    A -. "transient answer" .-> R["The owner decides whether to open a workflow"]
+    N -. "transient assessment + routing recommendation" .-> R
 ```
 
 ## When to use each skill

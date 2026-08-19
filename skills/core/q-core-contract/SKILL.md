@@ -55,7 +55,7 @@ An active skill with `invocable: false` and `execution_modes: [internal]` is a *
 
 ## Skill identity and dependencies
 
-Every skill declares `group` in the manifest. `group` is the authoritative grouping: the skill `name`, its folder, and its category folder all derive from it as `q-<group>-<leaf>`, and `skills.sh.json` derives its sections from it. Every publicly distributed skill names Quasar in its `description`, because the short `q-` prefix alone does not carry attribution or search terms.
+Every skill declares `group` in the manifest. `group` is the authoritative grouping: the skill `name`, its folder, and its category folder all derive from it as `q-<group>-<leaf>`; `skills.sh.json` must list every public skill once, and its page sections are curated presentation. Every publicly distributed skill names Quasar in its `description`, because the short `q-` prefix alone does not carry attribution or search terms.
 
 Installers copy one skill folder at a time into a flat agent directory, so a skill is externally installable only when every file it needs is reachable from its own folder. Two reference forms survive installation:
 

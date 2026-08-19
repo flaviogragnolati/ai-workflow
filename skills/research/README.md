@@ -1,6 +1,6 @@
 # Engagement research guide
 
-The `research` group reduces one named external uncertainty — market, competitor, regulatory, technology, feasibility, or risk — into an approved, cited baseline. It may run as a root workflow or be delegated by Proposal or Consulting execution when the owning stage cannot responsibly resolve the question from client evidence. Completing a baseline never automatically opens Proposal or Reporting; every next workflow is an explicit choice.
+The `research` group reduces one named external uncertainty — market, competitor, regulatory, technology, feasibility, or risk — into an approved, cited baseline. It may run as a root workflow or be delegated by Proposal, Consulting execution, or Delivery planning when the owning stage cannot responsibly resolve the question from its own evidence. Completing a baseline never automatically opens Proposal or Reporting; every next workflow is an explicit choice.
 
 This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.yaml) is the registry; each `SKILL.md` owns its procedure.
 
@@ -8,15 +8,19 @@ This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.
 
 ```mermaid
 flowchart TB
-    U["Named external uncertainty<br/>root run or delegated by Proposal or Consulting execution"] --> W["q-research-workflow"]
+    U["Named external uncertainty<br/>root run or delegated by Proposal, Consulting execution, or Delivery"] --> W["q-research-workflow"]
     W --> S1["q-research-scope<br/>Research Brief"]
     S1 --> S2["q-research-investigate<br/>Findings Register"]
     S2 -->|"market profile with modules<br/>or an explicit valid target"| S3["q-research-market-analysis<br/>market-analysis.yaml"]
     S2 --> S4["q-research-synthesize<br/>Research Synthesis"]
     S3 --> S4
-    S4 --> B["Research Baseline<br/>exact approved versions at as_of"]
-    B -. "explicit adoption as external-research" .-> P["Proposal Discovery"]
+    S4 --> W
+    W -->|"approval of exact versions at as_of"| B["Research Baseline<br/>(orchestrator, Baselined)"]
+    B -. "adopt-as-proposal-input" .-> P["Proposal Discovery<br/>external-research"]
+    B -. "adopt-as-engagement-input" .-> CE["Consulting execution"]
+    B -. "adopt-as-planning-input" .-> DL["Delivery planning"]
     B -. "optional next" .-> R["Reporting"]
+    B -. "explicit choice" .-> X["Close"]
 ```
 
 The `general` profile skips Market Analysis; the `market` profile inserts it conditionally.
@@ -25,10 +29,10 @@ The `general` profile skips Market Analysis; the `market` profile inserts it con
 
 | Skill | Use it when |
 |---|---|
-| [`q-research-workflow`](q-research-workflow/SKILL.md) | Starting, resuming, or baselining a research run; it owns workflow state and the final baseline disposition. |
+| [`q-research-workflow`](q-research-workflow/SKILL.md) | Starting, resuming, or baselining a research run; it owns workflow state, writes the Research Baseline after approval of the exact versions, and returns the caller's disposition. |
 | [`q-research-scope`](q-research-scope/SKILL.md) | Defining stable decision-linked questions, boundaries, privacy limits, search strategies, and a time or cost budget before any investigation. Typed evidence requests from an ideation session also land here. |
 | [`q-research-investigate`](q-research-investigate/SKILL.md) | Building a cited Findings Register with source identity, claim fit, independence, contradictions, and honest search coverage. |
-| [`q-research-market-analysis`](q-research-market-analysis/SKILL.md) | Producing evidence-linked sizing, TAM/SAM/SOM, reconciliation, forecasts, sensitivity, competitor matrices, shares, CRn, HHI, and scenarios from exact brief and findings versions, with deterministic local tools and no network read. |
+| [`q-research-market-analysis`](q-research-market-analysis/SKILL.md) | Producing evidence-linked sizing, TAM/SAM/SOM, reconciliation, forecasts, sensitivity, competitor matrices, shares, CRn, HHI, and scenarios from exact brief and findings versions, with deterministic local tools and no network read. When no bundled method fits, project-local custom-method code may be authorized through its own lineage gate; it is reproducibility support with no semantic authority. |
 | [`q-research-synthesize`](q-research-synthesize/SKILL.md) | Answering the approved questions through stable finding and published-result refs, preserving debates and gaps, and running a counter-evidence check. |
 
 ## Boundaries
@@ -45,4 +49,4 @@ The `general` profile skips Market Analysis; the `market` profile inserts it con
 
 ## Integration with the other groups
 
-A [proposal](../proposal/README.md)-delegated run returns to Proposal for an explicit adoption, retention, or deferral disposition. A [consulting execution](../consult/README.md)-delegated run returns to `q-consult-workflow` for the same three dispositions, and an [ai-coding](../delivery/README.md)-delegated run to `q-delivery-workflow` with `adopt-as-planning-input`. `q-research-investigate` may take a supplied PDF, DOCX, XLSX, or CSV source through verified extraction with `q-tool-pdf`, `q-tool-document`, or `q-tool-spreadsheet` (see the [shared tools guide](../tool/README.md)); the extract is derived and the source stays cited. An [ideation session](../ideation/q-ideation-session/SKILL.md) may send evidence requests into scope and reopen after the baseline answers them. A baseline may optionally feed [reporting](../report/README.md) with `content_profile: market-research`.
+A [proposal](../proposal/README.md)-delegated run returns to Proposal for an explicit adoption, retention, or deferral disposition. A [consulting execution](../consult/README.md)-delegated run returns to `q-consult-workflow` for the same three dispositions, and an [ai-coding](../delivery/README.md)-delegated run to `q-delivery-workflow` with `adopt-as-planning-input`. `q-research-investigate` may take a supplied PDF, DOCX, XLSX, or CSV source through verified extraction with `q-tool-pdf`, `q-tool-document`, or `q-tool-spreadsheet` (see the [shared tools guide](../tool/README.md)); the extract is derived and the source stays cited. `q-research-market-analysis` may hand only the workbook mechanics of a requested XLSX export to `q-tool-spreadsheet`; it keeps every formula, value, and qualifier. An [ideation session](../ideation/q-ideation-session/SKILL.md) may send evidence requests into scope and reopen after the baseline answers them. A baseline may optionally feed [reporting](../report/README.md) with `content_profile: market-research`.

@@ -25,7 +25,7 @@ Support software, consulting, assessment, training, managed service, mixed, and 
 
 ## Canonical outputs
 
-Create:
+Create under `docs/proposal-workflow/working/proposal/`:
 
 - `02-proposal-source.yaml`: authored and canonical for commercial meaning;
 - a human-readable proposal view derived from the source;

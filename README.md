@@ -18,7 +18,7 @@ The installer copies one skill folder at a time into your project's agent direct
 
 This package remains prerelease. `CHANGELOG.md` records work under `Unreleased`; no stable package version or release tag is established by the current repository state.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 64 are. `skills.sh.json` groups the catalog on the skills.sh repository page as a derived presentation of the manifest `group` field.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 64 are. `skills.sh.json` lays out the skills.sh repository page: its coverage is derived — the validator requires every public skill and no internal one to appear exactly once — while its section titles are curated reading groups (for example, delivery and plan share "Product and technical planning", and the code group is split across three sections).
 
 ## Philosophy
 
@@ -77,10 +77,10 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `review` | 7 | QA that never modifies its target: changes, releases, documentation, evidence, and skills | [review guide](skills/review/README.md) |
 | `report` | 4 | Approved artifacts to a traced report and its rendered channels | [report guide](skills/report/README.md) |
 | `tool` | 10 | Format, web-capture, and diagram mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
-| `core` | 1 | The shared governance companion every coordinated skill reads | [core guide](skills/core/README.md) |
+| `core` | 1 | The shared governance companion that coordinated skills declare in `requires` | [core guide](skills/core/README.md) |
 | `maint` | 3 | Package maintenance; internal, not distributed | [maint guide](skills/maint/README.md) |
 
-The manifest `group` field is authoritative: the skill name, its folder, and the skills.sh sections all derive from it.
+The manifest `group` field is authoritative: the skill name and its folder derive from it. The skills.sh page sections are curated views of the same catalog; the validator checks their coverage, not their grouping.
 
 Keep the three exploratory capabilities distinct: `q-ask-analyze` evaluates one already-proposed change against project truth, `q-research-workflow` reduces an external uncertainty with cited evidence, and `q-ideation-session` runs when the option set itself is the open question. The [ask guide](skills/ask/README.md) and the [ideation guide](skills/ideation/README.md) draw that boundary in full.
 
@@ -97,6 +97,7 @@ flowchart TB
         PLN["plan<br/>stages 1-6, plus 5b when it applies"]
         COD["code<br/>development loop per backlog item"]
         REV["review<br/>mini review and integral QA"]
+        SHIP["delivery<br/>release engineering and manifest"]
     end
     IDE -. "adopted snapshot" .-> PRO
     IDE -. "evidence request" .-> RES
@@ -105,8 +106,10 @@ flowchart TB
     PRO -->|"consulting or other service"| CON["consult<br/>engagement plan to accepted results"]
     PLN --> COD
     COD -->|"next backlog item"| COD
-    COD --> REV
-    REV --> SHIP["delivery<br/>release engineering and manifest"]
+    COD -. "mini review per change" .-> REV
+    COD -->|"releasable increment"| SHIP
+    SHIP -->|"release candidate and evidence"| REV
+    REV -->|"ready: close delivery"| SHIP
     PRO -. "optional checkpoint" .-> REP["report<br/>traced reports and decks"]
     COD -. "optional checkpoint" .-> REP
     SHIP -. "optional" .-> REP
@@ -165,7 +168,7 @@ docs/
     ├── 00-workflow-state.yaml    00-artifact-index.yaml
     ├── product/01-product-core.md  technical/02-technical-foundation.md  domain/03-domain-model.md
     ├── architecture/  experience/05b-design-system.md  backlog/  implementation/
-    └── release/<rc-id>/07-release-candidate.yaml  07-integral-validation.md  08-delivery-manifest.yaml  08-release-notes.md
+    └── release/<rc-id>/07-release-candidate.yaml  07-release-evidence.md  07-integral-validation.md  08-delivery-manifest.yaml  08-release-notes.md
 ```
 
 Research and reporting as root runs use `docs/research-workflow/` and `docs/reporting-workflow/`; delegated by another workflow, they write under the caller's root in `research/` or `reporting/`.
@@ -313,7 +316,7 @@ Tool-specific boundaries — web capture, Marp, PPTX, spreadsheet, and database 
 
 **Language.** The package language is English: skill bodies, manifest tokens, schemas, guides, and this changelog. Spanish appears only in the Quasar brand identity references (`skills/report/q-report-deck/references/identidad-visual.md` and its Marp template) and in the bilingual prose capabilities of `q-tool-humanizer`. Client deliverables follow the client's language. Governance vocabulary — lifecycle states, authority labels, disposition names, manifest tokens — is never translated.
 
-**Skill IDs.** `q-<group>-<leaf>`, derived from the manifest `group` field, which also determines the folder and the skills.sh section.
+**Skill IDs.** `q-<group>-<leaf>`, derived from the manifest `group` field, which also determines the folder.
 
 **Artifact paths.** `docs/<workflow>-workflow/` per root run, as listed under [What a run leaves behind](#what-a-run-leaves-behind).
 

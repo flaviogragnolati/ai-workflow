@@ -15,6 +15,7 @@ flowchart TB
     REL --> RR
     RR --> DW["q-delivery-workflow decides acceptance"]
     DOC["Durable project documentation"] --> RD["q-review-docs<br/>drift and authority diagnostic"]
+    RR -. "optional documentation QA<br/>before acceptance" .-> RD
     EV["Supplied claim or evidence package"] --> RE["q-review-evidence<br/>confidence, bias, reasoning, quantitative sanity"]
     SK["Agent Skill or package slice"] --> RS["q-review-skill<br/>read-only skill diagnostic"]
 ```
@@ -25,7 +26,7 @@ flowchart TB
 |---|---|
 | [`q-review-code`](q-review-code/SKILL.md) | Checking one change for technical and specification conformance after implementation. Design-system conformance is a criterion inside its standards axis. |
 | [`q-review-comments`](q-review-comments/SKILL.md) | Checking the accuracy of comments and docstrings affected by the same change. |
-| [`q-review-codebase`](q-review-codebase/SKILL.md) | Auditing a codebase or release candidate across architecture, integration, critical flows, security, NFRs, migration, deployment, and documentation. The audit alone is not release acceptance. |
+| [`q-review-codebase`](q-review-codebase/SKILL.md) | Auditing a codebase or release candidate across architecture, integration, critical flows, security, NFRs, migration, deployment, documentation, selected-technology usage against the adopted guidance in the exact `technical_foundation_ref`, and — when there is a user interface — accessibility and design-system conformance. The audit alone is not release acceptance. |
 | [`q-review-release`](q-review-release/SKILL.md) | Reconciling a release candidate's evidence checklist — audit, tests, release execution, UAT, mini reviews, security, NFR, design system, documentation — into a `ready`, `ready_with_accepted_risks`, or `blocked` verdict. The verdict is evidence; the acceptance decision is not its to make. |
 | [`q-review-docs`](q-review-docs/SKILL.md) | Auditing durable project documentation for structural breakage, authority errors, traceability gaps, contradictions, and drift. |
 | [`q-review-evidence`](q-review-evidence/SKILL.md) | Auditing a supplied business, engineering, scientific, or clinical claim for confidence, bias, reasoning, quantitative, or methodological limits — without investigating the open question itself. |
@@ -47,4 +48,4 @@ Scientific criteria (study hierarchies, GRADE, risk-of-bias instruments) load on
 
 ## Integration with the other groups
 
-The mini review (`q-review-code` plus `q-review-comments`) closes every iteration of the [development loop](../code/README.md). The codebase audit feeds the integral validation, which reconciles it with the release evidence `q-delivery-release` produces in the [delivery workflow](../delivery/README.md). Evidence review serves [research](../research/README.md), [proposal](../proposal/README.md), and consulting callers. Consulting acceptance may call `q-review-docs` over a deliverable set (see the [consulting execution guide](../consult/README.md)). For this repository's own skills, `q-review-skill` provides the public diagnostic and the internal maintenance companions own remediation and acceptance.
+The mini review (`q-review-code` plus `q-review-comments`) closes every iteration of the [development loop](../code/README.md). The codebase audit feeds the integral validation, which reconciles it with the release evidence `q-delivery-release` produces in the [delivery workflow](../delivery/README.md); `q-review-release` may route the delivery documentation scope to `q-review-docs` when the release warrants a documentation pass before acceptance, and the delivery orchestrator may do the same. Evidence review serves [research](../research/README.md), [proposal](../proposal/README.md), consulting, and `q-code-research` in the [code group](../code/README.md). Consulting acceptance may call `q-review-docs` over a deliverable set (see the [consulting execution guide](../consult/README.md)). Declared tool collaborations (see the [shared tools guide](../tool/README.md)): `q-review-code` and `q-review-codebase` may pass material schema, document-model, or migration surfaces to `q-tool-database-schema`; `q-review-docs` may use `q-tool-mermaid` for read-only validation of Mermaid in its scope. For this repository's own skills, `q-review-skill` provides the public diagnostic and the internal maintenance companions own remediation and acceptance.

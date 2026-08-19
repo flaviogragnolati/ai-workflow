@@ -67,9 +67,10 @@ For each backlog item the user selects — or confirms from the backlog's next r
 
 1. Check whether it is sufficiently defined and load the referenced technical foundation, application standards, and relevant ADRs.
 2. If refinement is needed, choose one depth:
-   - `q-code-grill-design` for broad or cross-cutting architecture;
+   - `q-code-grill-design` for broad or cross-cutting architecture — it yields a feature architecture document, not an executable plan; route the next slice it names, at the depth its `next_recommended_action` states, back through this step (`q-code-grill-feature`, `q-code-grill-simple`, or `q-code-implementation-plan`);
    - `q-code-grill-feature` for a bounded feature with meaningful complexity;
-   - `q-code-grill-simple` for a small contained change.
+   - `q-code-grill-simple` for a small contained change;
+   - `q-code-implementation-plan` when direction is settled and only the file-level sequence is missing.
 3. For a defect item — failing, broken, slow, or incorrect behavior in work that is not yet `Released` — skip the grill: route `q-code-debug` when the cause is not confirmed, or `q-code-fix` when the cause and correction are confirmed; either ends with the mini review and the durable-record update, and a correction that alters product behavior, architecture, or a cross-module contract is reclassified as change work and re-enters at step 2 (the reclassification rule those skills state). Then continue at step 10.
 4. Skip a grill when the item is already execution-ready.
 5. Ask whether distribution, a tracker, or multiple executors justify durable tickets.

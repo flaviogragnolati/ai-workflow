@@ -644,6 +644,10 @@ skills:
     path: plan/q-plan-design-system
     group: plan
     requires: [q-core-contract]
+    uses:
+      - skill: q-code-research
+        when: durable-external-investigation-of-an-adopted-system-or-design-library-is-warranted
+        fallback: record-the-bounded-read-only-lookup-in-the-stage-artifact-and-name-the-research-gap
     status: active
     kind: stage
     workflow: ai-coding
@@ -686,6 +690,10 @@ skills:
     path: plan/q-plan-tech-foundation
     group: plan
     requires: [q-core-contract]
+    uses:
+      - skill: q-code-research
+        when: durable-supporting-investigation-of-stack-alternatives-or-vendor-support-policies-is-warranted
+        fallback: record-the-bounded-comparison-in-the-technical-foundation-and-name-the-research-gap
     status: active
     kind: stage
     workflow: ai-coding
@@ -772,7 +780,7 @@ skills:
     human_interaction: {orchestrated: on-demand, standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [hypotheses, reproduction-harness]
-    side_effects: [write-code, write-tests]
+    side_effects: [write-code, write-tests, update-original-execution-record]
     approval_policy: follow-requested-fix-scope-and-require-approval-for-external-effects
     fallback: report-missing-reproduction-or-project-tooling
     stack_profile: project-defined
@@ -1168,7 +1176,7 @@ skills:
     human_interaction: {orchestrated: on-demand, standalone: on-demand}
     persistent_outputs: []
     transient_outputs: [fix-notes]
-    side_effects: [write-code, write-tests]
+    side_effects: [write-code, write-tests, update-original-execution-record]
     approval_policy: minimal-confirmed-fix-with-no-external-effects
     fallback: escalate-to-q-code-debug
     stack_profile: project-defined

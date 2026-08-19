@@ -13,13 +13,18 @@ flowchart TB
     D1 --> D2["q-proposal-design<br/>canonical proposal source"]
     D2 -->|"optional channel"| WCH["q-proposal-web<br/>interactive proposal"]
     D2 -->|"optional channel"| DCH["q-proposal-document<br/>DOCX / PDF"]
+    WCH -. "semantic error" .-> D2
+    DCH -. "semantic error" .-> D2
     W --> G{"Client disposition"}
-    G -->|"accepted software or mixed"| DEL["Delivery workflow"]
-    G -->|"consulting or other service"| CON["Consulting execution workflow"]
+    G -->|"accepted"| REL["Commercial release<br/>(orchestrator, proposal source Released)"]
+    REL -->|"software scope"| DEL["Delivery workflow"]
+    REL -->|"non-software scope<br/>(a mixed engagement takes both)"| CON["Consulting execution workflow"]
+    REL -->|"no further workflow"| CLO["Commercial close"]
     G -->|"review or negotiation"| D2
     G -->|"rejected or expired"| CLO["Commercial close"]
-    D1 -. "authorized external uncertainty" .-> RES["Research delegation"]
+    W -. "authorized external uncertainty" .-> RES["Research delegation"]
     RES -. "explicit adoption disposition" .-> D1
+    W -. "optional checkpoint" .-> REP["Reporting"]
 ```
 
 ## When to use each skill
@@ -38,8 +43,8 @@ flowchart TB
 - A channel renderer never rewrites accepted commercial scope; semantic errors return to Proposal Design.
 - Release approval and publication are separate approvals.
 - An adopted research baseline enters as `external-research` through an explicit disposition; Research never edits the Discovery Brief.
-- An ideation snapshot becomes a client fact, requirement, scope, price, or commitment only through this workflow's explicit adoption.
+- An adopted ideation snapshot enters as supporting input only; a candidate never becomes a client fact, requirement, scope, price, schedule, or commitment except through Discovery's or Proposal Design's own procedure.
 
 ## Integration with the other groups
 
-An accepted software engagement continues to the [delivery workflow](../delivery/README.md). A consulting, assessment, training, or managed-service engagement — or the non-software scope of a mixed one — continues to the [consulting execution workflow](../consult/README.md). A material external uncertainty may be delegated to [research](../research/README.md). Discovery may call `q-review-evidence` (see the [review guide](../review/README.md)) for a claim that could mislead a commitment, and may take supplied client PDF, DOCX, XLSX, or CSV evidence through verified extraction with `q-tool-pdf`, `q-tool-document`, or `q-tool-spreadsheet`. `q-proposal-design` may run a `q-tool-humanizer` pass over the commercial prose before its gate, and `q-proposal-web` only over the headings, navigation, and section introductions of the web presentation plan it authors — never over a sentence reproduced from the approved source. `q-proposal-document` requires `q-proposal-design` and may delegate PDF mechanics to `q-tool-pdf` (see the [shared tools guide](../tool/README.md)). A commercial checkpoint may optionally produce a [report](../report/README.md), including a presentation deck of the approved proposal rendered by `q-report-deck`; the proposal workflow has no deck channel of its own.
+An accepted software engagement continues to the [delivery workflow](../delivery/README.md). A consulting, assessment, training, or managed-service engagement — or the non-software scope of a mixed one — continues to the [consulting execution workflow](../consult/README.md). A mixed engagement receives both handoffs. A material external uncertainty may be delegated to [research](../research/README.md). Discovery may call `q-review-evidence` (see the [review guide](../review/README.md)) for a claim that could mislead a commitment, and may take supplied client PDF, DOCX, XLSX, or CSV evidence through verified extraction with `q-tool-pdf`, `q-tool-document`, or `q-tool-spreadsheet`. `q-proposal-design` may run a `q-tool-humanizer` pass over the commercial prose before its gate, and `q-proposal-web` only over the headings, navigation, and section introductions of the web presentation plan it authors — never over a sentence reproduced from the approved source. `q-proposal-web` may also render a structural diagram through `q-tool-mermaid`. `q-proposal-workflow` may route a bounded [ideation session](../ideation/README.md) before discovery or proposal design and records one adoption disposition on return. `q-proposal-document` requires `q-proposal-design`; it may delegate DOCX mechanics to `q-tool-document` and PDF inspection or validation to `q-tool-pdf`, while PDF production stays in its own verified local route (see the [shared tools guide](../tool/README.md)). A commercial checkpoint may optionally produce a [report](../report/README.md), including a presentation deck of the approved proposal rendered by `q-report-deck`; the proposal workflow has no deck channel of its own.

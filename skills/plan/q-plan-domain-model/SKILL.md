@@ -13,7 +13,7 @@ Require a mature product core and technical foundation. Load relevant decisions,
 
 ## Outputs and authority
 
-Create:
+Create under `docs/development-workflow/domain/`:
 
 - `03-domain-model.md`: authored and canonical for domain semantics, invariants, ownership, and lifecycle;
 - `03-data-dictionary.md`: authored and canonical for entities, attributes, definitions, and constraints;

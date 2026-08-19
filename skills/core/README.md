@@ -1,6 +1,6 @@
 # Core guide
 
-The `core` group holds one skill: the shared governance companion every coordinated Quasar skill loads before acting. It is a companion, not an entry point — you never invoke it directly. A skill that declares it in `requires` reads it and, when it is absent, stops and prints the exact install command instead of proceeding on assumed rules.
+The `core` group holds one skill: the shared governance companion loaded by every skill that declares it in `requires`. Nine active helpers and companions do not declare it: `q-review-skill`, `q-review-code`, `q-review-comments`, `q-code-explain`, `q-code-explore`, `q-code-handoff`, `q-code-tdd`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` (see [Skill dependencies](../../README.md#skill-dependencies)). It is a companion, not an entry point — you never invoke it directly. A skill that requires it reads it and, when it is absent, stops and prints the exact install command instead of proceeding on assumed rules.
 
 This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.yaml) is the registry; each `SKILL.md` owns its procedure.
 
@@ -42,7 +42,7 @@ The contract is long because it is shared. Load the section your task needs, not
 
 Four schemas travel with the contract because several skills validate against the same shape: [`stage-result.schema.yaml`](q-core-contract/references/stage-result.schema.yaml), [`cited-findings.schema.yaml`](q-core-contract/references/cited-findings.schema.yaml), [`ideation-baseline.schema.yaml`](q-core-contract/references/ideation-baseline.schema.yaml), and [`report-source.schema.yaml`](q-core-contract/references/report-source.schema.yaml). [`git-worktrees.md`](q-core-contract/references/git-worktrees.md) covers isolated-worktree execution.
 
-Two references are **generated** views of `skill-manifest.yaml`, regenerated whenever the manifest changes and carrying no authority of their own: [`routing.md`](q-core-contract/references/routing.md) (workflow entry skills, stages, delegates, optional next) and [`human-interaction.md`](q-core-contract/references/human-interaction.md) (the cadence mapping). They exist so an agent can answer a routing or cadence question without loading the whole manifest — the manifest remains the source of truth, and package validation fails on drift.
+Two references are **generated** views of `skill-manifest.yaml`, regenerated whenever the manifest changes and carrying no authority of their own: [`routing.md`](q-core-contract/references/routing.md) (per workflow: entry skill, stages — planning and release stages for delivery, stage conditions and profiles for research, the reporting stage and renderers with content profiles and deck formats — delegates, and optional next routes) and [`human-interaction.md`](q-core-contract/references/human-interaction.md) (the cadence mapping). They exist so an agent can answer a routing or cadence question without loading the whole manifest — the manifest remains the source of truth, and package validation fails on drift.
 
 ## Boundaries
 

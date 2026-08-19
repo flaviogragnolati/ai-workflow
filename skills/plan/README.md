@@ -1,6 +1,6 @@
 # Planning stages guide
 
-The `plan` group holds the seven ordered stages that take an accepted product idea to a validated high-level backlog. The [delivery workflow](../delivery/README.md) orchestrates them; each stage owns its artifacts and returns a delta instead of writing global state.
+The `plan` group holds the seven ordered stages that take a product idea or an accepted proposal version to a validated high-level backlog. The [delivery workflow](../delivery/README.md) orchestrates them; each stage owns its artifacts and returns a delta instead of writing global state.
 
 This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.yaml) is the registry; each `SKILL.md` owns its procedure.
 
@@ -9,18 +9,20 @@ This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.
 ```mermaid
 flowchart TB
     W["q-delivery-workflow"] --> S1["1 · q-plan-product-core"]
-    S1 --> S2["2 · q-plan-tech-foundation<br/>technical_foundation_ref"]
+    S1 --> S2["2 · q-plan-tech-foundation<br/>→ technical_foundation_ref"]
     S2 --> S3["3 · q-plan-domain-model"]
     S3 --> S4["4 · q-plan-architecture"]
     S4 --> S5["5 · q-plan-features"]
-    S5 -->|"durable visual interface"| S5B["5b · q-plan-design-system<br/>design_system_ref"]
+    S5 -->|"durable visual interface,<br/>or unclear"| S5B["5b · q-plan-design-system<br/>→ design_system_ref"]
     S5 -->|"headless, non-visual, or throwaway:<br/>not_applicable"| S6["6 · q-plan-backlog"]
+    S5 -. "applicable but declined:<br/>recorded decision, not not_applicable" .-> S6
     S5B --> S6
     S6 --> LOOP["Development loop<br/>(code group)"]
+    LOOP -. "targeted-refinement or<br/>replan-and-synchronize" .-> S6
     S4 -. "later evidence invalidates<br/>a technical choice" .-> S2
 ```
 
-Stage 5b is conditional and does not shift the other stage numbers. Any later stage or development-loop refinement that contradicts an upstream artifact reports the contradiction and routes reconciliation to the owner, which reconciles by creating a new version instead of editing the baselined one.
+Stage 5b is conditional and does not shift the other stage numbers. A declined applicable design-system stage is recorded as a decision (and a risk when warranted), never as `not_applicable`. `technical_foundation_ref` and `design_system_ref` are workflow-state fields the orchestrator reconciles from the stage delta; the stage never writes them. Any later stage or development-loop refinement that contradicts an upstream artifact reports the contradiction and routes reconciliation to the owner, which reconciles by creating a new version instead of editing the baselined one.
 
 ## When to use each skill
 
@@ -42,4 +44,4 @@ Stage 5b is conditional and does not shift the other stage numbers. Any later st
 
 ## Integration with the other groups
 
-`q-plan-domain-model` and `q-plan-architecture` require `q-tool-mermaid`; architecture and features optionally use `q-tool-c4`; several stages optionally use `q-tool-database-schema` (see the [shared tools guide](../tool/README.md)). Backlog output feeds the [development loop](../code/README.md). Design-system conformance is reviewed inside the standards axis of the [review group](../review/README.md), never as a third authority axis.
+`q-plan-domain-model` and `q-plan-architecture` require `q-tool-mermaid`, while features and backlog use it optionally (module diagram, derived Gantt); architecture and features optionally use `q-tool-c4`; domain model and architecture optionally use `q-tool-database-schema`; `q-plan-tech-foundation` and `q-plan-design-system` may hand a durable external investigation to `q-code-research` (see the [code group](../code/README.md)). The [shared tools guide](../tool/README.md) details the tool collaborations. Backlog output feeds the [development loop](../code/README.md). Design-system conformance is reviewed inside the standards axis of the [review group](../review/README.md), never as a third authority axis.

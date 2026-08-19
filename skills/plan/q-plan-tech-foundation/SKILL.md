@@ -35,7 +35,7 @@ Complete mode selection when the current artifact version, change trigger, and w
 3. Inspect the repository and deployment environment. Treat installed technologies and working conventions as evidence, not accidental mandates.
 4. Evaluate an explicit user proposal against the criteria. Preserve it when it fits; surface concrete trade-offs or incompatibilities when it does not.
 5. For a suitable greenfield web application without a mandated stack, read [`references/web-stack-recommendation.md`](references/web-stack-recommendation.md) and present its advisory T3 Core recommendation plus only the secondary options whose applicability conditions hold.
-6. For another product shape, or when the web recommendation does not fit, compare viable alternatives using current primary sources such as official documentation, specifications, first-party source, or vendor support policies. Use `q-code-research` when a durable supporting investigation is warranted.
+6. For another product shape, or when the web recommendation does not fit, compare viable alternatives using current primary sources such as official documentation, specifications, first-party source, or vendor support policies. When `durable-supporting-investigation-of-stack-alternatives-or-vendor-support-policies-is-warranted` and `q-code-research` is installed, route the bounded question there; if it is absent, `record-the-bounded-comparison-in-the-technical-foundation-and-name-the-research-gap`.
 7. Obtain user confirmation for the core stack and every material secondary technology. Do not infer approval from the absence of an objection.
 8. Record the selected profile, rejected alternatives, rationale, consequences, exceptions, risks, and evidence.
 
