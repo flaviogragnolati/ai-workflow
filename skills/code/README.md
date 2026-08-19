@@ -68,4 +68,4 @@ Skip any step whose purpose is already met: orientation when context exists, ref
 
 ## Integration with the other groups
 
-The mini review that closes each iteration lives in the [review group](../review/README.md). Orchestrated runs receive their item from the [delivery workflow](../delivery/README.md) backlog and return deltas to it. `q-code-explore` requires `q-code-grill-design` (its deep-module glossary); refinement and debugging may optionally use `q-tool-database-schema` or `q-tool-mermaid` (see the [shared tools guide](../tool/README.md)).
+The mini review that closes each iteration lives in the [review group](../review/README.md). Orchestrated runs receive their item from the [delivery workflow](../delivery/README.md) backlog and return deltas to it. `q-code-explore` requires `q-code-grill-design` (its deep-module glossary); refinement and debugging may optionally use `q-tool-database-schema` or `q-tool-mermaid` (see the [shared tools guide](../tool/README.md)). `q-code-explore` may also be called by `q-consult-current-state` when an assessed process is embodied in software (see the [consulting execution guide](../consult/README.md)).

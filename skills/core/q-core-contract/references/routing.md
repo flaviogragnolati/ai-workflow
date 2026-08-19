@@ -10,7 +10,12 @@ discovery-proposal:
   entry_skill: q-proposal-workflow
   stages: [q-proposal-discovery, q-proposal-design, q-proposal-web, q-proposal-document]
   delegates: [research, reporting]
-  optional_next: [ai-coding, reporting, close]
+  optional_next: [ai-coding, consulting-execution, reporting, close]
+consulting-execution:
+  entry_skill: q-consult-workflow
+  stages: [q-consult-engagement-plan, q-consult-current-state, q-consult-intervention, q-consult-acceptance]
+  delegates: [research, reporting]
+  optional_next: [reporting, discovery-proposal, ai-coding, close]
 ai-coding:
   entry_skill: q-delivery-workflow
   planning_stages: [q-plan-product-core, q-plan-tech-foundation, q-plan-domain-model, q-plan-architecture, q-plan-features, q-plan-design-system, q-plan-backlog]

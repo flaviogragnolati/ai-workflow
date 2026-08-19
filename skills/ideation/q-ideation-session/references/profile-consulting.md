@@ -75,5 +75,6 @@ Challenge assumptions explicitly: for the favored option, state what must be tru
 
 - The session owns alternatives and their disposition, never the engagement itself. It is not diagnosis, validation, implementation, or follow-up.
 - Proposal Design owns scope, methodology, deliverables, price, schedule, and commitments; hand it engagement and workstream options only.
+- Consulting execution owns diagnosis, intervention design, deliverables, and acceptance; hand `q-consult-current-state` hypotheses to validate and `q-consult-intervention` options to evaluate, never findings or designs.
 - Reporting consumes the exact approved snapshot; candidates never enter a report as facts.
 - Client-confidential material follows the information-governance classification recorded in the session; abstract or stop rather than exporting it.

@@ -15,7 +15,7 @@ flowchart TB
     D2 -->|"optional channel"| DCH["q-proposal-document<br/>DOCX / PDF"]
     W --> G{"Client disposition"}
     G -->|"accepted software or mixed"| DEL["Delivery workflow"]
-    G -->|"consulting or other service"| MAN["Commercial close or<br/>future/manual execution"]
+    G -->|"consulting or other service"| CON["Consulting execution workflow"]
     G -->|"review or negotiation"| D2
     G -->|"rejected or expired"| CLO["Commercial close"]
     D1 -. "authorized external uncertainty" .-> RES["Research delegation"]
@@ -42,4 +42,4 @@ flowchart TB
 
 ## Integration with the other groups
 
-An accepted software engagement continues to the [delivery workflow](../delivery/README.md). A material external uncertainty may be delegated to [research](../research/README.md). Discovery may call `q-review-evidence` (see the [review guide](../review/README.md)) for a claim that could mislead a commitment. `q-proposal-document` requires `q-proposal-design` and may delegate PDF mechanics to `q-tool-pdf` (see the [shared tools guide](../tool/README.md)). A commercial checkpoint may optionally produce a [report](../report/README.md), including a presentation deck of the approved proposal rendered by `q-report-deck`; the proposal workflow has no deck channel of its own.
+An accepted software engagement continues to the [delivery workflow](../delivery/README.md). A consulting, assessment, training, or managed-service engagement — or the non-software scope of a mixed one — continues to the [consulting execution workflow](../consult/README.md). A material external uncertainty may be delegated to [research](../research/README.md). Discovery may call `q-review-evidence` (see the [review guide](../review/README.md)) for a claim that could mislead a commitment. `q-proposal-document` requires `q-proposal-design` and may delegate PDF mechanics to `q-tool-pdf` (see the [shared tools guide](../tool/README.md)). A commercial checkpoint may optionally produce a [report](../report/README.md), including a presentation deck of the approved proposal rendered by `q-report-deck`; the proposal workflow has no deck channel of its own.

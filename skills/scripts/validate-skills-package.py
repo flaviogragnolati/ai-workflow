@@ -2802,7 +2802,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
     checks = {
         "S-01": [
             ("proposal/q-proposal-workflow/SKILL.md", "accepted_without_development"),
-            ("proposal/q-proposal-workflow/SKILL.md", "future/manual execution"),
+            ("proposal/q-proposal-workflow/SKILL.md", "continues to `q-consult-workflow`"),
         ],
         "S-02": [
             ("proposal/q-proposal-workflow/SKILL.md", "proposal object IDs"),
@@ -3165,6 +3165,15 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("delivery/q-delivery-workflow/SKILL.md", "Route release engineering to"),
             ("delivery/q-delivery-release/SKILL.md", "possible, partial, or impossible"),
             ("review/q-review-release/SKILL.md", "never modifies the release candidate"),
+        ],
+        "S-70": [
+            ("core/q-core-contract/SKILL.md", "Consulting execution"),
+            ("proposal/q-proposal-workflow/SKILL.md", "Consulting handoff"),
+            ("consult/q-consult-workflow/SKILL.md", "never edits the accepted proposal"),
+            ("consult/q-consult-current-state/SKILL.md", "cites registered evidence"),
+            ("consult/q-consult-acceptance/SKILL.md", "never infer it"),
+            ("report/q-report-workflow/SKILL.md", "`execution-release`"),
+            ("ideation/q-ideation-session/references/handoffs.md", "`q-consult-current-state`"),
         ],
     }
     errors: list[str] = []
@@ -3564,6 +3573,15 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     check("distributed-broken-link-fails", bool(local_link_errors(
         SKILLS_ROOT / "fixtures" / "link-scope.md", "missing.md", REPO_ROOT
     )))
+    workflows = manifest.get("workflows", {}) if isinstance(manifest, dict) else {}
+    consulting = workflows.get("consulting-execution", {}) if isinstance(workflows, dict) else {}
+    proposal_next = workflows.get("discovery-proposal", {}).get("optional_next", []) if isinstance(workflows, dict) else []
+    check("consulting-execution-reachable-from-proposal", (
+        isinstance(consulting, dict)
+        and consulting.get("status") == "active"
+        and consulting.get("entry_skill") == "q-consult-workflow"
+        and "consulting-execution" in proposal_next
+    ))
     return errors, checked
 
 

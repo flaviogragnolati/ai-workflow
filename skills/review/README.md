@@ -33,7 +33,7 @@ flowchart TB
 
 ## Evidence review as a collaborator
 
-Four skills may call `q-review-evidence` through declared `uses` triggers: Research Investigation for a material finding with non-obvious confidence, Research Synthesis for a fragile material inference, Technical Research for benchmark, vendor, compatibility, reproducibility, or ML/AI claims, and Proposal Discovery for a claim that could mislead a commercial commitment. Every caller keeps its own artifact, confidence, and decision; when the reviewer is absent, the caller applies its existing factors and names the gap.
+Five skills may call `q-review-evidence` through declared `uses` triggers: Research Investigation for a material finding with non-obvious confidence, Research Synthesis for a fragile material inference, Technical Research for benchmark, vendor, compatibility, reproducibility, or ML/AI claims, Proposal Discovery for a claim that could mislead a commercial commitment, and Current-State Assessment for a diagnostic conclusion that could mislead a recommendation. Every caller keeps its own artifact, confidence, and decision; when the reviewer is absent, the caller applies its existing factors and names the gap.
 
 Scientific criteria (study hierarchies, GRADE, risk-of-bias instruments) load only for scientific or clinical material or an explicit request. A diagnostic is never peer review, certification, or professional medical or legal advice.
 
@@ -46,4 +46,4 @@ Scientific criteria (study hierarchies, GRADE, risk-of-bias instruments) load on
 
 ## Integration with the other groups
 
-The mini review (`q-review-code` plus `q-review-comments`) closes every iteration of the [development loop](../code/README.md). The codebase audit feeds the integral validation, which reconciles it with the release evidence `q-delivery-release` produces in the [delivery workflow](../delivery/README.md). Evidence review serves [research](../research/README.md) and [proposal](../proposal/README.md) callers. For this repository's own skills, `q-review-skill` provides the public diagnostic and the internal maintenance companions own remediation and acceptance.
+The mini review (`q-review-code` plus `q-review-comments`) closes every iteration of the [development loop](../code/README.md). The codebase audit feeds the integral validation, which reconciles it with the release evidence `q-delivery-release` produces in the [delivery workflow](../delivery/README.md). Evidence review serves [research](../research/README.md), [proposal](../proposal/README.md), and consulting callers. Consulting acceptance may call `q-review-docs` over a deliverable set (see the [consulting execution guide](../consult/README.md)). For this repository's own skills, `q-review-skill` provides the public diagnostic and the internal maintenance companions own remediation and acceptance.

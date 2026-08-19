@@ -53,4 +53,5 @@ A tool never installs a runtime silently, never reaches a remote converter, and 
 
 - [Planning stages](../plan/README.md): `q-plan-domain-model` and `q-plan-architecture` require `q-tool-mermaid`; architecture and features optionally use `q-tool-c4`; several planning and refinement stages optionally use `q-tool-database-schema`.
 - [Proposal](../proposal/README.md) and [reporting](../report/README.md) renderers delegate DOCX, PDF, PPTX, and Marp mechanics to the matching tool while retaining narrative, channel, and release ownership.
+- [Consulting execution](../consult/README.md): `q-consult-current-state` optionally uses `q-tool-pdf`, `q-tool-document`, and `q-tool-spreadsheet` for verified client-evidence extraction and `q-tool-mermaid` for process maps; `q-consult-intervention` optionally uses `q-tool-mermaid` for target-state maps.
 - Every tool requires the `q-core-contract` companion. Optional collaborations are declared as manifest `uses` entries: when the tool is absent, the caller continues through its declared fallback and reports the capability gap.

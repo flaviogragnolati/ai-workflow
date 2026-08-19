@@ -52,6 +52,17 @@
       ]
     },
     {
+      "title": "Consulting execution",
+      "description": "Run an accepted consulting, assessment, training, or managed-service engagement: engagement plan, current-state assessment with verified evidence extraction and process maps, intervention design and deliverables, recorded client acceptance, and the execution release reporting consumes.",
+      "skills": [
+        "q-consult-workflow",
+        "q-consult-engagement-plan",
+        "q-consult-current-state",
+        "q-consult-intervention",
+        "q-consult-acceptance"
+      ]
+    },
+    {
       "title": "Engagement research",
       "description": "Scope and investigate optional consulting research, run conditional evidence-linked market analysis, synthesize, and baseline general or market decisions.",
       "skills": [

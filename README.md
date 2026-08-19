@@ -1,6 +1,6 @@
 # Quasar AI delivery skills
 
-This package is a coordinated catalog of Agent Skills for running a software consultancy's delivery flow end to end: explore an opportunity, win it commercially, plan and build the software, review it, deliver it, and report on it. Twelve groups organize the catalog; shared governance keeps every skill narrow, auditable, and honest about what it did. Start with `skill-manifest.yaml` — it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
+This package is a coordinated catalog of Agent Skills for running a software consultancy's delivery flow end to end: explore an opportunity, win it commercially, plan and build the software or execute the consulting engagement, review it, deliver it, and report on it. Thirteen groups organize the catalog; shared governance keeps every skill narrow, auditable, and honest about what it did. Start with `skill-manifest.yaml` — it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
 
 ## Install
 
@@ -18,7 +18,7 @@ The installer copies one skill folder at a time into your project's agent direct
 
 This package remains prerelease. `CHANGELOG.md` records work under `Unreleased`; no stable package version or release tag is established by the current repository state.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 59 are. `skills.sh.json` groups the catalog on the skills.sh repository page as a derived presentation of the manifest `group` field.
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 64 are. `skills.sh.json` groups the catalog on the skills.sh repository page as a derived presentation of the manifest `group` field.
 
 ## Philosophy
 
@@ -44,6 +44,7 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `ask` | 2 | Bounded answers from project truth and read-only proposal analysis | below |
 | `ideation` | 1 | Optional structured exploration of one decision's option space | below |
 | `proposal` | 5 | Client evidence to discovery brief, canonical proposal, and web/document channels | [proposal guide](skills/proposal/README.md) |
+| `consult` | 5 | Accepted consulting engagement to engagement plan, assessed current state, intervention design, recorded acceptance, and execution release | [consult guide](skills/consult/README.md) |
 | `research` | 5 | A named external uncertainty to an approved, cited baseline | [research guide](skills/research/README.md) |
 | `delivery` | 2 | The orchestrator that routes planning, iteration, release, QA, and delivery, plus release engineering | [delivery guide](skills/delivery/README.md) |
 | `plan` | 7 | Ordered planning stages from product intent to a validated backlog | [plan guide](skills/plan/README.md) |
@@ -80,7 +81,7 @@ flowchart TB
     IDE -. "evidence request" .-> RES
     RES -. "adopted baseline" .-> PRO
     PRO -->|"accepted software scope"| PLN
-    PRO -->|"consulting or other service"| MAN["commercial close or<br/>future/manual execution"]
+    PRO -->|"consulting or other service"| CON["consult<br/>engagement plan to accepted results"]
     PLN --> COD
     COD -->|"next backlog item"| COD
     COD --> REV
@@ -88,6 +89,8 @@ flowchart TB
     PRO -. "optional checkpoint" .-> REP["report<br/>traced reports and decks"]
     COD -. "optional checkpoint" .-> REP
     SHIP -. "optional" .-> REP
+    CON -. "optional checkpoint" .-> REP
+    CON -. "follow-on scope" .-> PRO
 ```
 
 Two groups are cross-cutting and appear at any point: `ask` reads project truth on demand, and `tool` executes format or diagram mechanics for whichever caller owns the meaning. Any gate may return work to its owning stage; the group guides show the internal loops this overview omits.
@@ -116,6 +119,7 @@ Invoke one orchestrator and name the objective or target stage:
 
 ```text
 Use $q-proposal-workflow to prepare a commercial proposal from these meeting notes.
+Use $q-consult-workflow to start the engagement from the accepted proposal and route its stages.
 Use $q-research-workflow to investigate this market uncertainty before deciding whether to open a proposal.
 Use $q-delivery-workflow to execute q-plan-backlog.
 Use $q-report-workflow to create a progress report and deck from approved project artifacts.
@@ -177,6 +181,7 @@ The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-
 | Market Analysis | Yes | Supporting for owned methods, assumptions, calculations, scenarios, and promoted published results; subordinate to brief and findings |
 | JSON/CSV/XLSX Market Analysis export | Yes when explicitly persisted | None; derived from exact Market Analysis calculation or published-result refs |
 | Research Baseline | Yes | Canonical only for exact approved research artifact versions and `as_of` |
+| Engagement plan, current-state assessment, intervention design, consulting deliverables, acceptance record, execution release | Yes | Canonical for the engagement execution plan, assessed current state, target state and each deliverable's declared scope, recorded acceptance, and accepted engagement results; evidence register and process-map source supporting |
 | Release candidate, release evidence, integral validation, delivery manifest, release notes | Yes | Canonical for release composition, release quality, and delivered scope; evidence supporting; notes derived |
 
 Use `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, or `Transient` as defined in the shared contract.
@@ -197,6 +202,7 @@ Authority and single writer:
 - Do not use an internal implementation scratchpad as a durable project plan.
 - Do not let an ideation candidate, score, or snapshot become client evidence, a requirement, an ADR, or a commitment without the owning skill's explicit adoption.
 - Do not let Research overwrite client evidence, create a proposal commitment, or start another workflow without an explicit choice.
+- Do not infer client acceptance of a consulting deliverable from an internal review, a delivered file, or silence, and do not let execution rewrite the accepted proposal.
 
 Honest evidence:
 

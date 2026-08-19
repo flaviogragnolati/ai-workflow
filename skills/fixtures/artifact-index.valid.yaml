@@ -126,3 +126,25 @@ artifacts:
       renderer: authored-view
       renderer_version: "fixture"
       source_sha256: "fixture-release-manifest-sha256"
+  - artifact_id: ART-ENGAGEMENT-PLAN-001
+    artifact_type: engagement-plan
+    path: docs/consulting-workflow/01-engagement-plan.md
+    owner_workflow: consulting-execution
+    owner_skill: q-consult-engagement-plan
+    creation_mode: authored
+    semantic_authority: canonical
+    authority_scope: engagement-execution-plan
+    lifecycle: Working
+    version: "0.1"
+    source_refs: [ART-001]
+  - artifact_id: ART-EXECUTION-RELEASE-001
+    artifact_type: execution-release
+    path: docs/consulting-workflow/05-execution-release.yaml
+    owner_workflow: consulting-execution
+    owner_skill: q-consult-workflow
+    creation_mode: authored
+    semantic_authority: canonical
+    authority_scope: accepted-engagement-results
+    lifecycle: Released
+    version: "1.0"
+    source_refs: ["ART-ENGAGEMENT-PLAN-001@0.1"]

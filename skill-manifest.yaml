@@ -15,7 +15,13 @@ workflows:
     entry_skill: q-proposal-workflow
     stages: [q-proposal-discovery, q-proposal-design, q-proposal-web, q-proposal-document]
     delegates: [research, reporting]
-    optional_next: [ai-coding, reporting, close]
+    optional_next: [ai-coding, consulting-execution, reporting, close]
+  consulting-execution:
+    status: active
+    entry_skill: q-consult-workflow
+    stages: [q-consult-engagement-plan, q-consult-current-state, q-consult-intervention, q-consult-acceptance]
+    delegates: [research, reporting]
+    optional_next: [reporting, discovery-proposal, ai-coding, close]
   ai-coding:
     status: active
     entry_skill: q-delivery-workflow
@@ -1360,6 +1366,143 @@ skills:
     side_effects: [write-project-artifacts]
     approval_policy: no-fabrication-and-user-confirms-blocking-assumptions
     fallback: blocked-with-targeted-questions
+    stack_profile: any
+    contract_version: "1.1"
+
+  q-consult-workflow:
+    path: consult/q-consult-workflow
+    group: consult
+    requires: [q-core-contract]
+    uses:
+      - skill: q-ideation-session
+        when: user-requests-structured-ideation-on-a-bounded-diagnostic-or-intervention-decision-during-execution
+        fallback: continue-the-owning-execution-stage-and-name-the-unexplored-option-space
+    status: active
+    kind: orchestrator
+    workflow: consulting-execution
+    stage: orchestration
+    invocable: true
+    execution_modes: [orchestrated]
+    human_interaction: {orchestrated: decision-gated}
+    persistent_outputs:
+      - {type: workflow-state, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: workflow-runtime}
+      - {type: artifact-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: artifact-inventory}
+      - {type: execution-release, lifecycle: Released, creation_mode: authored, semantic_authority: canonical, authority_scope: accepted-engagement-results}
+    transient_outputs: [routing-plan, internal-delegation]
+    side_effects: [write-project-state, write-artifact-index, write-project-artifacts]
+    approval_policy: user-confirms-execution-release-and-client-acceptance-disposition
+    fallback: close-or-return-to-proposal-change-control
+    stack_profile: any
+    contract_version: "1.1"
+
+  q-consult-engagement-plan:
+    path: consult/q-consult-engagement-plan
+    group: consult
+    requires: [q-core-contract]
+    status: active
+    kind: stage
+    workflow: consulting-execution
+    stage: engagement-plan
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
+    persistent_outputs:
+      - {type: engagement-plan, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: engagement-execution-plan}
+    transient_outputs: [kickoff-notes]
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-stakeholders-cadence-and-deliverable-register-against-the-accepted-proposal
+    fallback: blocked-with-targeted-kickoff-questions
+    stack_profile: any
+    contract_version: "1.1"
+
+  q-consult-current-state:
+    path: consult/q-consult-current-state
+    group: consult
+    requires: [q-core-contract]
+    uses:
+      - skill: q-tool-pdf
+        when: client-evidence-arrives-as-pdf-and-needs-verified-extraction
+        fallback: continue-with-manually-supplied-excerpts-and-record-the-extraction-gap
+      - skill: q-tool-document
+        when: client-evidence-arrives-as-docx-and-needs-verified-extraction
+        fallback: continue-with-manually-supplied-excerpts-and-record-the-docx-extraction-gap
+      - skill: q-tool-spreadsheet
+        when: client-evidence-arrives-as-xlsx-or-csv-and-needs-verified-extraction
+        fallback: continue-with-manually-supplied-figures-and-record-the-extraction-gap
+      - skill: q-tool-mermaid
+        when: confirmed-process-or-stakeholder-map-needs-a-diagram
+        fallback: continue-with-the-canonical-textual-map-and-record-the-visual-capability-gap
+      - skill: q-code-explore
+        when: an-assessed-process-is-embodied-in-software-the-user-can-open
+        fallback: continue-with-interviews-and-documents-and-record-the-system-orientation-gap
+      - skill: q-review-evidence
+        when: a-diagnostic-conclusion-rests-on-a-supported-inference-or-quantitative-or-causal-claim-that-could-mislead-a-recommendation
+        fallback: keep-the-conclusion-as-a-hypothesis-with-its-evidence-gap-and-report-expanded-evidence-review-unavailable
+    status: active
+    kind: stage
+    workflow: consulting-execution
+    stage: current-state
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
+    persistent_outputs:
+      - {type: current-state-assessment, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: assessed-current-state}
+      - {type: evidence-register, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: assessment-evidence}
+      - {type: process-map-source, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-representation}
+    transient_outputs: [interview-notes, extraction-scratch]
+    side_effects: [write-project-artifacts]
+    approval_policy: no-fabrication-and-user-confirms-diagnostic-findings-and-declared-evidence-gaps
+    fallback: blocked-with-targeted-evidence-requests
+    stack_profile: any
+    contract_version: "1.1"
+
+  q-consult-intervention:
+    path: consult/q-consult-intervention
+    group: consult
+    requires: [q-core-contract]
+    uses:
+      - skill: q-tool-mermaid
+        when: confirmed-target-state-process-or-operating-model-needs-a-diagram
+        fallback: continue-with-the-canonical-textual-design-and-record-the-visual-capability-gap
+    status: active
+    kind: stage
+    workflow: consulting-execution
+    stage: intervention
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
+    persistent_outputs:
+      - {type: intervention-design, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: target-state-and-recommendations}
+      - {type: consulting-deliverable, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: declared-deliverable-scope}
+      - {type: process-map-source, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-representation}
+    transient_outputs: [design-notes]
+    side_effects: [write-project-artifacts]
+    approval_policy: user-confirms-target-state-recommendations-and-each-deliverable-version-and-routes-any-commitment-change-to-proposal-change-control
+    fallback: return-to-current-state-for-a-missing-or-contradicted-finding
+    stack_profile: any
+    contract_version: "1.1"
+
+  q-consult-acceptance:
+    path: consult/q-consult-acceptance
+    group: consult
+    requires: [q-core-contract]
+    uses:
+      - skill: q-review-docs
+        when: deliverable-set-warrants-documentation-qa-before-client-acceptance
+        fallback: continue-with-owner-review-against-the-acceptance-criteria-and-record-the-qa-gap
+    status: active
+    kind: stage
+    workflow: consulting-execution
+    stage: acceptance
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
+    persistent_outputs:
+      - {type: acceptance-record, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: deliverable-acceptance}
+    transient_outputs: [acceptance-session-notes]
+    side_effects: [write-project-artifacts]
+    approval_policy: client-acceptance-is-recorded-never-inferred-and-user-confirms-each-deliverable-disposition
+    fallback: record-partial-acceptance-and-open-items
     stack_profile: any
     contract_version: "1.1"
 

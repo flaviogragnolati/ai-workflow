@@ -42,7 +42,7 @@ Use these report types to select candidate sources, then obtain explicit source-
 | Milestone | backlog, milestone deliverables, validation, dependencies, and risks |
 | Release | release candidate, release evidence, integral validation, delivery manifest, and release notes |
 | Completion | accepted proposal commitments, deliverables, acceptance evidence, and delivery manifest |
-| Consulting | discovery brief, accepted proposal, and approved execution results |
+| Consulting | discovery brief, accepted proposal, engagement plan, current-state assessment, intervention design, acceptance record, and the `execution-release` (approved execution results) |
 | Executive or custom | the smallest approved source set supporting the stated decision or communication objective |
 
 ## Content profiles

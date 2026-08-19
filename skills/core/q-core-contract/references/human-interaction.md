@@ -167,6 +167,20 @@ q-proposal-web:
 q-proposal-discovery:
   orchestrated: decision-gated
   standalone: decision-gated
+q-consult-workflow:
+  orchestrated: decision-gated
+q-consult-engagement-plan:
+  orchestrated: decision-gated
+  standalone: decision-gated
+q-consult-current-state:
+  orchestrated: decision-gated
+  standalone: decision-gated
+q-consult-intervention:
+  orchestrated: decision-gated
+  standalone: decision-gated
+q-consult-acceptance:
+  orchestrated: decision-gated
+  standalone: decision-gated
 q-maint-ai-workflow:
   standalone: decision-gated
 q-report-workflow:

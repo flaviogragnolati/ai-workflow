@@ -1,6 +1,6 @@
 # Engagement research guide
 
-The `research` group reduces one named external uncertainty — market, competitor, regulatory, technology, feasibility, or risk — into an approved, cited baseline. It may run as a root workflow or be delegated by Proposal when Discovery cannot responsibly resolve the question from client evidence. Completing a baseline never automatically opens Proposal or Reporting; every next workflow is an explicit choice.
+The `research` group reduces one named external uncertainty — market, competitor, regulatory, technology, feasibility, or risk — into an approved, cited baseline. It may run as a root workflow or be delegated by Proposal or Consulting execution when the owning stage cannot responsibly resolve the question from client evidence. Completing a baseline never automatically opens Proposal or Reporting; every next workflow is an explicit choice.
 
 This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.yaml) is the registry; each `SKILL.md` owns its procedure.
 
@@ -8,7 +8,7 @@ This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.
 
 ```mermaid
 flowchart TB
-    U["Named external uncertainty<br/>root run or delegated by Proposal"] --> W["q-research-workflow"]
+    U["Named external uncertainty<br/>root run or delegated by Proposal or Consulting execution"] --> W["q-research-workflow"]
     W --> S1["q-research-scope<br/>Research Brief"]
     S1 --> S2["q-research-investigate<br/>Findings Register"]
     S2 -->|"market profile with modules<br/>or an explicit valid target"| S3["q-research-market-analysis<br/>market-analysis.yaml"]
@@ -45,4 +45,4 @@ The `general` profile skips Market Analysis; the `market` profile inserts it con
 
 ## Integration with the other groups
 
-A [proposal](../proposal/README.md)-delegated run returns to Proposal for an explicit adoption, retention, or deferral disposition. An [ideation session](../ideation/q-ideation-session/SKILL.md) may send evidence requests into scope and reopen after the baseline answers them. A baseline may optionally feed [reporting](../report/README.md) with `content_profile: market-research`.
+A [proposal](../proposal/README.md)-delegated run returns to Proposal for an explicit adoption, retention, or deferral disposition. A [consulting execution](../consult/README.md)-delegated run returns to `q-consult-workflow` for the same three dispositions. An [ideation session](../ideation/q-ideation-session/SKILL.md) may send evidence requests into scope and reopen after the baseline answers them. A baseline may optionally feed [reporting](../report/README.md) with `content_profile: market-research`.

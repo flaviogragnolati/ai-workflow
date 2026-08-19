@@ -217,6 +217,10 @@ A release candidate names an exact base commit or tag, the included execution re
 
 Deployment and migration are external effects: each environment and operation needs its own explicit approval, production is never inferred from a lower environment, and a step the agent could not execute is recorded as human-executed evidence with provenance, never as agent evidence. A hotfix or rollback is a new release candidate over the released version; a `Released` version is never edited in place. Release tags, branches, and pushes are Git mutations requested as user actions under the Git operations section.
 
+## Consulting execution
+
+Consulting execution is optional and follows an accepted proposal whose engagement model is consulting, assessment, training, managed service, or the non-software scope of a mixed engagement, or an explicit engagement agreement the user supplies. `q-consult-workflow` is its root orchestrator and single global state writer; it accepts the exact accepted proposal version and never edits it. Its stages are canonical only for the engagement plan, the assessed current state and its evidence, the intervention design and each deliverable's declared scope, and the recorded client acceptance. A diagnostic finding cites registered evidence or remains a hypothesis; the remedy is designed only from confirmed findings. Acceptance is recorded from the client's disposition per deliverable and exact version, never inferred from internal review, a delivered file, or silence. The `execution-release` names the exact accepted versions, is immutable, and is the "approved execution results" reporting consumes. A deviation from accepted scope, price, schedule, deliverables, acceptance criteria, or other commitments returns to proposal change control; a client-facing render of an accepted deliverable is produced through reporting delegation and stays derived; a diagnostic or intervention candidate from ideation enters only through the owning stage's own procedure.
+
 ## Stack compatibility
 
 The development workflow is profile-driven. In the manifest, `stack_profile: any` means the skill's procedure is independent of the selected stack, while `stack_profile: project-defined` means the skill must load the project's current technical foundation and repository evidence. `t3-core` remains a legacy project value during migration; it is not a package compatibility gate.
@@ -256,7 +260,7 @@ Research uses `general` and `market` profiles. General keeps the route `scope â†
 
 `q-research-synthesize` interprets findings and market results by stable ID and must not recreate their claims, sources, formulas, or complete calculation tables. A changed finding, assumption, calculation, scenario, or published result makes the dependent synthesis and baseline stale.
 
-When Proposal delegates Research, the proposal root obtains one explicit disposition after return: adopt the exact baseline as `external-research`, retain it independently, or defer the decision. Only `q-proposal-discovery` may add an adopted baseline to its owned brief; Research never edits that artifact.
+When Proposal delegates Research, the proposal root obtains one explicit disposition after return: adopt the exact baseline as `external-research`, retain it independently, or defer the decision. Only `q-proposal-discovery` may add an adopted baseline to its owned brief; Research never edits that artifact. When Consulting execution delegates Research, `q-consult-workflow` obtains the same three dispositions with `adopt-as-engagement-input` in place of the proposal one; only `q-consult-current-state` or `q-consult-intervention` may register the adopted baseline as evidence, and Research never edits an engagement artifact.
 
 ## Structured ideation
 
@@ -273,7 +277,7 @@ The adopting workflow owns the lifecycle transition. After a session returns, it
 
 A consumer may use a snapshot whose exact version is `Baselined` in the adopting workflow's index, or explicitly approved by the named decision owner when the session ran standalone. A snapshot without an approval block is eligible only for `defer-decision` or `reject`. A later round produces a new version; adopting it marks the previously adopted version `Superseded`.
 
-Each consumer adopts only what its own authority allows: problem frames, questions, assumptions, and interpretation risks into discovery; solution, engagement, and workstream options into proposal design; evidence requests and candidate questions into research scope; a selected option, outcome hypothesis, and assumptions into product core; technology or architecture alternatives into their owning stage. A candidate never becomes a client fact, an authorized research question, a requirement, an ADR, scope, price, schedule, or a commitment without the owning skill's own procedure. Validate the snapshot against `references/ideation-baseline.schema.yaml`.
+Each consumer adopts only what its own authority allows: problem frames, questions, assumptions, and interpretation risks into discovery; solution, engagement, and workstream options into proposal design; evidence requests and candidate questions into research scope; a selected option, outcome hypothesis, and assumptions into product core; technology or architecture alternatives into their owning stage; diagnostic and causal hypotheses into current-state assessment for validation; intervention, governance, operating-model, and measurement options into intervention design; stakeholder actions into the engagement plan. A candidate never becomes a client fact, an authorized research question, a requirement, an ADR, scope, price, schedule, or a commitment without the owning skill's own procedure. Validate the snapshot against `references/ideation-baseline.schema.yaml`.
 
 ## Reporting
 
@@ -285,7 +289,7 @@ Reporting is optional and does not change upstream completion criteria. `q-repor
 
 `q-report-document` and `q-report-deck` consume the same baselined report source when they run as reporting channels. Their Markdown, DOCX, Marp source bundle, HTML, PDF, PPTX, and image outputs are derived with no semantic authority. The Marp bundle remains technically editable and regenerable, but that editability does not give it report authority. A manual semantic edit returns to `q-report-source`, creates a new approved source version, and makes affected channels stale. Generation or release approval never authorizes publication or external sending.
 
-When another workflow delegates progress, feature, milestone, release, completion, or other reporting, that workflow remains root orchestrator and reconciles the composite reporting delta. Direct standalone renderers never write workflow state or the artifact index.
+When another workflow delegates progress, feature, milestone, release, completion, consulting, or other reporting, that workflow remains root orchestrator and reconciles the composite reporting delta. Direct standalone renderers never write workflow state or the artifact index.
 
 ## PDF delegation
 

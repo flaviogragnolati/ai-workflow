@@ -23,6 +23,7 @@ evidence_requests:
 | Practical feasibility that only a throwaway build can settle | `q-code-prototype` |
 | Client facts, budget, deadline, stakeholders, or confirmed context | `q-proposal-discovery` |
 | Existing project truth already recorded somewhere | `q-ask-project` |
+| Current-state, process, role, or control evidence inside the client organization during an engagement | `q-consult-current-state`; before an engagement is accepted, `q-proposal-discovery` |
 | Customer interviews, data pulls, regulatory review, or stakeholder consultation | The named human owner, recorded as a required user action |
 
 One request names one uncertainty and one route. A request without a decision impact is noise; drop it or merge it.
@@ -44,6 +45,9 @@ Package for the receiving owner: the snapshot artifact ID and version, the froze
 |---|---|---|
 | `q-proposal-discovery` | Problem frames, questions, assumptions, interpretation risks | Client facts, budget, deadline, confirmed scope |
 | `q-proposal-design` | Solution, engagement, and workstream options | Scope, price, schedule, commitments |
+| `q-consult-engagement-plan` | Stakeholder actions and cadence options | Confirmed stakeholders, commitments, the deliverable register |
+| `q-consult-current-state` | Diagnostic and causal hypotheses to validate, evidence requests about the client's own processes | A validated diagnosis, a client fact, an assessed finding |
+| `q-consult-intervention` | Intervention, governance, operating-model, and measurement options with their assumptions | An accepted target state, a deliverable, a commitment |
 | `q-research-scope` | Evidence requests and candidate questions | Authorized questions, budget, search strategies |
 | `q-plan-product-core` | A selected option, outcome hypothesis, assumptions | Requirements, business rules, actors, canonical scope |
 | `q-plan-tech-foundation` | Technology alternatives and trade-offs | Stack selection |

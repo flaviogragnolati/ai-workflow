@@ -41,4 +41,4 @@ A Marp channel preserves its Markdown, theme CSS, assets, render command, hashes
 
 ## Integration with the other groups
 
-[Proposal](../proposal/README.md), [research](../research/README.md), and [delivery](../delivery/README.md) may all end or checkpoint in a report. The report source consumes their approved artifacts by exact ID and version and routes any needed upstream change back to the owner instead of editing it.
+[Proposal](../proposal/README.md), [consulting execution](../consult/README.md), [research](../research/README.md), and [delivery](../delivery/README.md) may all end or checkpoint in a report. The report source consumes their approved artifacts by exact ID and version and routes any needed upstream change back to the owner instead of editing it.

@@ -28,7 +28,7 @@ Classify client disposition as one of:
 - `rejected`;
 - `expired`.
 
-An accepted non-development proposal may close commercially, route to a future/manual execution process, and optionally route to reporting. It must not leave a development gate pending.
+An accepted non-development proposal continues to `q-consult-workflow` (the `consulting-execution` workflow) or closes commercially, and may optionally route to reporting. It must not leave a development gate pending.
 
 ## Gates and returns
 
@@ -46,6 +46,10 @@ Never let a channel renderer silently modify canonical commercial meaning.
 ## Development handoff
 
 Only software or mixed engagements with applicable software scope may continue to `q-delivery-workflow`. Pass proposal object IDs, version, applicable commitments, assumptions, exclusions, unresolved references, and readiness. Do not imply technical confirmation where the proposal records only a preliminary assumption.
+
+## Consulting handoff
+
+A consulting, assessment, training, managed-service, or mixed engagement with non-software scope may continue to `q-consult-workflow`. Pass the accepted proposal artifact ID and version, the proposal object IDs of the deliverables, acceptance criteria, commitments, assumptions, exclusions, and unresolved references in that scope, and readiness. A mixed engagement receives both handoffs; each root workflow owns the state and index of its own run, and neither edits the proposal. A scope, price, schedule, deliverable, or acceptance-criteria change that execution reports returns here through change control.
 
 ## Optional structured ideation
 

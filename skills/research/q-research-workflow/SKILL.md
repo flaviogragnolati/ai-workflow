@@ -48,6 +48,7 @@ At each stage boundary report only the metrics needed to decide the next action:
 For a delegated run, return the exact baseline and request one caller disposition:
 
 - `adopt-as-proposal-input` — the proposal root may ask `q-proposal-discovery` to register that baseline version as `external-research`;
+- `adopt-as-engagement-input` — the consulting root may ask `q-consult-current-state` or `q-consult-intervention` to register that baseline version as `external-research` evidence;
 - `retain-as-independent` — preserve the research artifacts without using them in the active proposal;
 - `defer-decision` — keep the disposition open and block only the commitment that depends on it.
 
