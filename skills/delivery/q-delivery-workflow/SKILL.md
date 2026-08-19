@@ -10,7 +10,7 @@ Read the `q-core-contract` companion for shared governance and its `references/r
 ## Preconditions
 
 1. Load project state, artifact index, baselines, decisions, risks, and open change requests.
-2. Accept either a product idea or a versioned proposal contract. Do not fabricate a commercial contract when work starts from an idea.
+2. Accept either a product idea or the accepted proposal version (its commercial release, exact `02-proposal-source.yaml` ID and version). Do not fabricate a commercial reference when work starts from an idea.
 3. Load `technical_foundation_ref` and, for work that touches a user interface, `design_system_ref`, each at its exact artifact version when it exists. Treat a legacy `stack_profile: t3-core` as project data, not a package compatibility gate.
 4. Route missing or stale technical selections to `q-plan-tech-foundation`. Block only on an unresolved requirement, decision, execution capability, or evidence gap that makes the next action unsafe.
 
@@ -49,6 +49,18 @@ When `user-requests-standalone-database-schema-migration-or-performance-analysis
 
 When `user-requests-structured-ideation-before-product-core-opportunity-discovery-on-the-existing-product-or-a-bounded-technical-option-set` and `q-ideation-session` is installed, route that session to it with the decision, its owner, and the versioned inputs, then record one adoption disposition from the contract's structured-ideation section before any stage consumes the result. `q-plan-product-core` may receive a selected option, an outcome hypothesis, and assumptions; technology and architecture options return to `q-plan-tech-foundation` or `q-plan-architecture`. A candidate never becomes a requirement, a business rule, an ADR, or a stack selection. If it is absent, `continue-with-the-owning-planning-stage-and-record-the-unexplored-option-space-as-a-gap`.
 
+## Optional engagement research
+
+When planning exposes an external uncertainty that materially affects a product or technology decision and the project's own evidence cannot resolve it, offer delegation to `q-research-workflow`. Start it only after the user authorizes the questions, boundary, privacy treatment, and budget. Pass `root_orchestrator: q-delivery-workflow`, `global_state_writer: q-delivery-workflow`, and an exact `return_to`; remain the global state writer and reconcile its composite delta.
+
+After Research returns, obtain one explicit disposition:
+
+- `adopt-as-planning-input` — route the exact Research Baseline ID and version to `q-plan-product-core` or `q-plan-tech-foundation`, whichever owns the affected meaning, to register as `external-research`;
+- `retain-as-independent` — preserve the research artifacts without using them in this delivery;
+- `defer-decision` — keep the disposition unresolved and block only the planning commitment that depends on it.
+
+Research never edits a planning artifact and never opens a planning stage by itself. Treat its claims and synthesis as supporting evidence; the planning owners retain their declared authority.
+
 ## Development loop
 
 For each backlog item the user selects — or confirms from the backlog's next recommended front — record its ID in workflow state as the active development front, then:
@@ -58,19 +70,20 @@ For each backlog item the user selects — or confirms from the backlog's next r
    - `q-code-grill-design` for broad or cross-cutting architecture;
    - `q-code-grill-feature` for a bounded feature with meaningful complexity;
    - `q-code-grill-simple` for a small contained change.
-3. Skip a grill when the item is already execution-ready.
-4. Ask whether distribution, a tracker, or multiple executors justify durable tickets.
-5. Run `q-code-tickets` only when useful. A single executor may continue from the ready backlog item, issue, or implementation plan.
-6. Run `q-code-implement`. Keep its internal plan, scratchpad, and delegations transient.
-7. Require verification proportional to acceptance criteria. Enable `q-code-tdd` only when requested or explicitly selected.
-8. Run a mini review:
+3. For a defect item — failing, broken, slow, or incorrect behavior in work that is not yet `Released` — skip the grill: route `q-code-debug` when the cause is not confirmed, or `q-code-fix` when the cause and correction are confirmed; either ends with the mini review and the durable-record update, and a correction that alters product behavior, architecture, or a cross-module contract is reclassified as change work and re-enters at step 2 (the reclassification rule those skills state). Then continue at step 10.
+4. Skip a grill when the item is already execution-ready.
+5. Ask whether distribution, a tracker, or multiple executors justify durable tickets.
+6. Run `q-code-tickets` only when useful. A single executor may continue from the ready backlog item, issue, or implementation plan.
+7. Run `q-code-implement`. Keep its internal plan, scratchpad, and delegations transient.
+8. Require verification proportional to acceptance criteria. Enable `q-code-tdd` only when requested or explicitly selected.
+9. Run the mini review — required; an executor whose reviewer is not installed returns a blocker naming it, and the item stays open until the review runs:
    - `q-review-code` for technical and specification conformance;
    - `q-review-comments` for affected comments and docstrings.
-9. Correct failures and update the original durable record: ticket when present, otherwise the selected backlog item, issue, or explicit plan. Route any newly required technology selection back to `q-plan-tech-foundation`.
-10. Integrate or continue. Do not create a parallel durable implementation diary.
-11. Validate every `stage_result` the loop returns — from each grill, implementation plan, ticket set, and implementation close — and apply its delta before selecting the next step or item: register authored plans, tickets, and feature architecture documents in the artifact index as `Working` with their declared authority; record decisions and ADRs; route each `stale_artifacts` entry to its owning stage; update the durable record reference and the active front; carry `next_recommended_action` into the next routing decision.
+10. Correct failures and update the original durable record: ticket when present, otherwise the selected backlog item, issue, or explicit plan. Route any newly required technology selection back to `q-plan-tech-foundation`.
+11. Integrate or continue. Do not create a parallel durable implementation diary.
+12. Validate every `stage_result` the loop returns — from each grill, implementation plan, ticket set, implementation close, and fix or debug close — and apply its delta before selecting the next step or item: register authored plans, tickets, and feature architecture documents in the artifact index as `Working` with their declared authority; record decisions and ADRs; route each `stale_artifacts` entry to its owning stage; update the durable record reference and the active front; carry `next_recommended_action` into the next routing decision.
 
-Backlog changes discovered during development return to `q-plan-backlog` in `targeted-refinement` or `replan-and-synchronize` mode. When a grill-design result lists a canonical planning artifact under `stale_artifacts` — architecture, features, domain model, technical foundation, or design system — route reconciliation to that owning stage before the affected slice enters implementation; the feature architecture document never replaces the planning version.
+Backlog changes discovered during development return to `q-plan-backlog` in `targeted-refinement` or `replan-and-synchronize` mode. A backlog item that a grill or plan cannot execute as approved — scope, priority, or acceptance criteria must change — returns there too; the item is the commitment, the plan is its execution record. When a grill-design result lists a canonical planning artifact under `stale_artifacts` — architecture, features, domain model, technical foundation, or design system — route reconciliation to that owning stage before the affected slice enters implementation; the feature architecture document never replaces the planning version.
 
 ## Release, integral QA, and delivery
 
@@ -88,7 +101,7 @@ Do not treat `q-review-codebase` alone as acceptance; the validation reconciles 
 
 ## Incidents and hotfixes
 
-When a defect or incident is reported against a `Released` version, record it as a change-control entry with the impacted release, severity, and decision owner, and keep the released version immutable. Route diagnosis to `q-code-debug`, or `q-code-fix` when the cause is confirmed, scoped to that release's exact commit or tag, then the mini review. Route `q-delivery-release` to form and execute a hotfix release candidate — `release_kind: hotfix`, base the released version — and `q-review-release` at proportional scope; deliver the result as a new version. A rollback is a release operation formed, executed, and evidenced by `q-delivery-release`. Return the root cause to `q-plan-backlog` in `targeted-refinement` mode when the hotfix was a mitigation.
+When a defect or incident is reported against a `Released` version, record it as a change-control entry with the impacted release, severity, and decision owner, and keep the released version immutable. Route diagnosis to `q-code-debug`, or `q-code-fix` when the cause is confirmed, scoped to that release's exact commit or tag, then the mini review. Route `q-delivery-release` to form and execute a hotfix release candidate — `release_kind: hotfix`, base the released version — and `q-review-release` at proportional scope; deliver the result as a new version. A rollback is a release operation formed, executed, and evidenced by `q-delivery-release`. Return the root cause to `q-plan-backlog` in `targeted-refinement` mode when the hotfix was a mitigation. Other client feedback on a `Released` version follows the contract's Client feedback rule: record it, then route a change to change control, a question to `q-ask-project`, and an acknowledgement to the delivery record or a completion report.
 
 ## Reporting checkpoints
 
@@ -106,7 +119,7 @@ When technical work affects accepted commercial scope, price, schedule, or commi
 4. Block affected work until the required decision.
 5. Regenerate derivatives after approval.
 
-On resume, rebuild context from state, index, baselines, decisions, risks, blockers, housekeeping, the exact technical foundation version, and any persisted standalone stage results: validate each sidecar the contract's standalone-persistence rule defines, apply its delta, and delete it before continuing. Do not reopen closed decisions without new evidence.
+On resume, rebuild context from state, index, baselines, decisions, risks, blockers, housekeeping, the exact technical foundation version, and any persisted standalone stage results: validate each sidecar the contract's standalone-persistence rule defines, apply its delta, and delete it before continuing; the run's state and index live under its artifact root (`docs/development-workflow/`), with the project root as the legacy location — name which one you used. Do not reopen closed decisions without new evidence.
 
 ## Anti-patterns
 

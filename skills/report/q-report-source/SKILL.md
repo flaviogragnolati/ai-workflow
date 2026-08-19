@@ -46,6 +46,8 @@ For `market-research`, require each material block to carry typed `evidence_refs
 Do not render Markdown, DOCX, PDF, or PPTX here. Do not let a summary or recommendation silently become an upstream decision.
 Do not use a derived export as the only semantic support or derive a new market calculation here.
 
+When `client-facing-prose-is-drafted-and-the-user-requests-a-clarity-or-ai-pattern-pass-before-the-gate` and `q-tool-humanizer` is installed, pass the exact prose sections, their language, and a meaning lock — every claim, number, name, price, date, citation, and commitment that must not change — for `detect` and, if requested, `rewrite` or `improve`; adopt a revision into this owned artifact only after checking the lock, and keep the pass out of any derived render. If it is absent, `keep-the-prose-as-authored-and-record-that-no-humanization-pass-ran`.
+
 ## Conflict and revision handling
 
 When sources disagree, identify the affected block, artifact IDs, versions, authority scopes, and owners. Block that block or the full baseline according to materiality, and route correction to the source owner.

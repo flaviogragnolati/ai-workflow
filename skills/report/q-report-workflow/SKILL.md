@@ -15,8 +15,8 @@ Read the `q-core-contract` companion for shared governance and its `references/r
 
 Identify the root orchestrator before writing project state:
 
-- When another workflow delegates reporting, inherit its `root_orchestrator`, `global_state_writer`, and `return_to`. Return a composite delta with `global_state_updated: false`; the root validates and reconciles it.
-- When reporting is the directly invoked project workflow, act as root and remain the only writer of `00-workflow-state.yaml` and `00-artifact-index.yaml`.
+- When another workflow delegates reporting, inherit its `root_orchestrator`, `global_state_writer`, and `return_to`, and write under the caller's artifact root in `reporting/`. Return a composite delta with `global_state_updated: false`; the root validates and reconciles it.
+- When reporting is the directly invoked project workflow, act as root and remain the only writer of `00-workflow-state.yaml` and `00-artifact-index.yaml`; this run's artifacts and both files live under `docs/reporting-workflow/`.
 
 Never let a delegated reporting run replace or discard the caller's stage state.
 

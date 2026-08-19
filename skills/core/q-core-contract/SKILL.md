@@ -77,6 +77,8 @@ The root orchestrator is the only writer of:
 - cross-workflow stage completion and recovery status;
 - reconciled traceability, decision, and risk deltas when those registers are managed centrally.
 
+A project may host more than one root workflow run — a proposal, then a delivery and/or a consulting execution, or research or reporting invoked as root. Each root run owns its own `00-workflow-state.yaml` and `00-artifact-index.yaml` inside its artifact root (see Artifact roots); no run edits another run's files. A successor run starts its own state and index, names the predecessor's released inputs by exact artifact ID and version in `source_refs` and in a `decisions` entry, and never copies them into its index or inherits the predecessor's stage status. A run whose files predate this rule keeps them at the project root; an orchestrator resuming looks in its artifact root first, then at the project root, and states which it used.
+
 A stage owns its domain artifacts and returns a structured delta. A delegated subworkflow may aggregate owned stage deltas but cannot apply them globally. The root orchestrator validates the resulting delta, reconciles IDs and dependencies, then updates state and index.
 
 Research, prototype, review, rendering, and other tools must not commit, publish, message external systems, or change remote state unless the manifest policy and the current user authorization allow that side effect.
@@ -127,7 +129,7 @@ Validate the result against `references/stage-result.schema.yaml`.
 
 ### Standalone persistence
 
-When a standalone run writes or updates a persistent project artifact, also persist the returned `stage_result` as a sidecar file `<primary-artifact-path>.stage-result.yaml` beside the primary authored or updated project file; when the only durable record lives outside the repository, such as an external tracker, write it beside the plan or backlog file that record links to. The sidecar is the stage's own domain file: it never touches `00-workflow-state.yaml` or `00-artifact-index.yaml`. On the next orchestrated run or resume, the root orchestrator discovers sidecars under the project's artifact roots, validates each against the schema, applies its delta to state and index, and deletes it; a sidecar that still exists is pending reconciliation by definition. A transient output never gets a sidecar.
+When a standalone run writes or updates a persistent project artifact, also persist the returned `stage_result` as a sidecar file `<primary-artifact-path>.stage-result.yaml` beside the primary authored or updated project file; when the only durable record lives outside the repository, such as an external tracker, write it beside the plan or backlog file that record links to. The sidecar is the stage's own domain file: it never touches `00-workflow-state.yaml` or `00-artifact-index.yaml`. On the next orchestrated run or resume, the root orchestrator discovers sidecars under the artifact roots this contract names, validates each against the schema, applies its delta to state and index, and deletes it; a sidecar that still exists is pending reconciliation by definition. A transient output never gets a sidecar.
 
 ## Artifact ownership and authority
 
@@ -156,6 +158,14 @@ Use these lifecycle states:
 - `Transient`: never added to the artifact index.
 
 An authored artifact may be canonical only for a declared scope. A derived artifact must reference its sources and cannot silently change their meaning.
+
+### Release records
+
+Each root workflow ends in one release act over exact versions, and a successor references that act by ID and version instead of re-authoring it: the **commercial release** — `q-proposal-workflow` marks the accepted `02-proposal-source.yaml` version `Released` and records the client disposition; the **delivery release** — the release candidate and delivery manifest owned by `q-delivery-release`, accepted by `q-delivery-workflow`; the **execution release** — `05-execution-release.yaml` written by `q-consult-workflow`; the **reporting release** — `reporting-release.yaml` written by `q-report-workflow`. "The accepted proposal version" always means the exact `Released` proposal-source version of the commercial release.
+
+### Artifact roots
+
+Persistent artifacts of a root run live under that run's root: `docs/proposal-workflow/` (discovery-proposal), `docs/consulting-workflow/` (consulting-execution), `docs/development-workflow/` (ai-coding), `docs/research-workflow/` (research as root), `docs/reporting-workflow/` (reporting as root). A delegated research or reporting run writes under the caller's root in `research/` or `reporting/`. Standalone stage sidecars are discovered under these roots.
 
 ## Diagram authority
 
@@ -193,15 +203,17 @@ When new information affects an accepted or baselined upstream artifact:
 4. Obtain the approval required by the manifest before changing priority, scope, price, schedule, or another commitment.
 5. Regenerate derived outputs from the corrected canonical source.
 
-A downstream stage or development-loop refinement that finds a contradiction with, or an accepted change to, a canonical planning artifact reports it, marks the referenced version stale, and routes reconciliation to the owning stage; it never edits that artifact or authors a competing canonical statement of the same meaning. An artifact canonical for a narrower scope — a feature architecture document, an implementation plan — yields to the current planning version it references.
+A downstream stage or development-loop grill that finds a contradiction with, or an accepted change to, a canonical planning artifact reports it, marks the referenced version stale, and routes reconciliation to the owning stage; it never edits that artifact or authors a competing canonical statement of the same meaning. An artifact canonical for a narrower scope — a feature architecture document, an implementation plan — yields to the current planning version it references.
 
 A gate may return work to the owning stage. Record the return in state, a decision/risk register, or a change request. Diagrams may show this with one shared feedback note instead of one arrow per gate.
+
+No skill estimates effort or invents dates: effort, capacity, dates, and prices enter as user-supplied or user-approved values, stay attributed to their author, and are commitments only through the owning workflow's approval.
 
 ## Durable and transient development records
 
 Treat these as durable when they exist:
 
-- the selected backlog item;
+- the backlog item the user selected — by confirming the backlog's next recommended front or naming another ready item — which the root orchestrator records as the active development front; no stage selects it for the user;
 - a workflow implementation plan created before execution;
 - tracker or Markdown tickets;
 - release-candidate, release-evidence, integral-validation, delivery-manifest, and release-note artifacts, owned by `q-delivery-release` and `q-review-release`;
@@ -210,6 +222,10 @@ Treat these as durable when they exist:
 Treat the implementer's scratchpad, internal plan, delegation messages, and subagent coordination as transient. `q-code-implement` must update the original durable execution record and must not create a second durable work diary.
 
 Tickets and TDD are optional. Verification proportional to the change and its acceptance criteria is required. After implementation and verification, run a change-scoped technical review and comment/docstring review. Run integral QA later against a release candidate.
+
+The three durable records for one item have a fixed precedence. The backlog item, owned by `q-plan-backlog`, is the commitment: its scope, priority, and acceptance criteria. An implementation plan or feature architecture document — from `q-code-implementation-plan` or a grill — is the durable execution record: tasks, order, verification, and task-level criteria that trace to the item's; it may add a criterion only for a gap the item left and must flag that gap for the next `targeted-refinement`. A ticket set derives from the plan and is the executable record when it exists. A plan or ticket that would change the item's scope, priority, or acceptance criteria returns the item to `q-plan-backlog` instead of redefining them.
+
+The **mini review** is the pair `q-review-code` (standards and specification conformance) and `q-review-comments` (affected comments and docstrings), run after implementation, a fix, or a debug correction and its verification. It is required: `q-code-implement`, `q-code-fix`, and `q-code-debug` declare both reviewers in `uses` so a partial catalog can still apply a change, but when a reviewer is absent the close carries a blocker naming it and its install command, and the change is never reported as reviewed. Two words are easy to confuse: a *grill* is the pre-implementation alignment at one of three depths (manifest `stage: refinement`); `targeted-refinement` is a `q-plan-backlog` mode that re-plans one front. This contract uses the full mode name for the latter.
 
 ## Release engineering
 
@@ -260,7 +276,7 @@ Research uses `general` and `market` profiles. General keeps the route `scope �
 
 `q-research-synthesize` interprets findings and market results by stable ID and must not recreate their claims, sources, formulas, or complete calculation tables. A changed finding, assumption, calculation, scenario, or published result makes the dependent synthesis and baseline stale.
 
-When Proposal delegates Research, the proposal root obtains one explicit disposition after return: adopt the exact baseline as `external-research`, retain it independently, or defer the decision. Only `q-proposal-discovery` may add an adopted baseline to its owned brief; Research never edits that artifact. When Consulting execution delegates Research, `q-consult-workflow` obtains the same three dispositions with `adopt-as-engagement-input` in place of the proposal one; only `q-consult-current-state` or `q-consult-intervention` may register the adopted baseline as evidence, and Research never edits an engagement artifact.
+When Proposal delegates Research, the proposal root obtains one explicit disposition after return: adopt the exact baseline as `external-research`, retain it independently, or defer the decision. Only `q-proposal-discovery` may add an adopted baseline to its owned brief; Research never edits that artifact. When Consulting execution delegates Research, `q-consult-workflow` obtains the same three dispositions with `adopt-as-engagement-input` in place of the proposal one; only `q-consult-current-state` or `q-consult-intervention` may register the adopted baseline as evidence, and Research never edits an engagement artifact. When the AI coding workflow delegates Research, `q-delivery-workflow` obtains the same three dispositions with `adopt-as-planning-input`; only `q-plan-product-core` or `q-plan-tech-foundation` may register the adopted baseline, and Research never edits a planning artifact.
 
 ## Structured ideation
 
@@ -275,7 +291,7 @@ The adopting workflow owns the lifecycle transition. After a session returns, it
 - `defer-decision`: leave the disposition open and block only the dependent commitment;
 - `reject`: record the reason and adopt nothing.
 
-A consumer may use a snapshot whose exact version is `Baselined` in the adopting workflow's index, or explicitly approved by the named decision owner when the session ran standalone. A snapshot without an approval block is eligible only for `defer-decision` or `reject`. A later round produces a new version; adopting it marks the previously adopted version `Superseded`.
+A consumer may use a snapshot whose exact version is `Baselined` in the adopting workflow's index, or explicitly approved by the named decision owner when the session ran standalone. A snapshot without an approval block is eligible only for `defer-decision` or `reject`. A later round produces a new version; adopting it marks the previously adopted version `Superseded`. When the session ran standalone, the approval record is the snapshot's own `approval` block (`approved_by`, `approval_ref`, `approved_at`); adoption is recorded only by an adopting root orchestrator's index entry, so a standalone snapshot nobody adopted has no adoption record by design, and its persisted `stage_result` sidecar is how a later root run discovers it.
 
 Each consumer adopts only what its own authority allows: problem frames, questions, assumptions, and interpretation risks into discovery; solution, engagement, and workstream options into proposal design; evidence requests and candidate questions into research scope; a selected option, outcome hypothesis, and assumptions into product core; technology or architecture alternatives into their owning stage; diagnostic and causal hypotheses into current-state assessment for validation; intervention, governance, operating-model, and measurement options into intervention design; stakeholder actions into the engagement plan. A candidate never becomes a client fact, an authorized research question, a requirement, an ADR, scope, price, schedule, or a commitment without the owning skill's own procedure. Validate the snapshot against `references/ideation-baseline.schema.yaml`.
 
@@ -290,6 +306,10 @@ Reporting is optional and does not change upstream completion criteria. `q-repor
 `q-report-document` and `q-report-deck` consume the same baselined report source when they run as reporting channels. Their Markdown, DOCX, Marp source bundle, HTML, PDF, PPTX, and image outputs are derived with no semantic authority. The Marp bundle remains technically editable and regenerable, but that editability does not give it report authority. A manual semantic edit returns to `q-report-source`, creates a new approved source version, and makes affected channels stale. Generation or release approval never authorizes publication or external sending.
 
 When another workflow delegates progress, feature, milestone, release, completion, consulting, or other reporting, that workflow remains root orchestrator and reconciles the composite reporting delta. Direct standalone renderers never write workflow state or the artifact index.
+
+## Client feedback
+
+Client feedback on a released or accepted version is a recorded input, never an edit. The root orchestrator that owns the release records each item — source, date, exact artifact ID and version, and the request in the client's words — in its decision or risk register or as a change request, then routes it by kind: a defect against a `Released` software version goes to the delivery hotfix route; an objection to an accepted consulting deliverable is a `rework` disposition in a new acceptance round; a request that changes scope, price, schedule, deliverables, or commitments is a change request for proposal change control; a question goes to `q-ask-project`; an acknowledgement or satisfaction signal is recorded in the acceptance record or a `completion` report. Nothing else changes state, and a `Released` version is never reopened in place — a new version follows the owning stage's procedure.
 
 ## PDF delegation
 
@@ -336,6 +356,22 @@ An owning skill may delegate Marp Markdown validation, theme and asset checks, c
 Keep a standalone Marp Markdown source, newly created theme, and persisted bundle assets authored and supporting for `slide-representation`; keep its renders derived with `semantic_authority: none`. In Reporting, `q-report-deck` owns the Marp Markdown, exact theme CSS, local asset bundle, reproducible render command, and every render as derived presentation artifacts with no semantic authority because `q-report-source` remains the semantic owner. Preserve the source bundle to satisfy Marp-channel editability. Standard Marp PPTX is a valid derived delivery format even though its slide contents are rendered images; when editable PowerPoint objects are required, route to `q-tool-pptx` instead. The experimental `--pptx-editable` route is unsupported.
 
 If a requested browser-backed format is unavailable, return the validated editable source plus the exact capability gap and let the owner request explicit partial release. Never claim a render, note-preservation property, visual check, or release readiness that was not verified.
+
+## Database-schema delegation
+
+An owning skill may delegate physical design, relational or document-model review, migration design, and evidence-led performance review to `q-tool-database-schema`. The caller retains the domain model, architecture decisions, feature meaning, the confirmed technical foundation, every command execution, and every artifact-index delta. Pass one `database_request` conforming to its bundled schema: task, caller, scope, confirmed or inferred profile, exact source versions, redacted supplied evidence, constraints, intended result, and output policy.
+
+`q-tool-database-schema` owns engine-coverage labeling (`verified-profile`, `portable`, `unverified`), the analysis, candidate designs, migration strategies, and its `database_analysis` result. It never executes a query or migration, connects to a database, accepts credentials or unsanitized production records, defaults an engine or model family, browses for engine ground truth, edits a caller's artifact, or writes workflow state or the artifact index. A finding without a representative query, plan, metric, or distribution is a hypothesis with an evidence request.
+
+Keep any persisted analysis derived with `semantic_authority: none` and exact provenance; the accepted design lives in the caller's canonical artifact (domain model, ADR, implementation plan). When the confirmed profile has no verified coverage, return the gap and let the owner route research or decide; never approve on a portable assumption presented as verified.
+
+## Prose delegation
+
+A prose-authoring skill — `q-proposal-design`, `q-report-source`, `q-consult-intervention` — may delegate detection of AI-writing patterns, a meaning-preserving rewrite, or a clarity edit of client-facing English or Spanish prose to `q-tool-humanizer` before its own gate; `q-report-deck` and `q-proposal-web` may do the same only for the copy they author themselves (slide titles, messages, speaker notes; web headings, navigation, section introductions), never for a sentence reproduced from their approved source. The caller retains every claim, number, name, price, date, citation, commitment, and the decision to adopt a revision into its owned artifact. Pass the exact sections, their language, and a meaning lock naming what must not change.
+
+`q-tool-humanizer` owns pattern detection with localized indicators, bounded rewriting, clarity improvement, and a change summary. It never issues an authorship verdict, invents specificity for a vague claim, repairs a citation, changes a locked element, edits a derived render, or writes workflow state or the artifact index. A revision that alters a locked element is returned as a rejected change with the reason.
+
+A humanization pass leaves no persistent artifact unless the caller separately authorizes a named file. A derived channel reproduces the approved prose exactly: `q-proposal-document` and `q-report-document` never run the pass, and a deck or web revision lands in the authored plan, never in a generated output.
 
 ## Validation
 

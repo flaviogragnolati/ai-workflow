@@ -24,16 +24,41 @@ Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shar
 
 Eight invariants govern every workflow and skill in this package:
 
-1. **Human judgment stays in charge** of scope, commitments, irreversible actions, and governance changes.
-2. **Skills are narrow and composable**, with explicit ownership boundaries. Orchestrators route, reconcile, and write global state; they never duplicate domain procedure.
-3. **Context is a budget.** An agent loads only the route and references the current task needs.
-4. **Each meaning has one authoritative source.** Every other surface is a pointer or a derived view — including this README and the group guides.
-5. **Changes are small and verification is proportional to risk.** Ceremony such as tickets and TDD stays optional.
-6. **Artifacts declare authority, lifecycle, stable IDs, and provenance.** A derived presentation never silently becomes semantic truth.
-7. **Compatibility is stated honestly.** A missing capability produces an explicit gap, never a false approval.
-8. **External or irreversible side effects are explicit and approval-gated.**
+1. **Human judgment stays in charge** of scope, commitments, irreversible actions, and governance changes — because scope, money, and irreversible actions are commitments only a person can make.
+2. **Skills are narrow and composable**, with explicit ownership boundaries. Orchestrators route, reconcile, and write global state; they never duplicate domain procedure — because a narrow skill can be verified and replaced, and a monolith cannot.
+3. **Context is a budget.** An agent loads only the route and references the current task needs — because attention spent on unneeded references is taken from the task.
+4. **Each meaning has one authoritative source.** Every other surface is a pointer or a derived view — including this README and the group guides — because two statements of one rule drift and the reader cannot tell which is true.
+5. **Changes are small and verification is proportional to risk.** Ceremony such as tickets and TDD stays optional — because ceremony unrelated to risk slows feedback without adding safety.
+6. **Artifacts declare authority, lifecycle, stable IDs, and provenance.** A derived presentation never silently becomes semantic truth — because a rendered file that outlives its source becomes a false authority.
+7. **Compatibility is stated honestly.** A missing capability produces an explicit gap, never a false approval — because a false approval is worse than a stated gap.
+8. **External or irreversible side effects are explicit and approval-gated** — because a side effect the user did not approve cannot be undone by the agent.
 
 `skills/core/q-core-contract/SKILL.md` turns these invariants into the shared operating contract that coordinated skills load before acting. The manifest declares, per skill, the execution modes, side effects, approval policy, and fallback that make them enforceable.
+
+## The six workflows
+
+`skill-manifest.yaml` registers six workflows. Each has one root orchestrator that is the only writer of the run's state and artifact index; everything else in the group is a stage or a tool it routes.
+
+| Workflow id | Root orchestrator | Turns … into … | Stages | Ends in | May continue to |
+|---|---|---|---|---|---|
+| `discovery-proposal` | `q-proposal-workflow` | client evidence → accepted proposal (web and document channels) | discovery, design, web, document | commercial release | `ai-coding`, `consulting-execution`, `reporting`, close |
+| `consulting-execution` | `q-consult-workflow` | accepted engagement → recorded client acceptance | engagement plan, current state, intervention, acceptance | execution release | `reporting`, `discovery-proposal`, `ai-coding`, close |
+| `ai-coding` | `q-delivery-workflow` | product idea or accepted proposal version → released software | seven planning stages (product core → backlog, design system when it applies), development loop, release engineering + integral validation | delivery release | `reporting`, close |
+| `research` | `q-research-workflow` | one external uncertainty → approved cited baseline | scope, investigate, market analysis (market profile only), synthesize | research baseline | `discovery-proposal`, `reporting`, close |
+| `reporting` | `q-report-workflow` | approved artifacts → traced report and rendered channels | source, then document / deck renderers | reporting release | return to caller, close |
+| `maintenance` | `q-maint-ai-workflow` | a package change request → validated package | (internal, not distributed) | clean validator | — |
+
+Start here:
+
+| You have … | Start with | Because |
+|---|---|---|
+| meeting notes, emails, a client ask, no quote yet | `$q-proposal-workflow` | discovery and the proposal own commercial meaning |
+| an accepted proposal (or SOW) for consulting, assessment, training, or a managed service | `$q-consult-workflow` | it executes non-software scope to recorded acceptance |
+| an accepted proposal for software, or a product idea | `$q-delivery-workflow` | it plans, iterates, releases, and delivers software |
+| a question the client's evidence cannot answer | `$q-research-workflow` (or let a proposal, engagement, or delivery delegate it) | research produces a cited baseline, not a decision |
+| approved artifacts and a stakeholder to inform | `$q-report-workflow` | reports trace to exact versions and are released before any sending |
+| an option space that is itself the open question | `$q-ideation-session`, then the owning workflow adopts | ideation generates options, never facts |
+| one bounded question about the project as it is | `$q-ask-project` | read-only, transient |
 
 ## Skill groups
 
@@ -41,8 +66,8 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 
 | Group | Skills | What it covers | Guide |
 |---|---:|---|---|
-| `ask` | 2 | Bounded answers from project truth and read-only proposal analysis | below |
-| `ideation` | 1 | Optional structured exploration of one decision's option space | below |
+| `ask` | 2 | Bounded answers from project truth and read-only proposal analysis | [ask guide](skills/ask/README.md) |
+| `ideation` | 1 | Optional structured exploration of one decision's option space | [ideation guide](skills/ideation/README.md) |
 | `proposal` | 5 | Client evidence to discovery brief, canonical proposal, and web/document channels | [proposal guide](skills/proposal/README.md) |
 | `consult` | 5 | Accepted consulting engagement to engagement plan, assessed current state, intervention design, recorded acceptance, and execution release | [consult guide](skills/consult/README.md) |
 | `research` | 5 | A named external uncertainty to an approved, cited baseline | [research guide](skills/research/README.md) |
@@ -52,16 +77,12 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `review` | 7 | QA that never modifies its target: changes, releases, documentation, evidence, and skills | [review guide](skills/review/README.md) |
 | `report` | 4 | Approved artifacts to a traced report and its rendered channels | [report guide](skills/report/README.md) |
 | `tool` | 10 | Format, web-capture, and diagram mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
-| `core` | 1 | The shared governance companion every coordinated skill reads | see [Skill dependencies](#skill-dependencies) |
-| `maint` | 3 | Package maintenance; internal, not distributed | see [Package maintenance](#package-maintenance) |
+| `core` | 1 | The shared governance companion every coordinated skill reads | [core guide](skills/core/README.md) |
+| `maint` | 3 | Package maintenance; internal, not distributed | [maint guide](skills/maint/README.md) |
 
 The manifest `group` field is authoritative: the skill name, its folder, and the skills.sh sections all derive from it.
 
-**Ask.** `q-ask-project` answers one bounded question from project documentation, workflow state, decisions, and observable implementation. `q-ask-analyze` extends that path with a multidimensional proposal assessment. Both return transient conversation output and never create artifacts or mutate project state; a routing recommendation is a next route, not authorization to start it.
-
-**Ideation.** `q-ideation-session` turns one decision into a traceable candidate space with independent generation, predeclared weighted criteria, non-compensatory gates, adversarial review, and routed evidence requests — including an opportunity-discovery sweep over an existing product. It generates options and questions but never evidence, and a candidate becomes a fact, requirement, or commitment only through the owning workflow's explicit adoption. See [`q-ideation-session/SKILL.md`](skills/ideation/q-ideation-session/SKILL.md).
-
-Keep the three exploratory capabilities distinct: `q-ask-analyze` evaluates one already-proposed change against project truth, `q-research-workflow` reduces an external uncertainty with cited evidence, and `q-ideation-session` runs when the option set itself is the open question.
+Keep the three exploratory capabilities distinct: `q-ask-analyze` evaluates one already-proposed change against project truth, `q-research-workflow` reduces an external uncertainty with cited evidence, and `q-ideation-session` runs when the option set itself is the open question. The [ask guide](skills/ask/README.md) and the [ideation guide](skills/ideation/README.md) draw that boundary in full.
 
 ## How the groups connect
 
@@ -113,6 +134,44 @@ Technical development is stack-agnostic and profile-driven. Skills marked `stack
 
 What done looks like: a completed workflow stage leaves owned artifacts, traceable IDs, declared authority and lifecycle, a valid `stage_result`, reconciled runtime state when orchestrated, explicit blockers when incomplete, and one clear next action. A read-only capability returns only its declared transient output and does not claim stage completion.
 
+## Approval gates
+
+Every workflow stops at named human decisions. The manifest `approval_policy` string is authoritative; the lists below are a paraphrase for readers.
+
+- **`q-proposal-workflow`** — you approve the discovery brief, the proposal design (scope, price, schedule, terms), and each requested channel; the commercial release marks the accepted proposal-source version `Released`. The client's disposition is recorded, never inferred, and publishing the web channel is a separate approval.
+- **`q-consult-workflow`** — the engagement gate, the assessment gate, the design gate, and the acceptance gate. Acceptance is the client's recorded disposition per deliverable and exact version; the execution release follows it. A deviation from the accepted proposal opens change control instead of editing it.
+- **`q-delivery-workflow`** — each planning stage; the backlog item you select as the active front; release acceptance; a per-environment approval for every deploy and migration, with production never inferred from a lower environment; and hotfix scope.
+- **`q-research-workflow`** — the scope, budget, and privacy boundary before any search; the baseline before it is usable; and how the caller adopts it.
+- **`q-report-workflow`** — the source snapshot, the report meaning, and each channel; then the reporting release. Publication or sending is always a separate approval.
+- **Tools** — local generation only, inside authorized paths, with explicit overwrite approval, no runtime install, no remote render, and no publication.
+
+Two rules cut across all of them. Git effects — staging, committing, pushing, opening a pull request, deleting a ref — are operation-scoped and never implied by a package or project write authorization. And generation or release approval never authorizes publication or external sending; that is always its own gate.
+
+## What a run leaves behind
+
+A root run keeps its artifacts, `00-workflow-state.yaml`, and `00-artifact-index.yaml` under its own artifact root, so a proposal, a delivery, and a consulting execution can coexist in one repository without sharing a mutable file. The paths below are the ones the stage skills declare:
+
+```text
+docs/
+├── proposal-workflow/            discovery-proposal run
+│   ├── 00-workflow-state.yaml    00-artifact-index.yaml
+│   └── working/proposal/02-proposal-source.yaml   (canonical commercial meaning; Released at commercial close)
+├── consulting-workflow/          consulting-execution run
+│   ├── 00-workflow-state.yaml    00-artifact-index.yaml
+│   ├── 01-engagement-plan.md  02-current-state-assessment.md  02-evidence-register.yaml
+│   ├── 03-intervention-design.md  03-deliverables/<deliverable-id>-<slug>.md
+│   └── 04-acceptance-record.yaml  05-execution-release.yaml
+└── development-workflow/         ai-coding run
+    ├── 00-workflow-state.yaml    00-artifact-index.yaml
+    ├── product/01-product-core.md  technical/02-technical-foundation.md  domain/03-domain-model.md
+    ├── architecture/  experience/05b-design-system.md  backlog/  implementation/
+    └── release/<rc-id>/07-release-candidate.yaml  07-integral-validation.md  08-delivery-manifest.yaml  08-release-notes.md
+```
+
+Research and reporting as root runs use `docs/research-workflow/` and `docs/reporting-workflow/`; delegated by another workflow, they write under the caller's root in `research/` or `reporting/`.
+
+Lifecycle tells you how much a file is allowed to move: `Working` is mutable and not yet approved, `Baselined` is an approved input downstream work may build on, and `Released` is immutable — a delivery or an accepted commercial release. A stage run standalone also leaves a `<primary-artifact-path>.stage-result.yaml` sidecar beside the artifact it wrote; the next orchestrated run validates it, applies its delta, and deletes it, so a sidecar that still exists is pending reconciliation by definition. Transient outputs — scratchpads, internal plans, search notes, review diagnostics — never appear here and are never indexed.
+
 ## Quick start
 
 Invoke one orchestrator and name the objective or target stage:
@@ -154,7 +213,7 @@ Every group guide lists all of its skills with a when-to-use table.
 
 Two reference forms survive installation: a one-level `../<sibling-skill>/…` path, and a companion named in prose. Anything deeper than one level leaves the installed catalog and fails validation.
 
-`uses` declares optional collaboration. Its `when` trigger activates only for the named branch and its `fallback` keeps the owning skill truthful when the tool is absent. Unlike `requires`, a missing `uses` target does not block unrelated procedure; it must produce the declared capability gap when that branch is requested.
+`uses` declares optional collaboration. Its `when` trigger activates only for the named branch and its `fallback` keeps the owning skill truthful when the tool is absent. Unlike `requires`, a missing `uses` target does not block unrelated procedure; it must produce the declared capability gap when that branch is requested. The mini review is the one required collaboration declared this way: `q-code-implement`, `q-code-fix`, and `q-code-debug` use `q-review-code` and `q-review-comments`, and a missing reviewer is a recorded blocker, never a skipped step.
 
 The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-maint-writing-for-agents` inside the maintenance package. Consumers do not install this internal acceptance route.
 
@@ -221,6 +280,46 @@ Ceremony and side effects:
 - Do not commit or publish through a read-only or unapproved execution mode.
 
 Tool-specific boundaries — web capture, Marp, PPTX, spreadsheet, and database — live in the [shared tools guide](skills/tool/README.md).
+
+## Glossary
+
+| Term | Meaning |
+|---|---|
+| Root workflow run | One execution of a registered workflow in a project. A project may host several; each owns its own state and index under its artifact root. |
+| Root orchestrator | The entry skill of a root run and the only writer of that run's `00-workflow-state.yaml` and `00-artifact-index.yaml`. |
+| Artifact root | The directory a root run's persistent artifacts live under: `docs/<workflow>-workflow/`. Delegated research or reporting writes under the caller's root instead. |
+| `target_stage` | A stage name supplied together with an orchestrator. It runs that one stage; it is not a second independent invocation. |
+| `stage_result` and delta | The structured result every stage returns. The root orchestrator validates it and applies its delta to state and index. |
+| `global_state_updated` / `reconciliation_required` | A standalone stage sets these `false` / `true`: it wrote its own artifact but nothing global, and a later orchestrated run must reconcile. |
+| Sidecar | `<primary-artifact-path>.stage-result.yaml`, written beside an artifact by a standalone stage. Its existence means reconciliation is pending. |
+| `canonical` / `supporting` / `none` | Semantic authority. Canonical is the meaning's one source for a declared scope; supporting informs without deciding; none is presentation only. |
+| `authored` / `derived` | Creation mode. A derived artifact references its sources and cannot silently change their meaning. |
+| `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, `Transient` | Lifecycle states. `Transient` is never added to the artifact index. |
+| "baseline" vs `Baselined` | A Research Baseline or ideation baseline is a content role (an approved body of evidence or options); `Baselined` is a lifecycle state. They are unrelated. |
+| Accepted proposal version / commercial release | The exact `Released` `02-proposal-source.yaml` version and the release act that marked it. Downstream work references that act, never re-authors it. |
+| Delivery release | The release candidate and delivery manifest owned by `q-delivery-release` and accepted by `q-delivery-workflow`. |
+| Execution release | `05-execution-release.yaml`, written by `q-consult-workflow` over recorded client acceptance. |
+| Reporting release | `reporting-release.yaml`, written by `q-report-workflow` over exact source and output versions. |
+| Grill vs `targeted-refinement` | A *grill* is pre-implementation alignment at one of three depths (manifest `stage: refinement`). `targeted-refinement` is a `q-plan-backlog` mode that re-plans one front. |
+| Mini review | `q-review-code` plus `q-review-comments`, run after every implementation, fix, or debug correction. Required; a missing reviewer is a recorded blocker, never a skip. |
+| Durable record | The record a change updates rather than duplicating: the backlog item, the implementation plan or feature architecture document, or the ticket — in that precedence. |
+| Change request | How an accepted commitment changes. A `Released` version is never edited in place. |
+| `uses` vs `requires` | `requires` is a hard dependency: absent, the skill stops with an install command. `uses` is optional collaboration: absent, its declared fallback runs and the gap is reported. |
+| Approval policy | The manifest string stating what a skill must have confirmed before acting. It is authoritative over any paraphrase, including this file. |
+| Stack profile | `any` (no stack dependency) or `project-defined` (loads the project's versioned technical foundation). Missing technology evidence is a coverage gap, not an approval. |
+| Estimation | Not a package capability. No skill estimates effort or invents dates; effort, capacity, dates, and prices enter as user-supplied or user-approved values attributed to their author. |
+
+## Conventions
+
+**Language.** The package language is English: skill bodies, manifest tokens, schemas, guides, and this changelog. Spanish appears only in the Quasar brand identity references (`skills/report/q-report-deck/references/identidad-visual.md` and its Marp template) and in the bilingual prose capabilities of `q-tool-humanizer`. Client deliverables follow the client's language. Governance vocabulary — lifecycle states, authority labels, disposition names, manifest tokens — is never translated.
+
+**Skill IDs.** `q-<group>-<leaf>`, derived from the manifest `group` field, which also determines the folder and the skills.sh section.
+
+**Artifact paths.** `docs/<workflow>-workflow/` per root run, as listed under [What a run leaves behind](#what-a-run-leaves-behind).
+
+**Changelog.** Every bullet under `Unreleased` starts with the ISO date it landed, states the change in one sentence, and keeps details in at most three sub-bullets.
+
+**Precedence.** `skill-manifest.yaml` wins over any paraphrase in this file; the contract wins over a group guide; a skill's own `SKILL.md` owns its procedure.
 
 ## Package maintenance
 

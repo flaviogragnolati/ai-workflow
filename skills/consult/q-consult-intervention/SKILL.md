@@ -33,6 +33,8 @@ Complete when every register deliverable at this stage's scope exists at an exac
 
 When `confirmed-target-state-process-or-operating-model-needs-a-diagram` and `q-tool-mermaid` is installed, delegate authoring, validation, and rendering; keep the textual design canonical and the diagram supporting. If it is absent, `continue-with-the-canonical-textual-design-and-record-the-visual-capability-gap`.
 
+When `client-facing-prose-is-drafted-and-the-user-requests-a-clarity-or-ai-pattern-pass-before-the-gate` and `q-tool-humanizer` is installed, pass the exact prose sections, their language, and a meaning lock — every claim, number, name, price, date, citation, and commitment that must not change — for `detect` and, if requested, `rewrite` or `improve`; adopt a revision into this owned artifact only after checking the lock, and keep the pass out of any derived render. If it is absent, `keep-the-prose-as-authored-and-record-that-no-humanization-pass-ran`.
+
 ## Boundaries
 
 Never accept a deliverable, edit the assessment or the proposal, or present a recommendation without a traced finding or a declared assumption. A `rework` disposition from acceptance returns here with its items and produces a new deliverable version.

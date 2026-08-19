@@ -29,7 +29,7 @@ flowchart TB
 | [`q-consult-workflow`](q-consult-workflow/SKILL.md) | Starting, resuming, routing, or recovering an engagement; running one named stage; writing the execution release after recorded acceptance; opening change control. It owns workflow state and the artifact index. |
 | [`q-consult-engagement-plan`](q-consult-engagement-plan/SKILL.md) | Turning the accepted proposal into stakeholders, cadence, evidence access, and a deliverable register with criteria by reference; reconciling the plan after an approved change. |
 | [`q-consult-current-state`](q-consult-current-state/SKILL.md) | Mapping how the client works today, registering evidence (with verified PDF/DOCX/XLSX extraction), diagnosing with confidence and gaps, validating hypotheses. Never designs the remedy. |
-| [`q-consult-intervention`](q-consult-intervention/SKILL.md) | Designing the target state, authoring each deliverable at its declared scope, and the adoption roadmap from confirmed findings. Never accepts its own work. |
+| [`q-consult-intervention`](q-consult-intervention/SKILL.md) | Designing the target state, authoring each deliverable at its declared scope, and the adoption roadmap from confirmed findings. May run a `q-tool-humanizer` pass over the client-facing prose before its gate. Never accepts its own work. |
 | [`q-consult-acceptance`](q-consult-acceptance/SKILL.md) | Presenting deliverables at exact versions against proposal criteria and recording the client's disposition — accepted, with reservations, rework, rejected, or deferred — with evidence. |
 
 ## Boundaries

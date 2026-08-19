@@ -35,7 +35,7 @@ Run `intent: reopen-after-evidence` only with the returned artifact ID and exact
 1. Record the returned artifact in `evidence_links` with its relation to the request.
 2. Update the affected candidates' `evidence_status` and the affected assumptions' status — never their original statements.
 3. Generate a new round recorded as `post-check`, keeping the original pool intact.
-4. Produce a new snapshot version. The adopting orchestrator marks the previously adopted version `Superseded`.
+4. Produce a new snapshot version. The adopting orchestrator marks the previously adopted version `Superseded`; when nothing adopted the earlier version, there is nothing to supersede.
 
 ## Snapshot handoff
 

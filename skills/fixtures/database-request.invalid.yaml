@@ -1,0 +1,27 @@
+schema_version: "1.0"
+request_id: DBREQ-2026-08-19-002
+task: indexing
+owner_skill: q-code-implementation-plan
+scope: "Speed up the invoice list."
+caller_context:
+  technical_foundation_ref: null
+  domain_refs: []
+  architecture_refs: []
+  feature_refs: []
+database_profile:
+  model_family: relational
+  engine: postgresql
+  version: "16"
+  confirmed: true
+source_refs: []
+supplied_evidence:
+  - kind: query
+    redacted: false
+    locator: "app/reports/invoices.sql"
+constraints: []
+intended_result: "Make it faster."
+output:
+  path: "docs/development-workflow/db-analysis.md"
+  overwrite: true
+  approval_ref: null
+forbidden: []

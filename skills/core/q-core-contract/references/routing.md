@@ -20,7 +20,7 @@ ai-coding:
   entry_skill: q-delivery-workflow
   planning_stages: [q-plan-product-core, q-plan-tech-foundation, q-plan-domain-model, q-plan-architecture, q-plan-features, q-plan-design-system, q-plan-backlog]
   release_stages: [q-delivery-release, q-review-release]
-  delegates: [reporting]
+  delegates: [reporting, research]
   optional_next: [reporting, close]
 research:
   entry_skill: q-research-workflow

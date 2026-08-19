@@ -20,7 +20,7 @@ Accept a backlog item, issue, ticket, architecture document, specification, or e
 3. Choose the implementation approach and strict sequence.
 4. Map the files to create, modify, and test with each file's responsibility, then break work into phases and tasks grounded in that map plus exact functions, data, and dependencies. Take module boundaries from the settled design; do not redesign them here.
 5. Identify pitfalls, compatibility concerns, migrations, observability, security, and rollback.
-6. Define acceptance criteria and proportional verification using commands discovered from the project rather than assumed tooling.
+6. Trace the item's acceptance criteria into task-level criteria and proportional verification using commands discovered from the project rather than assumed tooling; add a criterion only for a gap the item left and flag it for the backlog's next targeted-refinement.
 7. Mark assumptions and blockers honestly.
 8. Self-review the draft against its source before writing it: every source requirement and acceptance criterion maps to a task; every task is executable cold, so a step the executor cannot act on ("add appropriate error handling", "same as task N", a name no task defines) is a defect to fix, not an open question; and every name, signature, path, and schema a task defines matches what later tasks use.
 9. Write one durable `Working` plan.

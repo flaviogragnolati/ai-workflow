@@ -28,12 +28,12 @@ Use parallel executors only for independent work with clear ownership. Their coo
 
 ## Mini review
 
-After implementation and verification:
+When `code-change-and-its-verification-are-complete-and-the-mini-review-is-due` — always, after implementation and verification:
 
-1. Run `q-review-code` for standards and specification conformance.
-2. Run `q-review-comments` for affected comments and docstrings.
+1. Run `q-review-code` for standards and specification conformance. If it is not installed, `close-with-a-blocker-naming-q-review-code-and-its-install-command-and-never-report-the-change-as-reviewed` (`npx skills add flaviogragnolati/ai-workflow --skill q-review-code`).
+2. Run `q-review-comments` for affected comments and docstrings. If it is not installed, `close-with-a-blocker-naming-q-review-comments-and-its-install-command-and-never-report-the-comment-review-as-done` (`npx skills add flaviogragnolati/ai-workflow --skill q-review-comments`).
 3. Correct blockers and rerun relevant checks.
-4. Keep both review results distinct.
+4. Keep both review results distinct. A missing reviewer is a blocker in the stage result and in the durable record, never a skipped step.
 
 ## Durable close
 

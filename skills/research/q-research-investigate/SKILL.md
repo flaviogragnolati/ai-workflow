@@ -31,7 +31,7 @@ Keep these states separate:
 ## Procedure
 
 1. Load the exact authorized brief version and run only its approved strategies. Stop at `max_sources_inspected` when declared and record the resulting coverage; the ceiling never proves quality or completeness.
-2. Register each source with stable ID, title, publisher, owner or known independence, publication and access dates, URL or locator, provenance class, conflicts, currency notes, and `independence_group`. For market inputs add measurement context, original producer, source type, method, covered population, published sample description, limitations, revision status, vintage, license/terms, and archive locator when available.
+2. Register each source with stable ID, title, publisher, owner or known independence, publication and access dates, URL or locator, provenance class, conflicts, currency notes, `independence_group`, and `extraction: {tool: q-tool-pdf | q-tool-document | q-tool-spreadsheet | manual | none, provenance: "..."}` for a supplied file. For market inputs add measurement context, original producer, source type, method, covered population, published sample description, limitations, revision status, vintage, license/terms, and archive locator when available.
 3. Record each search attempt, question, strategy, coverage result, and access limitation.
 4. Register every claim with a stable finding ID, question reference, statement class, status, corroboration, confidence, source relations with exact locators, conflicts, coverage, notes, and optional quantitative value/range plus unit, denominator, geography, period, currency/base year/price basis, taxonomy, and revision status.
 5. Treat reused publications, datasets, press releases, or common owners as dependent evidence even when several URLs repeat them.
@@ -43,6 +43,14 @@ When `material-finding-has-non-obvious-confidence-or-bias-dependence-indirectnes
 Keep source evidence here and calculations elsewhere: do not add owned market calculations, scenarios, recommendations, or analysis results to the Findings Register. Published aggregate survey or interview evidence may be registered with its disclosed method and limitations. Do not contact or recruit participants, run surveys/interviews, store PII or recordings, or process raw response-level data.
 
 When evidence is insufficient, try approved synonyms, another pertinent source class, or a scope-compatible time-window adjustment. Otherwise preserve `unsupported` and the honest coverage state. Record paywalls, authentication, robots exclusions, and unavailable resources as access limitations; never infer unseen content.
+
+## Delegated mechanics
+
+- When `supplied-source-arrives-as-pdf-and-needs-verified-extraction` and `q-tool-pdf` is installed, pass one `pdf_request` with the exact source path, pages, requested extraction, authorized output path, and `overwrite: false`; register the extraction as derived with its provenance and cite the source, not the extract. If it is absent, `continue-with-manually-supplied-excerpts-and-record-the-extraction-gap`.
+- When `supplied-source-arrives-as-docx-and-needs-verified-extraction` and `q-tool-document` is installed, pass one `document_request` the same way. If it is absent, `continue-with-manually-supplied-excerpts-and-record-the-docx-extraction-gap`.
+- When `supplied-source-arrives-as-xlsx-or-csv-and-needs-verified-extraction` and `q-tool-spreadsheet` is installed, pass one `spreadsheet_request` naming sheets, ranges, and whether formulas or values are needed. If it is absent, `continue-with-manually-supplied-figures-and-record-the-extraction-gap`.
+
+Extraction never adds a source: a supplied file is registered as a source by the user's supply, and its extract is derived evidence with `semantic_authority: none`.
 
 ## External-content safety
 

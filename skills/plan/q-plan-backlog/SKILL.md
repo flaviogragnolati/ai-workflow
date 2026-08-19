@@ -29,7 +29,7 @@ Run at the end of app-flow. Produce the first complete high-level backlog with:
 - checkpoints and validation points;
 - important dependencies and blockers;
 - proposed priority and readiness;
-- one next front selectable for refinement, validation, or implementation.
+- one next front the user can select for a grill, validation, or implementation.
 
 Do not require all stories, tasks, subtasks, tickets, or future work to be `Ready`. State that the backlog is rolling-wave and not exhaustive.
 
@@ -61,7 +61,7 @@ Close app-flow when:
 2. central capabilities map to epics;
 3. known features are assigned or justified;
 4. primary dependencies and blockers are visible;
-5. at least one next front can begin refinement, validation, or implementation;
+5. at least one next front can begin a grill, validation, or implementation;
 6. uncertainty and non-exhaustiveness are explicit;
 7. tickets are not required;
 8. next actions are clear.

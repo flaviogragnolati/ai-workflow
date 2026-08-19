@@ -23,6 +23,14 @@ An adopted ideation snapshot may contribute candidate problem frames, open quest
 
 An approved Research Baseline may enter as `external-research` only when the root orchestrator records `adopt-as-proposal-input` and supplies the exact baseline ID and version. Keep its claims supporting, preserve its `as_of` and limitations, and do not let it overwrite contrary client evidence. A retained or deferred baseline is not an input to the active Discovery Brief.
 
+## Delegated mechanics
+
+- When `client-evidence-arrives-as-pdf-and-needs-verified-extraction` and `q-tool-pdf` is installed, pass one `pdf_request` with the exact source path, pages, requested extraction, authorized output path, and `overwrite: false`; register the extraction as derived with its provenance and cite the source, not the extract. If it is absent, `continue-with-manually-supplied-excerpts-and-record-the-extraction-gap`.
+- When `client-evidence-arrives-as-docx-and-needs-verified-extraction` and `q-tool-document` is installed, pass one `document_request` the same way. If it is absent, `continue-with-manually-supplied-excerpts-and-record-the-docx-extraction-gap`.
+- When `client-evidence-arrives-as-xlsx-or-csv-and-needs-verified-extraction` and `q-tool-spreadsheet` is installed, pass one `spreadsheet_request` naming sheets, ranges, and whether formulas or values are needed. If it is absent, `continue-with-manually-supplied-figures-and-record-the-extraction-gap`.
+
+Extraction never adds a source: a supplied file is evidence by the user's supply, and its extract is derived with `semantic_authority: none`.
+
 ## Canonical output
 
 Create a versioned Discovery Brief as an authored, canonical `Working` artifact for discovered client context. Include stable IDs for:
@@ -35,7 +43,7 @@ Create a versioned Discovery Brief as an authored, canonical `Working` artifact 
 - known deliverables and success signals;
 - budget or schedule information only when evidenced;
 - assumptions, decisions, risks, contradictions, and open questions;
-- source traceability;
+- source traceability, each supplied file carrying `extraction: {tool: q-tool-pdf | q-tool-document | q-tool-spreadsheet | manual | none, provenance: "..."}`;
 - proposal readiness and rationale.
 
 Create a concise follow-up question set only for gaps that materially affect proposal commitments.

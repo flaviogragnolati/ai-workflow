@@ -13,8 +13,8 @@ Read the `q-core-contract` companion for shared governance, its `references/rout
 
 Choose the execution branch before any state write:
 
-- **Direct root:** act as the research root orchestrator and sole writer of workflow state and the artifact index.
-- **Delegated:** inherit `root_orchestrator`, `global_state_writer`, and `return_to`. Return one composite delta with `global_state_updated: false`; do not replace the caller's active state.
+- **Direct root:** act as the research root orchestrator and sole writer of workflow state and the artifact index; this run's artifacts, `00-workflow-state.yaml`, and `00-artifact-index.yaml` live under `docs/research-workflow/`.
+- **Delegated:** inherit `root_orchestrator`, `global_state_writer`, and `return_to`, and write under the caller's artifact root in `research/`. Return one composite delta with `global_state_updated: false`; do not replace the caller's active state.
 
 Research is optional consulting or engagement work. It reduces external uncertainty for an identified decision; it does not claim scientific validity, replace client evidence, create commercial commitments, or force a proposal route.
 
@@ -49,6 +49,7 @@ For a delegated run, return the exact baseline and request one caller dispositio
 
 - `adopt-as-proposal-input` — the proposal root may ask `q-proposal-discovery` to register that baseline version as `external-research`;
 - `adopt-as-engagement-input` — the consulting root may ask `q-consult-current-state` or `q-consult-intervention` to register that baseline version as `external-research` evidence;
+- `adopt-as-planning-input` — the delivery root may ask `q-plan-product-core` or `q-plan-tech-foundation` to register that baseline version as `external-research`;
 - `retain-as-independent` — preserve the research artifacts without using them in the active proposal;
 - `defer-decision` — keep the disposition open and block only the commitment that depends on it.
 

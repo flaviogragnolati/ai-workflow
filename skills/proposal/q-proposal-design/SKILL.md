@@ -47,6 +47,8 @@ An adopted ideation snapshot supplies candidate solution, engagement, and workst
 8. Validate financial, schedule, scope, and traceability coherence.
 9. Obtain internal approval before marking a client-ready release.
 
+When `client-facing-prose-is-drafted-and-the-user-requests-a-clarity-or-ai-pattern-pass-before-the-gate` and `q-tool-humanizer` is installed, pass the exact prose sections, their language, and a meaning lock — every claim, number, name, price, date, citation, and commitment that must not change — for `detect` and, if requested, `rewrite` or `improve`; adopt a revision into this owned artifact only after checking the lock, and keep the pass out of any derived render. If it is absent, `keep-the-prose-as-authored-and-record-that-no-humanization-pass-ran`.
+
 ## Error routing
 
 A semantic error in scope, price, schedule, commitment, engagement model, or source returns here and requires derivative regeneration. A visual or channel-only error remains with the channel skill.

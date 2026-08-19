@@ -37,13 +37,14 @@ flowchart TB
 | Concern | How it works |
 |---|---|
 | Routing | Selects the next planning stage, backlog item, loop step, QA, or delivery action; a named `target_stage` runs one stage only. |
-| Single writer | Stages return deltas; only the orchestrator writes `00-workflow-state.yaml` and `00-artifact-index.yaml`. The development loop returns deltas too: each grill, plan, ticket set, and implementation close returns a `stage_result` that is reconciled before the next step. |
+| Single writer | Stages return deltas; only the orchestrator writes `00-workflow-state.yaml` and `00-artifact-index.yaml`. The development loop returns deltas too: each grill, plan, ticket set, implementation close, and fix or debug close returns a `stage_result` that is reconciled before the next step. |
+| Defect route | A defect item in work that is not yet `Released` skips the grill and goes to `q-code-debug` (cause unknown) or `q-code-fix` (cause confirmed), then rejoins the loop at the durable-record update; a defect against a `Released` version goes to the hotfix route instead. |
 | Runtime references | Carries `technical_foundation_ref` and `design_system_ref` so later stages load exact approved versions. |
 | Release | Routes candidate formation, execution, UAT, and validation to their owners; records the acceptance decision; marks lifecycles. The audit alone is not acceptance. |
 | Recovery | Rebuilds a consistent state when runtime records and artifacts have drifted, including standalone stage results persisted beside their artifacts. |
 
 ## Integration with the other groups
 
-Planning stages live in the [plan group](../plan/README.md); the per-item development loop lives in the [code group](../code/README.md); the mini review, the codebase audit, and the integral release validation live in the [review group](../review/README.md). Delegated reporting returns a composite delta and resumes at the supplied return target (see the [reporting guide](../report/README.md)). Structured ideation and standalone database analysis are optional collaborators declared in the manifest.
+Planning stages live in the [plan group](../plan/README.md); the per-item development loop lives in the [code group](../code/README.md); the mini review, the codebase audit, and the integral release validation live in the [review group](../review/README.md). Delegated reporting returns a composite delta and resumes at the supplied return target (see the [reporting guide](../report/README.md)). Delegated [research](../research/README.md) returns the same way; the root then records `adopt-as-planning-input`, `retain-as-independent`, or `defer-decision`, and only `q-plan-product-core` or `q-plan-tech-foundation` registers an adopted baseline. Structured ideation and standalone database analysis are optional collaborators declared in the manifest.
 
 Invoke a stage directly only when standalone output is intentional: a standalone stage writes its owned artifact, returns `reconciliation_required: true`, and does not claim global workflow completion.

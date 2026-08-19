@@ -1,0 +1,42 @@
+schema_version: "1.0"
+request_id: DBREQ-2026-08-19-001
+task: schema-review
+caller:
+  skill_id: q-code-implementation-plan
+  workflow: ai-coding
+  mode: orchestrated
+owner_skill: q-code-implementation-plan
+scope: "Review the invoicing schema before the settlement feature enters implementation."
+caller_context:
+  technical_foundation_ref: {artifact_id: TF-002, version: "1.3"}
+  domain_refs:
+    - {artifact_id: DOM-004, version: "2.0"}
+  architecture_refs:
+    - {artifact_id: ADR-011, version: "1.0"}
+  feature_refs:
+    - {artifact_id: FEA-023, version: "1.1"}
+database_profile:
+  model_family: relational
+  engine: postgresql
+  version: "16"
+  confirmed: true
+source_refs:
+  - {artifact_id: TF-002, version: "1.3", location: "docs/development-workflow/02-tech-foundation.md", sha256: null}
+  - {artifact_id: null, version: null, location: "db/migrations/0042_invoicing.sql", sha256: null}
+supplied_evidence:
+  - kind: ddl
+    redacted: true
+    locator: "db/migrations/0042_invoicing.sql#L1-L88"
+    notes: "Column comments and sample values removed by the caller."
+constraints:
+  - "No downtime window is available for the settlement release."
+  - "Existing invoice IDs must remain stable."
+intended_result: "A schema review with findings, coverage labels, and a candidate index set routed back to the implementation plan."
+output:
+  path: null
+  overwrite: false
+  approval_ref: null
+forbidden:
+  - credentials
+  - production-records
+  - network-access

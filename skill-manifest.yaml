@@ -29,7 +29,7 @@ workflows:
     release_stages: [q-delivery-release, q-review-release]
     includes_execution_loop: true
     includes_integral_qa: true
-    delegates: [reporting]
+    delegates: [reporting, research]
     optional_next: [reporting, close]
   research:
     status: active
@@ -752,11 +752,17 @@ skills:
   q-code-debug:
     path: code/q-code-debug
     group: code
-    requires: []
+    requires: [q-core-contract]
     uses:
       - skill: q-tool-database-schema
         when: database-performance-failure-has-supplied-query-plan-or-metric-evidence
         fallback: continue-with-evidence-led-debugging-and-mark-specialist-database-analysis-unavailable
+      - skill: q-review-code
+        when: code-change-and-its-verification-are-complete-and-the-mini-review-is-due
+        fallback: close-with-a-blocker-naming-q-review-code-and-its-install-command-and-never-report-the-change-as-reviewed
+      - skill: q-review-comments
+        when: code-change-and-its-verification-are-complete-and-the-mini-review-is-due
+        fallback: close-with-a-blocker-naming-q-review-comments-and-its-install-command-and-never-report-the-comment-review-as-done
     status: active
     kind: tool
     workflow: ai-coding
@@ -889,6 +895,13 @@ skills:
     path: code/q-code-implement
     group: code
     requires: [q-core-contract]
+    uses:
+      - skill: q-review-code
+        when: code-change-and-its-verification-are-complete-and-the-mini-review-is-due
+        fallback: close-with-a-blocker-naming-q-review-code-and-its-install-command-and-never-report-the-change-as-reviewed
+      - skill: q-review-comments
+        when: code-change-and-its-verification-are-complete-and-the-mini-review-is-due
+        fallback: close-with-a-blocker-naming-q-review-comments-and-its-install-command-and-never-report-the-comment-review-as-done
     status: active
     kind: tool
     workflow: ai-coding
@@ -1021,6 +1034,15 @@ skills:
       - skill: q-review-evidence
         when: material-finding-has-non-obvious-confidence-or-bias-dependence-indirectness-conflict-or-quantitative-fragility
         fallback: apply-existing-investigation-factors-preserve-uncertainty-and-report-expanded-evidence-review-unavailable
+      - skill: q-tool-pdf
+        when: supplied-source-arrives-as-pdf-and-needs-verified-extraction
+        fallback: continue-with-manually-supplied-excerpts-and-record-the-extraction-gap
+      - skill: q-tool-document
+        when: supplied-source-arrives-as-docx-and-needs-verified-extraction
+        fallback: continue-with-manually-supplied-excerpts-and-record-the-docx-extraction-gap
+      - skill: q-tool-spreadsheet
+        when: supplied-source-arrives-as-xlsx-or-csv-and-needs-verified-extraction
+        fallback: continue-with-manually-supplied-figures-and-record-the-extraction-gap
     status: active
     kind: stage
     workflow: research
@@ -1129,7 +1151,14 @@ skills:
   q-code-fix:
     path: code/q-code-fix
     group: code
-    requires: []
+    requires: [q-core-contract]
+    uses:
+      - skill: q-review-code
+        when: code-change-and-its-verification-are-complete-and-the-mini-review-is-due
+        fallback: close-with-a-blocker-naming-q-review-code-and-its-install-command-and-never-report-the-change-as-reviewed
+      - skill: q-review-comments
+        when: code-change-and-its-verification-are-complete-and-the-mini-review-is-due
+        fallback: close-with-a-blocker-naming-q-review-comments-and-its-install-command-and-never-report-the-comment-review-as-done
     status: active
     kind: tool
     workflow: ai-coding
@@ -1248,6 +1277,10 @@ skills:
     path: proposal/q-proposal-design
     group: proposal
     requires: [q-core-contract]
+    uses:
+      - skill: q-tool-humanizer
+        when: client-facing-prose-is-drafted-and-the-user-requests-a-clarity-or-ai-pattern-pass-before-the-gate
+        fallback: keep-the-prose-as-authored-and-record-that-no-humanization-pass-ran
     status: active
     kind: stage
     workflow: discovery-proposal
@@ -1328,6 +1361,9 @@ skills:
       - skill: q-tool-mermaid
         when: approved-web-visual-intent-needs-a-structural-diagram
         fallback: continue-with-an-accessible-textual-or-native-web-representation
+      - skill: q-tool-humanizer
+        when: client-facing-prose-is-drafted-and-the-user-requests-a-clarity-or-ai-pattern-pass-before-the-gate
+        fallback: keep-the-prose-as-authored-and-record-that-no-humanization-pass-ran
     status: active
     kind: stage
     workflow: discovery-proposal
@@ -1353,6 +1389,15 @@ skills:
       - skill: q-review-evidence
         when: material-supported-inference-adopted-external-research-or-quantitative-or-causal-claim-could-mislead-a-commercial-commitment
         fallback: preserve-current-discovery-classification-add-targeted-follow-up-questions-and-report-expanded-evidence-review-unavailable
+      - skill: q-tool-pdf
+        when: client-evidence-arrives-as-pdf-and-needs-verified-extraction
+        fallback: continue-with-manually-supplied-excerpts-and-record-the-extraction-gap
+      - skill: q-tool-document
+        when: client-evidence-arrives-as-docx-and-needs-verified-extraction
+        fallback: continue-with-manually-supplied-excerpts-and-record-the-docx-extraction-gap
+      - skill: q-tool-spreadsheet
+        when: client-evidence-arrives-as-xlsx-or-csv-and-needs-verified-extraction
+        fallback: continue-with-manually-supplied-figures-and-record-the-extraction-gap
     status: active
     kind: stage
     workflow: discovery-proposal
@@ -1464,6 +1509,9 @@ skills:
       - skill: q-tool-mermaid
         when: confirmed-target-state-process-or-operating-model-needs-a-diagram
         fallback: continue-with-the-canonical-textual-design-and-record-the-visual-capability-gap
+      - skill: q-tool-humanizer
+        when: client-facing-prose-is-drafted-and-the-user-requests-a-clarity-or-ai-pattern-pass-before-the-gate
+        fallback: keep-the-prose-as-authored-and-record-that-no-humanization-pass-ran
     status: active
     kind: stage
     workflow: consulting-execution
@@ -1552,6 +1600,10 @@ skills:
     path: report/q-report-source
     group: report
     requires: [q-core-contract]
+    uses:
+      - skill: q-tool-humanizer
+        when: client-facing-prose-is-drafted-and-the-user-requests-a-clarity-or-ai-pattern-pass-before-the-gate
+        fallback: keep-the-prose-as-authored-and-record-that-no-humanization-pass-ran
     status: active
     kind: stage
     workflow: reporting
@@ -1624,6 +1676,9 @@ skills:
       - skill: q-tool-mermaid
         when: approved-deck-plan-needs-a-mermaid-derived-asset
         fallback: continue-with-the-approved-textual-visual-intent-or-block-a-required-slide-asset
+      - skill: q-tool-humanizer
+        when: client-facing-prose-is-drafted-and-the-user-requests-a-clarity-or-ai-pattern-pass-before-the-gate
+        fallback: keep-the-prose-as-authored-and-record-that-no-humanization-pass-ran
     status: active
     kind: renderer
     workflow: reporting

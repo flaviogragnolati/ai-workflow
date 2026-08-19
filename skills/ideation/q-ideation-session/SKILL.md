@@ -103,4 +103,4 @@ The register structure is [`references/ideation-register.schema.json`](reference
 
 ## Completion
 
-Return a valid `stage_result` naming the register, snapshot, and evaluation artifacts with versions, the candidate dispositions, open evidence requests, gate results, retained dissent, limitations, required approvals, and one next action. In standalone mode return `global_state_updated: false` and `reconciliation_required: true`; adoption and any lifecycle transition belong to the consuming workflow.
+Return a valid `stage_result` naming the register, snapshot, and evaluation artifacts with versions, the candidate dispositions, open evidence requests, gate results, retained dissent, limitations, required approvals, and one next action. In standalone mode return `global_state_updated: false` and `reconciliation_required: true`; adoption and any lifecycle transition belong to the consuming workflow; a standalone approval lives in the snapshot's `approval` block, and adoption exists only when an adopting root records it.

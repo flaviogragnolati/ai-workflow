@@ -89,7 +89,7 @@ Make one cohesive change across the impact map. Apply these maintenance chores w
 - **Routing:** update the owning workflow, orchestrator, router, root `README.md`, any affected `skills/<group>/README.md` guide, and any agent context pointer that would otherwise lie.
 - **Contracts:** update schemas, fixtures, acceptance evidence, stable IDs, artifact ownership, authority, lifecycle, side effects, approvals, fallback, and stack profile together.
 - **Behavior:** add migration or compatibility guidance and re-sync affected consumers without copying the same rule into multiple files.
-- **History:** add a user-visible `CHANGELOG.md` entry under `Unreleased`; identify breaking changes and migrations explicitly.
+- **History:** add a dated, user-visible `CHANGELOG.md` entry under `Unreleased` (ISO date first, one sentence, at most three sub-bullets); identify breaking changes and migrations explicitly.
 - **Provenance:** incorporate every repository-owned license, third-party notice, and attribution into the single root `LICENSE`, which is the sole repository-level license and attribution catalog. When importing, adapting, or referencing external material, update that root document instead of creating a license, notice, or attribution file in an individual skill. List every externally referenced repository there with a link, affected Quasar scope, source revision, modifications, and applicable terms. Preserve license files owned by bundled third-party dependencies, and require the package validator to distinguish those dependency files from forbidden skill-root duplicates before removing a superseded notice.
 - **Removal or rename:** remove stale references, provide a transition path when consumers may still use the old ID, and avoid silent aliases.
 

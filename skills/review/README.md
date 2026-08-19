@@ -42,6 +42,7 @@ Scientific criteria (study hierarchies, GRADE, risk-of-bias instruments) load on
 - A review reports findings; fixes are separate, explicitly authorized work that returns to the owning skill.
 - A codebase audit is input to `q-review-release`; [`q-delivery-workflow`](../delivery/README.md) owns the acceptance decision.
 - A requested numeric skill score is a disclosed heuristic, never package acceptance.
+- `q-review-code` and `q-review-comments` are the declared mini-review collaborators of `q-code-implement`, `q-code-fix`, and `q-code-debug`; when one is not installed the executor closes with a blocker naming it and its install command, and never reports the change as reviewed.
 - Use `q-maint-ai-workflow`, not `q-review-docs`, for documentation owned by this package.
 
 ## Integration with the other groups

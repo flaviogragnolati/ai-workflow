@@ -3175,6 +3175,39 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("report/q-report-workflow/SKILL.md", "`execution-release`"),
             ("ideation/q-ideation-session/references/handoffs.md", "`q-consult-current-state`"),
         ],
+        "S-71": [
+            ("core/q-core-contract/SKILL.md", "The **mini review** is the pair"),
+            ("core/q-core-contract/SKILL.md", "no stage selects it for the user"),
+            ("core/q-core-contract/SKILL.md", "The backlog item, owned by `q-plan-backlog`, is the commitment"),
+            ("delivery/q-delivery-workflow/SKILL.md", "For a defect item"),
+            ("code/q-code-fix/SKILL.md", "never-report-the-change-as-reviewed"),
+            ("code/q-code-debug/SKILL.md", "never-report-the-change-as-reviewed"),
+            ("code/q-code-implement/SKILL.md", "never a skipped step"),
+        ],
+        "S-72": [
+            ("core/q-core-contract/SKILL.md", "Database-schema delegation"),
+            ("core/q-core-contract/SKILL.md", "Prose delegation"),
+            ("core/q-core-contract/SKILL.md", "`adopt-as-planning-input`"),
+            ("research/q-research-investigate/SKILL.md", "supplied-source-arrives-as-pdf-and-needs-verified-extraction"),
+            ("proposal/q-proposal-discovery/SKILL.md", "client-evidence-arrives-as-pdf-and-needs-verified-extraction"),
+            ("proposal/q-proposal-design/SKILL.md", "meaning lock"),
+            ("report/q-report-deck/SKILL.md", "never pass a sentence reproduced from the approved source"),
+            ("delivery/q-delivery-workflow/SKILL.md", "Optional engagement research"),
+        ],
+        "S-73": [
+            ("core/q-core-contract/SKILL.md", "Release records"),
+            ("core/q-core-contract/SKILL.md", "Artifact roots"),
+            ("core/q-core-contract/SKILL.md", "no run edits another run's files"),
+            ("delivery/q-delivery-workflow/SKILL.md", "accepted proposal version"),
+            ("plan/q-plan-product-core/SKILL.md", "accepted proposal version"),
+            ("ideation/q-ideation-session/SKILL.md", "adoption exists only when an adopting root records it"),
+        ],
+        "S-74": [
+            ("core/q-core-contract/SKILL.md", "Client feedback"),
+            ("core/q-core-contract/SKILL.md", "No skill estimates effort"),
+            ("delivery/q-delivery-workflow/SKILL.md", "Client feedback rule"),
+            ("consult/q-consult-workflow/SKILL.md", "Client feedback"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():
@@ -3937,6 +3970,14 @@ def run() -> dict[str, Any]:
         database_analysis_semantics,
         active,
         min_invalid_errors=3,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-database-schema" / "references" / "database-request.schema.yaml",
+        fixtures / "database-request.valid.yaml",
+        fixtures / "database-request.invalid.yaml",
+        None,
+        active,
+        min_invalid_errors=4,
     ))
     errors.extend(fixture_pair(
         SKILLS_ROOT / "tool" / "q-tool-c4" / "references" / "c4-request.schema.yaml",
