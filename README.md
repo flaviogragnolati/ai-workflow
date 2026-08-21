@@ -74,7 +74,7 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `delivery` | 2 | The orchestrator that routes planning, iteration, release, QA, and delivery, plus release engineering | [delivery guide](skills/delivery/README.md) |
 | `plan` | 7 | Ordered planning stages from product intent to a validated backlog | [plan guide](skills/plan/README.md) |
 | `code` | 15 | The development loop: orient, refine, implement, and handle trouble | [code guide](skills/code/README.md) |
-| `review` | 7 | QA that never modifies its target: changes, releases, documentation, evidence, and skills | [review guide](skills/review/README.md) |
+| `review` | 8 | QA that never modifies its target: changes, releases, plan conformance, documentation, evidence, and skills | [review guide](skills/review/README.md) |
 | `report` | 4 | Approved artifacts to a traced report and its rendered channels | [report guide](skills/report/README.md) |
 | `tool` | 10 | Format, web-capture, and diagram mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
 | `core` | 1 | The shared governance companion that coordinated skills declare in `requires` | [core guide](skills/core/README.md) |
@@ -204,7 +204,7 @@ Every group guide lists all of its skills with a when-to-use table.
 
 `invocable` and `distribution` are independent. `invocable: false` means a skill is a companion rather than a user entry point; `distribution: internal` means it is not offered to consumers. `q-core-contract` is a **public companion**: never invoked directly, always shipped alongside the skills that read it.
 
-`requires` in the manifest lists what a skill cannot work without, exactly, per skill. Two patterns cover most of the catalog: every orchestrator, stage, renderer, shared tool, development-loop skill that authors or updates a durable record, quality skill that persists an audit or a validation, and the ask, ideation, research, prototype, merge-conflict, and evidence capabilities require `q-core-contract`; the remaining standalone code and review helpers require nothing. Five cases need more than that:
+`requires` in the manifest lists what a skill cannot work without, exactly, per skill. Two patterns cover most of the catalog: every orchestrator, stage, renderer, shared tool, development-loop skill that authors or updates a durable record, quality skill that reads project artifact authority, state, or the index, and the ask, ideation, research, prototype, merge-conflict, and evidence capabilities require `q-core-contract`; the remaining standalone code and review helpers require nothing. Five cases need more than that:
 
 | Skill | Requires | Why |
 |---|---|---|

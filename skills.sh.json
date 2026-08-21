@@ -124,14 +124,15 @@
     },
     {
       "title": "Review and documentation QA",
-      "description": "Change-scoped technical review, integral release validation, bounded evidence critique, comment and docstring review, Agent Skill quality diagnostics, and drift auditing for persistent project documentation.",
+      "description": "Change-scoped technical review, integral release validation, bounded evidence critique, comment and docstring review, Agent Skill quality diagnostics, drift auditing for persistent project documentation, and plan-conformance auditing of multi-slice work against its approved plan hierarchy.",
       "skills": [
         "q-review-code",
         "q-review-comments",
         "q-review-release",
         "q-review-evidence",
         "q-review-skill",
-        "q-review-docs"
+        "q-review-docs",
+        "q-review-plan"
       ]
     },
     {

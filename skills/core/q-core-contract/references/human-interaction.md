@@ -54,6 +54,9 @@ q-review-docs:
 q-review-evidence:
   orchestrated: review-at-boundaries
   standalone: review-at-boundaries
+q-review-plan:
+  orchestrated: review-at-boundaries
+  standalone: review-at-boundaries
 q-review-release:
   orchestrated: review-at-boundaries
   standalone: review-at-boundaries

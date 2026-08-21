@@ -16,6 +16,9 @@ established.
 
 ### Added
 
+- **2026-08-20** — Added `q-review-plan`, a read-only quality skill that audits a multi-slice feature, epic, or milestone against its approved plan hierarchy (architecture → features → plan → tickets), gives every slice a conformance disposition, verifies deviations were documented and reconciled in the owning durable records, and returns a transient diagnostic.
+  - The delivery orchestrator routes it as an optional macro checkpoint at a front, milestone, or pre-release-candidate boundary; it may route affected durable artifacts to `q-review-docs`.
+  - Three package-validator behavior checks pin its active quality registration, read-only contract, and documentation-QA collaboration edge.
 - **2026-08-19** — Added a contract rule for post-release client feedback (record, then route by kind; never edit a `Released` version) with the matching paragraph in the delivery, consulting, and proposal orchestrators, and stated once that no skill estimates effort (audit item 8).
 - **2026-08-19** — Wired verified PDF/DOCX/XLSX extraction into `q-research-investigate` and `q-proposal-discovery`, humanizer into the three prose authors (`q-proposal-design`, `q-report-source`, `q-consult-intervention`) and the authored copy of `q-report-deck` and `q-proposal-web`, gave `q-tool-database-schema` a request schema, fixtures, and integration contract, added contract sections for database-schema and prose delegation, and let `ai-coding` delegate research (`adopt-as-planning-input`) (audit G5, G6, C8 residue, G8).
 

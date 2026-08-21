@@ -426,6 +426,30 @@ skills:
     contract_version: "1.0"
     distribution: public
 
+  q-review-plan:
+    path: review/q-review-plan
+    group: review
+    requires: [q-core-contract]
+    uses:
+      - skill: q-review-docs
+        when: conformance-findings-warrant-deep-documentation-qa-over-the-affected-durable-artifacts
+        fallback: report-the-documentation-qa-gap-and-keep-findings-scoped-to-the-plan-chain
+    status: active
+    kind: quality
+    workflow: ai-coding
+    stage: null
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: review-at-boundaries, standalone: review-at-boundaries}
+    persistent_outputs: []
+    transient_outputs: [plan-conformance-diagnostic]
+    side_effects: [none]
+    approval_policy: read-only-no-source-state-index-or-external-changes
+    fallback: partial-conformance-diagnostic-with-named-missing-or-unreadable-plan-levels
+    stack_profile: project-defined
+    contract_version: "1.0"
+    distribution: public
+
   q-review-release:
     path: review/q-review-release
     group: review

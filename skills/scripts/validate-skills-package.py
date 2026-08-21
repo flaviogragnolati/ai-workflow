@@ -3292,6 +3292,7 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     web_markdown_tool = skills.get("q-tool-web-markdown", {})
     pptx_tool = skills.get("q-tool-pptx", {})
     spreadsheet_tool = skills.get("q-tool-spreadsheet", {})
+    review_plan = skills.get("q-review-plan", {})
     check(
         "document-tool-active-not-planned",
         isinstance(document_tool, dict)
@@ -3468,6 +3469,26 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     check(
         "web-markdown-tool-has-no-unrendered-or-remote-fallback",
         "remote-converter-or-unrendered-fetch" in str(web_markdown_tool.get("fallback", "")),
+    )
+    check(
+        "review-plan-active-quality-not-planned",
+        isinstance(review_plan, dict)
+        and review_plan.get("status") == "active"
+        and review_plan.get("kind") == "quality"
+        and "q-review-plan" not in planned,
+    )
+    check(
+        "review-plan-read-only",
+        isinstance(review_plan, dict)
+        and review_plan.get("side_effects") == ["none"]
+        and review_plan.get("persistent_outputs") == [],
+    )
+    check(
+        "review-plan-uses-review-docs",
+        any(
+            isinstance(edge, dict) and edge.get("skill") == "q-review-docs"
+            for edge in (review_plan.get("uses") or [])
+        ),
     )
     check("git-edit-does-not-authorize-maintenance-commit", not git_operation_allowed(
         maintenance, "commit", approved=True
