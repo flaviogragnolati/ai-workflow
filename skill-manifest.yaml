@@ -75,6 +75,26 @@ skills:
     contract_version: "1.5"
     distribution: public
 
+  q-core-identity:
+    path: core/q-core-identity
+    group: core
+    requires: []
+    status: active
+    kind: tool
+    workflow: shared
+    stage: null
+    invocable: false
+    execution_modes: [internal]
+    human_interaction: {internal: none}
+    persistent_outputs: []
+    transient_outputs: []
+    side_effects: [none]
+    approval_policy: read-only-brand-and-editorial-reference-with-no-project-or-package-writes
+    fallback: report-the-missing-identity-companion-instead-of-inventing-brand-or-editorial-rules
+    stack_profile: any
+    contract_version: "1.0"
+    distribution: public
+
   q-tool-mermaid:
     path: tool/q-tool-mermaid
     group: tool
@@ -1333,7 +1353,7 @@ skills:
   q-proposal-document:
     path: proposal/q-proposal-document
     group: proposal
-    requires: [q-core-contract, q-proposal-design]
+    requires: [q-core-contract, q-proposal-design, q-core-identity]
     uses:
       - skill: q-tool-document
         when: requested-proposal-docx-mechanics-need-inspection-editing-comment-redline-conversion-or-validation
@@ -1388,7 +1408,7 @@ skills:
   q-proposal-web:
     path: proposal/q-proposal-web
     group: proposal
-    requires: [q-core-contract]
+    requires: [q-core-contract, q-core-identity]
     uses:
       - skill: q-tool-mermaid
         when: approved-web-visual-intent-needs-a-structural-diagram
@@ -1454,6 +1474,9 @@ skills:
       - skill: q-ideation-session
         when: user-requests-structured-ideation-on-a-bounded-diagnostic-or-intervention-decision-during-execution
         fallback: continue-the-owning-execution-stage-and-name-the-unexplored-option-space
+      - skill: q-report-document
+        when: a-baselined-or-released-deliverable-record-or-assessment-must-be-presented-to-the-client-as-docx-or-pdf
+        fallback: present-the-markdown-artifact-at-its-exact-version-and-record-the-render-gap
     status: active
     kind: orchestrator
     workflow: consulting-execution
@@ -1464,6 +1487,7 @@ skills:
     persistent_outputs:
       - {type: workflow-state, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: workflow-runtime}
       - {type: artifact-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: artifact-inventory}
+      - {type: engagement-agreement, lifecycle: Released, creation_mode: authored, semantic_authority: canonical, authority_scope: external-commercial-commitment}
       - {type: execution-release, lifecycle: Released, creation_mode: authored, semantic_authority: canonical, authority_scope: accepted-engagement-results}
     transient_outputs: [routing-plan, internal-delegation]
     side_effects: [write-project-state, write-artifact-index, write-project-artifacts]
@@ -1471,6 +1495,34 @@ skills:
     fallback: close-or-return-to-proposal-change-control
     stack_profile: any
     contract_version: "1.1"
+
+  q-consult-session:
+    path: consult/q-consult-session
+    group: consult
+    requires: [q-core-contract, q-core-identity]
+    uses:
+      - skill: q-tool-pdf
+        when: client-evidence-arrives-as-pdf-and-needs-verified-extraction
+        fallback: continue-with-manually-supplied-excerpts-and-record-the-extraction-gap
+      - skill: q-tool-document
+        when: client-evidence-arrives-as-docx-and-needs-verified-extraction
+        fallback: continue-with-manually-supplied-excerpts-and-record-the-docx-extraction-gap
+    status: active
+    kind: stage
+    workflow: consulting-execution
+    stage: session
+    invocable: true
+    execution_modes: [orchestrated, standalone]
+    human_interaction: {orchestrated: on-demand, standalone: dialogue-led}
+    persistent_outputs:
+      - {type: engagement-record, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: engagement-evidence}
+      - {type: evidence-register, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: assessment-evidence}
+    transient_outputs: [session-agenda, session-notes]
+    side_effects: [write-project-artifacts]
+    approval_policy: no-fabrication-and-user-confirms-verbatim-attribution-decisions-and-classification
+    fallback: return-the-record-in-conversation-with-the-registered-gaps
+    stack_profile: any
+    contract_version: "1.0"
 
   q-consult-engagement-plan:
     path: consult/q-consult-engagement-plan
@@ -1485,6 +1537,8 @@ skills:
     human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: engagement-plan, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: engagement-execution-plan}
+      - {type: commitment-register, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: engagement-commitment-ids-by-reference}
+      - {type: evidence-register, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: engagement-planning-evidence}
     transient_outputs: [kickoff-notes]
     side_effects: [write-project-artifacts]
     approval_policy: user-confirms-stakeholders-cadence-and-deliverable-register-against-the-accepted-proposal
@@ -1515,6 +1569,9 @@ skills:
       - skill: q-review-evidence
         when: a-diagnostic-conclusion-rests-on-a-supported-inference-or-quantitative-or-causal-claim-that-could-mislead-a-recommendation
         fallback: keep-the-conclusion-as-a-hypothesis-with-its-evidence-gap-and-report-expanded-evidence-review-unavailable
+      - skill: q-tool-humanizer
+        when: client-facing-prose-is-drafted-and-the-user-requests-a-clarity-or-ai-pattern-pass-before-the-gate
+        fallback: keep-the-prose-as-authored-and-record-that-no-humanization-pass-ran
     status: active
     kind: stage
     workflow: consulting-execution
@@ -1536,7 +1593,7 @@ skills:
   q-consult-intervention:
     path: consult/q-consult-intervention
     group: consult
-    requires: [q-core-contract]
+    requires: [q-core-contract, q-core-identity]
     uses:
       - skill: q-tool-mermaid
         when: confirmed-target-state-process-or-operating-model-needs-a-diagram
@@ -1544,6 +1601,18 @@ skills:
       - skill: q-tool-humanizer
         when: client-facing-prose-is-drafted-and-the-user-requests-a-clarity-or-ai-pattern-pass-before-the-gate
         fallback: keep-the-prose-as-authored-and-record-that-no-humanization-pass-ran
+      - skill: q-review-docs
+        when: deliverable-versions-are-ready-for-confirmation-and-documentation-qa-is-warranted-before-the-design-gate
+        fallback: continue-with-owner-review-against-the-acceptance-criteria-and-record-the-qa-gap
+      - skill: q-tool-spreadsheet
+        when: a-deliverable-component-is-a-calculation-model-or-data-table-the-client-will-operate
+        fallback: author-the-table-in-markdown-and-record-the-spreadsheet-capability-gap
+      - skill: q-tool-document
+        when: a-deliverable-component-must-be-delivered-as-an-editable-docx-template-or-form
+        fallback: author-the-content-in-markdown-and-record-the-docx-capability-gap
+      - skill: q-report-deck
+        when: a-deliverable-component-is-a-training-or-workshop-deck
+        fallback: author-the-slide-outline-in-markdown-and-record-the-deck-capability-gap
     status: active
     kind: stage
     workflow: consulting-execution
@@ -1554,6 +1623,9 @@ skills:
     persistent_outputs:
       - {type: intervention-design, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: target-state-and-recommendations}
       - {type: consulting-deliverable, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: declared-deliverable-scope}
+      - {type: working-document, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: pre-deliverable-structure-or-draft}
+      - {type: deliverable-component, lifecycle: Working, creation_mode: derived, semantic_authority: none, authority_scope: deliverable-presentation-or-calculation-view}
+      - {type: evidence-register, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: intervention-evidence}
       - {type: process-map-source, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: visual-representation}
     transient_outputs: [design-notes]
     side_effects: [write-project-artifacts]
@@ -1566,10 +1638,6 @@ skills:
     path: consult/q-consult-acceptance
     group: consult
     requires: [q-core-contract]
-    uses:
-      - skill: q-review-docs
-        when: deliverable-set-warrants-documentation-qa-before-client-acceptance
-        fallback: continue-with-owner-review-against-the-acceptance-criteria-and-record-the-qa-gap
     status: active
     kind: stage
     workflow: consulting-execution
@@ -1579,6 +1647,7 @@ skills:
     human_interaction: {orchestrated: decision-gated, standalone: decision-gated}
     persistent_outputs:
       - {type: acceptance-record, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: deliverable-acceptance}
+      - {type: evidence-register, lifecycle: Working, creation_mode: authored, semantic_authority: supporting, authority_scope: acceptance-evidence}
     transient_outputs: [acceptance-session-notes]
     side_effects: [write-project-artifacts]
     approval_policy: client-acceptance-is-recorded-never-inferred-and-user-confirms-each-deliverable-disposition
@@ -1655,7 +1724,7 @@ skills:
   q-report-document:
     path: report/q-report-document
     group: report
-    requires: [q-core-contract, q-report-deck]
+    requires: [q-core-contract, q-core-identity]
     uses:
       - skill: q-tool-document
         when: requested-report-docx-mechanics-need-creation-inspection-editing-comment-redline-conversion-or-validation
@@ -1681,9 +1750,11 @@ skills:
       - {type: quasar-report-markdown, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: document-presentation}
       - {type: quasar-report-docx, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: document-presentation}
       - {type: quasar-report-pdf, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: document-presentation}
+      - {type: artifact-channel-docx, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: exact-artifact-presentation}
+      - {type: artifact-channel-pdf, lifecycle: Released, creation_mode: derived, semantic_authority: none, authority_scope: exact-artifact-presentation}
     transient_outputs: [render-previews, document-validation]
     side_effects: [write-project-artifacts]
-    approval_policy: baselined-source-with-explicit-document-plan-and-release-approval-and-separate-publication-approval
+    approval_policy: baselined-report-source-or-baselined-or-released-canonical-artifact-with-explicit-document-plan-and-release-approval-and-separate-publication-approval
     fallback: block-missing-requested-document-runtime-or-require-explicit-partial-release
     stack_profile: any
     contract_version: "1.1"
@@ -1691,7 +1762,7 @@ skills:
   q-report-deck:
     path: report/q-report-deck
     group: report
-    requires: [q-core-contract]
+    requires: [q-core-contract, q-core-identity]
     uses:
       - skill: q-tool-marp
         when: requested-deck-channel-includes-marp-source-html-pdf-pptx-or-image-rendering

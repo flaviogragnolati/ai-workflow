@@ -16,6 +16,17 @@ established.
 
 ### Added
 
+- **2026-08-26** — Added an optional outline working-document branch before an extensive consulting deliverable or when structural approval is requested; it is never the default path and archives when the deliverable version is approved.
+- **2026-08-26** — Added `q-consult-session`, an invocable consulting capability for classified kickoff, interview, workshop, training, committee, and acceptance-session records with attributable statements, decisions, actions, attachment extraction, and evidence deltas.
+  - It is callable from any engagement point without entering the four-stage sequence and routes diagnostic hypotheses to current state and intervention options to intervention.
+  - Its engagement-record frontmatter schema, valid/invalid fixtures, public interface metadata, and positive/negative routing boundary make the new surface executable and reviewable.
+- **2026-08-26** — Added six executable consulting schemas with valid/invalid fixtures for commitments, evidence, deliverable and working-document frontmatter, acceptance, and execution release.
+  - Semantic checks pin resolvable acceptance criteria, evidence-gated dispositions, releases containing only accepted exact versions, unique run-wide `EVD-nnn` IDs, and compound-component provenance.
+  - Behavior cases `consult-criteria-ref-must-resolve`, `consult-disposition-without-evidence-is-deferred`, `consult-release-names-only-accepted-versions`, and `consult-evidence-ids-unique-per-run` exercise the failure direction explicitly.
+- **2026-08-26** — Added the public, non-invocable `q-core-identity` companion as the authoritative source for Quasar brand identity, document and deck systems, editorial standards, nine document-kind structures, and shared reusable assets.
+  - Proposal and report renderers now declare the companion directly instead of borrowing identity through another renderer.
+  - The companion keeps DOCX and Marp source assets editable and regenerable while separating declared typography from locally resolved raster-generation fonts.
+  - Validator marker `S-77` and four behavior cases pin public internal-mode registration plus portable cross-group sibling resolution.
 - **2026-08-20** — Added `q-review-plan`, a read-only quality skill that audits a multi-slice feature, epic, or milestone against its approved plan hierarchy (architecture → features → plan → tickets), gives every slice a conformance disposition, verifies deviations were documented and reconciled in the owning durable records, and returns a transient diagnostic.
   - The delivery orchestrator routes it as an optional macro checkpoint at a front, milestone, or pre-release-candidate boundary; it may route affected durable artifacts to `q-review-docs`.
   - Three package-validator behavior checks pin its active quality registration, read-only contract, and documentation-QA collaboration edge.
@@ -24,6 +35,24 @@ established.
 
 ### Changed
 
+- **2026-08-26** — Split consulting evidence into `01-evidence.yaml` through `04-evidence.yaml`, enforced run-wide unique `EVD-nnn` IDs, added `service` commitments and `service-report` evidence, and required recorded or explicitly absent client validation at the assessment gate.
+  - Confidentiality is monotonic: restricted source content is never persisted, confidential content stays within the engagement root, and every report or artifact channel inherits the maximum source classification.
+  - Validator marker `S-79`, the engagement-record fixture pair, and `consult-evidence-ids-unique-across-stage-registers` pin the session, confidentiality, and evidence contract.
+- **2026-08-26** — Extended `q-report-document` with the maintainer-approved artifact channel for exact canonical `Baselined`/`Released` consulting artifacts, alongside its existing report-source channel.
+  - Governance is intentionally limited to document rendering: the channel never creates a report source, changes lifecycle, or acquires semantic authority; edits return to the artifact owner and outputs retain exact provenance.
+  - Consulting uses the channel at the design gate for acceptance presentation and may regenerate a status-seal render after release; progress, committee, and completion reports still use `q-report-source`.
+  - Contract marker `S-78` and behavior case `consult-workflow-uses-report-document` pin the decision.
+- **2026-08-26** — Defined consulting `engagement-record`, `working-document`, and `consulting-deliverable` classes plus simple and compound deliverable forms with one canonical `deliverable.md` and only supporting or derived registered components.
+  - Intervention now declares `q-core-identity`, working-document and component outputs, and optional spreadsheet, DOCX, and deck component mechanics.
+  - Client-owned documents stay outside the artifact index; evidence records exact locators and classification, while authorized extractions remain derived.
+- **2026-08-26** — Centralized Quasar typography on declared Aptos/Arial and Aptos Mono/Consolas chains, with Cambria Math retained only for equations and an explicit Arial raster-generation slot that records its local resolution in `font_profile` provenance.
+  - Proposal DOCX generation now resolves Arial → Liberation Sans → DejaVu Sans locally and reports both the declared and resolved faces; the former `font_resolution` result key is replaced by `font_profile`.
+  - One-level sibling references now resolve a registered skill ID across repository group directories, while `../../` traversal and missing targets remain invalid.
+  - The proposal, report, Marp, humanizer, PPTX, and product-design-system boundaries now point to the owning identity or editorial source without applying Quasar branding to client product UI.
+- **2026-08-26** — Made deliverable and acceptance-criterion IDs resolvable on both commercial paths: `q-proposal-design` types acceptance criteria, `q-consult-engagement-plan` authors `01-commitment-register.yaml` by literal copy, the orchestrator registers an external agreement as `engagement-agreement`, marks confirmed design outputs `Baselined`, and documentation QA moves to `q-consult-intervention` (audit H-01, H-02, H-09, H-12–H-14).
+  - Contract marker `S-76` and behavior cases `consult-acceptance-does-not-use-review-docs`, `consult-intervention-uses-review-docs`, `consult-current-state-uses-humanizer`, and `consult-workflow-owns-engagement-agreement` pin the routing and lifecycle contract.
+  - `q-consult-current-state` may delegate a meaning-locked humanizer pass over client-facing prose.
+  - Acceptance returns late documentation-QA findings to intervention before presenting a deliverable.
 - **2026-08-26** — Tightened the comment gate against over-commenting: `q-review-comments` now judges necessity and brevity as well as accuracy, calibrates to the repository convention, and returns remove/rewrite/add/keep findings with severity and a pass/fail outcome; `q-code-implement`, `q-code-fix`, and `q-code-debug` state the comment discipline while writing and apply the reviewer's remove and rewrite findings before close.
   - The contract's mini-review rule states that remove and rewrite findings change no behavior and are applied by the implementing skill, never carried as follow-ups.
   - Validator contract-marker case `S-75` pins the rubric markers in the reviewer, the three writers, and the contract.
@@ -35,4 +64,11 @@ established.
 
 ### Fixed
 
+- **2026-08-26** — Fixed Proposal Document schema tests so Draft 2020-12 `minLength` diagnostics accept the installed validator wording, acceptance criteria require `satisfies`, and the reported pass count is calculated.
 - **2026-08-19** — Made the root README and the thirteen group guides accurate against the manifest, contract, and skill procedures after the 2026-08-19 README audit (7 high, 23 medium, 44 low findings): corrected tool-source authority, PPTX backend ownership, ideation's `participation_mode`, proposal ideation adoption, research delegation from Delivery planning, and eleven flow diagrams covering proposal release, defect and refinement routing, reporting gates, consulting change control, delivery acceptance and documentation QA, direct analysis, planning returns, and release ordering.
+
+### Removed
+
+- **2026-08-26** — Removed duplicated renderer-owned Quasar logos, templates, and identity prose after moving their authoritative copies to `q-core-identity`.
+  - Removed the implicit `q-report-document` → `q-report-deck` identity dependency and the proposal renderer's duplicate logo files.
+  - Removed the `FREE_FONT_CANDIDATES` abstraction and its ambiguous `font_resolution` output in favor of an explicit declared-family and generation-slot contract.

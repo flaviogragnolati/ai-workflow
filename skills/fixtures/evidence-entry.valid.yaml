@@ -1,0 +1,7 @@
+evidence_id: EVD-001
+kind: interview
+source: Operations interview, 2026-08-20
+classification: confidential
+extraction: {tool: manual, provenance: "notes confirmed by participant"}
+supports: [FND-001]
+limitations: Single participant perspective

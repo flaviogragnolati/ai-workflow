@@ -160,6 +160,17 @@ def local_link_errors(path: Path, raw: str, root: Path) -> list[str]:
         return []
     target_text, _, anchor = href.partition("#")
     target = path if not target_text else (path.parent / target_text).resolve()
+    if target_text.startswith("../") and not target_text.startswith("../../") and not target.exists():
+        parts = Path(target_text).parts
+        if len(parts) >= 3 and parts[0] == "..":
+            candidates = [
+                group / parts[1] / Path(*parts[2:])
+                for group in SKILLS_ROOT.iterdir()
+                if group.is_dir()
+            ]
+            resolved = [candidate.resolve() for candidate in candidates if candidate.exists()]
+            if len(resolved) == 1:
+                target = resolved[0]
     try:
         target.relative_to(root.resolve())
     except ValueError:
@@ -306,21 +317,31 @@ def outside_references(directory: Path) -> list[tuple[Path, str]]:
     return found
 
 
-def sibling_owner(directory: Path, source: Path, raw: str, folders: dict[Path, str]) -> str | None:
+def sibling_owner(
+    directory: Path,
+    source: Path,
+    raw: str,
+    folders: dict[Path, str],
+    skill_paths: dict[str, str],
+) -> str | None:
     """The registered skill that owns a one-level `../<sibling>/…` reference.
 
-    Skills are siblings both in this repository and in an installed agent
-    directory, so exactly one level up still resolves for a consumer. Two or
-    more levels leave the installed catalog and never resolve.
+    Installed skills are siblings. In this repository, resolve the first path
+    segment as a registered skill ID so references remain portable across
+    category folders. Two or more levels never resolve.
     """
+    del directory, source, folders
     if not raw.startswith("../") or raw.startswith("../../"):
         return None
-    target = (source.parent / raw).resolve()
-    for candidate in (target, *target.parents):
-        name = folders.get(candidate)
-        if name:
-            return name if candidate.parent == directory.parent else None
-    return None
+    parts = Path(raw).parts
+    if len(parts) < 3 or parts[0] != "..":
+        return None
+    owner = parts[1]
+    registered_path = skill_paths.get(owner)
+    if registered_path is None:
+        return None
+    target = SKILLS_ROOT / registered_path / Path(*parts[2:])
+    return owner if target.exists() else None
 
 
 def reference_errors(
@@ -329,6 +350,7 @@ def reference_errors(
     entry: dict[str, Any],
     skills: dict[str, Any],
     folders: dict[Path, str],
+    skill_paths: dict[str, str],
 ) -> list[str]:
     """Every reference leaving the skill must be a declared, one-level sibling."""
     errors: list[str] = []
@@ -337,9 +359,21 @@ def reference_errors(
     escapes: list[str] = []
 
     for source, raw in outside_references(directory):
-        owner = sibling_owner(directory, source, raw, folders)
+        owner = sibling_owner(directory, source, raw, folders, skill_paths)
         if owner is None:
-            escapes.append(raw)
+            parts = Path(raw).parts
+            registered_owner = (
+                parts[1]
+                if len(parts) >= 3 and parts[0] == ".." and not raw.startswith("../../")
+                else None
+            )
+            if registered_owner in skill_paths:
+                errors.append(
+                    "%s: sibling reference %r targets a missing file"
+                    % (skill_id, raw)
+                )
+            else:
+                escapes.append(raw)
         elif owner not in declared:
             errors.append("%s: sibling reference %r is not declared in requires" % (skill_id, raw))
 
@@ -1282,6 +1316,79 @@ def market_analysis_runtime_errors(skills: dict[str, Any]) -> list[str]:
 def base_artifact_id(reference: Any) -> str | None:
     """`ART-001@0.2` and `ART-001` both name the same indexed artifact."""
     return reference.split("@", 1)[0] if isinstance(reference, str) else None
+
+
+def consult_acceptance_semantics(record: Any, register: Any) -> list[str]:
+    """Acceptance criteria resolve to commitments and evidence gates disposition."""
+    if not isinstance(record, dict):
+        return []
+    rows = register if isinstance(register, list) else []
+    criteria = {
+        row.get("commitment_id")
+        for row in rows
+        if isinstance(row, dict) and row.get("kind") == "acceptance_criterion"
+    }
+    errors: list[str] = []
+    for item in record.get("deliverables", []) if isinstance(record.get("deliverables"), list) else []:
+        if not isinstance(item, dict):
+            continue
+        for reference in item.get("criteria_ref", []) if isinstance(item.get("criteria_ref"), list) else []:
+            if reference not in criteria:
+                errors.append("acceptance criteria_ref %r does not resolve in the commitment register" % reference)
+        evidence = item.get("evidence_ref") or record.get("acceptance_session", {}).get("evidence_ref")
+        if not evidence and item.get("disposition") != "deferred":
+            errors.append("a disposition without evidence_ref must be deferred")
+    return errors
+
+
+def consult_release_semantics(release: Any, record: Any) -> list[str]:
+    """An execution release may name only exact client-accepted versions."""
+    if not isinstance(release, dict) or not isinstance(record, dict):
+        return []
+    accepted = {
+        (item.get("deliverable_id"), item.get("artifact_ref"))
+        for item in record.get("deliverables", [])
+        if isinstance(item, dict)
+        and item.get("disposition") in {"accepted", "accepted_with_reservations"}
+    }
+    errors: list[str] = []
+    for item in release.get("accepted_deliverables", []) if isinstance(release.get("accepted_deliverables"), list) else []:
+        if isinstance(item, dict) and (item.get("deliverable_id"), item.get("artifact_ref")) not in accepted:
+            errors.append("execution release names a version without an accepted disposition")
+    return errors
+
+
+def evidence_register_semantics(entries: Any) -> list[str]:
+    """Evidence IDs are well formed and unique in the supplied run/register set."""
+    if isinstance(entries, dict):
+        entries = entries.get("entries", [entries])
+    if not isinstance(entries, list):
+        return []
+    errors: list[str] = []
+    seen: set[str] = set()
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        evidence_id = entry.get("evidence_id")
+        if not isinstance(evidence_id, str) or re.fullmatch(r"EVD-[0-9]{3,}", evidence_id) is None:
+            errors.append("evidence_id must match EVD-nnn")
+        elif evidence_id in seen:
+            errors.append("duplicate evidence_id %r in consulting run" % evidence_id)
+        else:
+            seen.add(evidence_id)
+    return errors
+
+
+def deliverable_frontmatter_semantics(value: Any) -> list[str]:
+    """Every registered component traces to the canonical deliverable version."""
+    if not isinstance(value, dict):
+        return []
+    expected = "deliverable.md@%s" % value.get("version")
+    return [
+        "deliverable component source_ref must be %r" % expected
+        for component in value.get("components", [])
+        if isinstance(component, dict) and component.get("source_ref") != expected
+    ]
 
 
 def artifact_semantics(data: Any, active: set[str]) -> list[str]:
@@ -3149,7 +3256,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("tool/q-tool-marp/SKILL.md", "standard Marp PPTX distinct from a native object-editable PPTX"),
             ("tool/q-tool-marp/SKILL.md", "source/output collision"),
             ("report/q-report-deck/SKILL.md", "requested-deck-channel-includes-marp-source-html-pdf-pptx-or-image-rendering"),
-            ("report/q-report-deck/references/identidad-visual.md", "Markdown, theme CSS y assets locales editables y regenerables"),
+            ("core/q-core-identity/references/deck-system.md", "Markdown, theme CSS y assets locales editables y regenerables"),
             ("../LICENSE", "Marp presentation reference and runtime"),
         ],
         "S-68": [
@@ -3216,6 +3323,35 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("code/q-code-fix/SKILL.md", "Comment only what the code cannot say"),
             ("code/q-code-debug/SKILL.md", "Comment only what the code cannot say"),
             ("core/q-core-contract/SKILL.md", "applies them before its close"),
+        ],
+        "S-76": [
+            ("consult/q-consult-engagement-plan/SKILL.md", "01-commitment-register.yaml"),
+            ("consult/q-consult-workflow/SKILL.md", "single source of IDs"),
+            ("consult/q-consult-workflow/SKILL.md", "`Baselined`"),
+            ("consult/q-consult-acceptance/SKILL.md", "`Baselined`"),
+            ("core/q-core-contract/SKILL.md", "commitment register"),
+        ],
+        "S-77": [
+            ("core/q-core-identity/references/document-system.md", "Aptos, Arial, sans-serif"),
+            ("core/q-core-identity/references/document-system.md", "generation_slot"),
+            ("proposal/q-proposal-document/references/style-guide.md", "q-core-identity"),
+            ("report/q-report-document/SKILL.md", "q-core-identity"),
+            ("plan/q-plan-design-system/SKILL.md", "never inherits"),
+            ("../LICENSE", "never redistributed"),
+        ],
+        "S-78": [
+            ("report/q-report-document/SKILL.md", "never produces a report source"),
+            ("report/q-report-document/SKILL.md", "deliverable_kind"),
+            ("core/q-core-contract/SKILL.md", "never produces a report source"),
+            ("consult/q-consult-workflow/SKILL.md", "q-report-document"),
+        ],
+        "S-79": [
+            ("consult/q-consult-session/SKILL.md", "never diagnoses"),
+            ("consult/q-consult-workflow/SKILL.md", "q-consult-session"),
+            ("core/q-core-contract/SKILL.md", "restricted"),
+        ],
+        "S-80": [
+            ("consult/q-consult-intervention/SKILL.md", "never by default"),
         ],
     }
     errors: list[str] = []
@@ -3302,6 +3438,17 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     pptx_tool = skills.get("q-tool-pptx", {})
     spreadsheet_tool = skills.get("q-tool-spreadsheet", {})
     review_plan = skills.get("q-review-plan", {})
+    consult_acceptance = skills.get("q-consult-acceptance", {})
+    consult_intervention = skills.get("q-consult-intervention", {})
+    consult_current_state = skills.get("q-consult-current-state", {})
+    consult_workflow = skills.get("q-consult-workflow", {})
+    core_identity = skills.get("q-core-identity", {})
+    skill_paths = {
+        skill_id: str(entry.get("path", ""))
+        for skill_id, entry in skills.items()
+        if isinstance(entry, dict)
+    }
+    report_document_dir = SKILLS_ROOT / "report" / "q-report-document"
     check(
         "document-tool-active-not-planned",
         isinstance(document_tool, dict)
@@ -3498,6 +3645,132 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
             isinstance(edge, dict) and edge.get("skill") == "q-review-docs"
             for edge in (review_plan.get("uses") or [])
         ),
+    )
+    check(
+        "consult-acceptance-does-not-use-review-docs",
+        not any(
+            isinstance(edge, dict) and edge.get("skill") == "q-review-docs"
+            for edge in (consult_acceptance.get("uses") or [])
+        ),
+    )
+    check(
+        "consult-intervention-uses-review-docs",
+        any(
+            isinstance(edge, dict) and edge.get("skill") == "q-review-docs"
+            for edge in (consult_intervention.get("uses") or [])
+        ),
+    )
+    check(
+        "consult-current-state-uses-humanizer",
+        any(
+            isinstance(edge, dict) and edge.get("skill") == "q-tool-humanizer"
+            for edge in (consult_current_state.get("uses") or [])
+        ),
+    )
+    check(
+        "consult-workflow-owns-engagement-agreement",
+        any(
+            isinstance(output, dict)
+            and output.get("type") == "engagement-agreement"
+            and output.get("lifecycle") == "Released"
+            and output.get("semantic_authority") == "canonical"
+            for output in (consult_workflow.get("persistent_outputs") or [])
+        ),
+    )
+    check(
+        "identity-companion-is-internal-and-public",
+        isinstance(core_identity, dict)
+        and core_identity.get("invocable") is False
+        and core_identity.get("execution_modes") == ["internal"]
+        and core_identity.get("distribution", "public") == "public",
+    )
+    check(
+        "sibling-reference-resolves-across-groups",
+        sibling_owner(
+            report_document_dir,
+            report_document_dir / "SKILL.md",
+            "../q-core-identity/references/identity.md",
+            {},
+            skill_paths,
+        ) == "q-core-identity",
+    )
+    check(
+        "sibling-reference-two-levels-never-resolves",
+        sibling_owner(
+            report_document_dir,
+            report_document_dir / "SKILL.md",
+            "../../core/q-core-identity/references/identity.md",
+            {},
+            skill_paths,
+        ) is None,
+    )
+    check(
+        "sibling-reference-missing-file-fails",
+        sibling_owner(
+            report_document_dir,
+            report_document_dir / "SKILL.md",
+            "../q-core-identity/references/missing.md",
+            {},
+            skill_paths,
+        ) is None,
+    )
+    behavior_register = [
+        {"commitment_id": "AC-001", "kind": "acceptance_criterion"},
+    ]
+    check(
+        "consult-criteria-ref-must-resolve",
+        bool(consult_acceptance_semantics(
+            {
+                "acceptance_session": {"evidence_ref": "EVD-001"},
+                "deliverables": [{"criteria_ref": ["AC-999"], "disposition": "accepted"}],
+            },
+            behavior_register,
+        )),
+    )
+    check(
+        "consult-disposition-without-evidence-is-deferred",
+        bool(consult_acceptance_semantics(
+            {
+                "acceptance_session": {},
+                "deliverables": [{"criteria_ref": ["AC-001"], "disposition": "accepted"}],
+            },
+            behavior_register,
+        )),
+    )
+    behavior_acceptance = {
+        "deliverables": [
+            {"deliverable_id": "DEL-001", "artifact_ref": "ART-DEL@1.0", "disposition": "rejected"},
+        ]
+    }
+    check(
+        "consult-release-names-only-accepted-versions",
+        bool(consult_release_semantics(
+            {"accepted_deliverables": [{"deliverable_id": "DEL-001", "artifact_ref": "ART-DEL@1.0"}]},
+            behavior_acceptance,
+        )),
+    )
+    check(
+        "consult-evidence-ids-unique-per-run",
+        bool(evidence_register_semantics([
+            {"evidence_id": "EVD-001"},
+            {"evidence_id": "EVD-001"},
+        ])),
+    )
+    check(
+        "consult-workflow-uses-report-document",
+        any(
+            isinstance(edge, dict)
+            and edge.get("skill") == "q-report-document"
+            and edge.get("when") == "a-baselined-or-released-deliverable-record-or-assessment-must-be-presented-to-the-client-as-docx-or-pdf"
+            for edge in consult_workflow.get("uses", [])
+        ),
+    )
+    check(
+        "consult-evidence-ids-unique-across-stage-registers",
+        bool(evidence_register_semantics([
+            {"evidence_id": "EVD-010", "stage": "engagement-plan"},
+            {"evidence_id": "EVD-010", "stage": "acceptance"},
+        ])),
     )
     check("git-edit-does-not-authorize-maintenance-commit", not git_operation_allowed(
         maintenance, "commit", approved=True
@@ -3769,6 +4042,7 @@ def package_doc_errors() -> list[str]:
             'Softaworks / Leonardo Flores references and adaptations',
             'Wikipedia contributors',
             'William Strunk Jr.',
+            'never redistributed',
         ):
             if phrase not in text:
                 errors.append('LICENSE is missing required notice %r' % phrase)
@@ -3882,6 +4156,11 @@ def run() -> dict[str, Any]:
         for skill_id, entry in skills.items()
         if isinstance(entry, dict)
     }
+    skill_paths = {
+        skill_id: str(entry.get("path", ""))
+        for skill_id, entry in skills.items()
+        if isinstance(entry, dict)
+    }
 
     errors.extend(optional_use_semantics(skills))
     errors.extend(workflow_profile_semantics(workflows))
@@ -3903,7 +4182,9 @@ def run() -> dict[str, Any]:
         errors.extend(identity_errors(skill_id, directory, entry, metadata))
         errors.extend(distribution_errors(skill_id, entry, metadata))
         errors.extend(human_interaction_errors(skill_id, entry))
-        errors.extend(reference_errors(skill_id, directory, entry, skills, folders))
+        errors.extend(reference_errors(
+            skill_id, directory, entry, skills, folders, skill_paths
+        ))
         errors.extend(optional_use_body_errors(skill_id, directory, entry))
         if entry.get("invocable") is False:
             errors.extend(internal_skill_errors(directory, skill_id, entry))
@@ -4327,6 +4608,58 @@ def run() -> dict[str, Any]:
         ideation_baseline_semantics,
         active,
         min_invalid_errors=5,
+    ))
+
+    consult_register = load(fixtures / "commitment-register.valid.yaml")
+    consult_acceptance = load(fixtures / "acceptance-record.valid.yaml")
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "consult" / "q-consult-engagement-plan" / "references" / "commitment-register.schema.yaml",
+        fixtures / "commitment-register.valid.yaml",
+        fixtures / "commitment-register.invalid.yaml",
+        None,
+        active,
+    ))
+    errors.extend(fixture_pair(
+        CORE_CONTRACT / "references" / "evidence-entry.schema.yaml",
+        fixtures / "evidence-entry.valid.yaml",
+        fixtures / "evidence-entry.invalid.yaml",
+        evidence_register_semantics,
+        active,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "consult" / "q-consult-intervention" / "references" / "consulting-deliverable-frontmatter.schema.yaml",
+        fixtures / "consulting-deliverable-frontmatter.valid.yaml",
+        fixtures / "consulting-deliverable-frontmatter.invalid.yaml",
+        deliverable_frontmatter_semantics,
+        active,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "consult" / "q-consult-intervention" / "references" / "working-document-frontmatter.schema.yaml",
+        fixtures / "working-document-frontmatter.valid.yaml",
+        fixtures / "working-document-frontmatter.invalid.yaml",
+        None,
+        active,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "consult" / "q-consult-acceptance" / "references" / "acceptance-record.schema.yaml",
+        fixtures / "acceptance-record.valid.yaml",
+        fixtures / "acceptance-record.invalid.yaml",
+        lambda value: consult_acceptance_semantics(value, consult_register),
+        active,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "consult" / "q-consult-workflow" / "references" / "execution-release.schema.yaml",
+        fixtures / "execution-release.valid.yaml",
+        fixtures / "execution-release.invalid.yaml",
+        lambda value: consult_release_semantics(value, consult_acceptance),
+        active,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "consult" / "q-consult-session" / "references" / "engagement-record-frontmatter.schema.yaml",
+        fixtures / "engagement-record-frontmatter.valid.yaml",
+        fixtures / "engagement-record-frontmatter.invalid.yaml",
+        None,
+        active,
     ))
 
     current_marker_errors, checked_contract_markers = contract_marker_errors()

@@ -1,0 +1,17 @@
+schema_version: "1.0"
+engagement_ref: "ART-ENG@1.0"
+acceptance_session:
+  date: "2026-08-26"
+  client_parties: [Operations lead]
+  quasar_parties: [Consultant]
+  evidence_ref: EVD-020
+deliverables:
+  - deliverable_id: DEL-001
+    artifact_ref: "ART-DEL-001@1.0"
+    criteria_ref: [AC-001]
+    disposition: accepted
+    evidence_ref: EVD-020
+    client_statement: Approved
+    reservations: []
+    rework_items: []
+    open_items: []

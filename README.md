@@ -18,7 +18,7 @@ The installer copies one skill folder at a time into your project's agent direct
 
 This package remains prerelease. `CHANGELOG.md` records work under `Unreleased`; no stable package version or release tag is established by the current repository state.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 64 are. `skills.sh.json` lays out the skills.sh repository page: its coverage is derived — the validator requires every public skill and no internal one to appear exactly once — while its section titles are curated reading groups (for example, delivery and plan share "Product and technical planning", and the code group is split across three sections).
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 67 are. `skills.sh.json` lays out the skills.sh repository page: its coverage is derived — the validator requires every public skill and no internal one to appear exactly once — while its section titles are curated reading groups (for example, delivery and plan share "Product and technical planning", and the code group is split across three sections).
 
 ## Philosophy
 
@@ -69,7 +69,7 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `ask` | 2 | Bounded answers from project truth and read-only proposal analysis | [ask guide](skills/ask/README.md) |
 | `ideation` | 1 | Optional structured exploration of one decision's option space | [ideation guide](skills/ideation/README.md) |
 | `proposal` | 5 | Client evidence to discovery brief, canonical proposal, and web/document channels | [proposal guide](skills/proposal/README.md) |
-| `consult` | 5 | Accepted consulting engagement to engagement plan, assessed current state, intervention design, recorded acceptance, and execution release | [consult guide](skills/consult/README.md) |
+| `consult` | 6 | Accepted consulting engagement to engagement plan, classified session evidence, assessed current state, intervention design, recorded acceptance, and execution release | [consult guide](skills/consult/README.md) |
 | `research` | 5 | A named external uncertainty to an approved, cited baseline | [research guide](skills/research/README.md) |
 | `delivery` | 2 | The orchestrator that routes planning, iteration, release, QA, and delivery, plus release engineering | [delivery guide](skills/delivery/README.md) |
 | `plan` | 7 | Ordered planning stages from product intent to a validated backlog | [plan guide](skills/plan/README.md) |
@@ -77,7 +77,7 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `review` | 8 | QA that never modifies its target: changes, releases, plan conformance, documentation, evidence, and skills | [review guide](skills/review/README.md) |
 | `report` | 4 | Approved artifacts to a traced report and its rendered channels | [report guide](skills/report/README.md) |
 | `tool` | 10 | Format, web-capture, and diagram mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
-| `core` | 1 | The shared governance companion that coordinated skills declare in `requires` | [core guide](skills/core/README.md) |
+| `core` | 2 | Public companions for shared workflow governance and Quasar identity/editorial guidance | [core guide](skills/core/README.md) |
 | `maint` | 3 | Package maintenance; internal, not distributed | [maint guide](skills/maint/README.md) |
 
 The manifest `group` field is authoritative: the skill name and its folder derive from it. The skills.sh page sections are curated views of the same catalog; the validator checks their coverage, not their grouping.
@@ -127,7 +127,7 @@ Two rules keep the flow coherent:
 Where each kind of truth lives:
 
 - Registry and routing: `skill-manifest.yaml`.
-- Shared governance: `skills/core/q-core-contract/SKILL.md`.
+- Shared governance: `skills/core/q-core-contract/SKILL.md`; Quasar identity and editorial system: `skills/core/q-core-identity/SKILL.md`.
 - Human-interaction cadence: [generated mapping](skills/core/q-core-contract/references/human-interaction.md); the manifest owns each mode mapping and `approval_policy` owns mandatory approvals.
 - Stage procedure: the selected `SKILL.md`.
 - Runtime truth: project `00-workflow-state.yaml` and `00-artifact-index.yaml`.
@@ -161,8 +161,11 @@ docs/
 │   └── working/proposal/02-proposal-source.yaml   (canonical commercial meaning; Released at commercial close)
 ├── consulting-workflow/          consulting-execution run
 │   ├── 00-workflow-state.yaml    00-artifact-index.yaml
-│   ├── 01-engagement-plan.md  02-current-state-assessment.md  02-evidence-register.yaml
-│   ├── 03-intervention-design.md  03-deliverables/<deliverable-id>-<slug>.md
+│   ├── records/<YYYY-MM-DD>-<slug>.md  01-evidence.yaml  02-evidence.yaml
+│   ├── 01-engagement-plan.md  01-commitment-register.yaml
+│   ├── 02-current-state-assessment.md  02-process-maps/  03-evidence.yaml  04-evidence.yaml
+│   ├── 03-intervention-design.md  03-deliverables/<DEL-id>/deliverable.md  03-process-maps/
+│   ├── 03-deliverables/<DEL-id>/<registered-components>  03-working/<kind>-<slug>.md
 │   └── 04-acceptance-record.yaml  05-execution-release.yaml
 └── development-workflow/         ai-coding run
     ├── 00-workflow-state.yaml    00-artifact-index.yaml
@@ -202,23 +205,24 @@ Every group guide lists all of its skills with a when-to-use table.
 
 ## Skill dependencies
 
-`invocable` and `distribution` are independent. `invocable: false` means a skill is a companion rather than a user entry point; `distribution: internal` means it is not offered to consumers. `q-core-contract` is a **public companion**: never invoked directly, always shipped alongside the skills that read it.
+`invocable` and `distribution` are independent. `invocable: false` means a skill is a companion rather than a user entry point; `distribution: internal` means it is not offered to consumers. `q-core-contract` and `q-core-identity` are **public companions**: never invoked directly, always shipped alongside the skills that read them.
 
-`requires` in the manifest lists what a skill cannot work without, exactly, per skill. Two patterns cover most of the catalog: every orchestrator, stage, renderer, shared tool, development-loop skill that authors or updates a durable record, quality skill that reads project artifact authority, state, or the index, and the ask, ideation, research, prototype, merge-conflict, and evidence capabilities require `q-core-contract`; the remaining standalone code and review helpers require nothing. Five cases need more than that:
+`requires` in the manifest lists what a skill cannot work without, exactly, per skill. Two patterns cover most of the catalog: every orchestrator, stage, renderer, shared tool, development-loop skill that authors or updates a durable record, quality skill that reads project artifact authority, state, or the index, and the ask, ideation, research, prototype, merge-conflict, and evidence capabilities require `q-core-contract`; the remaining standalone code and review helpers require nothing. The exceptions below need more than that:
 
 | Skill | Requires | Why |
 |---|---|---|
 | `q-plan-domain-model`, `q-plan-architecture` | `q-core-contract`, `q-tool-mermaid` | Preserve planning ownership while delegating Mermaid authoring, validation, and rendering |
 | `q-ask-analyze` | `q-core-contract`, `q-ask-project` | Reuses the same alignment and evidence path before applying proposal-analysis lenses |
-| `q-proposal-document` | `q-core-contract`, `q-proposal-design` | Regenerates the document channel from the canonical proposal source that Proposal Design owns |
-| `q-report-document` | `q-core-contract`, `q-report-deck` | Also reads the Quasar presentation identity bundled in the deck skill |
+| `q-proposal-document` | `q-core-contract`, `q-proposal-design`, `q-core-identity` | Regenerates the document channel from the canonical proposal source and the shared Quasar document system |
+| `q-proposal-web` | `q-core-contract`, `q-core-identity` | Applies the shared Quasar identity to the approved proposal source |
+| `q-report-document`, `q-report-deck` | `q-core-contract`, `q-core-identity` | Render approved report meaning through the shared Quasar document or deck system |
 | `q-code-explore` | `q-code-grill-design` | Reads its deep-module glossary when modules, interfaces, or seams matter |
 
 Two reference forms survive installation: a one-level `../<sibling-skill>/…` path, and a companion named in prose. Anything deeper than one level leaves the installed catalog and fails validation.
 
 `uses` declares optional collaboration. Its `when` trigger activates only for the named branch and its `fallback` keeps the owning skill truthful when the tool is absent. Unlike `requires`, a missing `uses` target does not block unrelated procedure; it must produce the declared capability gap when that branch is requested. The mini review is the one required collaboration declared this way: `q-code-implement`, `q-code-fix`, and `q-code-debug` use `q-review-code` and `q-review-comments`, and a missing reviewer is a recorded blocker, never a skipped step.
 
-The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-maint-writing-for-agents` inside the maintenance package. Consumers do not install this internal acceptance route.
+Three identity cases extend that table: `q-proposal-document` requires `q-proposal-design` and `q-core-identity`; `q-proposal-web` and `q-report-deck` require `q-core-identity`; and `q-report-document` requires `q-core-identity` directly rather than depending on a renderer for identity. The internal `q-maint-skill-quality` companion requires `q-review-skill` and `q-maint-writing-for-agents` inside the maintenance package. Consumers do not install this internal acceptance route.
 
 ## Artifact lifecycle
 
@@ -314,7 +318,7 @@ Tool-specific boundaries — web capture, Marp, PPTX, spreadsheet, and database 
 
 ## Conventions
 
-**Language.** The package language is English: skill bodies, manifest tokens, schemas, guides, and this changelog. Spanish appears only in the Quasar brand identity references (`skills/report/q-report-deck/references/identidad-visual.md` and its Marp template) and in the bilingual prose capabilities of `q-tool-humanizer`. Client deliverables follow the client's language. Governance vocabulary — lifecycle states, authority labels, disposition names, manifest tokens — is never translated.
+**Language.** The package language is English: skill bodies, manifest tokens, schemas, guides, and this changelog. Spanish appears only in the Quasar identity and editorial references under `skills/core/q-core-identity/references/`, its Marp template, and the bilingual prose capabilities of `q-tool-humanizer`. Client deliverables follow the client's language. Governance vocabulary — lifecycle states, authority labels, disposition names, manifest tokens — is never translated.
 
 **Skill IDs.** `q-<group>-<leaf>`, derived from the manifest `group` field, which also determines the folder.
 

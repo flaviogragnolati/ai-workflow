@@ -1,0 +1,13 @@
+# Invalid because a component cannot be canonical.
+deliverable_id: DEL-001
+deliverable_kind: procedure
+version: "1.0"
+declared_scope: Invoice approval procedure
+criteria_ref: [AC-001]
+source_findings: [FND-001]
+status: Baselined
+classification: internal
+components:
+  - path: approval-matrix.xlsx
+    role: canonical
+    source_ref: "deliverable.md@1.0"

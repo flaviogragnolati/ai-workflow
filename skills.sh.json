@@ -3,10 +3,11 @@
   "notGrouped": "bottom",
   "groupings": [
     {
-      "title": "Shared governance",
-      "description": "The companion every coordinated Quasar workflow skill reads before acting: routing, interaction cadence, ownership, authority, lifecycle, cited findings, report sources, and stage results.",
+      "title": "Shared governance and identity",
+      "description": "Public companions for coordinated workflow governance and shared Quasar identity, typography, document, deck, and editorial guidance.",
       "skills": [
-        "q-core-contract"
+        "q-core-contract",
+        "q-core-identity"
       ]
     },
     {
@@ -53,13 +54,14 @@
     },
     {
       "title": "Consulting execution",
-      "description": "Run an accepted consulting, assessment, training, or managed-service engagement: engagement plan, current-state assessment with verified evidence extraction and process maps, intervention design and deliverables, recorded client acceptance, and the execution release reporting consumes.",
+      "description": "Run an accepted consulting, assessment, training, or managed-service engagement: engagement plan, classified session records and evidence, current-state assessment, intervention design and deliverables, recorded client acceptance, and execution release.",
       "skills": [
         "q-consult-workflow",
         "q-consult-engagement-plan",
         "q-consult-current-state",
         "q-consult-intervention",
-        "q-consult-acceptance"
+        "q-consult-acceptance",
+        "q-consult-session"
       ]
     },
     {

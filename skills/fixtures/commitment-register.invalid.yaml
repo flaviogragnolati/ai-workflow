@@ -1,0 +1,8 @@
+# Invalid because the kind is outside the commitment taxonomy.
+- commitment_id: DEL-001
+  kind: promise
+  title: Operating procedure
+  source: {ref: "proposal@1.0", object_id: DEL-001, locator: null}
+  owner: Operations lead
+  planned_version: "1.0"
+  status: planned

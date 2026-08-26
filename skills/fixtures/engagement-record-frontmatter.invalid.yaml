@@ -1,0 +1,8 @@
+# Invalid because an engagement record must name at least one participant.
+session_kind: workshop
+date: "2026-08-26"
+participants: []
+classification: confidential
+evidence_ids: []
+decisions: []
+actions: []

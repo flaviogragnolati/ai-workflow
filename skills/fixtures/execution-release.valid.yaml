@@ -1,0 +1,9 @@
+schema_version: "1.0"
+acceptance_record_ref: "ART-ACCEPT@1.0"
+accepted_deliverables:
+  - {deliverable_id: DEL-001, artifact_ref: "ART-DEL-001@1.0"}
+engagement_plan_ref: "ART-PLAN@1.0"
+assessment_ref: "ART-ASSESS@1.0"
+intervention_design_ref: "ART-DESIGN@1.0"
+open_items: []
+approval: {approved_by: Engagement owner, approved_at: "2026-08-26"}

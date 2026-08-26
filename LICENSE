@@ -49,6 +49,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+## Typefaces — declared, never redistributed
+
+Quasar identity resources declare Aptos with Arial as the document and presentation fallback, plus Aptos Mono with Consolas as the monospace fallback. These proprietary typefaces are never redistributed, bundled, embedded, or licensed by this repository; a consumer must use fonts already available in its own environment under their applicable terms.
+
+Raster generation uses an explicit Arial generation slot and records the resolved local face in provenance. When Arial is unavailable, local generation may resolve to Liberation Sans under the SIL Open Font License 1.1 or DejaVu Sans under its Bitstream Vera-derived terms. Those typefaces are discovered locally and are not redistributed by this package.
+
 ## Marp presentation reference and runtime
 
 The implementation plan for `skills/tool/q-tool-marp` was conceptually informed

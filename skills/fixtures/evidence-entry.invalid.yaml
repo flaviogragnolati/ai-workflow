@@ -1,0 +1,8 @@
+# Invalid because classification is not an allowed information class.
+evidence_id: EVD-001
+kind: interview
+source: Operations interview
+classification: secret
+extraction: {tool: manual, provenance: notes}
+supports: [FND-001]
+limitations: none

@@ -1,0 +1,5 @@
+# Invalid because working documents cannot be Released.
+kind: outline
+for_deliverable: DEL-001
+version: "0.1"
+status: Released

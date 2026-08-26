@@ -1,0 +1,14 @@
+- commitment_id: DEL-001
+  kind: deliverable
+  title: Operating procedure
+  source: {ref: "proposal@1.0", object_id: DEL-001, locator: null}
+  owner: Operations lead
+  planned_version: "1.0"
+  status: active
+- commitment_id: AC-001
+  kind: acceptance_criterion
+  title: Approved by operations lead
+  source: {ref: "proposal@1.0", object_id: DEL-001, locator: null}
+  owner: Operations lead
+  planned_version: "1.0"
+  status: planned
