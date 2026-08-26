@@ -3208,6 +3208,15 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("delivery/q-delivery-workflow/SKILL.md", "Client feedback rule"),
             ("consult/q-consult-workflow/SKILL.md", "Client feedback"),
         ],
+        "S-75": [
+            ("review/q-review-comments/SKILL.md", "Accepting narration"),
+            ("review/q-review-comments/SKILL.md", "The reviewer's taste is never the standard"),
+            ("review/q-review-comments/SKILL.md", "`pass`, `pass with findings`, or `fail`"),
+            ("code/q-code-implement/SKILL.md", "Comment only what the code cannot say"),
+            ("code/q-code-fix/SKILL.md", "Comment only what the code cannot say"),
+            ("code/q-code-debug/SKILL.md", "Comment only what the code cannot say"),
+            ("core/q-core-contract/SKILL.md", "applies them before its close"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():

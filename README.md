@@ -304,7 +304,7 @@ Tool-specific boundaries — web capture, Marp, PPTX, spreadsheet, and database 
 | Execution release | `05-execution-release.yaml`, written by `q-consult-workflow` over recorded client acceptance. |
 | Reporting release | `reporting-release.yaml`, written by `q-report-workflow` over exact source and output versions. |
 | Grill vs `targeted-refinement` | A *grill* is pre-implementation alignment at one of three depths (manifest `stage: refinement`). `targeted-refinement` is a `q-plan-backlog` mode that re-plans one front. |
-| Mini review | `q-review-code` plus `q-review-comments`, run after every implementation, fix, or debug correction. Required; a missing reviewer is a recorded blocker, never a skip. |
+| Mini review | `q-review-code` plus `q-review-comments`, run after every implementation, fix, or debug correction. Required; a missing reviewer is a recorded blocker, never a skip, and comment remove/rewrite findings are applied before close. |
 | Durable record | The record a change updates rather than duplicating: the backlog item, the implementation plan or feature architecture document, or the ticket — in that precedence. |
 | Change request | How an accepted commitment changes. A `Released` version is never edited in place. |
 | `uses` vs `requires` | `requires` is a hard dependency: absent, the skill stops with an install command. `uses` is optional collaboration: absent, its declared fallback runs and the gap is reported. |

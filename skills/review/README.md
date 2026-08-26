@@ -27,7 +27,7 @@ flowchart TB
 | Skill | Use it when |
 |---|---|
 | [`q-review-code`](q-review-code/SKILL.md) | Checking one change for technical and specification conformance after implementation. Design-system conformance is a criterion inside its standards axis. |
-| [`q-review-comments`](q-review-comments/SKILL.md) | Checking the accuracy of comments and docstrings affected by the same change. |
+| [`q-review-comments`](q-review-comments/SKILL.md) | Checking the comments and docstrings a change added, edited, or invalidated for necessity, accuracy, and brevity; the implementer applies its remove and rewrite findings before close. |
 | [`q-review-codebase`](q-review-codebase/SKILL.md) | Auditing a codebase or release candidate across architecture, integration, critical flows, security, NFRs, migration, deployment, documentation, selected-technology usage against the adopted guidance in the exact `technical_foundation_ref`, and — when there is a user interface — accessibility and design-system conformance. The audit alone is not release acceptance. |
 | [`q-review-release`](q-review-release/SKILL.md) | Reconciling a release candidate's evidence checklist — audit, tests, release execution, UAT, mini reviews, security, NFR, design system, documentation — into a `ready`, `ready_with_accepted_risks`, or `blocked` verdict. The verdict is evidence; the acceptance decision is not its to make. |
 | [`q-review-docs`](q-review-docs/SKILL.md) | Auditing durable project documentation for structural breakage, authority errors, traceability gaps, contradictions, and drift. |
