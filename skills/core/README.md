@@ -38,6 +38,7 @@ The contract is long because it is shared. Load the section your task needs, not
 | applying Quasar identity, document structure, or editorial rules | [`q-core-identity`](q-core-identity/SKILL.md) and only the reference needed by the task |
 | handling what a client said after a release or acceptance | Client feedback |
 | delegating format mechanics | PDF · Document · Spreadsheet · PPTX · Marp · Database-schema · Prose delegation |
+| reducing what an agent loads from project documentation | Documentation compaction |
 | finishing package work | Validation |
 
 ## Bundled resources

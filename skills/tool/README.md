@@ -1,6 +1,6 @@
 # Shared tools guide
 
-The `tool` group holds ten mechanics skills that a workflow stage, renderer, or user can call within each skill's declared execution modes. A tool executes bounded mechanics — authoring, capture, parsing, editing, rendering, validating — while the caller keeps semantic ownership of the content. Tool outputs are transient or derived with no semantic authority, except the authored sources that `q-tool-mermaid`, `q-tool-c4`, and `q-tool-marp` return, which carry only `supporting` authority for the visual or slide representation (see the diagram and Marp delegation rules in [`q-core-contract`](../core/q-core-contract/SKILL.md)); an in-place `q-tool-humanizer` overwrite keeps the caller artifact's own type. Adopting any output into project meaning is always the caller's decision.
+The `tool` group holds eleven mechanics skills that a workflow stage, renderer, or user can call within each skill's declared execution modes. A tool executes bounded mechanics — authoring, capture, parsing, editing, rendering, validating — while the caller keeps semantic ownership of the content. Tool outputs are transient or derived with no semantic authority, except the authored sources that `q-tool-mermaid`, `q-tool-c4`, and `q-tool-marp` return, which carry only `supporting` authority for the visual or slide representation (see the diagram and Marp delegation rules in [`q-core-contract`](../core/q-core-contract/SKILL.md)); an in-place `q-tool-humanizer` overwrite keeps the caller artifact's own type, and a `q-tool-docs-compactor` edit keeps each surviving artifact's own type, path, and ID. Adopting any output into project meaning is always the caller's decision.
 
 This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.yaml) is the registry for status, side effects, and approval policies; each `SKILL.md` owns its procedure.
 
@@ -10,7 +10,7 @@ This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.
 flowchart LR
     C["Caller<br/>stage, renderer, or user"] -->|"request with approved content,<br/>authorized paths, validation demand"| T["Shared tool"]
     T -->|"runtime-backed tool"| P["Capability probe<br/>verified local runtime only"]
-    T -->|"analysis-only tool<br/>database-schema, humanizer"| A["Bounded analysis or revision<br/>transient or derived, no authority"]
+    T -->|"analysis or revision tool<br/>database-schema, humanizer, docs-compactor"| A["Bounded analysis or revision<br/>transient or derived, no authority"]
     P -->|"route available"| S["Authored source<br/>Mermaid, C4, Marp: supporting authority<br/>for the visual or slide representation only"]
     P -->|"route available"| O["Derived output or transient diagnostic<br/>no semantic authority"]
     P -->|"route missing"| G["Explicit capability gap<br/>no false success"]
@@ -36,6 +36,7 @@ A tool never installs a runtime silently, never reaches a remote converter, and 
 | [`q-tool-pdf`](q-tool-pdf/SKILL.md) | Inspecting, extracting, creating, transforming, filling, securing, rendering, OCRing, or validating a PDF. |
 | [`q-tool-pptx`](q-tool-pptx/SKILL.md) | Creating, inspecting, extracting, selecting, filling, rendering, or validating native PowerPoint files. |
 | [`q-tool-spreadsheet`](q-tool-spreadsheet/SKILL.md) | Inspecting, extracting, creating, boundedly editing, converting, recalculating, rendering, or validating XLSX workbooks. |
+| [`q-tool-docs-compactor`](q-tool-docs-compactor/SKILL.md) | Reducing the documentation an agent loads: measure a docset, retire superseded content whose trace survives elsewhere, merge partial documents into one survivor, replace copied rules with pointers, and condense the rest under a per-operation approved plan. Standalone-only; never edits a `Released` version. |
 
 ## Backend routing notes
 
@@ -52,6 +53,7 @@ A tool never installs a runtime silently, never reaches a remote converter, and 
 - Do not let spreadsheet mechanics choose formulas, assumptions, figures, financial conventions, or business meaning, or treat cached formula values or a LibreOffice conversion as proof of Excel fidelity.
 - Do not let transient database candidates choose the engine, overwrite semantic or architecture owners, or execute database commands.
 - Do not let `q-tool-humanizer` invent specificity for a vague claim or silently repair a suspicious citation; gaps and citation signals route to the evidence owner.
+- Do not let `q-tool-docs-compactor` retire content whose trace survives nowhere, edit a `Released` version, or set lifecycle in the artifact index; it reports `stale_artifacts` and the root orchestrator reconciles.
 
 ## Integration with the other groups
 
@@ -59,6 +61,6 @@ A tool never installs a runtime silently, never reaches a remote converter, and 
 - [Proposal](../proposal/README.md): `q-proposal-document` may delegate DOCX mechanics to `q-tool-document` and PDF inspection or validation to `q-tool-pdf`; `q-proposal-web` may use `q-tool-mermaid`; a proposal deck goes through the reporting renderer `q-report-deck`, not through a proposal skill.
 - [Reporting](../report/README.md) renderers delegate DOCX, PDF, PPTX, and Marp mechanics to the matching tool while retaining narrative, channel, and release ownership.
 - [Consulting execution](../consult/README.md), [research](../research/README.md), and [proposal discovery](../proposal/README.md): `q-consult-current-state`, `q-research-investigate`, and `q-proposal-discovery` optionally use `q-tool-pdf`, `q-tool-document`, and `q-tool-spreadsheet` for verified evidence extraction; `q-research-market-analysis` uses `q-tool-spreadsheet` for a requested XLSX export; `q-consult-current-state` and `q-consult-intervention` use `q-tool-mermaid` for process and target-state maps.
-- [Review](../review/README.md) and [code](../code/README.md): `q-review-docs` may validate Mermaid read-only; `q-code-grill-design` and `q-code-explore` may request structural diagrams from `q-tool-mermaid`.
+- [Review](../review/README.md) and [code](../code/README.md): `q-review-docs` may validate Mermaid read-only; `q-code-grill-design` and `q-code-explore` may request structural diagrams from `q-tool-mermaid`. `q-review-docs` diagnoses drift without editing; approved condensation of the same scope runs through `q-tool-docs-compactor` as a separate user-invoked task.
 - Inside the group: `q-tool-document`, `q-tool-pptx`, and `q-tool-spreadsheet` may call `q-tool-pdf` for rendered-page inspection; `q-tool-c4` may encode through `q-tool-mermaid`; `q-tool-mermaid` and `q-tool-c4` may call `q-code-explore` when codebase evidence is missing.
 - Every tool requires the `q-core-contract` companion. Optional collaborations are declared as manifest `uses` entries: when the tool is absent, the caller continues through its declared fallback and reports the capability gap.

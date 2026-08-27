@@ -2881,6 +2881,51 @@ def fixture_pair(
     return errors
 
 
+def docs_compactor_runtime_errors(skills: dict[str, Any]) -> list[str]:
+    entry = skills.get("q-tool-docs-compactor")
+    if not isinstance(entry, dict) or entry.get("status") != "active":
+        return []
+    directory = SKILLS_ROOT / str(entry.get("path", ""))
+    inventory = directory / "scripts" / "compaction_inventory.py"
+    tests = directory / "tests" / "run_tests.py"
+    required = [
+        inventory,
+        tests,
+        directory / "tests" / "fixtures" / "alpha.md",
+        directory / "tests" / "fixtures" / "beta.md",
+        directory / "tests" / "fixtures" / "legacy-notes.md",
+    ]
+    errors = [
+        "q-tool-docs-compactor: missing runtime file %s" % path.relative_to(REPO_ROOT)
+        for path in required if not path.is_file()
+    ]
+    if errors:
+        return errors
+    test = subprocess.run(
+        [sys.executable, str(tests)],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        timeout=45,
+        check=False,
+    )
+    if test.returncode != 0 or not re.search(r"q-tool-docs-compactor tests: [1-9][0-9]* passed", test.stdout):
+        errors.append("q-tool-docs-compactor: tests failed: %s"
+                      % (test.stderr.strip() or test.stdout.strip() or test.returncode))
+    smoke = subprocess.run(
+        [sys.executable, str(inventory), "--help"],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        timeout=10,
+        check=False,
+    )
+    if smoke.returncode != 0 or "never a tokenizer count" not in " ".join(smoke.stdout.split()):
+        errors.append("q-tool-docs-compactor: inventory --help failed: %s"
+                      % (smoke.stderr.strip() or smoke.stdout.strip() or smoke.returncode))
+    return errors
+
+
 def manifest_use_fixture_errors(schema: dict[str, Any], fixtures: Path) -> list[str]:
     valid_path = fixtures / "skill-manifest-uses.valid.yaml"
     invalid_path = fixtures / "skill-manifest-uses.invalid.yaml"
@@ -3362,6 +3407,14 @@ def contract_marker_errors() -> tuple[list[str], int]:
         "S-82": [
             ("maint/q-maint-ai-workflow/SKILL.md", "without a public release, remove the superseded form"),
             ("maint/q-maint-ai-workflow/SKILL.md", "Git history is the only record of the superseded form"),
+        ],
+        "S-83": [
+            ("tool/q-tool-docs-compactor/SKILL.md", "Never edit, stub, move, or delete it"),
+            ("tool/q-tool-docs-compactor/SKILL.md", "retirement test"),
+            ("tool/q-tool-docs-compactor/SKILL.md", "Never write `00-workflow-state.yaml` or `00-artifact-index.yaml`"),
+            ("tool/q-tool-docs-compactor/SKILL.md", "stop and route the request to `q-maint-ai-workflow`"),
+            ("core/q-core-contract/SKILL.md", "Documentation compaction"),
+            ("review/q-review-docs/SKILL.md", "q-tool-docs-compactor"),
         ],
     }
     errors: list[str] = []
@@ -3901,6 +3954,30 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     check(
         "license-copy-generator-is-absent",
         not (SKILLS_ROOT / "scripts" / "sync-skill-licenses.py").exists(),
+    )
+
+    docs_compactor = skills.get("q-tool-docs-compactor", {})
+    check(
+        "docs-compactor-active-public-standalone-decision-gated",
+        isinstance(docs_compactor, dict)
+        and docs_compactor.get("status") == "active"
+        and docs_compactor.get("distribution", "public") == "public"
+        and docs_compactor.get("invocable") is True
+        and docs_compactor.get("execution_modes") == ["standalone"]
+        and docs_compactor.get("human_interaction") == {"standalone": "decision-gated"}
+        and "q-tool-docs-compactor" not in planned,
+    )
+    compactor_effects = set(docs_compactor.get("side_effects", []) or [])
+    check(
+        "docs-compactor-writes-artifacts-never-state-index-or-git",
+        "write-project-artifacts" in compactor_effects
+        and not compactor_effects & {"write-artifact-index", "write-project-state"}
+        and not any(effect.startswith("git-") for effect in compactor_effects),
+    )
+    compactor_policy = str(docs_compactor.get("approval_policy", ""))
+    check(
+        "docs-compactor-approval-names-released-and-baselined",
+        "never-a-released-version" in compactor_policy and "baselined" in compactor_policy,
     )
 
     tdd_paths = [
@@ -4724,6 +4801,7 @@ def run() -> dict[str, Any]:
     errors.extend(pdf_runtime_errors(skills))
     errors.extend(c4_runtime_errors(skills))
     errors.extend(market_analysis_runtime_errors(skills))
+    errors.extend(docs_compactor_runtime_errors(skills))
 
     return {
         "status": "Failed" if errors else ("Passed with warnings" if warnings else "Passed"),

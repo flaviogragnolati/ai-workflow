@@ -1,0 +1,4 @@
+interface:
+  display_name: "Docs Compactor"
+  short_description: "Shrink project docs agents load without losing meaning"
+  default_prompt: "Use $q-tool-docs-compactor to measure this documentation, propose a compaction plan that retires superseded content, merges partial documents, and condenses the rest, and apply only what I approve."

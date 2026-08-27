@@ -16,6 +16,9 @@ established.
 
 ### Added
 
+- **2026-08-27** — Added `q-tool-docs-compactor`, a standalone, decision-gated shared tool that measures a project docset, retires superseded content whose trace survives elsewhere, merges partial documents into one surviving artifact, replaces copied rules with pointers, and condenses the rest so agents load fewer tokens.
+  - It never edits a `Released` version, touches a `Baselined` version only with explicit approval and a recorded decision, and reports absorbed documents through `stale_artifacts` instead of writing the artifact index.
+  - Its bundled `compaction_inventory.py` (`measure`, `overlap`, `markers`) returns before/after estimates plus duplicate and legacy signals; a contract `Documentation compaction` section, marker `S-83`, and three behavior cases pin the boundary.
 - **2026-08-26** — Added an optional outline working-document branch before an extensive consulting deliverable or when structural approval is requested; it is never the default path and archives when the deliverable version is approved.
 - **2026-08-26** — Added `q-consult-session`, an invocable consulting capability for classified kickoff, interview, workshop, training, committee, and acceptance-session records with attributable statements, decisions, actions, attachment extraction, and evidence deltas.
   - It is callable from any engagement point without entering the four-stage sequence and routes diagnostic hypotheses to current state and intervention options to intervention.

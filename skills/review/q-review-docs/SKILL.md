@@ -93,4 +93,4 @@ Complete the audit when the declared scope is exhausted, remaining uncertainty i
 
 ## Boundaries
 
-Use `q-code-explore` for document orientation, `q-review-comments` for comments and docstrings, `q-review-codebase` for integral technical quality, and the owning renderer for visual QA. Use this skill only for extended QA of durable project documentation and its authority graph.
+Use `q-code-explore` for document orientation, `q-review-comments` for comments and docstrings, `q-review-codebase` for integral technical quality, and the owning renderer for visual QA. Route approved condensation, consolidation, or retirement of durable documentation to `q-tool-docs-compactor` as a separate user-invoked task. Use this skill only for extended QA of durable project documentation and its authority graph.

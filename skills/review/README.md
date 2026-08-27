@@ -49,6 +49,7 @@ Scientific criteria (study hierarchies, GRADE, risk-of-bias instruments) load on
 - `q-review-code` and `q-review-comments` are the declared mini-review collaborators of `q-code-implement`, `q-code-fix`, and `q-code-debug`; when one is not installed the executor closes with a blocker naming it and its install command, and never reports the change as reviewed.
 - A conformance diagnostic reports plan-vs-implementation divergence and routes each finding to its owner; it never reconciles an artifact, never audits code quality, and never substitutes for the integral validation.
 - Use `q-maint-ai-workflow`, not `q-review-docs`, for documentation owned by this package.
+- `q-review-docs` diagnoses; approved condensation, consolidation, or retirement of the same documentation runs through `q-tool-docs-compactor` in the [shared tools guide](../tool/README.md) as a separate user-invoked task. The audit never edits, and the compactor never diagnoses drift.
 
 ## Integration with the other groups
 

@@ -59,6 +59,7 @@ Start here:
 | approved artifacts and a stakeholder to inform | `$q-report-workflow` | reports trace to exact versions and are released before any sending |
 | an option space that is itself the open question | `$q-ideation-session`, then the owning workflow adopts | ideation generates options, never facts |
 | one bounded question about the project as it is | `$q-ask-project` | read-only, transient |
+| documentation that has outgrown what an agent should load | `$q-tool-docs-compactor` | measured, approval-gated reduction; never a `Released` version |
 
 ## Skill groups
 
@@ -76,7 +77,7 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `code` | 15 | The development loop: orient, refine, implement, and handle trouble | [code guide](skills/code/README.md) |
 | `review` | 8 | QA that never modifies its target: changes, releases, plan conformance, documentation, evidence, and skills | [review guide](skills/review/README.md) |
 | `report` | 4 | Approved artifacts to a traced report and its rendered channels | [report guide](skills/report/README.md) |
-| `tool` | 10 | Format, web-capture, and diagram mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
+| `tool` | 11 | Format, web-capture, diagram, and documentation-compaction mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
 | `core` | 2 | Public companions for shared workflow governance and Quasar identity/editorial guidance | [core guide](skills/core/README.md) |
 | `maint` | 3 | Package maintenance; internal, not distributed | [maint guide](skills/maint/README.md) |
 
@@ -237,6 +238,7 @@ Three identity cases extend that table: `q-proposal-document` requires `q-propos
 | Structurizr JSON with manual layout | Yes when persisted | Supporting only for visual layout; tied to the exact model version and not hand-edited |
 | Standalone Marp Markdown, theme, and local assets | Yes when explicitly persisted | Supporting for slide representation; never canonical narrative, brand, or release meaning |
 | Browser-rendered web capture | Yes when explicitly persisted | None; derived from one exact public URL and access time with redacted runtime, network-policy, and validation provenance |
+| Compaction stub left where an absorbed document lived | Yes | None; a `Superseded` pointer to the surviving artifact, reconciled by the root orchestrator |
 | Format-tool transformation, extraction, or render (`q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, `q-tool-spreadsheet`, `q-tool-marp`), and any rendered SVG/PNG/PDF | Yes when explicitly persisted or delivered | None; derived from exact caller-owned sources with runtime and validation provenance |
 | Baselined report source | Yes | Canonical only for reporting selection, narrative, and approved interpretation |
 | Rendered report channels: Markdown, DOCX, PDF, Marp bundle, PPTX | Yes when delivered | None; derived from the baselined report source |
@@ -279,6 +281,7 @@ Honest evidence:
 - Do not let Market Analysis invent evidence, operate primary fieldwork, or process raw survey responses, and do not let market-research Reporting search or recalculate.
 - Do not let a documentation audit rewrite its targets or create a parallel changelog.
 - Do not treat a universal numeric skill grade, line-count target, or pattern taxonomy as package acceptance without target authority and behavioral evidence.
+- Do not let documentation compaction retire content whose trace survives nowhere, edit a `Released` version, or present an estimated token delta as acceptance evidence.
 
 Ceremony and side effects:
 
@@ -318,7 +321,7 @@ Tool-specific boundaries — web capture, Marp, PPTX, spreadsheet, and database 
 
 ## Conventions
 
-**Language.** The package language is English: skill bodies, manifest tokens, schemas, guides, and this changelog. Spanish appears only in the Quasar identity and editorial references under `skills/core/q-core-identity/references/`, its Marp template, and the bilingual prose capabilities of `q-tool-humanizer`. Client deliverables follow the client's language. Governance vocabulary — lifecycle states, authority labels, disposition names, manifest tokens — is never translated.
+**Language.** The package language is English: skill bodies, manifest tokens, schemas, guides, and this changelog. Spanish appears only in the Quasar identity and editorial references under `skills/core/q-core-identity/references/`, its Marp template, the bilingual prose capabilities of `q-tool-humanizer`, and the bilingual superseded-content markers of `q-tool-docs-compactor`. Client deliverables follow the client's language. Governance vocabulary — lifecycle states, authority labels, disposition names, manifest tokens — is never translated.
 
 **Skill IDs.** `q-<group>-<leaf>`, derived from the manifest `group` field, which also determines the folder.
 

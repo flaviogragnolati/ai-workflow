@@ -1,6 +1,6 @@
 ---
 name: q-core-contract
-description: "Shared governance companion for the Quasar AI delivery skills. Read it when a Quasar workflow, orchestrator, stage, renderer, tool, or quality skill needs routing, human-interaction cadence, dependencies or optional collaboration, single-writer rules, stage results, artifact authority and lifecycle, diagram delegation, external-content safety, research baselines, cited findings, market analysis, structured ideation and snapshot adoption, change control, stack compatibility, reporting, or bundled shared schemas. Any Quasar skill that declares it in requires must read it before acting. It is a companion, not a user entry point."
+description: "Shared governance companion for the Quasar AI delivery skills. Read it when a Quasar workflow, orchestrator, stage, renderer, tool, or quality skill needs routing, human-interaction cadence, dependencies or optional collaboration, single-writer rules, stage results, artifact authority and lifecycle, diagram delegation, external-content safety, research baselines, cited findings, market analysis, structured ideation and snapshot adoption, change control, stack compatibility, reporting, documentation compaction, or bundled shared schemas. Any Quasar skill that declares it in requires must read it before acting. It is a companion, not a user entry point."
 ---
 
 # Cross-workflow contract
@@ -388,6 +388,10 @@ A prose-authoring skill — `q-proposal-design`, `q-report-source`, `q-consult-c
 `q-tool-humanizer` owns pattern detection with localized indicators, bounded rewriting, clarity improvement, and a change summary. It never issues an authorship verdict, invents specificity for a vague claim, repairs a citation, changes a locked element, edits a derived render, or writes workflow state or the artifact index. A revision that alters a locked element is returned as a rejected change with the reason.
 
 A humanization pass leaves no persistent artifact unless the caller separately authorizes a named file. A derived channel reproduces the approved prose exactly: `q-proposal-document` and `q-report-document` never run the pass, and a deck or web revision lands in the authored plan, never in a generated output.
+
+## Documentation compaction
+
+A user may invoke `q-tool-docs-compactor` standalone to reduce the documentation an agent loads from a project. The owning workflow keeps every artifact's meaning, ID, authority, lifecycle, and index entry. The compactor edits `Working` and unindexed durable documents under a per-operation approved plan, touches a `Baselined` version only with explicit approval, a new version, and a recorded decision, and never edits a `Released` version. It retires content only when its trace survives in a decision or change record, a `Superseded` version, or version-control history the user accepts as the record; it merges documents into one survivor that keeps its path and ID; and it reports absorbed or retired documents as `Superseded` or `Archived` through `stale_artifacts` for the root orchestrator to reconcile. Its token figures are estimates, never acceptance evidence. Drift diagnosis stays with `q-review-docs`; this package's own documentation stays with `q-maint-ai-workflow`.
 
 ## Validation
 

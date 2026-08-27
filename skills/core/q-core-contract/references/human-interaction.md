@@ -43,6 +43,8 @@ q-tool-pptx:
 q-tool-spreadsheet:
   orchestrated: on-demand
   standalone: on-demand
+q-tool-docs-compactor:
+  standalone: decision-gated
 q-ideation-session:
   orchestrated: decision-gated
   standalone: dialogue-led
