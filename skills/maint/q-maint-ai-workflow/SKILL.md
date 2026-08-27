@@ -50,7 +50,7 @@ Trace the change through:
 - ownership, execution mode, side effects, approvals, fallback, and stack compatibility;
 - persistent versus transient outputs and their semantic authority;
 - manifest, contracts, orchestrators, routers, schemas, fixtures, scripts, agent metadata, and explanatory docs;
-- migration needs for renamed IDs, paths, outputs, or behavior;
+- release-boundary evidence for renamed IDs, paths, outputs, or behavior; without a public release, remove the superseded form instead of preserving a compatibility branch;
 - provenance and license obligations for incorporated third-party material.
 
 Read only the connected skills and references. Do not load the entire package without an impact reason.
@@ -88,10 +88,10 @@ Make one cohesive change across the impact map. Apply these maintenance chores w
 - **Skill layout:** Each registered skill has one canonical root at `skills/<group>/<skill-id>/`. A skill root may contain its own functional `agents/`, `references/`, `scripts/`, `tests/`, and runtime resources, but never another `SKILL.md` or a copied integration package. Keep incoming bundles and acceptance evidence outside the repository while integrating, move only functional runtime material into the canonical root, then remove the staging copy.
 - **Routing:** update the owning workflow, orchestrator, router, root `README.md`, any affected `skills/<group>/README.md` guide, and any agent context pointer that would otherwise lie.
 - **Contracts:** update schemas, fixtures, acceptance evidence, stable IDs, artifact ownership, authority, lifecycle, side effects, approvals, fallback, and stack profile together.
-- **Behavior:** add migration or compatibility guidance and re-sync affected consumers without copying the same rule into multiple files.
+- **Behavior:** re-sync affected consumers without copying the same rule into multiple files; add a migration only when a released consumer contract or an explicit user request requires one.
 - **History:** add a dated, user-visible `CHANGELOG.md` entry under `Unreleased` (ISO date first, one sentence, at most three sub-bullets); identify breaking changes and migrations explicitly.
 - **Provenance:** incorporate every repository-owned license, third-party notice, and attribution into the single root `LICENSE`, which is the sole repository-level license and attribution catalog. When importing, adapting, or referencing external material, update that root document instead of creating a license, notice, or attribution file in an individual skill. List every externally referenced repository there with a link, affected Quasar scope, source revision, modifications, and applicable terms. Preserve license files owned by bundled third-party dependencies, and require the package validator to distinguish those dependency files from forbidden skill-root duplicates before removing a superseded notice.
-- **Removal or rename:** remove stale references, provide a transition path when consumers may still use the old ID, and avoid silent aliases.
+- **Removal or rename:** remove stale references, aliases, and retired roots. Before changing an established release boundary, stop for an explicit migration decision; without one, Git history is the only record of the superseded form.
 
 Load [`q-maint-writing-for-agents`](../q-maint-writing-for-agents/SKILL.md) before creating, restructuring, or materially editing an agent-consumed artifact. Apply its internal writing discipline inside this maintenance task's authority and write scope.
 

@@ -69,6 +69,10 @@ established.
 
 ### Removed
 
+- **2026-08-27** — Removed prerelease compatibility branches for project-root workflow state and the retired `t3-core` / `t3-only` package profile values.
+  - Root orchestrators now resume only from their declared artifact roots; state or index files elsewhere are not recognized as workflow state.
+  - Workflow and manifest schemas accept only `any` or `project-defined`, while T3 Core remains an advisory technology recommendation rather than a compatibility profile.
+  - Maintenance now removes superseded prerelease forms by default, and the package validator rejects their reintroduction.
 - **2026-08-26** — Removed duplicated renderer-owned Quasar logos, templates, and identity prose after moving their authoritative copies to `q-core-identity`.
   - Removed the implicit `q-report-document` → `q-report-deck` identity dependency and the proposal renderer's duplicate logo files.
   - Removed the `FREE_FONT_CANDIDATES` abstraction and its ambiguous `font_resolution` output in favor of an explicit declared-family and generation-slot contract.

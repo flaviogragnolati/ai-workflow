@@ -11,7 +11,7 @@ Read the `q-core-contract` companion for shared governance and its `references/r
 
 1. Load project state, artifact index, baselines, decisions, risks, and open change requests.
 2. Accept either a product idea or the accepted proposal version (its commercial release, exact `02-proposal-source.yaml` ID and version). Do not fabricate a commercial reference when work starts from an idea.
-3. Load `technical_foundation_ref` and, for work that touches a user interface, `design_system_ref`, each at its exact artifact version when it exists. Treat a legacy `stack_profile: t3-core` as project data, not a package compatibility gate.
+3. Require workflow state to use `stack_profile: project-defined`, then load `technical_foundation_ref` and, for work that touches a user interface, `design_system_ref`, each at its exact artifact version when it exists.
 4. Route missing or stale technical selections to `q-plan-tech-foundation`. Block only on an unresolved requirement, decision, execution capability, or evidence gap that makes the next action unsafe.
 
 ## Planning stages
@@ -122,7 +122,7 @@ When technical work affects accepted commercial scope, price, schedule, or commi
 4. Block affected work until the required decision.
 5. Regenerate derivatives after approval.
 
-On resume, rebuild context from state, index, baselines, decisions, risks, blockers, housekeeping, the exact technical foundation version, and any persisted standalone stage results: validate each sidecar the contract's standalone-persistence rule defines, apply its delta, and delete it before continuing; the run's state and index live under its artifact root (`docs/development-workflow/`), with the project root as the legacy location — name which one you used. Do not reopen closed decisions without new evidence.
+On resume, rebuild context from state, index, baselines, decisions, risks, blockers, housekeeping, the exact technical foundation version, and any persisted standalone stage results under `docs/development-workflow/`: validate each sidecar the contract's standalone-persistence rule defines, apply its delta, and delete it before continuing. State or index files outside that artifact root do not belong to the run and must not be used as workflow state. Do not reopen closed decisions without new evidence.
 
 ## Anti-patterns
 

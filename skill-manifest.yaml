@@ -72,7 +72,7 @@ skills:
     approval_policy: read-only-governance-reference-with-no-project-or-package-writes
     fallback: report-the-missing-governance-reference-instead-of-assuming-shared-rules
     stack_profile: any
-    contract_version: "1.5"
+    contract_version: "2.0"
     distribution: public
 
   q-core-identity:
@@ -539,7 +539,7 @@ skills:
     approval_policy: user-confirms-commercial-impact-priority-release-acceptance-and-hotfix-scope
     fallback: block-on-unresolved-requirement-or-coverage-gap
     stack_profile: project-defined
-    contract_version: "1.1"
+    contract_version: "2.0"
 
   q-delivery-release:
     path: delivery/q-delivery-release
@@ -1403,7 +1403,7 @@ skills:
     approval_policy: user-confirms-commercial-release-and-client-disposition
     fallback: close-or-route-non-development-engagement
     stack_profile: any
-    contract_version: "1.1"
+    contract_version: "2.0"
 
   q-proposal-web:
     path: proposal/q-proposal-web
@@ -1494,7 +1494,7 @@ skills:
     approval_policy: user-confirms-execution-release-and-client-acceptance-disposition
     fallback: close-or-return-to-proposal-change-control
     stack_profile: any
-    contract_version: "1.1"
+    contract_version: "2.0"
 
   q-consult-session:
     path: consult/q-consult-session
@@ -1672,7 +1672,7 @@ skills:
     approval_policy: user-authorizes-package-writes-governance-changes-require-confirmation-and-git-mutations-require-separate-operation-scoped-approval
     fallback: read-only-audit-or-block-on-governance-change
     stack_profile: any
-    contract_version: "1.0"
+    contract_version: "1.1"
     distribution: internal
 
   q-report-workflow:

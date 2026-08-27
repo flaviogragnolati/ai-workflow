@@ -3353,6 +3353,16 @@ def contract_marker_errors() -> tuple[list[str], int]:
         "S-80": [
             ("consult/q-consult-intervention/SKILL.md", "never by default"),
         ],
+        "S-81": [
+            ("core/q-core-contract/SKILL.md", "must not be used as workflow state"),
+            ("delivery/q-delivery-workflow/SKILL.md", "must not be used as workflow state"),
+            ("proposal/q-proposal-workflow/SKILL.md", "must not be used as workflow state"),
+            ("consult/q-consult-workflow/SKILL.md", "must not be used as workflow state"),
+        ],
+        "S-82": [
+            ("maint/q-maint-ai-workflow/SKILL.md", "without a public release, remove the superseded form"),
+            ("maint/q-maint-ai-workflow/SKILL.md", "Git history is the only record of the superseded form"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():
@@ -3918,6 +3928,27 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
         and consulting.get("entry_skill") == "q-consult-workflow"
         and "consulting-execution" in proposal_next
     ))
+
+    manifest_schema = load(SKILLS_ROOT / "schemas" / "skill-manifest.schema.yaml")
+    legacy_manifest_profile = load(REPO_ROOT / "skill-manifest.yaml")
+    legacy_manifest_profile["package"]["stack_profile"] = "t3-core"
+    legacy_manifest_profile["package"]["compatibility"] = "t3-only"
+    check("prerelease-manifest-rejects-retired-compatibility-profiles", bool(
+        schema_errors(legacy_manifest_profile, manifest_schema, "manifest")
+    ))
+
+    inactive_manifest_skill = load(REPO_ROOT / "skill-manifest.yaml")
+    inactive_manifest_skill["skills"]["q-core-contract"]["status"] = "archived"
+    check("prerelease-manifest-rejects-retained-inactive-skills", bool(
+        schema_errors(inactive_manifest_skill, manifest_schema, "manifest")
+    ))
+
+    workflow_state_schema = load(SKILLS_ROOT / "schemas" / "workflow-state.schema.yaml")
+    legacy_workflow_state = load(SKILLS_ROOT / "fixtures" / "workflow-state.valid.yaml")
+    legacy_workflow_state["stack_profile"] = "t3-core"
+    check("workflow-state-rejects-retired-stack-profile", bool(
+        schema_errors(legacy_workflow_state, workflow_state_schema)
+    ))
     return errors, checked
 
 
@@ -4230,9 +4261,18 @@ def run() -> dict[str, Any]:
         r"(?<![a-z0-9-])quasar-crear-presentacion-consultoria(?![a-z0-9-])": "q-report-deck",
         r"(?<![a-z0-9-])05-implementation-roadmap\.md(?![a-z0-9-])": "05-technical-implementation-sequence.md",
         r"(?<![a-z0-9-])render_docx\.py(?![a-z0-9-])": "document_builder.py",
+        r"stack_profile:\s*t3-core\b": "stack_profile: project-defined",
+        r"stack_profile:\s*\{enum:\s*\[[^\]\n]*t3-core": "stack_profile enum [project-defined, any]",
+        r"(?<![a-z0-9-])t3-only(?![a-z0-9-])": "profile-driven",
+        r"\b(?:legacy location|predate this rule)\b": "the declared artifact-root-only contract",
+        r"status:\s*(?:deprecated|archived)\b": "remove the retired prerelease capability from the active registry",
     }
     for path in REPO_ROOT.rglob("*"):
-        if ignored_path(path) or path.resolve() == Path(__file__).resolve():
+        if (
+            ignored_path(path)
+            or path.resolve() == Path(__file__).resolve()
+            or path.resolve() == (REPO_ROOT / "CHANGELOG.md").resolve()
+        ):
             continue
         if not path.is_file() or path.suffix.lower() not in {".md", ".yaml", ".yml", ".py", ".json"}:
             continue

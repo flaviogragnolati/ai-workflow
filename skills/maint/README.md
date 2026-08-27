@@ -17,9 +17,9 @@ This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.
 | Step | What it produces |
 |---|---|
 | 1. Establish the baseline | Current authority, affected surfaces, a pre-change validator run, and the requested outcome — all explicit. Read `AGENTS.md`, the manifest, the contract, `README.md`, `CHANGELOG.md`, then the affected skill and its neighbours. |
-| 2. Build the impact map | Every changed contract has an owner and every affected consumer has a planned update or a documented reason to stay unchanged. Trace invocation, routing, upstream and downstream, ownership, side effects, approvals, fallback, persistence, migration, and provenance. |
+| 2. Build the impact map | Every changed contract has an owner and every affected consumer has a planned update or a documented reason to stay unchanged. Trace invocation, routing, upstream and downstream, ownership, side effects, approvals, fallback, persistence, release boundaries, and provenance. |
 | 3. Run the philosophy and anti-pattern gate | One of three dispositions: compatible, compatible with named safeguards, or a governance change awaiting or holding explicit user approval. |
-| 4. Implement the smallest coherent patch | One cohesive change across the impact map: skill lifecycle and layout, routing, contracts, behavior and migration, a dated `CHANGELOG.md` entry, provenance in the root `LICENSE`, and a transition path for any removal or rename. |
+| 4. Implement the smallest coherent patch | One cohesive change across the impact map: skill lifecycle and layout, routing, contracts, behavior, a dated `CHANGELOG.md` entry, and provenance in the root `LICENSE`. Without an established release boundary, remove superseded forms; preserve a migration path only when a released consumer contract or explicit user decision requires it. |
 | 5. Validate from structure to behavior | `validate-skills-package.py` clean with no new errors or warnings, `quick_validate.py` for every active skill (changed skills only when a full run is unavailable), affected script tests and fixtures, link and ID checks, a re-read of the diff against the impact map, and a forward test for behavior-changing work. |
 | 6. Hand back | Disposition, changed surfaces, compatibility and provenance decisions, exact validation evidence, unresolved risks, and one next recommended action — or `none`. |
 

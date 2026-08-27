@@ -81,7 +81,7 @@ A presentation deck of an approved proposal is produced through this same report
 
 Keep accepted commercial releases immutable. Use change requests for subsequent scope, price, schedule, or commitment changes. Client feedback after commercial close that is not a change request — a question, an acknowledgement, a lesson — is recorded, not applied; a request for new scope is a follow-on proposal.
 
-On resume, rebuild context from this run's state and index under its artifact root (`docs/proposal-workflow/`), with the project root as the legacy location — name which one you used — and validate, apply, and delete each persisted standalone stage-result sidecar the contract's standalone-persistence rule defines before continuing.
+On resume, rebuild context from this run's state, index, and persisted standalone stage-result sidecars under `docs/proposal-workflow/`; validate, apply, and delete each sidecar the contract's standalone-persistence rule defines before continuing. State or index files outside that artifact root do not belong to the run and must not be used as workflow state.
 
 When a DOCX is edited manually, reintroduce it through `q-proposal-document` for reconciliation. Do not implement partial hashes or editable-field tracking in this version.
 

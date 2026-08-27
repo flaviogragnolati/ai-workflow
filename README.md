@@ -133,7 +133,7 @@ Where each kind of truth lives:
 - Runtime truth: project `00-workflow-state.yaml` and `00-artifact-index.yaml`.
 - Explanatory views: this guide and the group guides.
 
-Technical development is stack-agnostic and profile-driven. Skills marked `stack_profile: project-defined` load the project's versioned technical foundation and repository evidence; skills marked `any` do not depend on a selected stack. `t3-core` remains a legacy project value during migration, not a package compatibility gate. Missing technology-specific evidence produces an explicit coverage gap rather than a false approval.
+Technical development is stack-agnostic and profile-driven. Skills marked `stack_profile: project-defined` load the project's versioned technical foundation and repository evidence; skills marked `any` do not depend on a selected stack. Missing technology-specific evidence produces an explicit coverage gap rather than a false approval.
 
 What done looks like: a completed workflow stage leaves owned artifacts, traceable IDs, declared authority and lifecycle, a valid `stage_result`, reconciled runtime state when orchestrated, explicit blockers when incomplete, and one clear next action. A read-only capability returns only its declared transient output and does not claim stage completion.
 

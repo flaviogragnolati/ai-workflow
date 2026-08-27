@@ -50,7 +50,7 @@ Execution never edits the accepted proposal. When a stage reports a deviation fr
 
 Client feedback on an accepted deliverable or the execution release follows the contract's Client feedback rule: record it, then route an objection as a `rework` disposition in a new acceptance round, a scope, price, schedule, or commitment change through the change request above, a question to `q-ask-project`, and an acknowledgement into the acceptance record.
 
-On resume, rebuild context from state, index, decisions, risks, blockers, the accepted proposal or agreement version, the four stage evidence registers, and any persisted standalone stage results under `docs/consulting-workflow/`: validate run-wide EVD uniqueness, validate each sidecar the contract's standalone-persistence rule defines, apply its delta, and delete it before continuing; the run's state and index live under its artifact root (`docs/consulting-workflow/`), with the project root as the legacy location — name which one you used. Do not reopen closed decisions without new evidence.
+On resume, rebuild context from state, index, decisions, risks, blockers, the accepted proposal or agreement version, the four stage evidence registers, and any persisted standalone stage results under `docs/consulting-workflow/`: validate run-wide EVD uniqueness, validate each sidecar the contract's standalone-persistence rule defines, apply its delta, and delete it before continuing. State or index files outside that artifact root do not belong to the run and must not be used as workflow state. Do not reopen closed decisions without new evidence.
 
 ## Optional structured ideation
 

@@ -77,7 +77,7 @@ The root orchestrator is the only writer of:
 - cross-workflow stage completion and recovery status;
 - reconciled traceability, decision, and risk deltas when those registers are managed centrally.
 
-A project may host more than one root workflow run — a proposal, then a delivery and/or a consulting execution, or research or reporting invoked as root. Each root run owns its own `00-workflow-state.yaml` and `00-artifact-index.yaml` inside its artifact root (see Artifact roots); no run edits another run's files. A successor run starts its own state and index, names the predecessor's released inputs by exact artifact ID and version in `source_refs` and in a `decisions` entry, and never copies them into its index or inherits the predecessor's stage status. A run whose files predate this rule keeps them at the project root; an orchestrator resuming looks in its artifact root first, then at the project root, and states which it used.
+A project may host more than one root workflow run — a proposal, then a delivery and/or a consulting execution, or research or reporting invoked as root. Each root run owns its own `00-workflow-state.yaml` and `00-artifact-index.yaml` inside its artifact root (see Artifact roots); no run edits another run's files. A successor run starts its own state and index, names the predecessor's released inputs by exact artifact ID and version in `source_refs` and in a `decisions` entry, and never copies them into its index or inherits the predecessor's stage status. An orchestrator resumes only from the state and index inside its declared artifact root; state or index files elsewhere are outside the run contract and must not be used as workflow state.
 
 A stage owns its domain artifacts and returns a structured delta. A delegated subworkflow may aggregate owned stage deltas but cannot apply them globally. The root orchestrator validates the resulting delta, reconciles IDs and dependencies, then updates state and index.
 
@@ -251,7 +251,7 @@ A diagnostic finding cites registered evidence or remains a hypothesis; the reme
 
 ## Stack compatibility
 
-The development workflow is profile-driven. In the manifest, `stack_profile: any` means the skill's procedure is independent of the selected stack, while `stack_profile: project-defined` means the skill must load the project's current technical foundation and repository evidence. `t3-core` remains a legacy project value during migration; it is not a package compatibility gate.
+The development workflow is profile-driven. In the manifest and workflow state, `stack_profile: any` means the procedure is independent of the selected stack, while `stack_profile: project-defined` means it must load the project's current technical foundation and repository evidence. No stack name is a package compatibility profile.
 
 `q-plan-tech-foundation` is the sole owner of the authored technical foundation: concrete selections and versions, NFR and operational fit, adopted technology guidance, and version-scoped external references. After that stage completes, workflow state must carry `technical_foundation_ref` as an artifact ID and version. Downstream stages may report a contradiction, mark the referenced version stale, and route reconciliation to the owner; they must not edit the technical foundation directly.
 
