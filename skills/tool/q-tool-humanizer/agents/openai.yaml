@@ -1,4 +1,4 @@
 interface:
   display_name: "Humanizer"
-  short_description: "Detect, humanize, and clarify text in English or Spanish"
-  default_prompt: "Use $q-tool-humanizer to detect AI-writing patterns in this text, rewrite it so it reads naturally in its original language, or edit it for clarity and concision without changing meaning or facts."
+  short_description: "Humanize prose or disambiguate technical English"
+  default_prompt: "Use $q-tool-humanizer to detect AI-writing patterns, rewrite prose naturally, improve English or Spanish clarity, or apply the optional STE-informed technical profile when I mention ASD-STE100, Simplified Technical English, controlled English, disambiguating technical instructions, or a downstream agent misreading text. Preserve meaning and do not flatten creative, commercial, or persuasive voice by default."

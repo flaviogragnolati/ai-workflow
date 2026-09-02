@@ -3500,6 +3500,7 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     web_markdown_tool = skills.get("q-tool-web-markdown", {})
     pptx_tool = skills.get("q-tool-pptx", {})
     spreadsheet_tool = skills.get("q-tool-spreadsheet", {})
+    humanizer_tool = skills.get("q-tool-humanizer", {})
     review_plan = skills.get("q-review-plan", {})
     consult_acceptance = skills.get("q-consult-acceptance", {})
     consult_intervention = skills.get("q-consult-intervention", {})
@@ -3512,6 +3513,137 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
         if isinstance(entry, dict)
     }
     report_document_dir = SKILLS_ROOT / "report" / "q-report-document"
+    humanizer_dir = SKILLS_ROOT / "tool" / "q-tool-humanizer"
+    humanizer_text = (humanizer_dir / "SKILL.md").read_text(encoding="utf-8-sig")
+    humanizer_metadata = (humanizer_dir / "agents" / "openai.yaml").read_text(
+        encoding="utf-8-sig"
+    )
+    technical_clarity_text = (
+        humanizer_dir / "references" / "technical-clarity-en.md"
+    ).read_text(encoding="utf-8-sig")
+
+    def humanizer_case_route(
+        request: str, *, language: str = "en", genre: str = "technical"
+    ) -> dict[str, Any]:
+        """Model the documented profile route for deterministic acceptance cases."""
+        lowered = request.lower()
+        names_standard = any(
+            signal in lowered
+            for signal in ("asd-ste100", "simplified technical english", "controlled english")
+        )
+        states_misread_cost = any(
+            signal in lowered
+            for signal in (
+                "cannot misread",
+                "can't misread",
+                "cannot misparse",
+                "disambiguate",
+            )
+        )
+        asks_ai_detection = "detect" in lowered and "ai-writing" in lowered
+        asks_ai_removal = "remove" in lowered and "ai-writing" in lowered
+        task = "detect" if asks_ai_detection else ("rewrite" if asks_ai_removal else "improve")
+        excludes_flat_voice = genre in {"creative", "commercial", "persuasive"}
+        technical_profile = (
+            task == "improve"
+            and language == "en"
+            and (names_standard or (states_misread_cost and not excludes_flat_voice))
+        )
+        if task == "detect":
+            references = ["patterns-en.md"] if language == "en" else ["patterns-es.md"]
+        elif task == "rewrite":
+            references = ["patterns-en.md"] if language == "en" else ["patterns-es.md"]
+        elif language == "es":
+            references = ["clarity-es.md"]
+        elif technical_profile:
+            references = ["clarity-en.md", "technical-clarity-en.md"]
+        else:
+            references = ["clarity-en.md"] if language == "en" else []
+        return {
+            "task": task,
+            "clarity_profile": (
+                "ste-informed-technical" if technical_profile else "general"
+            ),
+            "references_loaded": references,
+            "standards_compliance": (
+                "not-assessed" if technical_profile else "not-applicable"
+            ),
+            "can_certify": False,
+        }
+
+    explicit_ste = humanizer_case_route(
+        "Use $q-tool-humanizer to apply ASD-STE100 principles to this English maintenance instruction."
+    )
+    check(
+        "humanizer-explicit-ste-routes-to-technical-improve",
+        humanizer_tool.get("contract_version") == "1.2"
+        and explicit_ste == {
+            "task": "improve",
+            "clarity_profile": "ste-informed-technical",
+            "references_loaded": ["clarity-en.md", "technical-clarity-en.md"],
+            "standards_compliance": "not-assessed",
+            "can_certify": False,
+        }
+        and "English `improve` + `ste-informed-technical`" in humanizer_text,
+    )
+    disambiguation = humanizer_case_route(
+        "Rewrite this tool description so a downstream agent cannot misread it."
+    )
+    check(
+        "humanizer-costly-technical-ambiguity-triggers-profile",
+        disambiguation["clarity_profile"] == "ste-informed-technical"
+        and disambiguation["references_loaded"]
+        == ["clarity-en.md", "technical-clarity-en.md"]
+        and "downstream agent" in humanizer_metadata,
+    )
+    general_intro = humanizer_case_route(
+        "Improve the clarity of this English proposal introduction.", genre="proposal"
+    )
+    check(
+        "humanizer-general-english-does-not-load-technical-profile",
+        general_intro["clarity_profile"] == "general"
+        and general_intro["references_loaded"] == ["clarity-en.md"]
+        and general_intro["standards_compliance"] == "not-applicable",
+    )
+    spanish_clarity = humanizer_case_route(
+        "Mejora la claridad de esta propuesta en español.", language="es", genre="proposal"
+    )
+    check(
+        "humanizer-spanish-has-no-ste-coverage",
+        spanish_clarity["clarity_profile"] == "general"
+        and spanish_clarity["references_loaded"] == ["clarity-es.md"]
+        and "apply `ste-informed-technical` only to English segments" in humanizer_text,
+    )
+    campaign_copy = humanizer_case_route(
+        "Make this campaign copy more persuasive and distinctive.", genre="persuasive"
+    )
+    check(
+        "humanizer-persuasive-copy-keeps-general-profile",
+        campaign_copy["clarity_profile"] == "general"
+        and "creative, commercial, or persuasive prose" in humanizer_text
+        and "creative, commercial, or persuasive voice" in humanizer_metadata,
+    )
+    certification = humanizer_case_route(
+        "Certify that this manual complies with ASD-STE100."
+    )
+    check(
+        "humanizer-refuses-ste-certification",
+        certification["standards_compliance"] == "not-assessed"
+        and certification["can_certify"] is False
+        and "does not verify every ASD-STE100 rule" in technical_clarity_text
+        and "qualified professional" in technical_clarity_text,
+    )
+    check(
+        "humanizer-technical-profile-preserves-modality-conditions-and-figures",
+        "Never change `may have failed` to `failed`" in technical_clarity_text
+        and "condition, quotation, defined term, measurement" in technical_clarity_text
+        and "meaning lock always prevails" in technical_clarity_text,
+    )
+    check(
+        "humanizer-technical-profile-keeps-simultaneous-actions-together",
+        "actions together when they must occur simultaneously" in technical_clarity_text
+        and "separating them would change the operation" in technical_clarity_text,
+    )
     check(
         "document-tool-active-not-planned",
         isinstance(document_tool, dict)
@@ -4122,6 +4254,7 @@ def package_doc_errors() -> list[str]:
             'https://github.com/K-Dense-AI/scientific-agent-skills',
             'https://github.com/anthropics/skills',
             'https://github.com/softaworks/agent-toolkit',
+            'https://github.com/danyuchn/asd-ste100-skill',
             '`q-ideation-session`',
             '`q-research-market-analysis`',
             '`q-review-evidence`',
@@ -4148,6 +4281,11 @@ def package_doc_errors() -> list[str]:
             'https://github.com/microsoft/markitdown',
             'K-Dense Inc. adaptations',
             'Softaworks / Leonardo Flores references and adaptations',
+            'danyuchn / Dustin Yuchen Teng reference',
+            'd5ce157870cf9c41efd1d6e836706a2be3c7b9da',
+            'ASD-STE100 Issue 9 — restrictive source not incorporated',
+            'https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf',
+            'Copyright (c) 2026 Dustin Yuchen Teng',
             'Wikipedia contributors',
             'William Strunk Jr.',
             'never redistributed',

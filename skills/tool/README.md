@@ -31,7 +31,7 @@ A tool never installs a runtime silently, never reaches a remote converter, and 
 | [`q-tool-marp`](q-tool-marp/SKILL.md) | Creating, revising, validating, or locally rendering Marp Markdown slides as an editable source bundle. |
 | [`q-tool-web-markdown`](q-tool-web-markdown/SKILL.md) | Manually capturing one explicitly named public JavaScript-rendered page as bounded, derived Markdown. |
 | [`q-tool-database-schema`](q-tool-database-schema/SKILL.md) | Designing or reviewing a physical schema, document model, migration, or supplied performance evidence, without executing database work. Callers pass one `database_request` (see its [delegation contract](q-tool-database-schema/references/integration-contract.md)). |
-| [`q-tool-humanizer`](q-tool-humanizer/SKILL.md) | Detecting AI-writing indicators, humanizing prose, or improving English or Spanish clarity without changing facts, citations, or commitments. Its callers are the three prose authors — `q-proposal-design`, `q-report-source`, `q-consult-intervention` — plus the copy `q-report-deck` and `q-proposal-web` author themselves. |
+| [`q-tool-humanizer`](q-tool-humanizer/SKILL.md) | Detecting AI-writing indicators, humanizing prose, or improving English or Spanish clarity without changing facts, citations, or commitments. Its optional `ste-informed-technical` profile disambiguates high-cost English technical text without claiming ASD-STE100 compliance; `general` remains the default, including for Spanish and creative, commercial, or persuasive prose. Its callers are the three prose authors — `q-proposal-design`, `q-report-source`, `q-consult-intervention` — plus the copy `q-report-deck` and `q-proposal-web` author themselves. |
 | [`q-tool-document`](q-tool-document/SKILL.md) | Inspecting, extracting, creating, exactly editing, commenting, redlining, accepting changes, converting, rendering, or validating DOCX/DOTX files. |
 | [`q-tool-pdf`](q-tool-pdf/SKILL.md) | Inspecting, extracting, creating, transforming, filling, securing, rendering, OCRing, or validating a PDF. |
 | [`q-tool-pptx`](q-tool-pptx/SKILL.md) | Creating, inspecting, extracting, selecting, filling, rendering, or validating native PowerPoint files. |
@@ -52,7 +52,7 @@ A tool never installs a runtime silently, never reaches a remote converter, and 
 - Do not use `q-tool-pptx` to decide a deck's narrative, claims, brand, slide purpose, release, or publication; route those decisions to the owning renderer or upstream content owner.
 - Do not let spreadsheet mechanics choose formulas, assumptions, figures, financial conventions, or business meaning, or treat cached formula values or a LibreOffice conversion as proof of Excel fidelity.
 - Do not let transient database candidates choose the engine, overwrite semantic or architecture owners, or execute database commands.
-- Do not let `q-tool-humanizer` invent specificity for a vague claim or silently repair a suspicious citation; gaps and citation signals route to the evidence owner.
+- Do not let `q-tool-humanizer` invent specificity for a vague claim, silently repair a suspicious citation, or label an STE-informed revision compliant or certified; gaps, citation signals, and formal standards review route to the applicable owner.
 - Do not let `q-tool-docs-compactor` retire content whose trace survives nowhere, edit a `Released` version, or set lifecycle in the artifact index; it reports `stale_artifacts` and the root orchestrator reconciles.
 
 ## Integration with the other groups

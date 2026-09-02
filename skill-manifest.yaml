@@ -232,7 +232,7 @@ skills:
     approval_policy: conversation-output-by-default-with-explicit-authorization-for-writing-or-overwriting-a-named-project-artifact
     fallback: return-conversation-only-detection-or-revision-with-a-named-language-evidence-or-meaning-preservation-gap
     stack_profile: any
-    contract_version: "1.1"
+    contract_version: "1.2"
     distribution: public
 
   q-tool-document:

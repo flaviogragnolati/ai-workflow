@@ -17,6 +17,7 @@ imply endorsement by its authors.
 | [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | `q-ideation-session`, `q-research-market-analysis`, `q-review-evidence`, `q-tool-web-markdown`, `q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, and `q-tool-spreadsheet` |
 | [anthropics/skills](https://github.com/anthropics/skills) | `q-tool-document`, `q-tool-pdf`, `q-tool-pptx`, and `q-tool-spreadsheet` |
 | [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit) | `q-ideation-session`, `q-tool-humanizer`, `q-review-skill`, `q-tool-c4`, `q-plan-design-system`, `q-tool-marp`, `q-tool-web-markdown`, and `q-code-grill-simple` |
+| [danyuchn/asd-ste100-skill](https://github.com/danyuchn/asd-ste100-skill) | `q-tool-humanizer` |
 | [obra/superpowers](https://github.com/obra/superpowers) | `q-code-implementation-plan`, `q-code-tickets`, `q-core-contract`, and `q-code-prototype` |
 | [marp-team/marp-cli](https://github.com/marp-team/marp-cli) | `q-tool-marp` local runtime dependency |
 | [leonardocouy/web2md](https://github.com/leonardocouy/web2md) | `q-tool-web-markdown` browser-capture behavior reference; not a dependency |
@@ -313,6 +314,63 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## danyuchn / Dustin Yuchen Teng reference — MIT License
+
+Source repository: <https://github.com/danyuchn/asd-ste100-skill>
+
+Commit consulted: `d5ce157870cf9c41efd1d6e836706a2be3c7b9da`.
+The source skill identifies version `0.4.0` and uses the MIT License.
+
+The optional `ste-informed-technical` profile in
+`skills/tool/q-tool-humanizer/SKILL.md` and
+`references/technical-clarity-en.md` is conceptually informed by the source's
+application of controlled-language discipline to agent-facing instructions,
+tool descriptions, and error messages. Quasar retained that general use case
+and the distinction between checkable structural guidance and dictionary-bound
+claims. It independently rewrote the profile around Quasar's existing task and
+`C1`–`C9` taxonomy, progressive-disclosure route, meaning lock, change summary,
+bilingual boundary, standards disclaimer, caller authority, and original prose.
+No source example, rule table, output format, or repository asset was copied.
+
+MIT License
+
+Copyright (c) 2026 Dustin Yuchen Teng
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## ASD-STE100 Issue 9 — restrictive source not incorporated
+
+ASD-STE100 Simplified Technical English, Issue 9 (15 January 2025), was
+consulted at <https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf>
+through the official ASD Simplified Technical English Maintenance Group site.
+The standard and the ASD-STE100 / Simplified Technical English marks are owned
+by the Aerospace, Security and Defence Industries Association of Europe (ASD),
+Brussels, Belgium; all applicable rights remain with ASD.
+
+Quasar consulted the standard only to verify high-level structural principles
+and the limits of this profile. It does not redistribute or incorporate the
+controlled dictionary, official rule wording, tables, or examples. The profile
+text and examples elsewhere in `q-tool-humanizer` are independently written.
+It does not assess every ASD-STE100 rule or produce certified or compliant
+documentation; actual compliance requires the official current standard and
+qualified professional review.
 
 ## Obra / Jesse Vincent reference — MIT License
 

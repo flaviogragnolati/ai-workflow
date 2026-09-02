@@ -38,6 +38,10 @@ established.
 
 ### Changed
 
+- **2026-09-01** — Extended `q-tool-humanizer` with an optional `ste-informed-technical` profile for high-cost English technical ambiguity while keeping `general` as the default and making no ASD-STE100 compliance or certification claim.
+  - Progressive disclosure loads original technical-clarity guidance only for the English technical branch, with the meaning lock taking precedence over mechanical limits and Spanish or creative, commercial, and persuasive prose excluded by default.
+  - The root attribution catalog records ASD-STE100 Issue 9 and the MIT-licensed `danyuchn/asd-ste100-skill` reference at revision `d5ce157870cf9c41efd1d6e836706a2be3c7b9da`.
+  - Eight deterministic behavior cases cover positive routing, nearby non-triggers, certification refusal, meaning preservation, and simultaneous-action exceptions.
 - **2026-08-26** — Split consulting evidence into `01-evidence.yaml` through `04-evidence.yaml`, enforced run-wide unique `EVD-nnn` IDs, added `service` commitments and `service-report` evidence, and required recorded or explicitly absent client validation at the assessment gate.
   - Confidentiality is monotonic: restricted source content is never persisted, confidential content stays within the engagement root, and every report or artifact channel inherits the maximum source classification.
   - Validator marker `S-79`, the engagement-record fixture pair, and `consult-evidence-ids-unique-across-stage-registers` pin the session, confidentiality, and evidence contract.
