@@ -18,7 +18,7 @@ The installer copies one skill folder at a time into your project's agent direct
 
 This package remains prerelease. `CHANGELOG.md` records work under `Unreleased`; no stable package version or release tag is established by the current repository state.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 67 are. `skills.sh.json` lays out the skills.sh repository page: its coverage is derived — the validator requires every public skill and no internal one to appear exactly once — while its section titles are curated reading groups (for example, delivery and plan share "Product and technical planning", and the code group is split across three sections).
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 69 are. `skills.sh.json` lays out the skills.sh repository page: its coverage is derived — the validator requires every public skill and no internal one to appear exactly once — while its section titles are curated reading groups (for example, delivery and plan share "Product and technical planning", and the code group is split across three sections).
 
 ## Philosophy
 
@@ -77,7 +77,7 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `code` | 15 | The development loop: orient, refine, implement, and handle trouble | [code guide](skills/code/README.md) |
 | `review` | 8 | QA that never modifies its target: changes, releases, plan conformance, documentation, evidence, and skills | [review guide](skills/review/README.md) |
 | `report` | 4 | Approved artifacts to a traced report and its rendered channels | [report guide](skills/report/README.md) |
-| `tool` | 11 | Format, web-capture, diagram, and documentation-compaction mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
+| `tool` | 12 | Format, web-capture, interactive diagram, and documentation-compaction mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
 | `core` | 2 | Public companions for shared workflow governance and Quasar identity/editorial guidance | [core guide](skills/core/README.md) |
 | `maint` | 3 | Package maintenance; internal, not distributed | [maint guide](skills/maint/README.md) |
 

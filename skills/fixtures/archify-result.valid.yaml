@@ -1,0 +1,52 @@
+schema_version: "1.0"
+archify_result:
+  request_id: ARCHIFY-REQ-001
+  outcome: completed
+  owner_skill: q-plan-architecture
+  generator_skill: q-tool-archify
+  runtime:
+    version: 2.17.0-dev.1
+    commit: d8e4daf2610d512821365f41b139d874b29efe81
+    node_version: v24.20.0
+    doctor_status: ready
+  diagram_type: architecture
+  sources:
+    - path: docs/development-workflow/architecture/04-checkout.architecture.json
+      sha256: source-sha256
+      bytes: 2048
+      schema_version: 1
+      creation_mode: authored
+      semantic_authority: supporting
+      authority_scope: interactive-visual-representation
+      derived_from: [ART-ARCH-001@1.2, ART-ADR-004@1.0]
+  renders:
+    - path: docs/development-workflow/architecture/04-checkout.html
+      format: html
+      sha256: artifact-sha256
+      bytes: 715216
+      creation_mode: derived
+      semantic_authority: none
+      authority_scope: presentation
+  validation:
+    command: node runtime/bin/archify.mjs deliver architecture source.json output.html --quality showcase --json
+    checks_passed: 9
+    check_count: 9
+    composition_profile: showcase
+    composition_status: pass
+    errors: 0
+    warnings: 0
+    repairs: []
+  browser_evidence:
+    status: collected
+    chrome_path: /usr/bin/chromium
+    receipt_path: docs/development-workflow/architecture/04-checkout.visual-check.json
+  locale_disclosure:
+    primary_language: en
+    viewer_ui_language: en
+    disclosed: false
+  warnings: []
+  blockers: []
+  provenance:
+    generated_at: "2026-09-05T12:00:00Z"
+    runtime_root: skills/tool/q-tool-archify/runtime
+    commands: [python3 scripts/detect_archify_runtime.py --json, node runtime/bin/archify.mjs deliver architecture source.json output.html --quality showcase --json]

@@ -1,0 +1,46 @@
+schema_version: "2.0"
+archify_request:
+  request_id: ARCHIFY-INVALID
+  operation: merge
+  caller:
+    skill_id: q-tool-archify
+    workflow: shared
+    mode: automatic
+  ownership:
+    owner_skill: q-tool-archify
+    owner_workflow: shared
+    creation_mode: derived
+    semantic_authority: canonical
+    authority_scope: visual-representation
+  sources:
+    - source_ref: diagram.txt
+      version: draft
+      evidence_class: guessed
+      kind: mermaid-source
+  scope:
+    subject: Unknown workflow
+    audience: Everyone
+    purpose: Invent a diagram
+    diagram_type: workflow
+  content:
+    primary_language: es
+    required_elements: []
+    forbidden_inferences: []
+  quality:
+    profile: perfect
+    max_repair_rounds: 5
+  evidence:
+    repo_root: /outside
+    revision: latest
+  output:
+    source_path: diagram.json
+    artifact_path: diagram.html
+    overwrite: yes
+    browser_evidence: always
+  policy:
+    network: true
+    preview: true
+    open_after_deliver: true
+    brand_capture: true
+    update_check: true
+  unexpected: true

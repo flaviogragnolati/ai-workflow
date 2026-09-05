@@ -25,6 +25,9 @@ q-tool-web-markdown:
 q-tool-c4:
   orchestrated: on-demand
   standalone: on-demand
+q-tool-archify:
+  orchestrated: on-demand
+  standalone: on-demand
 q-tool-database-schema:
   orchestrated: on-demand
   standalone: on-demand

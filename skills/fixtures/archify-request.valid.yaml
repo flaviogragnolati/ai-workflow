@@ -1,0 +1,50 @@
+schema_version: "1.0"
+archify_request:
+  request_id: ARCHIFY-REQ-001
+  operation: deliver
+  caller:
+    skill_id: q-plan-architecture
+    workflow: ai-coding
+    mode: orchestrated
+  ownership:
+    owner_skill: q-plan-architecture
+    owner_workflow: ai-coding
+    creation_mode: authored
+    semantic_authority: supporting
+    authority_scope: interactive-visual-representation
+  sources:
+    - source_ref: ART-ARCH-001
+      version: "1.2"
+      evidence_class: approved
+      owner_skill: q-plan-architecture
+      kind: narrative
+    - source_ref: ART-ADR-004
+      version: "1.0"
+      evidence_class: approved
+      owner_skill: q-plan-architecture
+      kind: adr
+  scope:
+    subject: Checkout platform
+    audience: Product and engineering stakeholders
+    purpose: Explain the approved request path interactively
+    diagram_type: architecture
+  content:
+    primary_language: en
+    required_elements: [Browser, Web application, API, Database]
+    forbidden_inferences: [Do not add unapproved services, Do not infer deployment regions]
+    main_path_summary: Browser to web application to API to database
+  quality:
+    profile: showcase
+    max_repair_rounds: 2
+  output:
+    source_path: docs/development-workflow/architecture/04-checkout.architecture.json
+    artifact_path: docs/development-workflow/architecture/04-checkout.html
+    receipt_path: docs/development-workflow/architecture/04-checkout.receipt.json
+    overwrite: false
+    browser_evidence: requested
+  policy:
+    network: false
+    preview: false
+    open_after_deliver: false
+    brand_capture: false
+    update_check: false

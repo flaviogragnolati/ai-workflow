@@ -1,0 +1,45 @@
+schema_version: "2.0"
+archify_result:
+  request_id: ARCHIFY-INVALID
+  outcome: done
+  owner_skill: q-tool-archify
+  generator_skill: archify
+  runtime:
+    version: 2.17
+    commit: latest
+    node_version: old
+    doctor_status: broken
+  diagram_type: mindmap
+  sources:
+    - path: source.json
+      sha256: none
+      bytes: many
+      schema_version: "1"
+      creation_mode: derived
+      semantic_authority: canonical
+      authority_scope: visual-representation
+      derived_from: source
+  renders:
+    - path: output.svg
+      format: svg
+      sha256: none
+      bytes: large
+      creation_mode: authored
+      semantic_authority: supporting
+      authority_scope: visual-representation
+  validation:
+    command: none
+    checks_passed: nine
+    check_count: 9
+    composition_profile: perfect
+    composition_status: broken
+    errors: 2
+    warnings: 1
+  browser_evidence:
+    status: passed
+    chrome_path: false
+  warnings: warning
+  blockers: blocker
+  provenance:
+    generated_at: never
+    runtime_root: remote

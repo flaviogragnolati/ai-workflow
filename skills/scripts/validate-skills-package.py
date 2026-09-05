@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -38,6 +39,8 @@ CORE_CONTRACT = SKILLS_ROOT / "core" / "q-core-contract"
 ROUTING_DIGEST = CORE_CONTRACT / "references" / "routing.md"
 HUMAN_INTERACTION_DIGEST = CORE_CONTRACT / "references" / "human-interaction.md"
 IGNORED_PATH_PARTS = {".git", "node_modules", "__pycache__", ".venv", "tmp"}
+ARCHIFY_PINNED_VERSION = "2.17.0-dev.1"
+ARCHIFY_PINNED_COMMIT = "d8e4daf2610d512821365f41b139d874b29efe81"
 
 
 def ignored_path(path: Path) -> bool:
@@ -1266,6 +1269,104 @@ def c4_runtime_errors(skills: dict[str, Any]) -> list[str]:
     return errors
 
 
+def archify_runtime_errors(skills: dict[str, Any]) -> list[str]:
+    entry = skills.get("q-tool-archify")
+    if not isinstance(entry, dict) or entry.get("status") != "active":
+        return []
+    directory = SKILLS_ROOT / str(entry.get("path", ""))
+    runtime = directory / "runtime"
+    detector = directory / "scripts" / "detect_archify_runtime.py"
+    tests = directory / "tests" / "run_tests.py"
+    required = [
+        runtime / "bin" / "archify.mjs",
+        runtime / "bin" / "visual-check.mjs",
+        runtime / "renderers" / "shared" / "generated-validators.mjs",
+        runtime / "assets" / "template.html",
+        runtime / "delta" / "architecture-delta.mjs",
+        runtime / "scripts" / "check-render-output.mjs",
+        runtime / "ARCHIFY_VERSION",
+        runtime / "skill-release.json",
+        runtime / "LICENSE",
+        runtime / "THIRD_PARTY_NOTICES.md",
+        detector,
+        tests,
+        directory / "tests" / "trigger-cases.json",
+        directory / "references" / "archify-request.schema.yaml",
+        directory / "references" / "archify-result.schema.yaml",
+        directory / "references" / "integration-contract.md",
+        directory / "references" / "policy.md",
+    ]
+    errors = [
+        "q-tool-archify: missing runtime file %s" % path.relative_to(REPO_ROOT)
+        for path in required if not path.is_file()
+    ]
+    nested_skills = list(runtime.rglob("SKILL.md")) if runtime.is_dir() else []
+    if nested_skills:
+        errors.append("q-tool-archify: vendored runtime must not contain SKILL.md")
+    for forbidden in (runtime / "scripts" / "check-update.mjs", runtime / "package.json"):
+        if forbidden.exists():
+            errors.append("q-tool-archify: forbidden runtime file %s" % forbidden.relative_to(REPO_ROOT))
+    if errors:
+        return errors
+
+    metadata: dict[str, str] = {}
+    for line in (runtime / "ARCHIFY_VERSION").read_text(encoding="utf-8").splitlines():
+        key, separator, value = line.partition("=")
+        if separator:
+            metadata[key] = value
+    try:
+        release = json.loads((runtime / "skill-release.json").read_text(encoding="utf-8"))
+    except Exception as exc:
+        return ["q-tool-archify: invalid skill-release.json (%s)" % exc]
+    if metadata.get("version") != ARCHIFY_PINNED_VERSION or release.get("version") != ARCHIFY_PINNED_VERSION:
+        errors.append("q-tool-archify: runtime version must be pinned at %s" % ARCHIFY_PINNED_VERSION)
+    if metadata.get("commit") != ARCHIFY_PINNED_COMMIT:
+        errors.append("q-tool-archify: runtime commit must be pinned at %s" % ARCHIFY_PINNED_COMMIT)
+
+    node = shutil.which("node")
+    if not node:
+        errors.append("q-tool-archify: Node is required to verify the declared runtime")
+        return errors
+    environment = dict(os.environ)
+    environment["ARCHIFY_UPDATE_CHECK_DISABLED"] = "1"
+    doctor = subprocess.run(
+        [node, str(runtime / "bin" / "archify.mjs"), "doctor"],
+        cwd=directory,
+        env=environment,
+        text=True,
+        capture_output=True,
+        timeout=30,
+        check=False,
+    )
+    if doctor.returncode != 0 or "Archify is ready." not in doctor.stdout:
+        errors.append("q-tool-archify: doctor failed: %s"
+                      % (doctor.stderr.strip() or doctor.stdout.strip() or doctor.returncode))
+    test = subprocess.run(
+        [sys.executable, str(tests)],
+        cwd=REPO_ROOT,
+        env=environment,
+        text=True,
+        capture_output=True,
+        timeout=120,
+        check=False,
+    )
+    if test.returncode != 0 or not re.search(r"q-tool-archify tests: [1-9][0-9]* passed", test.stdout):
+        errors.append("q-tool-archify: tests failed: %s"
+                      % (test.stderr.strip() or test.stdout.strip() or test.returncode))
+    smoke = subprocess.run(
+        [sys.executable, str(detector), "--help"],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        timeout=10,
+        check=False,
+    )
+    if smoke.returncode != 0 or "without network access or installation" not in smoke.stdout:
+        errors.append("q-tool-archify: detector --help failed: %s"
+                      % (smoke.stderr.strip() or smoke.stdout.strip() or smoke.returncode))
+    return errors
+
+
 def market_analysis_runtime_errors(skills: dict[str, Any]) -> list[str]:
     entry = skills.get("q-research-market-analysis")
     if not isinstance(entry, dict) or entry.get("status") != "active":
@@ -2376,6 +2477,80 @@ def c4_result_semantics(data: Any) -> list[str]:
     for render in result.get("renders", []) if isinstance(result.get("renders"), list) else []:
         if isinstance(render, dict) and render.get("source_sha256") not in source_hashes:
             errors.append("C4 render %r references an unknown source hash" % render.get("path"))
+    return errors
+
+
+def archify_request_semantics(data: Any) -> list[str]:
+    request = data.get("archify_request", {}) if isinstance(data, dict) else {}
+    if not isinstance(request, dict):
+        return ["archify_request must be a mapping"]
+    errors: list[str] = []
+    operation = request.get("operation")
+    scope = request.get("scope", {})
+    diagram_type = scope.get("diagram_type") if isinstance(scope, dict) else None
+    output = request.get("output", {})
+    quality = request.get("quality", {})
+    ownership = request.get("ownership", {})
+
+    if operation == "compare":
+        if not isinstance(request.get("compare"), dict):
+            errors.append("Archify compare operation requires a compare block")
+        if diagram_type != "architecture":
+            errors.append("Archify compare operation requires architecture diagram_type")
+        if not isinstance(output, dict) or not output.get("delta_path"):
+            errors.append("Archify compare operation requires output.delta_path")
+    if "evidence" in request and diagram_type != "architecture":
+        errors.append("Archify repository evidence is architecture-only")
+    if isinstance(quality, dict) and isinstance(quality.get("max_repair_rounds"), int):
+        if quality.get("max_repair_rounds") > 2:
+            errors.append("Archify max_repair_rounds must not exceed two")
+    if isinstance(ownership, dict) and ownership.get("owner_skill") == "q-tool-archify":
+        errors.append("q-tool-archify cannot be the semantic owner")
+    for source in request.get("sources", []) if isinstance(request.get("sources"), list) else []:
+        if isinstance(source, dict) and source.get("kind") == "mermaid-source":
+            if not str(source.get("source_ref", "")).endswith(".mmd"):
+                errors.append("Archify Mermaid source_ref must end in .mmd")
+    return errors
+
+
+def archify_result_semantics(data: Any) -> list[str]:
+    result = data.get("archify_result", {}) if isinstance(data, dict) else {}
+    if not isinstance(result, dict):
+        return ["archify_result must be a mapping"]
+    errors: list[str] = []
+    outcome = result.get("outcome")
+    validation = result.get("validation", {})
+    blockers = result.get("blockers", [])
+    warnings = result.get("warnings", [])
+
+    if outcome in {"completed", "completed_with_warnings"} and blockers:
+        errors.append("non-blocked Archify result cannot contain blockers")
+    if outcome == "completed" and warnings:
+        errors.append("completed Archify result cannot contain warnings")
+    if outcome == "completed_with_warnings" and not warnings:
+        errors.append("completed_with_warnings Archify result requires a warning")
+    if outcome == "blocked" and not blockers:
+        errors.append("blocked Archify result requires at least one blocker")
+    if outcome == "completed" and isinstance(validation, dict):
+        if validation.get("errors") != 0:
+            errors.append("completed Archify result requires zero validation errors")
+        if validation.get("checks_passed") != validation.get("check_count"):
+            errors.append("completed Archify result requires all validation checks to pass")
+        if validation.get("composition_profile") == "showcase" and validation.get("warnings") != 0:
+            errors.append("completed showcase Archify result requires zero validation warnings")
+    for render in result.get("renders", []) if isinstance(result.get("renders"), list) else []:
+        if isinstance(render, dict) and render.get("semantic_authority") != "none":
+            errors.append("Archify render %r must have semantic_authority none" % render.get("path"))
+    for source in result.get("sources", []) if isinstance(result.get("sources"), list) else []:
+        if isinstance(source, dict) and source.get("authority_scope") != "interactive-visual-representation":
+            errors.append("Archify source %r requires interactive-visual-representation authority" % source.get("path"))
+    browser = result.get("browser_evidence", {})
+    if isinstance(browser, dict) and browser.get("status") == "collected" and not browser.get("receipt_path"):
+        errors.append("collected Archify browser evidence requires a receipt_path")
+    locale = result.get("locale_disclosure", {})
+    if isinstance(locale, dict):
+        if locale.get("viewer_ui_language") != locale.get("primary_language") and locale.get("disclosed") is not True:
+            errors.append("Archify viewer locale mismatch must be disclosed")
     return errors
 
 
@@ -4708,6 +4883,46 @@ def run() -> dict[str, Any]:
         min_invalid_errors=10,
     ))
     errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-archify" / "references" / "archify-request.schema.yaml",
+        fixtures / "archify-request.valid.yaml",
+        fixtures / "archify-request.invalid.yaml",
+        archify_request_semantics,
+        active,
+        min_invalid_errors=8,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-archify" / "references" / "archify-request.schema.yaml",
+        fixtures / "archify-request-compare.valid.yaml",
+        fixtures / "archify-request.invalid.yaml",
+        archify_request_semantics,
+        active,
+        min_invalid_errors=8,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-archify" / "references" / "archify-result.schema.yaml",
+        fixtures / "archify-result.valid.yaml",
+        fixtures / "archify-result.invalid.yaml",
+        archify_result_semantics,
+        active,
+        min_invalid_errors=8,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-archify" / "references" / "archify-result.schema.yaml",
+        fixtures / "archify-result-warning.valid.yaml",
+        fixtures / "archify-result.invalid.yaml",
+        archify_result_semantics,
+        active,
+        min_invalid_errors=8,
+    ))
+    errors.extend(fixture_pair(
+        SKILLS_ROOT / "tool" / "q-tool-archify" / "references" / "archify-result.schema.yaml",
+        fixtures / "archify-result-blocked.valid.yaml",
+        fixtures / "archify-result.invalid.yaml",
+        archify_result_semantics,
+        active,
+        min_invalid_errors=8,
+    ))
+    errors.extend(fixture_pair(
         SKILLS_ROOT / "tool" / "q-tool-pdf" / "references" / "pdf-request.schema.yaml",
         fixtures / "pdf-request.valid.yaml",
         fixtures / "pdf-request.invalid.yaml",
@@ -5060,6 +5275,7 @@ def run() -> dict[str, Any]:
     errors.extend(pptx_runtime_errors(skills))
     errors.extend(pdf_runtime_errors(skills))
     errors.extend(c4_runtime_errors(skills))
+    errors.extend(archify_runtime_errors(skills))
     errors.extend(market_analysis_runtime_errors(skills))
     errors.extend(docs_compactor_runtime_errors(skills))
 

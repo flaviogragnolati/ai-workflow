@@ -1,0 +1,3 @@
+skills/tool/q-tool-archify/runtime/** text eol=lf
+skills/tool/q-tool-archify/runtime/renderers/shared/generated-*.mjs linguist-generated=true
+skills/tool/q-tool-archify/runtime/assets/template.html linguist-generated=true

@@ -1,0 +1,55 @@
+schema_version: "1.0"
+archify_request:
+  request_id: ARCHIFY-REQ-002
+  operation: compare
+  caller:
+    skill_id: q-plan-architecture
+    workflow: ai-coding
+    mode: orchestrated
+  ownership:
+    owner_skill: q-plan-architecture
+    owner_workflow: ai-coding
+    creation_mode: authored
+    semantic_authority: supporting
+    authority_scope: interactive-visual-representation
+  sources:
+    - source_ref: ART-ARCHIFY-BASE
+      version: "1.0"
+      evidence_class: approved
+      owner_skill: q-plan-architecture
+      kind: archify-source
+    - source_ref: ART-ARCHIFY-HEAD
+      version: "2.0"
+      evidence_class: approved
+      owner_skill: q-plan-architecture
+      kind: archify-source
+  scope:
+    subject: Checkout platform architecture change
+    audience: Architecture reviewers
+    purpose: Show structural changes between approved versions
+    diagram_type: architecture
+  content:
+    primary_language: en
+    required_elements: [Base architecture, Head architecture]
+    forbidden_inferences: [Do not infer runtime impact, Do not decide mergeability]
+  quality:
+    profile: showcase
+    max_repair_rounds: 0
+  compare:
+    base_source_ref: ART-ARCHIFY-BASE
+    base_version: "1.0"
+    head_source_ref: ART-ARCHIFY-HEAD
+    head_version: "2.0"
+  output:
+    source_path: docs/development-workflow/architecture/04-checkout-v2.architecture.json
+    artifact_path: docs/development-workflow/architecture/04-checkout-v2.html
+    delta_path: docs/development-workflow/architecture/04-checkout-delta.html
+    receipt_path: docs/development-workflow/architecture/04-checkout-delta.receipt.json
+    overwrite: false
+    browser_evidence: skip
+  policy:
+    network: false
+    preview: false
+    open_after_deliver: false
+    brand_capture: false
+    update_check: false

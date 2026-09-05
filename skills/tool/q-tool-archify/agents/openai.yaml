@@ -1,0 +1,4 @@
+interface:
+  display_name: "Archify Interactive Diagrams"
+  short_description: "Validated interactive HTML diagrams from typed JSON"
+  default_prompt: "Use $q-tool-archify to create, revise, validate, deliver, or compare an evidence-grounded interactive diagram."

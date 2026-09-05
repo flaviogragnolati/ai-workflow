@@ -1,0 +1,111 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: Quasar Archify request
+type: object
+required: [schema_version, archify_request]
+additionalProperties: false
+properties:
+  schema_version: {const: "1.0"}
+  archify_request:
+    type: object
+    required: [request_id, operation, caller, ownership, sources, scope, content, quality, output, policy]
+    additionalProperties: false
+    properties:
+      request_id: {type: string}
+      operation: {enum: [create, revise, validate, deliver, compare]}
+      caller:
+        type: object
+        required: [skill_id, workflow, mode]
+        additionalProperties: false
+        properties:
+          skill_id: {type: string}
+          workflow: {type: string}
+          mode: {enum: [orchestrated, standalone]}
+      ownership:
+        type: object
+        required: [owner_skill, owner_workflow, creation_mode, semantic_authority, authority_scope]
+        additionalProperties: false
+        properties:
+          owner_skill: {type: string}
+          owner_workflow: {type: string}
+          creation_mode: {const: authored}
+          semantic_authority: {const: supporting}
+          authority_scope: {const: interactive-visual-representation}
+      sources:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          required: [source_ref, version, evidence_class]
+          additionalProperties: false
+          properties:
+            source_ref: {type: string}
+            version: {type: string}
+            evidence_class: {enum: [approved, observed, user-supplied]}
+            owner_skill: {type: string}
+            kind: {enum: [narrative, adr, mermaid-source, archify-source, repository]}
+      scope:
+        type: object
+        required: [subject, audience, purpose, diagram_type]
+        additionalProperties: false
+        properties:
+          subject: {type: string}
+          audience: {type: string}
+          purpose: {type: string}
+          diagram_type: {enum: [architecture, workflow, sequence, dataflow, lifecycle]}
+      content:
+        type: object
+        required: [primary_language, required_elements, forbidden_inferences]
+        additionalProperties: false
+        properties:
+          primary_language: {type: string}
+          required_elements:
+            type: array
+            items: {type: string}
+          forbidden_inferences:
+            type: array
+            items: {type: string}
+          main_path_summary: {type: string}
+      quality:
+        type: object
+        required: [profile, max_repair_rounds]
+        additionalProperties: false
+        properties:
+          profile: {enum: [showcase, standard]}
+          max_repair_rounds: {type: integer, minimum: 0, maximum: 2}
+      evidence:
+        type: object
+        required: [repo_root, revision]
+        additionalProperties: false
+        properties:
+          repo_root: {type: string}
+          revision: {type: string}
+      compare:
+        type: object
+        required: [base_source_ref, base_version, head_source_ref, head_version]
+        additionalProperties: false
+        properties:
+          base_source_ref: {type: string}
+          base_version: {type: string}
+          head_source_ref: {type: string}
+          head_version: {type: string}
+      output:
+        type: object
+        required: [source_path, artifact_path, overwrite, browser_evidence]
+        additionalProperties: false
+        properties:
+          source_path: {type: string}
+          artifact_path: {type: string}
+          delta_path: {type: string}
+          receipt_path: {type: string}
+          overwrite: {type: boolean}
+          browser_evidence: {enum: [requested, skip]}
+      policy:
+        type: object
+        required: [network, preview, open_after_deliver, brand_capture, update_check]
+        additionalProperties: false
+        properties:
+          network: {const: false}
+          preview: {const: false}
+          open_after_deliver: {const: false}
+          brand_capture: {const: false}
+          update_check: {const: false}

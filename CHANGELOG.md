@@ -16,6 +16,10 @@ established.
 
 ### Added
 
+- **2026-09-05** — Added `q-tool-archify`, a shared tool that authors, validates, delivers, and compares Archify typed-JSON diagrams as self-contained interactive HTML through a vendored, commit-pinned runtime (`tt-a1i/archify` 2.17.0-dev.1 at `d8e4daf`).
+  - Typed JSON is authored support for `interactive-visual-representation`; HTML and Architecture Delta outputs are derived with no semantic authority, and `q-plan-architecture` remains the first semantic owner.
+  - The request contract disables network, update checks, preview, opening, and brand capture; validation allows at most two supported repair rounds and records byte-bound receipts.
+  - The package validator pins the runtime and its fixtures, while `sync-archify-runtime.sh` preserves the dependency license and third-party notices; the planned `v2.16.0` pin was rejected because its bundle omitted the brand-mark notice.
 - **2026-08-27** — Added `q-tool-docs-compactor`, a standalone, decision-gated shared tool that measures a project docset, retires superseded content whose trace survives elsewhere, merges partial documents into one surviving artifact, replaces copied rules with pointers, and condenses the rest so agents load fewer tokens.
   - It never edits a `Released` version, touches a `Baselined` version only with explicit approval and a recorded decision, and reports absorbed documents through `stale_artifacts` instead of writing the artifact index.
   - Its bundled `compaction_inventory.py` (`measure`, `overlap`, `markers`) returns before/after estimates plus duplicate and legacy signals; a contract `Documentation compaction` section, marker `S-83`, and three behavior cases pin the boundary.

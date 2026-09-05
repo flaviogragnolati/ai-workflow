@@ -1,0 +1,19 @@
+{
+  "positive": [
+    {"prompt": "Generá un mapa de arquitectura interactivo en HTML autocontenido con validación de layout.", "expected": "q-tool-archify"},
+    {"prompt": "Compare these two architecture snapshots and show added and removed components as an Architecture Delta.", "expected": "q-tool-archify"},
+    {"prompt": "Deliver an explorable sequence diagram HTML with a deterministic receipt.", "expected": "q-tool-archify"},
+    {"prompt": "Convertí este flowchart Mermaid aprobado a un diagrama interactivo Archify sin cambiar su significado.", "expected": "q-tool-archify"},
+    {"prompt": "Run Archify geometric validation on this workflow JSON.", "expected": "q-tool-archify"}
+  ],
+  "negative": [
+    {"prompt": "Create editable Mermaid source for our README architecture diagram.", "expected": "q-tool-mermaid"},
+    {"prompt": "Model a C4 container view for the checkout platform.", "expected": "q-tool-c4"},
+    {"prompt": "Turn this report into a branded executive deck.", "expected": "q-report-deck"},
+    {"prompt": "Decide our target architecture and write the ADRs.", "expected": "q-plan-architecture"}
+  ],
+  "fallback": [
+    {"condition": "browser-unavailable", "expected": "validated-delivery-plus-explicit-browser-evidence-gap"},
+    {"condition": "runtime-unavailable", "expected": "blocked-result-with-runtime-capability-gap"}
+  ]
+}

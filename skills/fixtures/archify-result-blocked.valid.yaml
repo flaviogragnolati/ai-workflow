@@ -1,0 +1,49 @@
+schema_version: "1.0"
+archify_result:
+  request_id: ARCHIFY-REQ-004
+  outcome: blocked
+  owner_skill: q-plan-architecture
+  generator_skill: q-tool-archify
+  runtime:
+    version: 2.17.0-dev.1
+    commit: d8e4daf2610d512821365f41b139d874b29efe81
+    node_version: v24.20.0
+    doctor_status: ready
+  diagram_type: architecture
+  sources:
+    - path: docs/development-workflow/architecture/04-checkout.architecture.json
+      sha256: source-sha256
+      bytes: 2000
+      schema_version: 1
+      creation_mode: authored
+      semantic_authority: supporting
+      authority_scope: interactive-visual-representation
+      derived_from: [ART-ARCH-001@1.2]
+  renders: []
+  validation:
+    command: node runtime/bin/archify.mjs validate architecture source.json --quality showcase --json
+    checks_passed: 8
+    check_count: 9
+    composition_profile: showcase
+    composition_status: fail
+    errors: 1
+    warnings: 0
+    repairs:
+      - round: 2
+        subject: connection checkout-to-database
+        rule_code: geometry/relationship-crossing
+        supported_fix: Move the diagnosed route waypoint
+  browser_evidence:
+    status: skipped
+    chrome_path: null
+    receipt_path: null
+  locale_disclosure:
+    primary_language: en
+    viewer_ui_language: en
+    disclosed: false
+  warnings: []
+  blockers: [Showcase validation still fails after the authorized repair rounds]
+  provenance:
+    generated_at: "2026-09-05T12:00:00Z"
+    runtime_root: skills/tool/q-tool-archify/runtime
+    commands: [node runtime/bin/archify.mjs validate architecture source.json --quality showcase --json]

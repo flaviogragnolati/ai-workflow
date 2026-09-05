@@ -1,0 +1,113 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: Quasar Archify result
+type: object
+required: [schema_version, archify_result]
+additionalProperties: false
+properties:
+  schema_version: {const: "1.0"}
+  archify_result:
+    type: object
+    required: [request_id, outcome, owner_skill, generator_skill, runtime, diagram_type, sources, renders, validation, browser_evidence, locale_disclosure, warnings, blockers, provenance]
+    additionalProperties: false
+    properties:
+      request_id: {type: string}
+      outcome: {enum: [completed, completed_with_warnings, blocked]}
+      owner_skill: {type: string}
+      generator_skill: {const: q-tool-archify}
+      runtime:
+        type: object
+        required: [version, commit, node_version, doctor_status]
+        additionalProperties: false
+        properties:
+          version: {type: string}
+          commit: {type: string}
+          node_version: {type: string}
+          doctor_status: {enum: [ready, degraded, unavailable]}
+      diagram_type: {enum: [architecture, workflow, sequence, dataflow, lifecycle]}
+      sources:
+        type: array
+        items:
+          type: object
+          required: [path, sha256, bytes, schema_version, creation_mode, semantic_authority, authority_scope, derived_from]
+          additionalProperties: false
+          properties:
+            path: {type: string}
+            sha256: {type: string}
+            bytes: {type: integer}
+            schema_version: {type: integer}
+            creation_mode: {const: authored}
+            semantic_authority: {const: supporting}
+            authority_scope: {const: interactive-visual-representation}
+            derived_from:
+              type: array
+              items: {type: string}
+      renders:
+        type: array
+        items:
+          type: object
+          required: [path, format, sha256, bytes, creation_mode, semantic_authority, authority_scope]
+          additionalProperties: false
+          properties:
+            path: {type: string}
+            format: {enum: [html, delta-html, receipt-json, png]}
+            sha256: {type: string}
+            bytes: {type: integer}
+            creation_mode: {const: derived}
+            semantic_authority: {const: none}
+            authority_scope: {const: presentation}
+      validation:
+        type: object
+        required: [command, checks_passed, check_count, composition_profile, composition_status, errors, warnings, repairs]
+        additionalProperties: false
+        properties:
+          command: {type: string}
+          checks_passed: {type: integer}
+          check_count: {type: integer}
+          composition_profile: {enum: [showcase, standard]}
+          composition_status: {enum: [pass, fail, unavailable]}
+          errors: {type: integer}
+          warnings: {type: integer}
+          repairs:
+            type: array
+            items:
+              type: object
+              required: [round, subject, rule_code, supported_fix]
+              additionalProperties: false
+              properties:
+                round: {type: integer}
+                subject: {type: string}
+                rule_code: {type: string}
+                supported_fix: {type: string}
+      browser_evidence:
+        type: object
+        required: [status, chrome_path, receipt_path]
+        additionalProperties: false
+        properties:
+          status: {enum: [collected, unavailable, skipped]}
+          chrome_path: {type: [string, "null"]}
+          receipt_path: {type: [string, "null"]}
+      locale_disclosure:
+        type: object
+        required: [primary_language, viewer_ui_language, disclosed]
+        additionalProperties: false
+        properties:
+          primary_language: {type: string}
+          viewer_ui_language: {enum: [en, zh-CN]}
+          disclosed: {type: boolean}
+      warnings:
+        type: array
+        items: {type: string}
+      blockers:
+        type: array
+        items: {type: string}
+      provenance:
+        type: object
+        required: [generated_at, runtime_root, commands]
+        additionalProperties: false
+        properties:
+          generated_at: {type: string}
+          runtime_root: {type: string}
+          commands:
+            type: array
+            items: {type: string}
+      stage_result: {type: object}
