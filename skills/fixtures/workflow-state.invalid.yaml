@@ -1,4 +1,4 @@
-schema_version: "1.0"
+schema_version: "1.1"
 project_id: demo
 workflow: ai-coding
 status: approved
@@ -10,4 +10,8 @@ stage_status: {q-plan-design-system: completed}
 decisions: []
 risks: []
 blockers: []
+active_front:
+  item_ref: ""
+  record_ref: ""
+next_actor: null
 next_action: null

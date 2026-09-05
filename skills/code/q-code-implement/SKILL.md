@@ -24,6 +24,7 @@ Read the `q-core-contract` companion for shared governance and its stage-result 
 4. Comment only what the code cannot say — intent, invariant, constraint, trade-off, hazard — in the fewest words, to the `q-review-comments` rubric and the repository's convention. Leave no narration, step markers, ticket or task references, or planning residue in the source; the durable record carries the change story.
 5. Run focused checks after each meaningful step and broader proportional checks before close.
 6. Stop on an architecture, product, stack, priority, or commercial contradiction; route an unsettled technology decision to `q-plan-tech-foundation` and a needed change to a reusable design contract to `q-plan-design-system`, and do not widen the change silently.
+7. Prepare one transient shared review bundle after verification as the contract defines. Reuse it for both mini-review axes only while that evidence remains current.
 
 Use parallel executors only for independent work with clear ownership. Their coordination is not a persistent project artifact.
 
@@ -34,7 +35,8 @@ When `code-change-and-its-verification-are-complete-and-the-mini-review-is-due` 
 1. Run `q-review-code` for standards and specification conformance. If it is not installed, `close-with-a-blocker-naming-q-review-code-and-its-install-command-and-never-report-the-change-as-reviewed` (`npx skills add flaviogragnolati/ai-workflow --skill q-review-code`).
 2. Run `q-review-comments` for affected comments and docstrings. If it is not installed, `close-with-a-blocker-naming-q-review-comments-and-its-install-command-and-never-report-the-comment-review-as-done` (`npx skills add flaviogragnolati/ai-workflow --skill q-review-comments`). Its remove and rewrite findings change no behavior; apply them before close.
 3. Correct blockers, apply the comment findings, and rerun relevant checks.
-4. Keep both review results distinct. A missing reviewer is a blocker in the stage result and in the durable record, never a skipped step.
+4. If a correction changes code or evidence, refresh the shared review bundle and rerun each affected review; context may be reused, but a verdict about an older diff may not.
+5. Keep both review results distinct. A reviewer with no affected surface returns verified empty coverage instead of being skipped. A missing reviewer is a blocker in the stage result and in the durable record, never a skipped step.
 
 ## Durable close
 
@@ -49,4 +51,4 @@ Return changed files, checks, review result, residual risk, record updated, and 
 
 ## Stage result
 
-Also return a valid `stage_result` with no `authored_outputs`: the updated durable record in `updated_outputs`; a decision taken during execution in `decisions_added_or_updated`; a planning artifact the change contradicted under `stale_artifacts`; unmet acceptance or a failed check in `blockers`; the mini-review result and residual risk in `warnings`. Do not register scratchpads, internal plans, or delegation messages as outputs. In standalone mode set `global_state_updated: false` and `reconciliation_required: true` and persist the result beside the updated record as the contract's standalone-persistence rule requires; never write workflow state or the artifact index.
+Also return a valid `stage_result` with no `authored_outputs`: the updated durable record in `updated_outputs`; a decision taken during execution in `decisions_added_or_updated`; a planning artifact the change contradicted under `stale_artifacts`; unmet acceptance or a failed check in `blockers`; the two distinct mini-review outcomes and residual risk in `warnings`; and the exact record or owner route in `next_recommended_action`. Do not register the shared review bundle, scratchpads, internal plans, or delegation messages as outputs. In standalone mode set `global_state_updated: false` and `reconciliation_required: true` and persist the result beside the updated record as the contract's standalone-persistence rule requires; never write workflow state or the artifact index.

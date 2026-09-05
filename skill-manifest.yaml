@@ -72,7 +72,7 @@ skills:
     approval_policy: read-only-governance-reference-with-no-project-or-package-writes
     fallback: report-the-missing-governance-reference-instead-of-assuming-shared-rules
     stack_profile: any
-    contract_version: "2.0"
+    contract_version: "2.1"
     distribution: public
 
   q-core-identity:
@@ -554,12 +554,12 @@ skills:
     persistent_outputs:
       - {type: workflow-state, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: workflow-runtime}
       - {type: artifact-index, lifecycle: Working, creation_mode: authored, semantic_authority: canonical, authority_scope: artifact-inventory}
-    transient_outputs: [routing-plan, internal-delegation]
+    transient_outputs: [routing-plan, delivery-status-view, internal-delegation]
     side_effects: [write-project-state, write-artifact-index]
     approval_policy: user-confirms-commercial-impact-priority-release-acceptance-and-hotfix-scope
     fallback: block-on-unresolved-requirement-or-coverage-gap
     stack_profile: project-defined
-    contract_version: "2.0"
+    contract_version: "2.1"
 
   q-delivery-release:
     path: delivery/q-delivery-release
@@ -612,7 +612,7 @@ skills:
     approval_policy: user-confirms-priority-and-structural-replanning
     fallback: standalone-without-global-state-update
     stack_profile: any
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-plan-domain-model:
     path: plan/q-plan-domain-model
@@ -819,7 +819,7 @@ skills:
     approval_policy: read-only-findings-only-fixes-return-to-the-owning-skill
     fallback: sequential-two-axis-review
     stack_profile: project-defined
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-code-debug:
     path: code/q-code-debug
@@ -843,12 +843,12 @@ skills:
     execution_modes: [orchestrated, standalone]
     human_interaction: {orchestrated: on-demand, standalone: on-demand}
     persistent_outputs: []
-    transient_outputs: [hypotheses, reproduction-harness]
+    transient_outputs: [hypotheses, reproduction-harness, review-bundle]
     side_effects: [write-code, write-tests, update-original-execution-record]
     approval_policy: follow-requested-fix-scope-and-require-approval-for-external-effects
     fallback: report-missing-reproduction-or-project-tooling
     stack_profile: project-defined
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-code-grill-design:
     path: code/q-code-grill-design
@@ -875,7 +875,7 @@ skills:
     approval_policy: user-confirms-major-tradeoffs-and-scope
     fallback: deescalate-to-q-code-grill-feature
     stack_profile: project-defined
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-code-explain:
     path: code/q-code-explain
@@ -941,7 +941,7 @@ skills:
     approval_policy: user-confirms-feature-scope-and-approach
     fallback: escalate-or-deescalate-grill-depth
     stack_profile: project-defined
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-code-handoff:
     path: code/q-code-handoff
@@ -982,12 +982,12 @@ skills:
     execution_modes: [orchestrated, standalone]
     human_interaction: {orchestrated: on-demand, standalone: on-demand}
     persistent_outputs: []
-    transient_outputs: [internal-plan, scratchpad, internal-delegation]
+    transient_outputs: [internal-plan, scratchpad, review-bundle, internal-delegation]
     side_effects: [write-code, write-tests, update-original-execution-record]
     approval_policy: follow-authorized-scope-and-request-approval-for-external-effects
     fallback: stop-and-return-to-refinement
     stack_profile: project-defined
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-code-implementation-plan:
     path: code/q-code-implementation-plan
@@ -1011,7 +1011,7 @@ skills:
     approval_policy: user-confirms-scope-and-sequencing
     fallback: return-to-q-code-grill-design-or-q-code-grill-feature
     stack_profile: project-defined
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-code-prototype:
     path: code/q-code-prototype
@@ -1218,7 +1218,7 @@ skills:
     approval_policy: read-only-findings-only-fixes-return-to-the-owning-skill
     fallback: workspace-copy-is-source-of-truth
     stack_profile: any
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-code-fix:
     path: code/q-code-fix
@@ -1239,12 +1239,12 @@ skills:
     execution_modes: [orchestrated, standalone]
     human_interaction: {orchestrated: on-demand, standalone: on-demand}
     persistent_outputs: []
-    transient_outputs: [fix-notes]
+    transient_outputs: [fix-notes, review-bundle]
     side_effects: [write-code, write-tests, update-original-execution-record]
     approval_policy: minimal-confirmed-fix-with-no-external-effects
     fallback: escalate-to-q-code-debug
     stack_profile: project-defined
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-code-grill-simple:
     path: code/q-code-grill-simple
@@ -1264,7 +1264,7 @@ skills:
     approval_policy: user-confirms-small-change-scope
     fallback: escalate-grill-depth
     stack_profile: project-defined
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-code-tdd:
     path: code/q-code-tdd
@@ -1303,7 +1303,7 @@ skills:
     approval_policy: optional-and-user-confirms-publication-target
     fallback: versioned-markdown-tickets
     stack_profile: any
-    contract_version: "1.0"
+    contract_version: "1.1"
 
   q-maint-writing-for-agents:
     path: maint/q-maint-writing-for-agents

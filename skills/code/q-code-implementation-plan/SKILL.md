@@ -35,4 +35,4 @@ This plan is not an implementation diary. It may be baselined, archived, or supe
 
 ## Stage result
 
-Return a valid `stage_result`: the plan in `authored_outputs` with its type, path, and `Working` lifecycle; source IDs in `traceability_delta`; honest assumptions and blockers in `warnings` and `blockers`; a specialist database gap as a `warning`. In standalone mode set `global_state_updated: false` and `reconciliation_required: true` and persist the result beside the plan as the contract's standalone-persistence rule requires; never write workflow state or the artifact index.
+Return a valid `stage_result`: the plan in `authored_outputs` with its type, path, and `Working` lifecycle; source IDs in `traceability_delta`; honest assumptions and blockers in `warnings` and `blockers`; a specialist database gap as a `warning`; and the destination skill plus exact plan or source reference in `next_recommended_action`. In standalone mode set `global_state_updated: false` and `reconciliation_required: true` and persist the result beside the plan as the contract's standalone-persistence rule requires; never write workflow state or the artifact index.

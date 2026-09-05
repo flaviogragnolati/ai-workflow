@@ -1501,6 +1501,32 @@ def workflow_state_semantics(data: Any) -> list[str]:
         errors.append("a completed design-system stage requires design_system_ref")
     if design_status == "not_applicable" and design_ref:
         errors.append("a not_applicable design-system stage cannot carry design_system_ref")
+
+    if data.get("workflow") == "ai-coding":
+        status = data.get("status")
+        next_action = data.get("next_action")
+        next_actor = data.get("next_actor")
+        if data.get("schema_version") != "1.1":
+            errors.append("ai-coding workflow state requires schema_version 1.1")
+        if "active_front" not in data:
+            errors.append("ai-coding workflow state requires active_front")
+        if "next_actor" not in data:
+            errors.append("ai-coding workflow state requires next_actor")
+        active_front = data.get("active_front")
+        if isinstance(active_front, dict):
+            for field in ("item_ref", "record_ref"):
+                value = active_front.get(field)
+                if not isinstance(value, str) or not value.strip():
+                    errors.append("ai-coding active_front.%s must be non-empty" % field)
+        if status in {"not_started", "completed", "closed"} and active_front is not None:
+            errors.append("ai-coding active_front must be null outside a selected development front")
+        if status in {"not_started", "working", "blocked"}:
+            if not isinstance(next_action, str) or not next_action.strip():
+                errors.append("open ai-coding workflow state requires a non-empty next_action")
+            if next_actor not in {"agent", "user", "external"}:
+                errors.append("open ai-coding workflow state requires next_actor")
+        elif next_action is None and next_actor is not None:
+            errors.append("ai-coding next_actor must be null when no next_action remains")
     return errors
 
 
@@ -3416,6 +3442,22 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("core/q-core-contract/SKILL.md", "Documentation compaction"),
             ("review/q-review-docs/SKILL.md", "q-tool-docs-compactor"),
         ],
+        "S-84": [
+            ("schemas/workflow-state.schema.yaml", "next_actor"),
+            ("delivery/q-delivery-workflow/SKILL.md", "Read-only status query"),
+            ("delivery/q-delivery-workflow/SKILL.md", "active_front.item_ref"),
+            ("delivery/q-delivery-workflow/SKILL.md", "Keep a malformed, stale, or contradictory sidecar in place"),
+            ("core/q-core-contract/SKILL.md", "may update only operational status and execution evidence"),
+            ("plan/q-plan-backlog/SKILL.md", "operational execution update"),
+        ],
+        "S-85": [
+            ("core/q-core-contract/SKILL.md", "transient shared review bundle"),
+            ("code/q-code-implement/SKILL.md", "Prepare one transient shared review bundle"),
+            ("code/q-code-tickets/SKILL.md", "without asking a routine ticket question"),
+            ("review/q-review-code/SKILL.md", "shared evidence snapshot"),
+            ("review/q-review-comments/SKILL.md", "coverage is empty and verified"),
+            ("review/q-review-comments/SKILL.md", "even when their lines did not change"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():
@@ -3507,6 +3549,12 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     consult_current_state = skills.get("q-consult-current-state", {})
     consult_workflow = skills.get("q-consult-workflow", {})
     core_identity = skills.get("q-core-identity", {})
+    delivery_workflow = skills.get("q-delivery-workflow", {})
+    mini_review_producers = [
+        skills.get("q-code-implement", {}),
+        skills.get("q-code-fix", {}),
+        skills.get("q-code-debug", {}),
+    ]
     skill_paths = {
         skill_id: str(entry.get("path", ""))
         for skill_id, entry in skills.items()
@@ -3521,6 +3569,19 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     technical_clarity_text = (
         humanizer_dir / "references" / "technical-clarity-en.md"
     ).read_text(encoding="utf-8-sig")
+
+    check(
+        "delivery-status-view-is-transient",
+        "delivery-status-view" in delivery_workflow.get("transient_outputs", [])
+        and not any(
+            isinstance(item, dict) and item.get("type") == "delivery-status-view"
+            for item in delivery_workflow.get("persistent_outputs", [])
+        ),
+    )
+    check(
+        "mini-review-bundle-is-transient-for-every-producer",
+        all("review-bundle" in entry.get("transient_outputs", []) for entry in mini_review_producers),
+    )
 
     def humanizer_case_route(
         request: str, *, language: str = "en", genre: str = "technical"
@@ -4157,6 +4218,67 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     legacy_workflow_state["stack_profile"] = "t3-core"
     check("workflow-state-rejects-retired-stack-profile", bool(
         schema_errors(legacy_workflow_state, workflow_state_schema)
+    ))
+    retired_delivery_state = load(SKILLS_ROOT / "fixtures" / "workflow-state.valid.yaml")
+    retired_delivery_state["schema_version"] = "1.0"
+    check("delivery-state-rejects-pre-continuity-schema-version", bool(
+        workflow_state_semantics(retired_delivery_state)
+    ))
+    open_delivery_state = load(SKILLS_ROOT / "fixtures" / "workflow-state.valid.yaml")
+    check("delivery-open-state-has-action-actor-and-front-field", not (
+        schema_errors(open_delivery_state, workflow_state_schema)
+        or workflow_state_semantics(open_delivery_state)
+    ))
+    missing_delivery_continuation = dict(open_delivery_state)
+    missing_delivery_continuation["next_action"] = None
+    missing_delivery_continuation["next_actor"] = None
+    check("delivery-working-state-rejects-empty-continuation", bool(
+        workflow_state_semantics(missing_delivery_continuation)
+    ))
+    selected_delivery_front = dict(open_delivery_state)
+    selected_delivery_front["current_stage"] = "q-code-implement"
+    selected_delivery_front["active_front"] = {
+        "item_ref": "BL-042@1.0",
+        "record_ref": "PLAN-BL-042@1.1",
+    }
+    check("delivery-selected-front-resolves-item-and-record", not (
+        schema_errors(selected_delivery_front, workflow_state_schema)
+        or workflow_state_semantics(selected_delivery_front)
+    ))
+    completed_delivery_state = dict(open_delivery_state)
+    completed_delivery_state["status"] = "completed"
+    completed_delivery_state["current_stage"] = None
+    completed_delivery_state["active_front"] = None
+    completed_delivery_state["next_actor"] = None
+    completed_delivery_state["next_action"] = None
+    check("delivery-completed-state-allows-null-continuation", not (
+        schema_errors(completed_delivery_state, workflow_state_schema)
+        or workflow_state_semantics(completed_delivery_state)
+    ))
+    completed_with_active_front = dict(completed_delivery_state)
+    completed_with_active_front["active_front"] = {
+        "item_ref": "BL-042@1.0",
+        "record_ref": "PLAN-BL-042@1.1",
+    }
+    check("delivery-completed-state-rejects-active-front", bool(
+        workflow_state_semantics(completed_with_active_front)
+    ))
+    other_workflow_state = {
+        "schema_version": "1.0",
+        "project_id": "demo",
+        "workflow": "research",
+        "status": "working",
+        "current_stage": "q-research-scope",
+        "stack_profile": "any",
+        "stage_status": {},
+        "decisions": [],
+        "risks": [],
+        "blockers": [],
+        "next_action": None,
+    }
+    check("non-delivery-workflow-keeps-existing-continuation-semantics", not (
+        schema_errors(other_workflow_state, workflow_state_schema)
+        or workflow_state_semantics(other_workflow_state)
     ))
     return errors, checked
 

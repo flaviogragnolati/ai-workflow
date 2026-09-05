@@ -120,10 +120,11 @@ flowchart TB
 
 Two groups are cross-cutting and appear at any point: `ask` reads project truth on demand, and `tool` executes format or diagram mechanics for whichever caller owns the meaning. Any gate may return work to its owning stage; the group guides show the internal loops this overview omits.
 
-Two rules keep the flow coherent:
+Three rules keep the flow coherent:
 
 - Do not invoke an orchestrator and a stage as two independent writers. The orchestrator treats the named stage as `target_stage`, delegates domain work, validates the returned delta, and remains the only writer of workflow state and artifact index.
 - Invoke a stage directly only when standalone output is intentional. A standalone stage writes its owned artifact, returns `reconciliation_required: true`, and does not claim global workflow completion; when it wrote a persistent artifact it also persists that `stage_result` beside it for later reconciliation.
+- An open `ai-coding` run records the selected item and current durable record in `active_front`, plus one actionable `next_action` and its `next_actor`. A status query reads and reports pending reconciliation without applying it; resuming resolves blockers and sidecars before continuing the authorized front.
 
 Where each kind of truth lives:
 
@@ -302,6 +303,8 @@ Tool-specific boundaries — web capture, Marp, PPTX, spreadsheet, and database 
 | `stage_result` and delta | The structured result every stage returns. The root orchestrator validates it and applies its delta to state and index. |
 | `global_state_updated` / `reconciliation_required` | A standalone stage sets these `false` / `true`: it wrote its own artifact but nothing global, and a later orchestrated run must reconcile. |
 | Sidecar | `<primary-artifact-path>.stage-result.yaml`, written beside an artifact by a standalone stage. Its existence means reconciliation is pending. |
+| Active front | The `ai-coding` workflow-state pair `item_ref` and `record_ref`: the user-selected commitment and its current durable execution record. It never authorizes another item. |
+| `next_action` / `next_actor` | One executable continuation and who acts next (`agent`, `user`, or `external`). Open delivery states cannot leave either empty. |
 | `canonical` / `supporting` / `none` | Semantic authority. Canonical is the meaning's one source for a declared scope; supporting informs without deciding; none is presentation only. |
 | `authored` / `derived` | Creation mode. A derived artifact references its sources and cannot silently change their meaning. |
 | `Working`, `Baselined`, `Released`, `Superseded`, `Archived`, `Transient` | Lifecycle states. `Transient` is never added to the artifact index. |

@@ -1,18 +1,20 @@
 ---
 name: q-delivery-workflow
-description: "Orchestrate Quasar product planning, profile-driven implementation, change-scoped review, release engineering, integral QA, and delivery. Use to start, resume, route, or validate the full AI coding workflow, execute a named planning stage, coordinate development from a backlog item, or recover project state. Requires the q-core-contract companion."
+description: "Orchestrate Quasar product planning, profile-driven implementation, change-scoped review, release engineering, integral QA, and delivery. Use to start, resume, route, validate, or report the current position of the full AI coding workflow, execute a named planning stage, coordinate development from a backlog item, or recover project state. Requires the q-core-contract companion."
 ---
 
 # AI coding workflow
 
-Read the `q-core-contract` companion for shared governance and its `references/routing.md` for workflow routes before routing; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Remain the root orchestrator and single global state writer while delegating any subworkflow.
+Read the `q-core-contract` companion for shared governance; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Load `skill-manifest.yaml` for routing when the package registry is available, otherwise load the companion's generated `references/routing.md`; do not load both by routine. Remain the root orchestrator and single global state writer while delegating any subworkflow.
 
 ## Preconditions
 
-1. Load project state, artifact index, baselines, decisions, risks, and open change requests.
+1. Read this run's `00-workflow-state.yaml` first, inspect only the artifact-index entries it references, and discover every pending standalone stage-result sidecar under `docs/development-workflow/`. Then load the active record, exact source versions, decisions, risks, and open change requests needed by the selected route. A read-only status query stops after the evidence needed to report position and pending reconciliation; it does not apply a delta, delete a sidecar, or rewrite state.
 2. Accept either a product idea or the accepted proposal version (its commercial release, exact `02-proposal-source.yaml` ID and version). Do not fabricate a commercial reference when work starts from an idea.
 3. Require workflow state to use `stack_profile: project-defined`, then load `technical_foundation_ref` and, for work that touches a user interface, `design_system_ref`, each at its exact artifact version when it exists.
 4. Route missing or stale technical selections to `q-plan-tech-foundation`. Block only on an unresolved requirement, decision, execution capability, or evidence gap that makes the next action unsafe.
+
+Reuse content already read while its exact version and file remain unchanged. Expand the loaded slice only for a contradiction, changed reference, concurrent edit, insufficient evidence, or uncertain recovery; never treat a timestamp alone as proof that cached meaning is current.
 
 ## Planning stages
 
@@ -63,7 +65,7 @@ Research never edits a planning artifact and never opens a planning stage by its
 
 ## Development loop
 
-For each backlog item the user selects — or confirms from the backlog's next recommended front — record its ID in workflow state as the active development front, then:
+For each backlog item the user selects — or confirms from the backlog's next recommended front — set `active_front.item_ref` to that exact item ID or locator and version and `active_front.record_ref` to the current durable execution record. Until a separate plan or ticket exists, use the item itself as `record_ref`; do not invent another identifier. Then:
 
 1. Check whether it is sufficiently defined and load the referenced technical foundation, application standards, and relevant ADRs.
 2. If refinement is needed, choose one depth:
@@ -73,8 +75,8 @@ For each backlog item the user selects — or confirms from the backlog's next r
    - `q-code-implementation-plan` when direction is settled and only the file-level sequence is missing.
 3. For a defect item — failing, broken, slow, or incorrect behavior in work that is not yet `Released` — skip the grill: route `q-code-debug` when the cause is not confirmed, or `q-code-fix` when the cause and correction are confirmed; either ends with the mini review and the durable-record update, and a correction that alters product behavior, architecture, or a cross-module contract is reclassified as change work and re-enters at step 2 (the reclassification rule those skills state). Then continue at step 10.
 4. Skip a grill when the item is already execution-ready.
-5. Ask whether distribution, a tracker, or multiple executors justify durable tickets.
-6. Run `q-code-tickets` only when useful. A single executor may continue from the ready backlog item, issue, or implementation plan.
+5. Determine ticket need from an explicit tracker request, an established project preference, or a concrete distribution, multi-executor, or cold-start continuity need. Ask only when an unresolved tracker or publication choice materially changes execution.
+6. Run `q-code-tickets` only when that trigger is present. A single executor with a sufficient durable record continues without a ticket decision turn.
 7. Run `q-code-implement`. Keep its internal plan, scratchpad, and delegations transient.
 8. Require verification proportional to acceptance criteria. Enable `q-code-tdd` only when requested or explicitly selected.
 9. Run the mini review — required; an executor whose reviewer is not installed returns a blocker naming it, and the item stays open until the review runs:
@@ -82,7 +84,7 @@ For each backlog item the user selects — or confirms from the backlog's next r
    - `q-review-comments` for affected comments and docstrings; its remove and rewrite findings are applied before the item closes.
 10. Correct failures and update the original durable record: ticket when present, otherwise the selected backlog item, issue, or explicit plan. Route any newly required technology selection back to `q-plan-tech-foundation`.
 11. Integrate or continue. Do not create a parallel durable implementation diary.
-12. Validate every `stage_result` the loop returns — from each grill, implementation plan, ticket set, implementation close, and fix or debug close — and apply its delta before selecting the next step or item: register authored plans, tickets, and feature architecture documents in the artifact index as `Working` with their declared authority; record decisions and ADRs; route each `stale_artifacts` entry to its owning stage; update the durable record reference and the active front; carry `next_recommended_action` into the next routing decision.
+12. Validate every `stage_result` the loop returns — from each grill, implementation plan, ticket set, implementation close, and fix or debug close — and apply its delta before selecting the next step or item: register authored plans, tickets, and feature architecture documents in the artifact index as `Working` with their declared authority; record decisions and ADRs; route each `stale_artifacts` entry to its owning stage; update `active_front.record_ref`; and convert the exact `next_recommended_action` into one actionable `next_action` plus `next_actor` (`agent`, `user`, or `external`). A recommendation never authorizes selection of another front.
 
 Backlog changes discovered during development return to `q-plan-backlog` in `targeted-refinement` or `replan-and-synchronize` mode. A backlog item that a grill or plan cannot execute as approved — scope, priority, or acceptance criteria must change — returns there too; the item is the commitment, the plan is its execution record. When a grill-design result lists a canonical planning artifact under `stale_artifacts` — architecture, features, domain model, technical foundation, or design system — route reconciliation to that owning stage before the affected slice enters implementation; the feature architecture document never replaces the planning version.
 
@@ -122,7 +124,11 @@ When technical work affects accepted commercial scope, price, schedule, or commi
 4. Block affected work until the required decision.
 5. Regenerate derivatives after approval.
 
-On resume, rebuild context from state, index, baselines, decisions, risks, blockers, housekeeping, the exact technical foundation version, and any persisted standalone stage results under `docs/development-workflow/`: validate each sidecar the contract's standalone-persistence rule defines, apply its delta, and delete it before continuing. State or index files outside that artifact root do not belong to the run and must not be used as workflow state. Do not reopen closed decisions without new evidence.
+On resume or "continue delivery", resolve continuation in this order: blockers that prevent progress, every pending sidecar, work inside the authorized `active_front`, then selection of another backlog front by the user. Inspect all sidecars under `docs/development-workflow/`, validate each one, and apply compatible deltas once before continuing; summarize the batch and delete a successfully applied sidecar only after the updated state and index validate. Keep a malformed, stale, or contradictory sidecar in place with a localized diagnostic and route semantic conflicts to the owner. State or index files outside that artifact root do not belong to the run and must not be used as workflow state. Do not reopen closed decisions without new evidence.
+
+Workflow-state schema `1.1` adds `active_front` and `next_actor` for `ai-coding`. For an older state, recover the exact item and record references from the durable record and current evidence on the next authorized resume write. If more than one front remains plausible, keep `active_front: null`, set the user decision as `next_action`, and do not guess. Keep `active_front` null before selection and clear it when the workflow completes or closes. In `not_started`, `working`, or `blocked`, keep `next_action` non-empty and name its actor; `completed` or `closed` may use null when no continuation remains. Closing one stage does not complete the workflow.
+
+A pure "where are we?" query is a Read-only status query: report pending sidecars without applying or deleting them. A nearby technical question keeps its current owner and does not start delivery housekeeping merely because it reads workflow state.
 
 ## Anti-patterns
 
@@ -137,4 +143,4 @@ On resume, rebuild context from state, index, baselines, decisions, risks, block
 
 ## Completion response
 
-Return current outcome, changed artifact IDs, validations, warnings, blockers, reconciled state, and one next action. A directly invoked stage remains standalone and never changes global state.
+Return a compact derived status view: current stage and active front, sufficient evidence links, blockers or exceptions, one next action with its actor, whether user intervention is needed, and how to resume. Keep detailed evidence in its durable record and do not print the complete state YAML or empty result lists by default. A directly invoked stage remains standalone, reports pending reconciliation, and never changes global state.

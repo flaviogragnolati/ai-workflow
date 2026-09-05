@@ -19,6 +19,8 @@ The backlog owns milestones, epics, feature assignment, delivery dependencies, c
 
 ## Modes
 
+An operational execution update is not a backlog-planning mode. An authorized implementer or the root may record progress, verification evidence, mini-review outcomes, and completion on the current execution record without opening this skill. If that record is the backlog item, change only its operational fields; a scope, acceptance-criterion, priority, dependency, or structural change returns here in one of the modes below.
+
 ### initial-generation
 
 Run at the end of app-flow. Produce the first complete high-level backlog with:
@@ -49,7 +51,7 @@ Incorporate new information by adding, splitting, combining, reordering, deferri
 4. Preserve stable IDs when meaning is unchanged.
 5. Record structural changes, rationale, affected IDs, approvals, and stale downstream artifacts.
 6. Validate dependency direction, readiness, checkpoints, and next action.
-7. Regenerate derived views from `06-backlog.yaml`.
+7. Regenerate only the derived views whose source meaning changed. Do not add a structural changelog entry for an operational execution update; when a derived view displays the changed operational status, refresh that view so it does not publish stale information.
 
 When `approved-backlog-visual-intent-requires-a-derived-gantt-view` and `q-tool-mermaid` is installed, delegate only approved backlog dates, dependencies, and milestones and register the result as a derived view with no semantic authority. If the tool is absent, `continue-with-canonical-backlog-and-textual-derived-views`.
 
@@ -70,4 +72,4 @@ Close app-flow when:
 
 `q-code-tickets` is optional and downstream. Use it only when distribution, tracker needs, multiple executors, or multiple sessions justify durable tickets.
 
-Return a valid `stage_result`. In standalone mode set `global_state_updated: false` and `reconciliation_required: true`.
+Return a valid `stage_result` whose `next_recommended_action` names the exact backlog item or version and destination skill. The root converts that recommendation into workflow-state `next_action` and `next_actor`; this skill never selects a front for the user. In standalone mode set `global_state_updated: false` and `reconciliation_required: true`.

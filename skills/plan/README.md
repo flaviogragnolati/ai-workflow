@@ -34,13 +34,15 @@ Stage 5b is conditional and does not shift the other stage numbers. A declined a
 | [`q-plan-architecture`](q-plan-architecture/SKILL.md) | Defining system architecture, ADRs, application standards, boundaries, and optional evidence-grounded C4 or Mermaid views. |
 | [`q-plan-features`](q-plan-features/SKILL.md) | Decomposing architecture into modules, vertical slices, behaviors, dependencies, and technical sequence. A C4 Component view is optional and only inside one confirmed container. |
 | [`q-plan-design-system`](q-plan-design-system/SKILL.md) | Defining, adopting, or evolving reusable design contracts and a design token set for a product with a durable visual interface. |
-| [`q-plan-backlog`](q-plan-backlog/SKILL.md) | Creating the first high-level rolling-wave backlog, refining the next front, or synchronizing an approved replan. |
+| [`q-plan-backlog`](q-plan-backlog/SKILL.md) | Creating the first high-level rolling-wave backlog, refining one front, or synchronizing an approved structural replan. Routine execution progress stays on the authorized durable record and does not open a planning mode. |
 
 ## Stage notes
 
 `q-plan-tech-foundation` owns `02-technical-foundation.md`, the canonical profile for stack selection, versions, NFR fit, and version-scoped references. For a suitable greenfield web application without a mandated stack, it recommends T3 Core — TypeScript, Next.js App Router, and tRPC — as an advisory starting point and evaluates secondary candidates only when their conditions hold. The user confirms every material selection; the recommendation is never a mandatory stack.
 
 `q-plan-design-system` authors contracts, never implementation: a specification (`05b-design-system.md`) and a machine-readable token set (`05b-design-tokens.json`) with separated authority. It chooses no UI library, writes no component code, and claims no conformance — planning records the accessibility target (web default `WCAG 2.2 Level AA`) and the expected evidence, while implementation and QA establish it. A token set comes only from confirmed values; an unavailable validator produces an explicit `token_validation: unverified` gap instead of a false approval.
+
+Backlog work has three planning modes: initial generation, targeted refinement of one front, and structural replan-and-synchronize. An execution close may update operational status and evidence on the current record without adding a structural changelog entry; scope, acceptance, priority, dependency, or structure changes return to the backlog owner. Regenerate only affected derived views, including any view that displays changed operational status.
 
 ## Integration with the other groups
 

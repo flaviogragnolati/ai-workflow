@@ -39,7 +39,7 @@ flowchart TB
     UR --> RC["Release candidate<br/>(q-delivery-release, delivery group)"]
 ```
 
-Skip any step whose purpose is already met: orientation when context exists, refinement when the item is execution-ready, tickets for a single executor. Verification proportional to the change and its acceptance criteria is always required; TDD is opt-in.
+Skip any step whose purpose is already met: orientation when context exists, refinement when the item is execution-ready, tickets when no explicit tracker or concrete coordination need exists. A single executor with a sufficient durable record proceeds without a ticket decision turn. Verification proportional to the change and its acceptance criteria is always required; TDD is opt-in.
 
 ## When to use each skill
 
@@ -73,6 +73,7 @@ Skip any step whose purpose is already met: orientation when context exists, ref
 - A `q-code-grill-design` feature architecture document is canonical only for that change: it lives under the planning docs root, shares the planning ADR home, yields to the planning versions it cites, and returns a contradiction to the owning planning stage instead of overriding it.
 - `q-code-research` shares the cited-findings contract with engagement research but not its workflow (see the [research guide](../research/README.md)).
 - The mini review (`q-review-code` + `q-review-comments`) is required after every change by `q-code-implement`, `q-code-fix`, and `q-code-debug`; a missing reviewer is a blocker in the close, never a skip. A defect in unreleased work goes to fix or debug inside the loop, a defect in a `Released` version to the hotfix route.
+- The implementer prepares one transient review bundle — fixed baseline, diff identity, exact criteria and source versions, standards, and verification evidence — for both reviewers. Their outcomes remain separate; a changed diff invalidates affected verdicts, and an empty affected surface is verified and reported rather than skipped.
 - Every loop skill that authors or updates a durable record — the three grills, the implementation plan, tickets, implement, fix, and debug — returns a `stage_result`. Orchestrated, the delivery workflow reconciles it before the next step; standalone, the skill persists it beside the artifact so a later orchestrated run can.
 
 ## Integration with the other groups

@@ -31,7 +31,7 @@ flowchart TB
 
 | Skill | Use it when |
 |---|---|
-| [`q-delivery-workflow`](q-delivery-workflow/SKILL.md) | Starting, resuming, routing, or recovering a software delivery; running one named planning stage; coordinating the development loop; deciding release acceptance; opening the hotfix route for an incident on a released version. |
+| [`q-delivery-workflow`](q-delivery-workflow/SKILL.md) | Starting, resuming, routing, recovering, or reporting the current position of a software delivery; running one named planning stage; coordinating the development loop; deciding release acceptance; opening the hotfix route for an incident on a released version. |
 | [`q-delivery-release`](q-delivery-release/SKILL.md) | Forming a release candidate from an exact base commit, executing approved deployments and migrations or recording human-executed steps, drilling rollback, coordinating UAT, and closing delivery with the manifest and release notes. It never validates its own release. |
 
 ## What the orchestrator owns
@@ -42,8 +42,9 @@ flowchart TB
 | Single writer | Stages return deltas; only the orchestrator writes this run's `00-workflow-state.yaml` and `00-artifact-index.yaml`. The development loop returns deltas too: each grill, plan, ticket set, implementation close, and fix or debug close returns a `stage_result` that is reconciled before the next step. |
 | Defect route | A defect item in work that is not yet `Released` skips the grill and goes to `q-code-debug` (cause unknown) or `q-code-fix` (cause confirmed), then rejoins the loop at the durable-record update; a defect against a `Released` version goes to the hotfix route instead. |
 | Runtime references | Carries `technical_foundation_ref` and `design_system_ref` so later stages load exact approved versions. |
+| Continuity | Workflow-state schema `1.1` gives `ai-coding` an `active_front` (`item_ref` plus current durable `record_ref`), one `next_action`, and its `next_actor`; an open run cannot leave the action or actor empty. |
 | Release | Routes candidate formation, execution, UAT, and validation to their owners; every deployment or migration needs its own explicit approval per environment and per operation, and production is never inferred from a lower environment (see the contract's Release engineering section); records the acceptance decision — `ready` or `ready_with_accepted_risks` closes delivery, `blocked` returns findings to the loop and forms a new candidate version; marks lifecycles. The audit alone is not acceptance. |
-| Recovery | Rebuilds a consistent state when runtime records and artifacts have drifted, including standalone stage results persisted beside their artifacts. |
+| Recovery | Reads state first, discovers every sidecar, resolves blockers and pending reconciliation before the authorized front, and loads only the active record and exact dependencies. A malformed or contradictory sidecar remains pending; a status query reports it without writing. |
 
 ## Integration with the other groups
 

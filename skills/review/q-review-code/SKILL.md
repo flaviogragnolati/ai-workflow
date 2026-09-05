@@ -18,7 +18,11 @@ Require:
 - the exact `design_system_ref` version when the change touches a user interface;
 - the originating backlog item, issue, ticket, plan, specification, or acceptance criteria.
 
+Accept these inputs separately or in one transient shared review bundle from the implementing skill.
+
 If the baseline or specification is missing, state the limitation instead of inventing it. If the technical profile is missing or stale, keep generic findings separate and declare the stack-specific coverage gap.
+
+Treat the bundle as a shared evidence snapshot, not a shared verdict. Reuse it only while its baseline, diff identity, source versions, and verification evidence remain current. A code or evidence change invalidates every conclusion it affects.
 
 ## Two-axis review
 
@@ -40,6 +44,8 @@ When `changed-surface-includes-relational-schema-document-model-or-migration` an
 For each finding include priority, axis, exact location, evidence, impact, and recommended correction. Merge only true duplicates while preserving both axes.
 
 Distinguish blockers from suggestions. Do not report pre-existing issues outside the changed surface unless the change makes them newly relevant.
+
+If comparison against the fixed baseline proves that this reviewer has no affected surface, return `scope: empty`, the comparison evidence, empty findings for both axes, and a pass. This is verified empty coverage, not a skipped review.
 
 ## Anti-patterns
 

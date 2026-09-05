@@ -4,7 +4,7 @@ type: object
 required: [schema_version, project_id, workflow, status, current_stage, stack_profile, stage_status, decisions, risks, blockers, next_action]
 additionalProperties: false
 properties:
-  schema_version: {const: "1.0"}
+  schema_version: {enum: ["1.0", "1.1"]}
   project_id: {type: string}
   workflow: {type: string}
   status: {enum: [not_started, working, blocked, completed, closed]}
@@ -22,4 +22,12 @@ properties:
   blockers:
     type: array
     items: {type: string}
+  active_front:
+    type: [object, "null"]
+    required: [item_ref, record_ref]
+    additionalProperties: false
+    properties:
+      item_ref: {type: string}
+      record_ref: {type: string}
+  next_actor: {enum: [agent, user, external, null]}
   next_action: {type: [string, "null"]}

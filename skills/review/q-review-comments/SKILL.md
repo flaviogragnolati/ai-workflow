@@ -9,15 +9,16 @@ The workspace copy of this skill is the source of truth for this package. Do not
 
 ## Scope
 
-Inspect the comments and docstrings the current work added or changed, plus nearby comments whose meaning the change invalidates. Judge both directions: a comment the code does not need is a defect, as a missing comment on a hazard is. Do not demand comments for self-explanatory code, and do not accept comments that restate it.
+Inspect the comments and docstrings the current work added or changed, plus comments anywhere in the affected code whose meaning the behavioral change invalidates even when their lines did not change. Judge both directions: a comment the code does not need is a defect, as a missing comment on a hazard is. Do not demand comments for self-explanatory code, and do not accept comments that restate it.
 
 ## Baseline
 
 Before judging any comment, establish the standard it is held to:
 
-1. the code it describes, read first;
-2. the originating specification or relevant history, when the comment makes a claim about them;
-3. the repository convention: `04-application-standards.md` or repository instructions when they exist, a documentation linter or public-API docstring rule when one is configured, and the comment density of the surrounding unchanged code.
+1. the transient shared review bundle when the implementing skill supplied one; use its applicable inputs as evidence, never as this review's verdict;
+2. the code it describes, read first;
+3. the originating specification or relevant history, when the comment makes a claim about them;
+4. the repository convention: `04-application-standards.md` or repository instructions when they exist, a documentation linter or public-API docstring rule when one is configured, and the comment density of the surrounding unchanged code.
 
 Calibrate to that convention. When none exists, apply the rubric default: few comments, each short. The reviewer's taste is never the standard.
 
@@ -52,6 +53,8 @@ Return one outcome: `pass`, `pass with findings`, or `fail`. Fail when any block
 5. Count the comments the work added or changed against those kept. When most are remove or rewrite, name the pattern once — narration, task residue, restated signatures — so the implementer corrects the habit, not only the instances.
 6. Change no behavior; route a behavior mismatch a comment reveals to an authorized implementation task.
 7. Return the findings, the counts, the outcome, and the next action separately from the technical `q-review-code` axis.
+
+If the fixed comparison proves that no comment or docstring was added, edited, or invalidated and no changed behavior created a missing-comment hazard, return zero counts, empty findings, the comparison evidence, and `pass`. The coverage is empty and verified; never skip this reviewer merely because no comment line changed.
 
 After `q-code-implement`, `q-code-fix`, or `q-code-debug`, the implementer applies the findings and records the outcome in the original durable execution record. Standalone, return the review in the conversation as a transient result and create no file.
 

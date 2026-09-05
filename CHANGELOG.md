@@ -38,6 +38,10 @@ established.
 
 ### Changed
 
+- **2026-09-04** — Made AI-coding continuation explicit and reduced routine delivery ceremony while preserving reconciliation, review, and approval gates.
+  - Breaking prerelease change for `ai-coding`: its workflow-state profile moves to `1.1` with `active_front` and `next_actor`; unchanged workflows retain `1.0`, while the delivery root recovers exact references on resume and asks the user instead of guessing when an older state is ambiguous.
+  - Delivery now reads state and pending sidecars before loading the active evidence slice, keeps status queries read-only, resolves blockers and reconciliation before the authorized front, and returns a compact derived continuation view.
+  - Tickets use concrete coordination triggers, backlog modes exclude operational status updates, and both mini reviews consume one current transient evidence bundle while retaining separate outcomes and verified empty coverage.
 - **2026-09-01** — Extended `q-tool-humanizer` with an optional `ste-informed-technical` profile for high-cost English technical ambiguity while keeping `general` as the default and making no ASD-STE100 compliance or certification claim.
   - Progressive disclosure loads original technical-clarity guidance only for the English technical branch, with the meaning lock taking precedence over mechanical limits and Spanish or creative, commercial, and persuasive prose excluded by default.
   - The root attribution catalog records ASD-STE100 Issue 9 and the MIT-licensed `danyuchn/asd-ste100-skill` reference at revision `d5ce157870cf9c41efd1d6e836706a2be3c7b9da`.
