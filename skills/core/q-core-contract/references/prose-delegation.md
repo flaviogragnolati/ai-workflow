@@ -1,0 +1,7 @@
+## Prose delegation
+
+A prose-authoring skill — `q-proposal-design`, `q-report-source`, `q-consult-current-state`, `q-consult-intervention` — may delegate detection of AI-writing patterns, a meaning-preserving rewrite, or a clarity edit of client-facing English or Spanish prose to `q-tool-humanizer` before its own gate; `q-report-deck` and `q-proposal-web` may do the same only for the copy they author themselves (slide titles, messages, speaker notes; web headings, navigation, section introductions), never for a sentence reproduced from their approved source. The caller retains every claim, number, name, price, date, citation, commitment, and the decision to adopt a revision into its owned artifact. Pass the exact sections, their language, and a meaning lock naming what must not change.
+
+`q-tool-humanizer` owns pattern detection with localized indicators, bounded rewriting, clarity improvement, and a change summary. It never issues an authorship verdict, invents specificity for a vague claim, repairs a citation, changes a locked element, edits a derived render, or writes workflow state or the artifact index. A revision that alters a locked element is returned as a rejected change with the reason.
+
+A humanization pass leaves no persistent artifact unless the caller separately authorizes a named file. A derived channel reproduces the approved prose exactly: `q-proposal-document` and `q-report-document` never run the pass, and a deck or web revision lands in the authored plan, never in a generated output.

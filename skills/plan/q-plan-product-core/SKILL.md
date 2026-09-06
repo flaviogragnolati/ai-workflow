@@ -23,6 +23,8 @@ An adopted ideation snapshot may contribute one selected option, an outcome hypo
 Create `docs/development-workflow/product/01-product-core.md` as an authored, canonical `Working` artifact for product intent and scope. Include:
 
 - problem and desired outcome;
+- first useful increment, its acceptance signal, and later outcomes deliberately deferred;
+- intended use (local, development or evaluation, shared internal, or external), decision owner, and known data or operational criticality;
 - actors and responsibilities;
 - critical journeys and scenarios;
 - essential functional requirements and business rules;
@@ -35,9 +37,9 @@ Use stable IDs for requirements, rules, decisions, risks, and assumptions.
 
 ## Procedure
 
-1. Load authoritative sources and current registers.
+1. Load the smallest authoritative source slice and current relevant decisions. Reuse a confirmed onboarding request or existing brief without repeating its questions; revalidate only unsupported or contradictory meaning.
 2. Resolve contradictions by source authority and version; do not silently merge incompatible claims.
-3. Draft the smallest product core sufficient for technical work.
+3. Draft the smallest product core sufficient for technical work on the first useful increment. Separate current scope from future opportunity; expand discovery only when an unresolved question could change this increment or a cross-cutting constraint.
 4. Ask only blocking questions that sources cannot answer.
 5. Validate coverage, internal consistency, source traceability, and explicit uncertainty.
 6. Mark readiness for `q-plan-tech-foundation`.
@@ -47,5 +49,7 @@ A product started without a proposal is valid. Record `commercial_contract: not_
 ## Gate
 
 Complete when product intent, primary actors, core journeys, in/out scope, business rules, and blocking uncertainty are explicit. Return `blocked` when a missing decision would make technical planning speculative.
+
+Obtain user confirmation of product scope and unresolved material assumptions before declaring that meaning approved. Reuse an explicit confirmation already supplied with the same scope; present only the remaining decisions together. The root records the exact approved version as `Baselined`; this skill authors `Working` artifacts and never treats onboarding or a completed draft alone as a product approval.
 
 Return a valid `stage_result`. In standalone mode include `global_state_updated: false` and `reconciliation_required: true`.

@@ -32,6 +32,8 @@ Treat the returned analysis as transient advice. Reconcile accepted ownership, c
 
 ## Procedure
 
+Bound initial architecture detail to the first increment, stable boundaries, and risks that would make later correction costly. Record deferred decisions with their trigger; do not design speculative modules or deployments. Inspect additional sources only when the active decision needs them.
+
 1. Load product, the referenced technical foundation version, domain model, decisions, risks, and existing repository constraints.
 2. Define boundaries, components, responsibilities, interactions, and data ownership.
 3. Cover security, failure behavior, observability, deployment, migration, and operational constraints.
@@ -51,3 +53,5 @@ Treat the returned analysis as transient advice. Reconcile accepted ownership, c
 Complete when the architecture can guide module ownership and implementation without hidden critical decisions and every applied technology rule resolves to the referenced technical foundation version. Return to product, technical, or domain stages when an upstream contradiction is found; never edit their owned artifacts directly. When a downstream refinement or implementation marks an owned artifact stale, reconcile here by creating a new version — never rewrite a `Baselined` version in place — and record the driving change as an ADR.
 
 Return a valid `stage_result`; only the orchestrator reconciles state and index.
+
+Confirm unresolved architecture decisions with scope or cost impact with the user. Reuse applicable decisions already confirmed; neither a routine ADR transcription nor reconciliation of its exact version adds a confirmation turn.

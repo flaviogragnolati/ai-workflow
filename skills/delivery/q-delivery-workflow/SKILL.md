@@ -9,7 +9,7 @@ Read the `q-core-contract` companion for shared governance; if it is missing, st
 
 ## Preconditions
 
-1. Read this run's `00-workflow-state.yaml` first, inspect only the artifact-index entries it references, and discover every pending standalone stage-result sidecar under `docs/development-workflow/`. Then load the active record, exact source versions, decisions, risks, and open change requests needed by the selected route. A read-only status query stops after the evidence needed to report position and pending reconciliation; it does not apply a delta, delete a sidecar, or rewrite state.
+1. Inspect whether this run's state and index exist under `docs/development-workflow/`. For an authorized new run or a `workflow-start-request`, follow the contract's Workflow initialization reference; reuse the confirmed starting point and boundary. For an existing run, read `00-workflow-state.yaml` first, inspect only the artifact-index entries it references, and discover every pending standalone stage-result sidecar under that root. Then load the active record, exact source versions, decisions, risks, and open change requests needed by the selected route. A read-only status query stops after the evidence needed to report position and pending reconciliation; it does not initialize a run, apply a delta, delete a sidecar, or rewrite state.
 2. Accept either a product idea or the accepted proposal version (its commercial release, exact `02-proposal-source.yaml` ID and version). Do not fabricate a commercial reference when work starts from an idea.
 3. Require workflow state to use `stack_profile: project-defined`, then load `technical_foundation_ref` and, for work that touches a user interface, `design_system_ref`, each at its exact artifact version when it exists.
 4. Route missing or stale technical selections to `q-plan-tech-foundation`. Block only on an unresolved requirement, decision, execution capability, or evidence gap that makes the next action unsafe.
@@ -31,9 +31,15 @@ Stage 5b, `q-plan-design-system`, runs between stages 5 and 6 only when it appli
 
 Do not duplicate stage templates or domain procedure here. Validate each returned `stage_result`, then apply its delta to state and index.
 
+Plan progressively from the first useful increment and its cross-cutting constraints. Keep later outcomes and uncertainties visible without loading or specifying their full context in advance. An existing brief or repository may satisfy part of a stage; the owner verifies and adopts that evidence instead of restarting discovery. Missing commands in a new repository become bounded bootstrap work, not invented technical evidence.
+
+At each planning boundary, distinguish completed work, confirmed decisions, and artifact lifecycle. Obtain only the owning stage's required material decisions that remain unresolved; reuse confirmations whose scope and evidence still apply. After validation and those decisions, mark the exact sufficient output versions consumed downstream `Baselined` and record their approval references. When the meaning was already explicitly approved, reconciling its artifact version adds no decision turn. Keep blocked or unapproved meaning `Working`; a stage returning `completed` alone never establishes approval. A named `target_stage` stops at its requested boundary; otherwise continue within the authorized planning scope to the next unresolved decision.
+
 After `q-plan-tech-foundation` completes, reconcile the returned artifact ID and version into `technical_foundation_ref`. If a later stage discovers a stack contradiction, mark the referenced version stale when appropriate and route `reconcile-and-update` to its owner; do not let another stage edit the technical foundation.
 
 After `q-plan-features`, decide the design-system route from one question: does the product have a durable visual interface whose reusable design decisions outlive a single feature? Route to `q-plan-design-system` when it does or when the answer is unclear, and let that stage own the full applicability criteria and confirm the disposition. When it plainly does not — a headless API, worker, infrastructure, CLI, or throwaway prototype — record `stage_status: not_applicable`, keep `design_system_ref` null, and continue to `q-plan-backlog`.
+
+Reconcile an assessment that excludes a minimal interface as `not_applicable`, not as a completed design-system artifact. Pass the recorded disposition to code and review consumers under the contract's Design system reference rules.
 
 Reconcile a completed run into `design_system_ref` as an artifact ID and version, and register both the specification and its token set in the index. If the user declines an applicable stage, record that omission as a decision plus any warranted risk; never write it as `not_applicable`. Do not treat an unvalidated token set as a missing artifact: carry its declared coverage gap forward to implementation and QA.
 
@@ -94,6 +100,8 @@ Backlog changes discovered during development return to `q-plan-backlog` in `tar
 
 Route release engineering to `q-delivery-release` and integral validation to `q-review-release`; author no release artifact here. Run integral QA on a release candidate, not on each diff.
 
+Carry the confirmed usage, audience, criticality, data and environment constraints from Product Core and Technical Foundation into candidate preparation. The release owner selects applicable evidence for that context; local or development use does not imply public deployment, and internal use does not waive material risk controls.
+
 1. When the backlog front or a milestone marks a releasable increment, route `q-delivery-release` in `form-release-candidate` mode; on user confirmation mark `07-release-candidate.yaml` `Baselined`.
 2. Route `q-review-codebase` over the release candidate scope.
 3. Route `q-delivery-release` in `execute-release` and `coordinate-uat` modes; every environment and operation needs its own explicit approval, and human-executed steps enter the evidence with provenance.
@@ -129,6 +137,8 @@ On resume or "continue delivery", resolve continuation in this order: blockers t
 Workflow-state schema `1.1` adds `active_front` and `next_actor` for `ai-coding`. For an older state, recover the exact item and record references from the durable record and current evidence on the next authorized resume write. If more than one front remains plausible, keep `active_front: null`, set the user decision as `next_action`, and do not guess. Keep `active_front` null before selection and clear it when the workflow completes or closes. In `not_started`, `working`, or `blocked`, keep `next_action` non-empty and name its actor; `completed` or `closed` may use null when no continuation remains. Closing one stage does not complete the workflow.
 
 A pure "where are we?" query is a Read-only status query: report pending sidecars without applying or deleting them. A nearby technical question keeps its current owner and does not start delivery housekeeping merely because it reads workflow state.
+
+Before executing a selected step, check coherence using the already loaded state, index entries, and active record: the stage and action agree, each required reference resolves to its exact version, and implementation has an authorized front and technical foundation. Resolve a nested item against its owning backlog or ticket record, not a fabricated artifact-index entry. Reuse valid resolutions until their evidence changes; do not scan unrelated artifacts, build another continuity register, or load the package validator during project execution. An ambiguous recovery remains blocked on the affected action instead of guessing.
 
 ## Anti-patterns
 

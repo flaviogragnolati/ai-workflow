@@ -38,6 +38,9 @@ Stage 5b is conditional and does not shift the other stage numbers. A declined a
 
 ## Stage notes
 
+Start from the first useful increment, existing evidence and shared constraints. Discover and specify future work when a current decision needs it. Each owner returns exact approved decision references; the root baselines sufficient versions without re-asking an unchanged approval. For a new repository, commands become verified bootstrap evidence when implemented.
+
+
 `q-plan-tech-foundation` owns `02-technical-foundation.md`, the canonical profile for stack selection, versions, NFR fit, and version-scoped references. For a suitable greenfield web application without a mandated stack, it recommends T3 Core — TypeScript, Next.js App Router, and tRPC — as an advisory starting point and evaluates secondary candidates only when their conditions hold. The user confirms every material selection; the recommendation is never a mandatory stack.
 
 `q-plan-design-system` authors contracts, never implementation: a specification (`05b-design-system.md`) and a machine-readable token set (`05b-design-tokens.json`) with separated authority. It chooses no UI library, writes no component code, and claims no conformance — planning records the accessibility target (web default `WCAG 2.2 Level AA`) and the expected evidence, while implementation and QA establish it. A token set comes only from confirmed values; an unavailable validator produces an explicit `token_validation: unverified` gap instead of a false approval.

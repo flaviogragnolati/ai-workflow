@@ -44,6 +44,10 @@ def json_stdout(result: subprocess.CompletedProcess[str]) -> dict:
 def main() -> int:
     passed = 0
 
+    failures = run([sys.executable, str(SKILL_ROOT / "tests" / "test_subprocess_failures.py")])
+    require(failures.returncode == 0, failures.stderr or failures.stdout)
+    passed += 1
+
     help_result = run([sys.executable, str(PROBE), "--help"])
     require(help_result.returncode == 0, help_result.stderr)
     require("without network access or installation" in help_result.stdout, "probe help contract missing")

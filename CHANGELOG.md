@@ -16,6 +16,10 @@ established.
 
 ### Added
 
+- **2026-09-05** — Added `q-tool-init` for guided project onboarding that agrees the starting evidence, included/excluded workflows, first outcome, usage and criticality, then hands a transient confirmed request to the selected root without creating another project artifact.
+  - New and existing runs share an explicit initialization/recovery boundary, and known root workflows remain directly invocable.
+  - Breaking prerelease resource move: workflow-state and artifact-index schemas now ship under `q-core-contract/references/`; update direct package-path consumers from `skills/schemas/`, with project state shapes unchanged.
+
 - **2026-09-05** — Added `q-tool-archify`, a shared tool that authors, validates, delivers, and compares Archify typed-JSON diagrams as self-contained interactive HTML through a vendored, commit-pinned runtime (`tt-a1i/archify` 2.17.0-dev.1 at `d8e4daf`).
   - Typed JSON is authored support for `interactive-visual-representation`; HTML and Architecture Delta outputs are derived with no semantic authority, and `q-plan-architecture` remains the first semantic owner.
   - The request contract disables network, update checks, preview, opening, and brand capture; validation allows at most two supported repair rounds and records byte-bound receipts.
@@ -41,6 +45,13 @@ established.
 - **2026-08-19** — Wired verified PDF/DOCX/XLSX extraction into `q-research-investigate` and `q-proposal-discovery`, humanizer into the three prose authors (`q-proposal-design`, `q-report-source`, `q-consult-intervention`) and the authored copy of `q-report-deck` and `q-proposal-web`, gave `q-tool-database-schema` a request schema, fixtures, and integration contract, added contract sections for database-schema and prose delegation, and let `ai-coding` delegate research (`adopt-as-planning-input`) (audit G5, G6, C8 residue, G8).
 
 ### Changed
+
+- **2026-09-05** — Aligned `q-maint-ai-workflow` with progressive onboarding and delivery through selective contract loading, reconciliation of supplied analyses against current sources, and maintenance-only regression scenarios for affected handoffs, approval reuse, design-system applicability, and proportional releases.
+
+- **2026-09-05** — Made idea-to-delivery planning progressive, reused existing material approvals when baselining exact outputs, preserved design-system non-applicability across code and QA, and scaled release evidence to actual use, criticality and delivery target.
+  - Shared workflow and format rules now load through conditional contract references; runtime continuity checks reuse the active evidence slice, while package fixtures reject missing fronts, stale or unresolved references, and the wrong delivery profile.
+  - Local and development releases retain exact version, proportional verification and named human acceptance without invented production environments; real deployments and migrations retain their separate approvals.
+  - `q-review-code` now declares `q-core-contract` so installed consumers receive the same design-system disposition rules; install that companion alongside the reviewer when it is absent.
 
 - **2026-09-04** — Made AI-coding continuation explicit and reduced routine delivery ceremony while preserving reconciliation, review, and approval gates.
   - Breaking prerelease change for `ai-coding`: its workflow-state profile moves to `1.1` with `active_front` and `next_actor`; unchanged workflows retain `1.0`, while the delivery root recovers exact references on resume and asks the user instead of guessing when an older state is ambiguous.
@@ -78,6 +89,10 @@ established.
 - **2026-08-19** — Restarted this changelog at the prerelease baseline: commit `b217f92`, 67 skills (64 public), thirteen groups, six workflows, validator `Passed` with 0 errors and 0 warnings. Earlier entries are retired to Git history.
 
 ### Fixed
+
+- **2026-09-06** — Fixed misleading JSON errors in Web Markdown tests and Archify subprocess consumers when execution fails or a required receipt is empty or invalid.
+  - Transport errors and signals take precedence over exit status, with deterministic regressions for `EPERM` even alongside status `0` or an expected rejection status; failed Archify delivery and comparison preserve existing artifacts and receipts.
+  - Archify retains its upstream commit and version with a maintained MIT patch whose input, patch, and output hashes are checked during synchronization and package validation.
 
 - **2026-08-26** — Fixed Proposal Document schema tests so Draft 2020-12 `minLength` diagnostics accept the installed validator wording, acceptance criteria require `satisfies`, and the reported pass count is calculated.
 - **2026-08-19** — Made the root README and the thirteen group guides accurate against the manifest, contract, and skill procedures after the 2026-08-19 README audit (7 high, 23 medium, 44 low findings): corrected tool-source authority, PPTX backend ownership, ideation's `participation_mode`, proposal ideation adoption, research delegation from Delivery planning, and eleven flow diagrams covering proposal release, defect and refinement routing, reporting gates, consulting change control, delivery acceptance and documentation QA, direct analysis, planning returns, and release ordering.

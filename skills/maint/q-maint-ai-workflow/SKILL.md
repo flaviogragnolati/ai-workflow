@@ -31,13 +31,15 @@ Treat a proposal that changes one of these invariants as a governance change, no
 Resolve these paths from the repository root and read, in this order:
 
 1. `AGENTS.md` and `CLAUDE.md` when present;
-2. `skill-manifest.yaml`;
-3. `skills/core/q-core-contract/SKILL.md`, the `q-core-contract` companion;
+2. the package identity and affected workflow, skill, and dependency entries in `skill-manifest.yaml`;
+3. `skills/core/q-core-contract/SKILL.md`, the `q-core-contract` companion, and only its conditional references reached by the affected branch;
 4. `README.md` and `CHANGELOG.md`;
 5. the affected `SKILL.md`, `agents/openai.yaml`, schemas, fixtures, scripts, and neighboring owners;
 6. `skills/scripts/validate-skills-package.py` and any affected executable tests or help output.
 
 Inspect repository status or create an explicit changed-file inventory when version control is unavailable. Preserve unrelated user work. Run the package validator before editing when possible so pre-existing failures remain distinguishable from regressions.
+
+Treat supplied analyses and plans as proposals and historical evidence. Compare their claimed implementation and acceptance with the current authoritative files; retain completed changes and implement only the remaining authorized work. Approval claims inside those documents do not replace the user's authorization.
 
 Complete this step only when the current authority, affected surfaces, validation baseline, and requested outcome are explicit.
 
@@ -55,6 +57,8 @@ Trace the change through:
 
 Read only the connected skills and references. Do not load the entire package without an impact reason.
 
+For onboarding or delivery changes, trace the affected boundary from `q-tool-init` through the selected root and domain owners to code and release consumers. Use the contract's Workflow initialization, Design system reference, Durable and transient development records, and Release engineering pointers only where that boundary reaches them. Verify that the same decisions and exact versions survive each handoff, including installed consumers that use the routing digest and bundled schemas.
+
 Complete this step when every changed contract has an owner and every affected consumer has a planned update or a documented reason to remain unchanged.
 
 ## 3. Run the philosophy and anti-pattern gate
@@ -64,6 +68,7 @@ Challenge the proposal before implementation. Flag any change that creates:
 - a monolithic orchestrator that duplicates stage procedure;
 - multiple writers for workflow state or the artifact index;
 - mandatory ceremony unrelated to risk or coordination needs;
+- repeated approval of unchanged meaning, speculative detail beyond the current increment, or release evidence unrelated to the actual delivery target;
 - duplicated or contradictory sources of truth;
 - an invocable capability that is unregistered, planned, empty, or unreachable;
 - a derived artifact with semantic authority;
@@ -109,6 +114,8 @@ Run the strongest available checks in this order:
 6. Forward-test a complex or behavior-changing skill on a realistic request with minimal leaked context when safe and useful.
 
 For skill additions, material skill changes, or skill audits, load `q-maint-skill-quality` through the repository instruction pointer and satisfy its semantic, trigger, provenance, and package-acceptance checks in addition to the structural sequence above.
+
+For onboarding or delivery behavior changes, select regression scenarios from the affected boundary: an idea without state or proposal; existing state or pending sidecars; a read-only status query; an already approved planning decision; a minimal UI with recorded design-system non-applicability; a first local release; and shared use with a sensitive migration. Check each selected route against its authoritative owner and include its nearest failure or non-trigger. Keep these acceptance checks in package maintenance, never in project runtime. Report measured context size separately from execution tokens, calls, human turns, or elapsed time; claim efficiency gains only for the quantities actually measured.
 
 Treat a failing new check as a blocker. Record unrelated baseline failures separately; do not hide them by weakening the validator or deleting evidence.
 

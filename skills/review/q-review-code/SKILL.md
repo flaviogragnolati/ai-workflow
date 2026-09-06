@@ -7,6 +7,8 @@ description: "Review a branch, pull request, working tree, or change since a fix
 
 Review one change, not the whole codebase. Do not modify code.
 
+Read the `q-core-contract` companion for shared governance and its Design system reference rules for interface work; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`.
+
 ## Inputs
 
 Require:
@@ -15,7 +17,7 @@ Require:
 - the changed files or diff;
 - repository instructions and standards;
 - the exact technical foundation version and adopted guidance when they apply;
-- the exact `design_system_ref` version when the change touches a user interface;
+- the recorded design-system disposition for interface work, and the exact `design_system_ref` version when a system exists;
 - the originating backlog item, issue, ticket, plan, specification, or acceptance criteria.
 
 Accept these inputs separately or in one transient shared review bundle from the implementing skill.
@@ -33,7 +35,7 @@ Keep results separate:
 
 Use independent reviewers or parallel passes when that capability is available. Otherwise run two sequential passes with separate notes and context. Do not require a particular tool or agent name.
 
-Keep exactly these two axes. Design-system conformance is a standards criterion and may be reported as its own subsection, but it never becomes a third authority axis and never justifies reviewing beyond the changed surface. Report a missing or stale design-system reference as a coverage gap and route it to `q-plan-design-system`.
+Keep exactly these two axes. Design-system conformance is a standards criterion and may be reported as its own subsection, but it never becomes a third authority axis and never justifies reviewing beyond the changed surface. Apply the contract's Design system reference disposition before classifying a missing reference as a gap; route an unexplained absence or stale executed system to `q-plan-design-system`.
 
 ## Optional database schema review
 

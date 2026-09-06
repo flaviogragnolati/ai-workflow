@@ -35,13 +35,15 @@ The technical sequence is supporting guidance for slicing and dependency order. 
 
 ## Procedure
 
+Use a progressive discovery horizon: map known outcomes at high level, and detail behavior, data and verification for the first increment and its immediate dependencies. Mark later feature detail as deferred with a reason or trigger. It is not a blocker unless it affects current scope or a shared boundary.
+
 1. Load baselined architecture, application standards, the referenced technical foundation version, domain model, and product requirements.
 2. Identify cohesive modules with one authoritative owner per responsibility.
 3. Map requirements and domain behaviors to bounded features.
 4. Specify happy paths, alternate paths, authorization, validation, persistence, events, failures, and test scope.
 5. Prefer vertical slices over horizontal technical task lists.
 6. Define dependencies and approximate technical order without assigning delivery priority.
-7. Verify every in-scope requirement is assigned or has an explicit exception.
+7. Verify every in-scope requirement is assigned at the chosen horizon or has an explicit exception; a future outline is never reported as execution-ready.
 8. Return unresolved scope, boundary, or technology decisions to their owning stage; do not update the technical foundation directly.
 
 When `approved-module-or-dependency-structure-benefits-from-a-diagram` and `q-tool-mermaid` is installed, delegate a representation of already approved modules, feature dependencies, or technical order. Keep the module map, feature index, and technical sequence authoritative. If the tool is absent, `continue-with-canonical-module-feature-and-sequence-artifacts`.
@@ -55,3 +57,5 @@ Complete when modules and features are sufficiently defined for backlog planning
 When the product has a durable visual interface, the recorded surfaces and states are also the input the conditional `q-plan-design-system` stage derives its inventory from. Record them; do not resolve them into a component catalogue.
 
 Return a valid `stage_result`; standalone execution does not update global state.
+
+Obtain confirmation only for unresolved boundary or scope changes, preserving existing product and architecture approvals. Return their references for the root's lifecycle reconciliation instead of adding a generic approval of every generated document.

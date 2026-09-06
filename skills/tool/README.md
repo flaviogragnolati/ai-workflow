@@ -1,6 +1,6 @@
 # Shared tools guide
 
-The `tool` group holds twelve mechanics skills that a workflow stage, renderer, or user can call within each skill's declared execution modes. A tool executes bounded mechanics — authoring, capture, parsing, editing, rendering, validating — while the caller keeps semantic ownership of the content. Tool outputs are transient or derived with no semantic authority, except the authored sources that `q-tool-mermaid`, `q-tool-c4`, `q-tool-archify`, and `q-tool-marp` return, which carry only `supporting` authority for the visual, interactive visual, or slide representation (see the diagram and Marp delegation rules in [`q-core-contract`](../core/q-core-contract/SKILL.md)); an in-place `q-tool-humanizer` overwrite keeps the caller artifact's own type, and a `q-tool-docs-compactor` edit keeps each surviving artifact's own type, path, and ID. Adopting any output into project meaning is always the caller's decision.
+The `tool` group holds thirteen tools that a workflow stage, renderer, or user can call within each skill's declared execution modes. A tool performs bounded onboarding or mechanics — authoring, capture, parsing, editing, rendering, validating — while the caller keeps semantic ownership of the content. Tool outputs are transient or derived with no semantic authority, except the authored sources that `q-tool-mermaid`, `q-tool-c4`, `q-tool-archify`, and `q-tool-marp` return, which carry only `supporting` authority for the visual, interactive visual, or slide representation (see the diagram and Marp delegation rules in [`q-core-contract`](../core/q-core-contract/SKILL.md)); an in-place `q-tool-humanizer` overwrite keeps the caller artifact's own type, and a `q-tool-docs-compactor` edit keeps each surviving artifact's own type, path, and ID. Adopting any output into project meaning is always the caller's decision.
 
 This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.yaml) is the registry for status, side effects, and approval policies; each `SKILL.md` owns its procedure.
 
@@ -26,6 +26,7 @@ A tool never installs a runtime silently, never reaches a remote converter, and 
 
 | Skill | Use it when |
 |---|---|
+| [`q-tool-init`](q-tool-init/SKILL.md) | Agreeing a project's starting point, included/excluded workflows, first outcome, use and criticality, then handing a transient confirmed request to one root without writing state. |
 | [`q-tool-mermaid`](q-tool-mermaid/SKILL.md) | Creating, revising, validating, repairing, rendering, or compiling Mermaid diagrams. |
 | [`q-tool-c4`](q-tool-c4/SKILL.md) | Modeling or rendering C4 views of a system, container, component, code area, dynamic flow, deployment, or landscape through a capability-verified Mermaid, Structurizr DSL, or C4-PlantUML route. |
 | [`q-tool-archify`](q-tool-archify/SKILL.md) | Re-encoding approved meaning as validated Archify typed JSON, delivering self-contained interactive HTML, or comparing exact architecture versions as a derived delta. |
@@ -38,6 +39,8 @@ A tool never installs a runtime silently, never reaches a remote converter, and 
 | [`q-tool-pptx`](q-tool-pptx/SKILL.md) | Creating, inspecting, extracting, selecting, filling, rendering, or validating native PowerPoint files. |
 | [`q-tool-spreadsheet`](q-tool-spreadsheet/SKILL.md) | Inspecting, extracting, creating, boundedly editing, converting, recalculating, rendering, or validating XLSX workbooks. |
 | [`q-tool-docs-compactor`](q-tool-docs-compactor/SKILL.md) | Reducing the documentation an agent loads: measure a docset, retire superseded content whose trace survives elsewhere, merge partial documents into one survivor, replace copied rules with pointers, and condense the rest under a per-operation approved plan. Standalone-only; never edits a `Released` version. |
+
+`q-tool-init` is optional onboarding for the full journey. It selects the first workflow with the user, preserves existing runs and decisions, and creates no onboarding document. Initialization belongs to the selected root; routine resume, status and bounded questions keep their existing routes.
 
 ## Backend routing notes
 

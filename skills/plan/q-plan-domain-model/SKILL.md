@@ -11,6 +11,8 @@ Read the `q-core-contract` companion for shared governance and `q-tool-mermaid` 
 
 Require a mature product core and technical foundation. Load relevant decisions, requirements, terminology, external-system contracts, and existing schemas.
 
+Model the first increment and the shared invariants it depends on. Keep future concepts as named uncertainties until they affect that work; do not read every existing schema or elaborate every future attribute in advance.
+
 ## Outputs and authority
 
 Create under `docs/development-workflow/domain/`:
@@ -51,3 +53,5 @@ Reconcile accepted feedback about identity, cardinality, ownership, invariants, 
 Complete when every critical concept has a definition and owner, important relationships and invariants are textual, data authority is explicit, and diagrams match the narrative. A physical schema is not an exit criterion. Block on contradictions that would invalidate architecture, not on unresolved index or DDL syntax. When a downstream refinement or implementation marks the domain model or dictionary stale, reconcile here by creating a new version — never rewrite a `Baselined` version in place.
 
 Return a valid `stage_result`; standalone execution requires later orchestration reconciliation.
+
+Confirm unresolved domain decisions with downstream impact with the user, reusing prior confirmations. Routine modeling of already confirmed meaning needs no additional approval turn; return the exact decision references so the root can baseline sufficient outputs.

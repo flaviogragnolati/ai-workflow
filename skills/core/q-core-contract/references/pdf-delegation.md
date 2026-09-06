@@ -1,0 +1,7 @@
+## PDF delegation
+
+An owning skill may delegate PDF inspection, extraction, transformation, form handling, authorized security operations, rendering, and validation to `q-tool-pdf`. The caller retains document meaning, approved source versions, lifecycle, release decisions, branding intent, authorized paths, and every artifact-index delta. Pass one `pdf_request` with exact source refs, preservation requirements, forbidden semantic changes, output and overwrite policy, runtime policy, security flags, and required validation.
+
+`q-tool-pdf` owns operation-aware selection between verified local Python and Node backends, safe file mechanics, structural checks, rendered inspection, and operation provenance. It never installs dependencies, uses a remote converter, publishes, changes canonical content, approves a release, or writes global workflow state or the artifact index. A runtime executable without the declared packages and native tools is not a supported route.
+
+Keep every persisted PDF or extraction derived with `semantic_authority: none` and exact generation provenance. For Proposal, Report Document, or Report Deck, the renderer reviews semantic fidelity and incorporates accepted outputs into its own result; only the root orchestrator reconciles them. If the optional tool is unavailable, use only a separately verified local PDF route or block the affected PDF and require explicit approval for a partial release. Never treat an active tool entry as proof that the current environment can produce or visually inspect the requested format.

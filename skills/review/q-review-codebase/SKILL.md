@@ -13,7 +13,7 @@ Load:
 
 - repository instructions, architecture, ADRs, product requirements, and application standards;
 - the exact `technical_foundation_ref` when one exists, including adopted guidance IDs and source versions;
-- the exact `design_system_ref` when the audit scope includes a user interface;
+- the recorded design-system disposition for interface scope, and the exact `design_system_ref` when a system exists;
 - [`references/generic-standards.md`](references/generic-standards.md);
 - [`assets/report-template.md`](assets/report-template.md).
 
@@ -21,7 +21,7 @@ Inspect manifests, lockfiles, configuration, schemas, and executable help to ide
 
 When a selected technology lacks current adopted guidance and its idiomatic use matters to the requested scope, consult current primary sources such as official documentation, specifications, first-party source, or vendor support policy. Cite the precise source and version in the report. If that evidence cannot be verified, continue with generic and repository-grounded criteria where safe and declare the technology-specific coverage gap; do not issue a full stack-specific approval.
 
-Complete authority setup when every review lens resolves to a generic catalog ID, project guidance ID, repository convention, design-system contract ID, specification, or explicit coverage gap. When the product has an interface and no design system exists, is stale, or carries an unvalidated token set, record that as a coverage gap routed to `q-plan-design-system` rather than auditing against an unadopted design standard.
+Complete authority setup when every review lens resolves to a generic catalog ID, project guidance ID, repository convention, design-system contract ID, specification, or explicit coverage gap. Apply the contract's Design system reference disposition before requiring an interface reference. An unexplained absence, stale executed system, or unvalidated token set is a gap routed to `q-plan-design-system`; a valid non-applicability is assessed against the applicable project standards.
 
 When `audit-scope-includes-material-database-schema-document-model-migration-or-performance-risk` and `q-tool-database-schema` is installed, use the matching specialist mode with the fixed audit scope, observed schema, confirmed profile, and supplied workload evidence. Reconcile its transient findings into this audit's existing lenses and evidence standard; do not treat the tool as integral acceptance. If it is absent, `continue-with-generic-and-project-grounded-database-coverage-and-name-the-specialist-gap`.
 

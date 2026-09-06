@@ -1,0 +1,9 @@
+## Stack compatibility
+
+The development workflow is profile-driven. In the manifest and workflow state, `stack_profile: any` means the procedure is independent of the selected stack, while `stack_profile: project-defined` means it must load the project's current technical foundation and repository evidence. No stack name is a package compatibility profile.
+
+`q-plan-tech-foundation` is the sole owner of the authored technical foundation: concrete selections and versions, NFR and operational fit, adopted technology guidance, and version-scoped external references. After that stage completes, workflow state must carry `technical_foundation_ref` as an artifact ID and version. Downstream stages may report a contradiction, mark the referenced version stale, and route reconciliation to the owner; they must not edit the technical foundation directly.
+
+For a suitable greenfield web application without a mandated stack, the package recommends T3 Core as an advisory starting point. The user confirms the final stack and every secondary technology. Existing codebase choices, explicit user proposals, product shape, constraints, and NFRs take precedence when they provide a better fit. Headless APIs, distributed systems, embedded software, performance-critical workloads, and other materially different products require requirements-driven evaluation and current primary-source research rather than automatic T3 selection.
+
+Stack-agnostic execution does not imply universal stack-specific expertise. A technical skill may continue with generic criteria and an explicit coverage gap when technology-specific guidance cannot be verified. It must block only when an unresolved decision, unmet requirement, missing execution capability, or evidence gap makes the requested approval unsafe; it must never issue a false approval.

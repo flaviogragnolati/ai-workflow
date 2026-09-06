@@ -6,6 +6,8 @@ import {dirname, join, resolve} from "node:path";
 import {PassThrough} from "node:stream";
 import {spawnSync} from "node:child_process";
 import {fileURLToPath} from "node:url";
+import {cliJson} from "./cli-result.mjs";
+import "./test-cli-result.mjs";
 import {buildBrowserArgs, discoverBrowser, sanitizedBrowserHeaders, scrubbedEnvironment} from "../runtime/lib/browser.mjs";
 import {connectPinned, startEgressProxy} from "../runtime/lib/egress-proxy.mjs";
 import {buildExtractionExpression, validateExtracted} from "../runtime/lib/extract.mjs";
@@ -21,13 +23,11 @@ assert.equal(validateRequest(fixture("web-capture-request.invalid.json")).valid,
 assert.equal(validateResult(fixture("web-capture-result.valid.json")).valid, true);
 assert.equal(validateResult(fixture("web-capture-result.invalid.json")).valid, false);
 const invalidCli = spawnSync(process.execPath, [resolve(HERE, "../runtime/web-markdown.mjs"), "capture", "http://127.0.0.1/", "--json"], {encoding: "utf8"});
-assert.equal(invalidCli.status, 1);
-const invalidCliResult = JSON.parse(invalidCli.stdout);
+const invalidCliResult = cliJson(invalidCli, "reject private URL", 1);
 assert.equal(validateResult(invalidCliResult).valid, true);
 assert.equal(invalidCliResult.category, "authorization");
 const forbiddenFlag = spawnSync(process.execPath, [resolve(HERE, "../runtime/web-markdown.mjs"), "capture", "https://example.com/", "--browser-path", "/tmp/browser", "--json"], {encoding: "utf8"});
-assert.equal(forbiddenFlag.status, 1);
-assert.equal(validateResult(JSON.parse(forbiddenFlag.stdout)).valid, true);
+assert.equal(validateResult(cliJson(forbiddenFlag, "reject forbidden browser flag", 1)).valid, true);
 
 for (const address of ["127.0.0.1", "10.1.2.3", "169.254.169.254", "192.0.2.1", "198.18.0.1", "224.0.0.1", "::1", "fc00::1", "fe80::1", "2001:db8::1", "::ffff:127.0.0.1"]) {
   assert.equal(addressDisposition(address).public, false, address);

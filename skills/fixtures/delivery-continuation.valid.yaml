@@ -1,0 +1,57 @@
+state:
+  schema_version: "1.1"
+  project_id: internal-tool
+  workflow: ai-coding
+  status: working
+  current_stage: q-code-implement
+  stack_profile: project-defined
+  technical_foundation_ref: "ART-TECH-001@0.2"
+  design_system_ref: null
+  stage_status: {q-plan-tech-foundation: completed, q-plan-design-system: not_applicable}
+  decisions: [DEC-SCOPE-001, DEC-UI-001]
+  risks: []
+  blockers: []
+  active_front: {item_ref: "BL-042@1.0", record_ref: "PLAN-BL-042@1.1"}
+  next_actor: agent
+  next_action: "Execute PLAN-BL-042@1.1 for the selected BL-042@1.0."
+artifact_index:
+  schema_version: "1.0"
+  project_id: internal-tool
+  artifacts:
+    - artifact_id: ART-TECH-001
+      artifact_type: technical-foundation
+      path: docs/development-workflow/technical/02-technical-foundation.md
+      owner_workflow: ai-coding
+      owner_skill: q-plan-tech-foundation
+      creation_mode: authored
+      semantic_authority: canonical
+      authority_scope: stack-selection-versioned-guidance-nfr-and-operations
+      lifecycle: Baselined
+      version: "0.2"
+      source_refs: []
+    - artifact_id: ART-BACKLOG-001
+      artifact_type: development-backlog
+      path: docs/development-workflow/backlog/06-backlog.yaml
+      owner_workflow: ai-coding
+      owner_skill: q-plan-backlog
+      creation_mode: authored
+      semantic_authority: canonical
+      authority_scope: delivery-structure
+      lifecycle: Baselined
+      version: "1.0"
+      source_refs: ["ART-TECH-001@0.2"]
+    - artifact_id: PLAN-BL-042
+      artifact_type: implementation-plan
+      path: docs/development-workflow/implementation/plan-bl-042.md
+      owner_workflow: ai-coding
+      owner_skill: q-code-implementation-plan
+      creation_mode: authored
+      semantic_authority: canonical
+      authority_scope: planned-execution
+      lifecycle: Working
+      version: "1.1"
+      source_refs: ["ART-BACKLOG-001@1.0"]
+record_slice:
+  source_ref: "ART-BACKLOG-001@1.0"
+  items:
+    - {item_id: BL-042, version: "1.0"}

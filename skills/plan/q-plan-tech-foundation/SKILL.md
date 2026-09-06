@@ -19,6 +19,8 @@ Read the `q-core-contract` companion for shared governance; if it is missing, st
 
 Separate observed repository facts, user mandates, workflow recommendations, assumptions, and unresolved choices. Preserve an existing stack unless requirements or evidence justify a migration.
 
+Load only evidence needed by the first increment and its architecture-driving constraints. Carry the product's confirmed usage, audience, criticality and decision owner into environment, testing and recovery expectations. For a new repository, mark commands not yet materialized as pending bootstrap verification; absence alone does not block planning or justify inventing executable evidence.
+
 ## Modes
 
 Use exactly one mode:
@@ -36,7 +38,7 @@ Complete mode selection when the current artifact version, change trigger, and w
 4. Evaluate an explicit user proposal against the criteria. Preserve it when it fits; surface concrete trade-offs or incompatibilities when it does not.
 5. For a suitable greenfield web application without a mandated stack, read [`references/web-stack-recommendation.md`](references/web-stack-recommendation.md) and present its advisory T3 Core recommendation plus only the secondary options whose applicability conditions hold.
 6. For another product shape, or when the web recommendation does not fit, compare viable alternatives using current primary sources such as official documentation, specifications, first-party source, or vendor support policies. When `durable-supporting-investigation-of-stack-alternatives-or-vendor-support-policies-is-warranted` and `q-code-research` is installed, route the bounded question there; if it is absent, `record-the-bounded-comparison-in-the-technical-foundation-and-name-the-research-gap`.
-7. Obtain user confirmation for the core stack and every material secondary technology. Do not infer approval from the absence of an objection.
+7. Obtain user confirmation for the core stack and every material secondary technology not already explicitly confirmed for this scope. Present compatible choices together when ready; do not infer approval from the absence of an objection or ask for the same selection again.
 8. Record the selected profile, rejected alternatives, rationale, consequences, exceptions, risks, and evidence.
 
 Complete selection when the chosen technologies satisfy the accepted criteria, the user has confirmed material choices, and uncertainty that could change architecture is either resolved or blocking.

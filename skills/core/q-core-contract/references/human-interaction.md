@@ -14,6 +14,8 @@ q-core-contract:
   internal: none
 q-core-identity:
   internal: none
+q-tool-init:
+  standalone: dialogue-led
 q-tool-mermaid:
   orchestrated: on-demand
   standalone: on-demand

@@ -1,6 +1,6 @@
 # Core guide
 
-The `core` group holds two public companions: shared workflow governance and shared Quasar identity/editorial guidance. A skill loads only the companions it declares in `requires`. Nine active helpers and companions do not declare the governance contract: `q-review-skill`, `q-review-code`, `q-review-comments`, `q-code-explain`, `q-code-explore`, `q-code-handoff`, `q-code-tdd`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` (see [Skill dependencies](../../README.md#skill-dependencies)). Companions are not entry points — you never invoke them directly. A skill that requires one reads it and, when it is absent, stops and prints the exact install command instead of proceeding on assumed rules.
+The `core` group holds two public companions: shared workflow governance and shared Quasar identity/editorial guidance. A skill loads only the companions it declares in `requires`. Eight active helpers and companions do not declare the governance contract: `q-review-skill`, `q-review-comments`, `q-code-explain`, `q-code-explore`, `q-code-handoff`, `q-code-tdd`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` (see [Skill dependencies](../../README.md#skill-dependencies)). Companions are not entry points — you never invoke them directly. A skill that requires one reads it and, when it is absent, stops and prints the exact install command instead of proceeding on assumed rules.
 
 This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.yaml) is the registry; each `SKILL.md` owns its procedure.
 
@@ -13,7 +13,7 @@ This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.
 
 ## Reading map
 
-The contract is long because it is shared. Load the section your task needs, not the file as a tour.
+Read the core rules once and follow only the conditional reference for the active branch. Workflow-specific and format-specific contracts live behind those pointers and retain their authority. Reuse unchanged evidence; do not load all branches in advance.
 
 | If you are … | Load … |
 |---|---|
@@ -22,7 +22,8 @@ The contract is long because it is shared. Load the section your task needs, not
 | routing an orchestrator, a `target_stage`, or a delegated subworkflow | Invocation and routing |
 | deciding whether a skill ships to consumers | External distribution |
 | adding a `requires`, a `uses`, or a bundled reference | Skill identity and dependencies |
-| writing workflow state, the artifact index, or starting a second root run | Single-writer rule |
+| agreeing where a project starts | `q-tool-init`, then Workflow initialization for the selected root |
+| writing workflow state, the artifact index, or starting a second root run | Single-writer rule · Workflow initialization |
 | staging, committing, pushing, or touching a ref | Git operations |
 | returning a stage delta, or persisting one standalone | Stage result (including Standalone persistence) |
 | assigning authority, lifecycle, stable IDs, provenance, an artifact root, or naming a release | Artifact ownership and authority (including Release records and Artifact roots) |
@@ -43,7 +44,7 @@ The contract is long because it is shared. Load the section your task needs, not
 
 ## Bundled resources
 
-Five schemas travel with the contract because several skills validate against the same shape: [`stage-result.schema.yaml`](q-core-contract/references/stage-result.schema.yaml), [`cited-findings.schema.yaml`](q-core-contract/references/cited-findings.schema.yaml), [`ideation-baseline.schema.yaml`](q-core-contract/references/ideation-baseline.schema.yaml), [`report-source.schema.yaml`](q-core-contract/references/report-source.schema.yaml), and [`evidence-entry.schema.yaml`](q-core-contract/references/evidence-entry.schema.yaml). [`git-worktrees.md`](q-core-contract/references/git-worktrees.md) covers isolated-worktree execution.
+Seven schemas travel with the contract because several skills validate against the same shape: [`workflow-state.schema.yaml`](q-core-contract/references/workflow-state.schema.yaml), [`artifact-index.schema.yaml`](q-core-contract/references/artifact-index.schema.yaml), [`stage-result.schema.yaml`](q-core-contract/references/stage-result.schema.yaml), [`cited-findings.schema.yaml`](q-core-contract/references/cited-findings.schema.yaml), [`ideation-baseline.schema.yaml`](q-core-contract/references/ideation-baseline.schema.yaml), [`report-source.schema.yaml`](q-core-contract/references/report-source.schema.yaml), and [`evidence-entry.schema.yaml`](q-core-contract/references/evidence-entry.schema.yaml). [`git-worktrees.md`](q-core-contract/references/git-worktrees.md) covers isolated-worktree execution.
 
 Two references are **generated** views of `skill-manifest.yaml`, regenerated whenever the manifest changes and carrying no authority of their own: [`routing.md`](q-core-contract/references/routing.md) (per workflow: entry skill, stages — planning and release stages for delivery, stage conditions and profiles for research, the reporting stage and renderers with content profiles and deck formats — delegates, and optional next routes) and [`human-interaction.md`](q-core-contract/references/human-interaction.md) (the cadence mapping). They exist so an agent can answer a routing or cadence question without loading the whole manifest — the manifest remains the source of truth, and package validation fails on drift.
 

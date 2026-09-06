@@ -1,0 +1,4 @@
+interface:
+  display_name: "Initialize Workflows"
+  short_description: "Agree the starting point, scope, and first workflow"
+  default_prompt: "Use $q-tool-init to agree where this project starts, which workflows it needs, what stays out, and the first action to take together."

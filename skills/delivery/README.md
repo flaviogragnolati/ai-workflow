@@ -8,6 +8,8 @@ This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.
 
 ```mermaid
 flowchart TB
+    INIT["q-tool-init<br/>optional guided onboarding"] --> W
+    IDEA["Product idea or internal brief"] --> W
     CR["Accepted commercial release<br/>(from Proposal)"] --> W["q-delivery-workflow"]
     W --> PL["Planning stages 1-6, plus 5b when it applies<br/>(plan group)"]
     PL --> B["High-level backlog"]
@@ -32,13 +34,17 @@ flowchart TB
 | Skill | Use it when |
 |---|---|
 | [`q-delivery-workflow`](q-delivery-workflow/SKILL.md) | Starting, resuming, routing, recovering, or reporting the current position of a software delivery; running one named planning stage; coordinating the development loop; deciding release acceptance; opening the hotfix route for an incident on a released version. |
-| [`q-delivery-release`](q-delivery-release/SKILL.md) | Forming a release candidate from an exact base commit, executing approved deployments and migrations or recording human-executed steps, drilling rollback, coordinating UAT, and closing delivery with the manifest and release notes. It never validates its own release. |
+| [`q-delivery-release`](q-delivery-release/SKILL.md) | Forming an exact release candidate, verifying local delivery or executing actual approved deployments and migrations, checking applicable recovery, coordinating human acceptance, and closing delivery with the manifest and release notes. It never validates its own release. |
+
+A new run initializes its state and index under the declared root; an existing run resumes. Planning adopts existing evidence and details the first useful increment progressively. Material decisions remain with the user, while routine stage transitions and baselining of already approved meaning add no confirmation turn. Interface consumers preserve a valid design-system non-applicability or accepted omission.
+
+Release requirements follow confirmed usage, criticality, data and actual delivery target. Local package/source delivery and development evaluation need proportional verification and named human acceptance; remote environments and meetings are required only when the release context calls for them.
 
 ## What the orchestrator owns
 
 | Concern | How it works |
 |---|---|
-| Routing | Selects the next planning stage, backlog item, loop step, QA, or delivery action; a named `target_stage` runs one stage only. |
+| Routing | Routes the next planning stage, the user-selected backlog item, loop step, QA, or delivery action; a named `target_stage` runs one stage only. |
 | Single writer | Stages return deltas; only the orchestrator writes this run's `00-workflow-state.yaml` and `00-artifact-index.yaml`. The development loop returns deltas too: each grill, plan, ticket set, implementation close, and fix or debug close returns a `stage_result` that is reconciled before the next step. |
 | Defect route | A defect item in work that is not yet `Released` skips the grill and goes to `q-code-debug` (cause unknown) or `q-code-fix` (cause confirmed), then rejoins the loop at the durable-record update; a defect against a `Released` version goes to the hotfix route instead. |
 | Runtime references | Carries `technical_foundation_ref` and `design_system_ref` so later stages load exact approved versions. |

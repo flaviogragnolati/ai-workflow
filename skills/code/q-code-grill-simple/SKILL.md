@@ -11,7 +11,7 @@ Read the `q-core-contract` companion for shared governance and its stage-result 
 
 ## Procedure
 
-1. Inspect the relevant code, project context, and applicable technical foundation or repository standards. When the change touches a user interface and `design_system_ref` exists, load that exact version and reuse its contracts instead of inventing local styling.
+1. Inspect the relevant code, project context, and applicable technical foundation or repository standards. For interface work, apply the contract's Design system reference disposition and load the exact version when a system exists.
 2. Confirm objective, integration point, must-not-break behavior, scope, and acceptance.
 3. Ask at most five questions that cannot be answered from evidence and materially reduce risk.
 4. Cover important edge cases, validation, authorization, and testing.

@@ -69,7 +69,7 @@ Keep the authority split honest. The specification names the exact token-set art
 
 1. Resolve every input to an exact version, and name the authorized brand and art sources or their absence.
 2. Confirm applicability and select one mode.
-3. Audit the current state: existing tokens, components, patterns, art, inconsistencies, and duplication.
+3. Audit only the existing tokens, components, patterns, art and inconsistencies relevant to the first increment and reusable constraints. Expand to later features when a current decision depends on them.
 4. Derive design principles and constraints from product intent, users, and confirmed sources. Never invent brand or user preference.
 5. Define art direction and cross-cutting visual language, keeping each source and human decision visible.
 6. Define the token architecture: primitive, semantic, and component tiers, aliases, sets, and the themes and modes the product actually needs.
@@ -115,5 +115,7 @@ Accepted evolution creates a new specification version, and a new token-set vers
 | 3 | Duplicating token values | Colour, spacing, or typography values are restated in the Markdown beside the token set. | Reference the exact token-set ID and version and describe coverage, never values. |
 | 4 | Importing a default catalog | A generic component list is adopted without a feature, journey, or requirement that needs each entry. | Derive every component and pattern from evidenced product need and record the trace. |
 | 5 | Claiming unverified conformance | An unchecked token set or an accessibility target is reported as validated or conformant. | Declare the exact coverage gap and leave conformance evidence to implementation and QA. |
+
+Confirm material brand, art, accessibility and cross-feature design decisions not already authorized. Reuse confirmed library defaults and existing decisions where applicable; present remaining decisions together rather than requiring approval for each token or section.
 
 Return a valid `stage_result`; standalone execution never updates global state.

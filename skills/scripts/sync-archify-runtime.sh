@@ -59,6 +59,10 @@ cp "$source_root/skill-release.json" "$target/skill-release.json"
 runtime_version=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["version"])' "$target/skill-release.json")
 printf 'version=%s\ncommit=%s\nsynced=%s\n' "$runtime_version" "$source_commit" "$(date +%F)" > "$target/ARCHIFY_VERSION"
 
+# Apply the maintained patch only to its exact upstream preimage, then verify
+# its output before replacing the installed runtime.
+python3 "$repo_root/skills/scripts/archify_runtime_patch.py" apply "$target"
+
 if find "$target" -name SKILL.md -print -quit | grep -q .; then
   echo "Refusing a runtime containing a nested SKILL.md" >&2
   exit 1

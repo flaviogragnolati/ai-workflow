@@ -45,7 +45,7 @@ Incorporate new information by adding, splitting, combining, reordering, deferri
 
 ## Procedure
 
-1. Load upstream baselines, existing backlog, changelog, state, decisions, risks, and delivery constraints. When `design_system_ref` exists, load that exact version and treat its downstream needs — build, adoption, and migration work — as candidate backlog input alongside features.
+1. Load the current increment's upstream baselines and relevant slices of the existing backlog, changelog, state, decisions, risks, and delivery constraints. When `design_system_ref` exists, load that exact version and treat its downstream needs — build, adoption, and migration work — as candidate backlog input alongside features.
 2. Choose exactly one mode.
 3. Reconcile every known feature with a backlog assignment or explicit exception.
 4. Preserve stable IDs when meaning is unchanged.
@@ -71,5 +71,7 @@ Close app-flow when:
 ## Ticket boundary
 
 `q-code-tickets` is optional and downstream. Use it only when distribution, tracker needs, multiple executors, or multiple sessions justify durable tickets.
+
+Confirm initial priority and structural replanning when required, reusing unchanged approved decisions. Present the concrete next-front selection with its priority decision when both are ready; reconciliation alone does not add another approval turn.
 
 Return a valid `stage_result` whose `next_recommended_action` names the exact backlog item or version and destination skill. The root converts that recommendation into workflow-state `next_action` and `next_actor`; this skill never selects a front for the user. In standalone mode set `global_state_updated: false` and `reconciliation_required: true`.

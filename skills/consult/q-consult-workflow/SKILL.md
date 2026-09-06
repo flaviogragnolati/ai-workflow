@@ -5,7 +5,11 @@ description: "Orchestrate Quasar consulting execution after an accepted non-deve
 
 # Consulting execution workflow
 
-Read the `q-core-contract` companion for shared governance, especially its Consulting execution section, and its `references/routing.md` for workflow routes before routing; if it is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Remain the root orchestrator and single global state writer while delegating any subworkflow. Route stages and decide lifecycles; author no engagement plan, assessment, design, deliverable, or acceptance record here.
+Read the `q-core-contract` companion for shared governance, especially its Consulting execution section; use the relevant manifest routes when available, otherwise its `references/routing.md`. If the companion is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`. Remain the root orchestrator and single global state writer while delegating any subworkflow. Route stages and decide lifecycles; author no engagement plan, assessment, design, deliverable, or acceptance record here.
+
+## Initialization
+
+When acting as root and starting without state or receiving a `workflow-start-request`, follow the contract's Workflow initialization reference. Reuse the confirmed starting boundary and existing decisions; create no state for a delegated run or a read-only query. Keep this workflow's own prerequisites and gates.
 
 ## Preconditions
 

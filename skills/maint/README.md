@@ -16,7 +16,7 @@ This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.
 
 | Step | What it produces |
 |---|---|
-| 1. Establish the baseline | Current authority, affected surfaces, a pre-change validator run, and the requested outcome — all explicit. Read `AGENTS.md`, the manifest, the contract, `README.md`, `CHANGELOG.md`, then the affected skill and its neighbours. |
+| 1. Establish the baseline | Current authority, affected surfaces, a pre-change validator run, and the requested outcome — all explicit. Read `AGENTS.md`, relevant manifest entries, the contract and affected conditional references, `README.md`, `CHANGELOG.md`, then the affected skill and its neighbours; compare supplied analyses with the actual tree. |
 | 2. Build the impact map | Every changed contract has an owner and every affected consumer has a planned update or a documented reason to stay unchanged. Trace invocation, routing, upstream and downstream, ownership, side effects, approvals, fallback, persistence, release boundaries, and provenance. |
 | 3. Run the philosophy and anti-pattern gate | One of three dispositions: compatible, compatible with named safeguards, or a governance change awaiting or holding explicit user approval. |
 | 4. Implement the smallest coherent patch | One cohesive change across the impact map: skill lifecycle and layout, routing, contracts, behavior, a dated `CHANGELOG.md` entry, and provenance in the root `LICENSE`. Without an established release boundary, remove superseded forms; preserve a migration path only when a released consumer contract or explicit user decision requires it. |
@@ -34,3 +34,5 @@ This guide is an explanatory view. [`skill-manifest.yaml`](../../skill-manifest.
 ## Integration with the other groups
 
 Maintenance can touch any group, so it loads only the branch its impact map names. It owns changes to the shared contract (see the [core guide](../core/README.md)) and to `skill-manifest.yaml`, and it synchronizes the derived views — the root `README.md`, every group guide, and the generated routing and human-interaction digests — in the same change. For a diagnostic on a skill *outside* this package, use the public `q-review-skill` in the [review group](../review/README.md); remediation and package acceptance stay here.
+
+For onboarding and delivery changes, maintenance checks the affected handoffs and regression scenarios defined in its [validation procedure](q-maint-ai-workflow/SKILL.md#5-validate-from-structure-to-behavior), including installed consumers. These are package acceptance checks; project execution continues to use its active evidence slice. Efficiency claims distinguish measured context size from observed execution cost.

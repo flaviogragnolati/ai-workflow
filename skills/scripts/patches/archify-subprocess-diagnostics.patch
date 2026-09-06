@@ -1,0 +1,108 @@
+--- a/bin/archify.mjs
++++ b/bin/archify.mjs
+@@ -48,12 +48,76 @@
+ }
+ 
+ function runNode(args, options = {}) {
+-  return spawnSync(process.execPath, args, {
++  const result = spawnSync(process.execPath, args, {
+     cwd: options.cwd || process.cwd(),
+     encoding: 'utf8',
+     stdio: options.stdio || 'inherit',
+     env: options.env ? { ...process.env, ...options.env } : process.env,
+   });
++  const operation = path.basename(args[0]);
++  let failure;
++  if (result.error || result.signal || result.status === null) {
++    const reason = result.error
++      ? `${result.error.code || 'unknown'}: ${result.error.message}`
++      : result.signal ? `signal ${result.signal}` : 'no exit status';
++    const message = `Subprocess ${operation} did not complete reliably (${reason}).`;
++    failure = {
++      error: message,
++      diagnostics: [diagnostic({
++        code: 'internal/subprocess-execution',
++        message,
++        subject: { operation },
++        evidence: {
++          ...(result.error?.code ? { systemCode: result.error.code } : {}),
++          signal: result.signal ?? null,
++          exitCode: result.status,
++          reason,
++        },
++      })],
++    };
++  } else if (options.stdio === 'pipe' && result.status === 0
++      && (operation === 'check-render-output.mjs' || args.includes('--layout-json'))) {
++    try {
++      if (!result.stdout?.trim()) throw new Error('empty JSON receipt');
++      const receipt = JSON.parse(result.stdout);
++      if (!receipt || typeof receipt !== 'object' || Array.isArray(receipt)) {
++        throw new Error('expected a JSON receipt object');
++      }
++      if (operation === 'check-render-output.mjs'
++          && (receipt.ok !== true || !Array.isArray(receipt.checks) || !receipt.checks.length
++            || !receipt.checks.every((check) => check?.ok === true && typeof check.name === 'string')
++            || typeof receipt.composition?.profile !== 'string'
++            || receipt.composition?.summary?.errors !== 0
++            || !Number.isInteger(receipt.composition?.summary?.warnings))) {
++        throw new Error('invalid successful artifact-check receipt');
++      }
++      if (args.includes('--layout-json')
++          && (!Array.isArray(receipt.viewBox)
++            || (operation === 'render-architecture.mjs'
++              ? receipt.ok !== true || !Array.isArray(receipt.components)
++              : typeof receipt.contract !== 'string' || !Array.isArray(receipt.nodes)
++                || !Array.isArray(receipt.diagnostics) || receipt.diagnostics.length !== 0))) {
++        throw new Error('invalid successful layout receipt');
++      }
++    } catch (error) {
++      const message = `Subprocess ${operation} returned an invalid JSON receipt: ${error.message}`;
++      failure = {
++        error: message,
++        diagnostics: [diagnostic({
++          code: 'internal/subprocess-receipt-invalid',
++          message,
++          subject: { operation },
++          evidence: { reason: error.message },
++        })],
++      };
++    }
++  }
++  if (!failure) return result;
++  // A transport error can coexist with status 0 and partial output. Discard
++  // that output and normalize to failure before any caller consumes a receipt.
++  const payload = JSON.stringify({ ok: false, ...failure });
++  if ((options.stdio || 'inherit') === 'inherit') console.error(failure.error);
++  return { ...result, status: result.status || 1, stdout: payload, stderr: payload, failure };
+ }
+ 
+ function extractQualityArgs(args) {
+@@ -139,16 +203,7 @@
+ }
+ 
+ function rendererFailure(result) {
+-  if (result.error) {
+-    return {
+-      error: 'Renderer process could not start.',
+-      diagnostics: [diagnostic({
+-        code: 'internal/renderer-process',
+-        message: 'Renderer process could not start.',
+-        evidence: { reason: result.error.message },
+-      })],
+-    };
+-  }
++  if (result.failure) return result.failure;
+   try {
+     const payload = JSON.parse((result.stderr || '').trim());
+     if (payload?.ok === false && Array.isArray(payload.diagnostics) && payload.diagnostics.length) {
+@@ -197,6 +252,9 @@
+ };
+ 
+ function checkerDiagnostics(checker) {
++  if (checker?.ok === false && Array.isArray(checker.diagnostics) && checker.diagnostics.length) {
++    return checker.diagnostics;
++  }
+   const diagnostics = [];
+   for (const issue of checker?.composition?.issues || []) {
+     if (issue.severity !== 'error') continue;

@@ -7,7 +7,11 @@ description: "Orchestrate optional Quasar engagement research from an approved g
 
 Coordinate a bounded research run and preserve uncertainty. Delegate scope, investigation, and synthesis to their owners; do not perform their domain work here.
 
-Read the `q-core-contract` companion for shared governance, its `references/routing.md` for workflow routes, and `references/research-baseline.schema.yaml` before creating a baseline. If the companion is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`.
+Read the `q-core-contract` companion for shared governance; use the relevant manifest routes when available, otherwise its `references/routing.md`. Read `references/research-baseline.schema.yaml` before creating a baseline. If the companion is missing, stop and install it with `npx skills add flaviogragnolati/ai-workflow --skill q-core-contract`.
+
+## Initialization
+
+When acting as root and starting without state or receiving a `workflow-start-request`, follow the contract's Workflow initialization reference. Reuse the confirmed starting boundary and existing decisions; create no state for a delegated run or a read-only query. Keep this workflow's own prerequisites and gates.
 
 ## Entry and orchestration
 

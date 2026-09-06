@@ -1,0 +1,7 @@
+## Database-schema delegation
+
+An owning skill may delegate physical design, relational or document-model review, migration design, and evidence-led performance review to `q-tool-database-schema`. The caller retains the domain model, architecture decisions, feature meaning, the confirmed technical foundation, every command execution, and every artifact-index delta. Pass one `database_request` conforming to its bundled schema: task, caller, scope, confirmed or inferred profile, exact source versions, redacted supplied evidence, constraints, intended result, and output policy.
+
+`q-tool-database-schema` owns engine-coverage labeling (`verified-profile`, `portable`, `unverified`), the analysis, candidate designs, migration strategies, and its `database_analysis` result. It never executes a query or migration, connects to a database, accepts credentials or unsanitized production records, defaults an engine or model family, browses for engine ground truth, edits a caller's artifact, or writes workflow state or the artifact index. A finding without a representative query, plan, metric, or distribution is a hypothesis with an evidence request.
+
+Keep any persisted analysis derived with `semantic_authority: none` and exact provenance; the accepted design lives in the caller's canonical artifact (domain model, ADR, implementation plan). When the confirmed profile has no verified coverage, return the gap and let the owner route research or decide; never approve on a portable assumption presented as verified.

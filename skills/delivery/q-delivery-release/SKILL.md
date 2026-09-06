@@ -36,33 +36,37 @@ Record in `07-release-candidate.yaml`:
 - UAT scope, criteria, and named owners;
 - the evidence checklist `q-review-release` must reconcile, one line per claim.
 
+Apply the contract's Release engineering context rules. Resolve actual use, internal/external audience, decision owner, criticality and delivery target from existing product and technical decisions; ask only for missing material choices. Record applicability and its rationale on each checklist line. Include only actual deployment environments and operations. A local package/source release records its distribution target and reproducible use checks without inventing remote environments; first-release recovery names a feasible alternative to restoring a nonexistent version.
+
 When `release-candidate-includes-a-schema-or-data-migration-with-material-operational-risk` and `q-tool-database-schema` is installed, delegate `migration-design` with the confirmed database profile, observed schema, workload, and rollout constraints, and reconcile its transient result into the migration entries here. If the tool is absent, `continue-with-the-migration-plan-in-the-implementation-record-and-declare-the-specialist-migration-gap`.
 
-Complete when every included record resolves to an exact version, every migration states its reversibility disposition, and every checklist line names the evidence that will satisfy it.
+Complete when every included record resolves to an exact version, every actual migration states its reversibility disposition, and every checklist line names the evidence that will satisfy it or a justified non-applicability. The user confirms this exact candidate and its material applicability decisions together; reuse already confirmed context.
 
 ### execute-release
 
-Per environment, in the declared order:
+For a local package/source target without deployment, verify the candidate's reproducible build, packaging and use checks and record the delivery location and recovery disposition. Do not request deployment approval for an operation that does not exist; apply the normal permission boundary to any actual external effect.
+
+For each actual environment, in the declared order:
 
 1. Verify preconditions: base commit, build artifact, configuration and secret availability by name, and the previous environment's recorded outcome.
 2. Obtain explicit approval naming this environment and this operation. Production approval is never inferred from a staging approval, and one approval never covers two operations.
 3. Run the project's discovered deploy and migration commands, or, when the agent lacks access, record the human-executed step with its source, operator, timestamp, command or console action, and outcome. Human-executed evidence is labelled as such and never presented as agent evidence.
 4. Run the smoke checks the candidate declares and record their output.
-5. Drill the rollback in a lower environment before the production run and record whether the restore reproduced the pre-release state, was partial, or is impossible.
+5. Execute the candidate's applicable recovery check. When production consequences warrant a lower-environment rollback drill, run it before production and record whether restore reproduced the pre-release state, was partial, or is impossible. For another justified route, record its verified alternative or the unresolved/accepted risk; do not relabel an untested recovery claim `not_applicable`.
 
 Write every result into `07-release-evidence.md` with provenance. On a failed precondition, missing approval, or failed smoke check, stop at that environment and return the blocker with the exact pending effect and the safe next action.
 
-Complete when every executed environment has an approval reference, a command or human-executed record, a smoke-check result, and a rollback disposition.
+Complete when each local delivery check has a recorded outcome and recovery disposition, and every executed environment has an approval reference, a command or human-executed record, a smoke-check result, and a rollback disposition. An unexecuted applicable operation remains a named gap.
 
 ### coordinate-uat
 
-Produce the UAT plan from the candidate's scope and criteria: sessions, participants, data, and per-criterion pass conditions. Sessions run as `required_user_actions`; record each criterion's outcome, evidence reference, and owner. A screenshot, a zero exit code, or an agent walkthrough is not user acceptance. Record refused, deferred, or unreachable criteria as named gaps rather than as passes.
+Produce the UAT plan from the candidate's scope and criteria: named participants or accountable owner, suitable data, and per-criterion pass conditions. Use an asynchronous owner check for a bounded local/internal release when sufficient; coordinate sessions only when user coverage or risk needs them. Human checks run as `required_user_actions`; record each criterion's outcome, evidence reference, and owner. A screenshot, a zero exit code, or an agent walkthrough is not user acceptance. Record refused, deferred, or unreachable criteria as named gaps rather than as passes.
 
 Complete when every UAT criterion carries a recorded outcome and owner, or an explicit gap.
 
 ### close-delivery
 
-Write `08-delivery-manifest.yaml` with delivered scope and its source IDs, versions, environments and their deployment timestamps, the integral validation reference and verdict, the acceptance decision reference, known deviations, accepted risks, and open follow-ups routed to their owners. Derive `08-release-notes.md` from the manifest, the included backlog items, and the tickets; keep it `creation_mode: derived` with `semantic_authority: none` and provenance naming its sources.
+Write `08-delivery-manifest.yaml` with delivered scope and its source IDs, versions, delivery target and context, actual environments and their deployment timestamps when deployed, the integral validation reference and verdict, the acceptance decision reference, known deviations, accepted risks, and open follow-ups routed to their owners. For a local package/source delivery, record its exact identity, location and verification instead of fabricated deployment timestamps. Derive `08-release-notes.md` from the manifest, the included backlog items, and the tickets; keep it `creation_mode: derived` with `semantic_authority: none` and provenance naming its sources.
 
 Run this mode only after `q-review-release` has returned a verdict and `q-delivery-workflow` has recorded the acceptance decision.
 

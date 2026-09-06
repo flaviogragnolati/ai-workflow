@@ -1,0 +1,14 @@
+## Release engineering
+
+A release candidate names an exact base commit or tag, the included execution records at exact versions, target environments in order, migrations with a reversibility disposition (`possible`, `partial`, or `impossible` with its restore path or forward-fix), configuration and secret names — never values — a rollout and rollback plan, the UAT scope, and the evidence checklist integral validation will reconcile. `q-delivery-release` forms, executes, and closes it; `q-review-release` validates it; the root orchestrator decides acceptance and transitions lifecycles.
+
+Deployment and migration are external effects: each environment and operation needs its own explicit approval, production is never inferred from a lower environment, and a step the agent could not execute is recorded as human-executed evidence with provenance, never as agent evidence. A hotfix or rollback is a new release candidate over the released version; a `Released` version is never edited in place. Release tags, branches, and pushes are Git mutations requested as user actions under the Git operations section.
+
+Scale release requirements to the confirmed use, audience, criticality, data sensitivity, exposure, reversibility, and actual delivery target. Record that context and each evidence claim's applicability in the candidate's existing checklist; do not create another release-profile artifact. Internal/external and local/development/shared/production are context, not blanket risk exemptions.
+
+- A local tool or library may be delivered as an exact tested package or source version with reproducible use instructions and a named human acceptance outcome. Remote deployment, production timestamps, or an invented lower environment are not required when no such operation exists.
+- Development or evaluation use carries its actual limits, users and data constraints; it is not accepted as production-ready merely because it runs.
+- Shared or production use requires evidence for its real access, data, deployment, migration and recovery risks. Run a lower-environment rollback drill when production consequences warrant it and that route exists; otherwise record the verified recovery alternative or an explicit unresolved/accepted risk.
+- For a first release without an earlier deployed version, describe cleanup, safe disablement, backup/restore, or a forward correction as applicable. Never claim restoration to a nonexistent prior release.
+
+Every checklist claim is applicable with required evidence, or `not_applicable` with an evidenced reason and scope. Non-applicability is not missing evidence or an accepted risk. Version identity, delivered scope, proportional verification and a named human acceptance decision remain required. Human UAT may be an asynchronous check by the internal owner; separate meetings or external clients are not universal requirements. A machine check never supplies human acceptance.

@@ -20,8 +20,9 @@
     },
     {
       "title": "Shared tools",
-      "description": "Cross-cutting tools for browser-rendered web capture, bilingual prose editing, database design evidence, C4 architecture models and views, validated interactive HTML diagrams and architecture deltas, editable structural diagrams and Marp presentations, Word documents, spreadsheets, PowerPoint files, runtime-neutral PDF mechanics, and measured documentation compaction while owning stages retain project meaning.",
+      "description": "Guided workflow onboarding plus cross-cutting tools for browser-rendered web capture, bilingual prose editing, database design evidence, C4 architecture models and views, validated interactive HTML diagrams and architecture deltas, editable structural diagrams and Marp presentations, Word documents, spreadsheets, PowerPoint files, runtime-neutral PDF mechanics, and measured documentation compaction while owning stages retain project meaning.",
       "skills": [
+        "q-tool-init",
         "q-tool-mermaid",
         "q-tool-marp",
         "q-tool-web-markdown",

@@ -109,7 +109,14 @@ The sync copies Archify's `bin/`, renderer and schema trees, HTML template,
 architecture-delta and workflow-migration modules, brand-mark catalog, scenario
 recipe, four runtime references, delivery checker and example renderer, JSON
 examples, `skill-release.json`, `LICENSE`, and `THIRD_PARTY_NOTICES.md`
-verbatim. It intentionally excludes Archify's `SKILL.md`, tests, generated HTML
+verbatim before applying Quasar's maintained
+`skills/scripts/patches/archify-subprocess-diagnostics.patch` to `bin/archify.mjs`.
+That patch rejects unreliable subprocess results and invalid JSON receipts with
+structured diagnostics, preserving failed-delivery rollback and hash checks.
+`skills/scripts/archify_runtime_patch.py` pins the upstream CLI, patch, and patched
+CLI SHA-256 hashes; `ARCHIFY_VERSION` records the patch hash alongside the unchanged
+upstream commit and version. The patch remains under the same MIT terms.
+The sync intentionally excludes Archify's `SKILL.md`, tests, generated HTML
 examples, package metadata, update checker, source generators, repository
 automation, and other non-runtime files. The Quasar skill wrapper,
 request/result contracts, policy, capability probe, tests, fixtures, routing,

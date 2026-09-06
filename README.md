@@ -1,6 +1,6 @@
 # Quasar AI delivery skills
 
-This package is a coordinated catalog of Agent Skills for running a software consultancy's delivery flow end to end: explore an opportunity, win it commercially, plan and build the software or execute the consulting engagement, review it, deliver it, and report on it. Thirteen groups organize the catalog; shared governance keeps every skill narrow, auditable, and honest about what it did. Start with `skill-manifest.yaml` — it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
+This package is a coordinated catalog of Agent Skills for starting and delivering internal products, software projects, and consulting engagements: agree the starting point, discover what the next decision needs, prepare a commercial proposal when applicable, plan and build or execute the engagement, review, deliver, and report. Thirteen groups organize the catalog; shared governance keeps every skill narrow, auditable, and honest about what it did. Start with `skill-manifest.yaml` — it is the canonical registry for skill IDs, paths, routing, side effects, approval policies, and compatibility.
 
 ## Install
 
@@ -18,7 +18,7 @@ The installer copies one skill folder at a time into your project's agent direct
 
 This package remains prerelease. `CHANGELOG.md` records work under `Unreleased`; no stable package version or release tag is established by the current repository state.
 
-Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 69 are. `skills.sh.json` lays out the skills.sh repository page: its coverage is derived — the validator requires every public skill and no internal one to appear exactly once — while its section titles are curated reading groups (for example, delivery and plan share "Product and technical planning", and the code group is split across three sections).
+Skill IDs follow `q-<group>-<leaf>`, so the catalog stays recognizable in a shared agent directory and sorts by group. `q-maint-ai-workflow`, `q-maint-writing-for-agents`, and `q-maint-skill-quality` are `distribution: internal` and are not offered to consumers; the remaining 70 are. `skills.sh.json` lays out the skills.sh repository page: its coverage is derived — the validator requires every public skill and no internal one to appear exactly once — while its section titles are curated reading groups (for example, delivery and plan share "Product and technical planning", and the code group is split across three sections).
 
 ## Philosophy
 
@@ -52,6 +52,7 @@ Start here:
 
 | You have … | Start with | Because |
 |---|---|---|
+| a new project or uncertainty about which workflows to initialize | `$q-tool-init` | it agrees the starting evidence, included/excluded work, first outcome, use and criticality, then hands off to one root |
 | meeting notes, emails, a client ask, no quote yet | `$q-proposal-workflow` | discovery and the proposal own commercial meaning |
 | an accepted proposal (or SOW) for consulting, assessment, training, or a managed service | `$q-consult-workflow` | it executes non-software scope to recorded acceptance |
 | an accepted proposal for software, or a product idea | `$q-delivery-workflow` | it plans, iterates, releases, and delivers software |
@@ -60,6 +61,8 @@ Start here:
 | an option space that is itself the open question | `$q-ideation-session`, then the owning workflow adopts | ideation generates options, never facts |
 | one bounded question about the project as it is | `$q-ask-project` | read-only, transient |
 | documentation that has outgrown what an agent should load | `$q-tool-docs-compactor` | measured, approval-gated reduction; never a `Released` version |
+
+Delivery plans the first useful increment and its cross-cutting constraints, leaving future detail for progressive discovery. The user sees the current outcome, completed and pending work, one next action and its actor. Release evidence follows actual use, criticality, data and delivery target: a local or development release does not imply production readiness or invented environments, and internal use does not waive real risks.
 
 ## Skill groups
 
@@ -77,7 +80,7 @@ Each linked guide explains one group in depth: its internal flow, a when-to-use 
 | `code` | 15 | The development loop: orient, refine, implement, and handle trouble | [code guide](skills/code/README.md) |
 | `review` | 8 | QA that never modifies its target: changes, releases, plan conformance, documentation, evidence, and skills | [review guide](skills/review/README.md) |
 | `report` | 4 | Approved artifacts to a traced report and its rendered channels | [report guide](skills/report/README.md) |
-| `tool` | 12 | Format, web-capture, interactive diagram, and documentation-compaction mechanics any caller can delegate to | [tool guide](skills/tool/README.md) |
+| `tool` | 13 | Guided onboarding, format, web-capture, interactive diagram, and documentation-compaction tools | [tool guide](skills/tool/README.md) |
 | `core` | 2 | Public companions for shared workflow governance and Quasar identity/editorial guidance | [core guide](skills/core/README.md) |
 | `maint` | 3 | Package maintenance; internal, not distributed | [maint guide](skills/maint/README.md) |
 
@@ -100,6 +103,9 @@ flowchart TB
         REV["review<br/>mini review and integral QA"]
         SHIP["delivery<br/>release engineering and manifest"]
     end
+    START["q-tool-init<br/>starting point and included workflows"] -. "commercial work" .-> PRO
+    START -. "internal idea or software scope" .-> PLN
+    IDEA["Product idea or internal brief"] --> PLN
     IDE -. "adopted snapshot" .-> PRO
     IDE -. "evidence request" .-> RES
     RES -. "adopted baseline" .-> PRO
@@ -145,10 +151,11 @@ Every workflow stops at named human decisions. The manifest `approval_policy` st
 
 - **`q-proposal-workflow`** — you approve the discovery brief, the proposal design (scope, price, schedule, terms), and each requested channel; the commercial release marks the accepted proposal-source version `Released`. The client's disposition is recorded, never inferred, and publishing the web channel is a separate approval.
 - **`q-consult-workflow`** — the engagement gate, the assessment gate, the design gate, and the acceptance gate. Acceptance is the client's recorded disposition per deliverable and exact version; the execution release follows it. A deviation from the accepted proposal opens change control instead of editing it.
-- **`q-delivery-workflow`** — each planning stage; the backlog item you select as the active front; release acceptance; a per-environment approval for every deploy and migration, with production never inferred from a lower environment; and hotfix scope.
+- **`q-tool-init`** — agree the starting point, included/excluded work and first workflow action; existing decisions are reused, and the selected root alone initializes state. Direct invocation of a known workflow remains valid.
+- **`q-delivery-workflow`** — unresolved material scope, stack, domain, architecture, design and priority decisions under each owner's policy; the backlog item you select as the active front; release acceptance; per-environment approval for actual deploy and migration operations; and hotfix scope. Routine validation, reconciliation and recording an already approved artifact version add no approval turn.
 - **`q-research-workflow`** — the scope, budget, and privacy boundary before any search; the baseline before it is usable; and how the caller adopts it.
 - **`q-report-workflow`** — the source snapshot, the report meaning, and each channel; then the reporting release. Publication or sending is always a separate approval.
-- **Tools** — local generation only, inside authorized paths, with explicit overwrite approval, no runtime install, no remote render, and no publication.
+- **Format and editing tools** — local generation only, inside authorized paths, with explicit overwrite approval, no runtime install, no remote render, and no publication.
 
 Two rules cut across all of them. Git effects — staging, committing, pushing, opening a pull request, deleting a ref — are operation-scoped and never implied by a package or project write authorization. And generation or release approval never authorizes publication or external sending; that is always its own gate.
 
@@ -185,6 +192,10 @@ Lifecycle tells you how much a file is allowed to move: `Working` is mutable and
 Invoke one orchestrator and name the objective or target stage:
 
 ```text
+Use $q-tool-init to initialize this internal product from an idea: agree the first useful outcome, exclusions, local use, and the first workflow.
+Use $q-delivery-workflow to plan the first useful increment from this internal brief; no commercial proposal is needed.
+Use $q-delivery-workflow to report where we are without continuing.
+Use $q-delivery-workflow to continue the authorized front.
 Use $q-proposal-workflow to prepare a commercial proposal from these meeting notes.
 Use $q-consult-workflow to start the engagement from the accepted proposal and route its stages.
 Use $q-research-workflow to investigate this market uncertainty before deciding whether to open a proposal.
@@ -337,6 +348,8 @@ Tool-specific boundaries — web capture, Marp, PPTX, spreadsheet, and database 
 ## Package maintenance
 
 `q-maint-ai-workflow` is the administrative entry point for changing or auditing this package: workflows, skills, governance, routing, metadata, schemas, fixtures, and validators. Repository maintainers invoke it as `$q-maint-ai-workflow`; it is `distribution: internal` and never runs inside a client or project workflow. It builds an impact map, applies the philosophy gate, synchronizes every affected surface — including this README and the group guides — and validates from structure to behavior. `q-maint-writing-for-agents` and `q-maint-skill-quality` are its internal companions for agent-consumed writing and skill acceptance.
+
+Maintenance compares supplied analyses with the current tree and loads only affected contract branches. Changes to onboarding or delivery receive regression checks for the affected handoffs, approval reuse, applicability, and actual release target; those checks stay outside project execution.
 
 ## Planned capabilities
 

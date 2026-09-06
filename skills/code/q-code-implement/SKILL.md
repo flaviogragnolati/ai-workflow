@@ -11,7 +11,7 @@ Read the `q-core-contract` companion for shared governance and its stage-result 
 
 ## Load
 
-1. Read repository instructions, the original execution record, and the applicable technical foundation, application standards, and ADRs when they exist. For interface work, read the exact `design_system_ref` version and build from its tokens and component contracts; note any declared token-validation gap rather than treating the token set as verified.
+1. Read repository instructions, the original execution record, and the applicable technical foundation, application standards, and ADRs when they exist. For interface work, apply the contract's Design system reference disposition; when a system exists, read its exact version and build from its tokens and component contracts, preserving any declared token-validation gap.
 2. Resolve acceptance criteria, scope, non-goals, dependencies, must-not-break behavior, and required approvals.
 3. Inspect the real code before editing.
 4. Discover the project's actual build, test, analysis, formatting, migration, and packaging commands. Select `q-code-tdd` only when explicitly requested or chosen. Testing remains required either way.

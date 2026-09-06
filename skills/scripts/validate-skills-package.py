@@ -16,6 +16,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SKILLS_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import yaml_subset as yaml  # noqa: E402
+from archify_runtime_patch import verify_runtime_patch  # noqa: E402
 
 TYPE_MAP = {
     "object": dict,
@@ -1322,6 +1323,10 @@ def archify_runtime_errors(skills: dict[str, Any]) -> list[str]:
         errors.append("q-tool-archify: runtime version must be pinned at %s" % ARCHIFY_PINNED_VERSION)
     if metadata.get("commit") != ARCHIFY_PINNED_COMMIT:
         errors.append("q-tool-archify: runtime commit must be pinned at %s" % ARCHIFY_PINNED_COMMIT)
+    try:
+        verify_runtime_patch(runtime)
+    except (OSError, ValueError) as exc:
+        errors.append("q-tool-archify: %s" % exc)
 
     node = shutil.which("node")
     if not node:
@@ -1575,7 +1580,7 @@ def stage_semantics(data: Any) -> list[str]:
     return errors
 
 
-def workflow_state_semantics(data: Any) -> list[str]:
+def workflow_state_semantics(data: Any, available_refs: set[str] | None = None) -> list[str]:
     if not isinstance(data, dict):
         return ["workflow state must be a mapping"]
     errors: list[str] = []
@@ -1589,7 +1594,7 @@ def workflow_state_semantics(data: Any) -> list[str]:
     stage_status = data.get("stage_status", {})
     foundation_completed = (
         isinstance(stage_status, dict)
-        and stage_status.get("q-plan-tech-foundation") == "completed"
+        and stage_status.get("q-plan-tech-foundation") in {"completed", "completed_with_warnings"}
     )
     if (data.get("current_stage") in downstream or foundation_completed) and not data.get("technical_foundation_ref"):
         errors.append("downstream workflow state requires technical_foundation_ref")
@@ -1607,6 +1612,9 @@ def workflow_state_semantics(data: Any) -> list[str]:
         status = data.get("status")
         next_action = data.get("next_action")
         next_actor = data.get("next_actor")
+        current_stage = data.get("current_stage")
+        if data.get("stack_profile") != "project-defined":
+            errors.append("ai-coding workflow state requires stack_profile project-defined")
         if data.get("schema_version") != "1.1":
             errors.append("ai-coding workflow state requires schema_version 1.1")
         if "active_front" not in data:
@@ -1614,11 +1622,32 @@ def workflow_state_semantics(data: Any) -> list[str]:
         if "next_actor" not in data:
             errors.append("ai-coding workflow state requires next_actor")
         active_front = data.get("active_front")
+        execution_stages = {
+            "q-code-grill-simple", "q-code-grill-feature", "q-code-grill-design",
+            "q-code-implementation-plan", "q-code-tickets", "q-code-implement",
+            "q-code-fix", "q-code-debug",
+        }
+        if status == "working" and current_stage in execution_stages:
+            if not isinstance(active_front, dict):
+                errors.append("working development-loop state requires an authorized active_front")
+            if not data.get("technical_foundation_ref"):
+                errors.append("working development-loop state requires technical_foundation_ref")
+        refs = [data.get("technical_foundation_ref"), data.get("design_system_ref")]
         if isinstance(active_front, dict):
             for field in ("item_ref", "record_ref"):
                 value = active_front.get(field)
                 if not isinstance(value, str) or not value.strip():
                     errors.append("ai-coding active_front.%s must be non-empty" % field)
+                else:
+                    refs.append(value)
+        for reference in refs:
+            if reference is None:
+                continue
+            identity, separator, version = reference.rpartition("@") if isinstance(reference, str) else ("", "", "")
+            if not separator or not identity.strip() or not version.strip() or version != version.strip():
+                errors.append("ai-coding reference requires exact identity and version: %r" % reference)
+            elif available_refs is not None and reference not in available_refs:
+                errors.append("ai-coding reference does not resolve in supplied evidence: %s" % reference)
         if status in {"not_started", "completed", "closed"} and active_front is not None:
             errors.append("ai-coding active_front must be null outside a selected development front")
         if status in {"not_started", "working", "blocked"}:
@@ -3198,15 +3227,15 @@ def contract_marker_errors() -> tuple[list[str], int]:
         ],
         "S-12": [
             ("plan/q-plan-tech-foundation/SKILL.md", "Never block solely because the selected stack is not T3"),
-            ("core/q-core-contract/SKILL.md", "profile-driven"),
+            ("core/q-core-contract/references/technical-profile.md", "profile-driven"),
         ],
         "S-13": [
             ("delivery/q-delivery-workflow/SKILL.md", "On resume"),
             ("delivery/q-delivery-workflow/SKILL.md", "Do not reopen closed decisions"),
         ],
         "S-14": [
-            ("core/q-core-contract/SKILL.md", "Domain or architecture Mermaid source"),
-            ("core/q-core-contract/SKILL.md", "SVG, PNG, or PDF rendered from Mermaid"),
+            ("core/q-core-contract/references/diagrams.md", "Domain or architecture Mermaid source"),
+            ("core/q-core-contract/references/diagrams.md", "SVG, PNG, or PDF rendered from Mermaid"),
         ],
         "S-15": [
             ("report/q-report-workflow/SKILL.md", "Reporting is optional"),
@@ -3263,7 +3292,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("plan/q-plan-tech-foundation/SKILL.md", "current primary sources"),
         ],
         "S-25": [
-            ("core/q-core-contract/SKILL.md", "sole owner of the authored technical foundation"),
+            ("core/q-core-contract/references/technical-profile.md", "sole owner of the authored technical foundation"),
             ("delivery/q-delivery-workflow/SKILL.md", "technical_foundation_ref"),
             ("plan/q-plan-architecture/SKILL.md", "never edit their owned artifacts directly"),
         ],
@@ -3303,7 +3332,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
         "S-33": [
             ("code/q-code-research/SKILL.md", "do not start `q-research-workflow`"),
             ("code/q-code-research/SKILL.md", "stage delta with `global_state_updated: false`"),
-            ("core/q-core-contract/SKILL.md", "references/cited-findings.schema.yaml"),
+            ("core/q-core-contract/references/engagement-research.md", "references/cited-findings.schema.yaml"),
         ],
         "S-34": [
             ("review/q-review-comments/SKILL.md", "Validating intention without code"),
@@ -3355,8 +3384,8 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("tool/q-tool-database-schema/references/migration-strategies.md", "Classify rollback as"),
         ],
         "S-44": [
-            ("core/q-core-contract/SKILL.md", "Structured ideation is optional"),
-            ("core/q-core-contract/SKILL.md", "The adopting workflow owns the lifecycle transition"),
+            ("core/q-core-contract/references/structured-ideation.md", "Structured ideation is optional"),
+            ("core/q-core-contract/references/structured-ideation.md", "The adopting workflow owns the lifecycle transition"),
             ("ideation/q-ideation-session/SKILL.md", "Never browse, cite, or change the candidate pool from unauthorized research"),
             ("ideation/q-ideation-session/SKILL.md", "never writes `00-workflow-state.yaml`"),
         ],
@@ -3395,17 +3424,17 @@ def contract_marker_errors() -> tuple[list[str], int]:
         "S-51": [
             ("report/q-report-source/SKILL.md", "typed `evidence_refs`"),
             ("report/q-report-workflow/SKILL.md", "it never searches, processes raw survey responses, recalculates market values"),
-            ("core/q-core-contract/SKILL.md", "`content_profile` states the semantic source pattern"),
+            ("core/q-core-contract/references/reporting.md", "`content_profile` states the semantic source pattern"),
         ],
         "S-52": [
-            ("core/q-core-contract/SKILL.md", "Keep three runtime states distinguishable"),
+            ("core/q-core-contract/references/design-system-reference.md", "Keep three runtime states distinguishable"),
             ("delivery/q-delivery-workflow/SKILL.md", "does the product have a durable visual interface whose reusable design decisions outlive a single feature?"),
             ("delivery/q-delivery-workflow/SKILL.md", "never write it as `not_applicable`"),
             ("plan/q-plan-design-system/references/applicability-and-modes.md", "accepted omission"),
             ("plan/q-plan-design-system/SKILL.md", "A completed assessment is not a claim that a design system exists"),
         ],
         "S-53": [
-            ("core/q-core-contract/SKILL.md", "Do not add a second global reference field"),
+            ("core/q-core-contract/references/design-system-reference.md", "Do not add a second global reference field"),
             ("plan/q-plan-design-system/SKILL.md", "without copying a single value"),
             ("plan/q-plan-design-system/references/dtcg-and-validation.md", "never validate an extracted or reconstructed copy"),
             ("plan/q-plan-features/SKILL.md", "route a pattern that recurs across features to `q-plan-design-system`"),
@@ -3425,7 +3454,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
         "S-56": [
             ("plan/q-plan-architecture/SKILL.md", "approved-architecture-meaning-benefits-from-c4-views-or-a-synchronized-model"),
             ("plan/q-plan-features/SKILL.md", "A module is not automatically a C4 component"),
-            ("core/q-core-contract/SKILL.md", "caller still owns the approved people, systems, containers, components"),
+            ("core/q-core-contract/references/diagrams.md", "caller still owns the approved people, systems, containers, components"),
         ],
         "S-57": [
             ("report/q-report-source/SKILL.md", "never reconstruct a model from a derived render"),
@@ -3458,7 +3487,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("proposal/q-proposal-discovery/SKILL.md", "Never grade a confirmed client statement as scientific evidence"),
         ],
         "S-62": [
-            ("core/q-core-contract/SKILL.md", "Pass one `pdf_request` with exact source refs"),
+            ("core/q-core-contract/references/pdf-delegation.md", "Pass one `pdf_request` with exact source refs"),
             ("tool/q-tool-pdf/SKILL.md", "The dispatcher resolves Python or Node"),
             ("tool/q-tool-pdf/SKILL.md", "Never install a runtime or dependency"),
             ("proposal/q-proposal-document/SKILL.md", "requested-proposal-channel-includes-pdf-inspection-or-validation"),
@@ -3473,7 +3502,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("scripts/validate-skills-package.py", "unregistered or nested SKILL.md"),
         ],
         "S-64": [
-            ("core/q-core-contract/SKILL.md", "Pass one `document_request` with exact source refs"),
+            ("core/q-core-contract/references/document-delegation.md", "Pass one `document_request` with exact source refs"),
             ("tool/q-tool-document/SKILL.md", "The local runtime never installs dependencies"),
             ("tool/q-tool-document/SKILL.md", "creation_mode: derived"),
             ("proposal/q-proposal-document/SKILL.md", "requested-proposal-docx-mechanics-need-inspection-editing-comment-redline-conversion-or-validation"),
@@ -3481,7 +3510,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("../LICENSE", "DOCX functional reference — restricted source not incorporated"),
         ],
         "S-65": [
-            ("core/q-core-contract/SKILL.md", "Pass one `spreadsheet_request` with exact source refs"),
+            ("core/q-core-contract/references/spreadsheet-delegation.md", "Pass one `spreadsheet_request` with exact source refs"),
             ("tool/q-tool-spreadsheet/SKILL.md", "Never install a runtime or dependency"),
             ("tool/q-tool-spreadsheet/SKILL.md", "creation_mode: derived"),
             ("tool/q-tool-spreadsheet/SKILL.md", "spreadsheet-validation-needs-pdf-structure-or-rendered-page-inspection"),
@@ -3489,7 +3518,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("../LICENSE", "XLSX functional reference — restricted source not incorporated"),
         ],
         "S-66": [
-            ("core/q-core-contract/SKILL.md", "Pass one `pptx_request` with exact source refs"),
+            ("core/q-core-contract/references/pptx-delegation.md", "Pass one `pptx_request` with exact source refs"),
             ("tool/q-tool-pptx/SKILL.md", "Never install a runtime or dependency"),
             ("tool/q-tool-pptx/SKILL.md", "Refuse input/output collisions even with `--overwrite`"),
             ("tool/q-tool-pptx/SKILL.md", "pptx-validation-needs-pdf-structure-or-rendered-page-inspection"),
@@ -3497,7 +3526,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("../LICENSE", "PPTX functional reference — restricted source not incorporated"),
         ],
         "S-67": [
-            ("core/q-core-contract/SKILL.md", "Pass one `marp_request` with the exact source refs"),
+            ("core/q-core-contract/references/marp-delegation.md", "Pass one `marp_request` with the exact source refs"),
             ("tool/q-tool-marp/SKILL.md", "Never install the runtime during a skill execution"),
             ("tool/q-tool-marp/SKILL.md", "standard Marp PPTX distinct from a native object-editable PPTX"),
             ("tool/q-tool-marp/SKILL.md", "source/output collision"),
@@ -3529,9 +3558,9 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("ideation/q-ideation-session/references/handoffs.md", "`q-consult-current-state`"),
         ],
         "S-71": [
-            ("core/q-core-contract/SKILL.md", "The **mini review** is the pair"),
-            ("core/q-core-contract/SKILL.md", "no stage selects it for the user"),
-            ("core/q-core-contract/SKILL.md", "The backlog item, owned by `q-plan-backlog`, is the commitment"),
+            ("core/q-core-contract/references/development-records.md", "The **mini review** is the pair"),
+            ("core/q-core-contract/references/development-records.md", "no stage selects it for the user"),
+            ("core/q-core-contract/references/development-records.md", "The backlog item, owned by `q-plan-backlog`, is the commitment"),
             ("delivery/q-delivery-workflow/SKILL.md", "For a defect item"),
             ("code/q-code-fix/SKILL.md", "never-report-the-change-as-reviewed"),
             ("code/q-code-debug/SKILL.md", "never-report-the-change-as-reviewed"),
@@ -3540,7 +3569,7 @@ def contract_marker_errors() -> tuple[list[str], int]:
         "S-72": [
             ("core/q-core-contract/SKILL.md", "Database-schema delegation"),
             ("core/q-core-contract/SKILL.md", "Prose delegation"),
-            ("core/q-core-contract/SKILL.md", "`adopt-as-planning-input`"),
+            ("core/q-core-contract/references/engagement-research.md", "`adopt-as-planning-input`"),
             ("research/q-research-investigate/SKILL.md", "supplied-source-arrives-as-pdf-and-needs-verified-extraction"),
             ("proposal/q-proposal-discovery/SKILL.md", "client-evidence-arrives-as-pdf-and-needs-verified-extraction"),
             ("proposal/q-proposal-design/SKILL.md", "meaning lock"),
@@ -3568,14 +3597,14 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("code/q-code-implement/SKILL.md", "Comment only what the code cannot say"),
             ("code/q-code-fix/SKILL.md", "Comment only what the code cannot say"),
             ("code/q-code-debug/SKILL.md", "Comment only what the code cannot say"),
-            ("core/q-core-contract/SKILL.md", "applies them before its close"),
+            ("core/q-core-contract/references/development-records.md", "applies them before its close"),
         ],
         "S-76": [
             ("consult/q-consult-engagement-plan/SKILL.md", "01-commitment-register.yaml"),
             ("consult/q-consult-workflow/SKILL.md", "single source of IDs"),
             ("consult/q-consult-workflow/SKILL.md", "`Baselined`"),
             ("consult/q-consult-acceptance/SKILL.md", "`Baselined`"),
-            ("core/q-core-contract/SKILL.md", "commitment register"),
+            ("core/q-core-contract/references/consulting-execution.md", "commitment register"),
         ],
         "S-77": [
             ("core/q-core-identity/references/document-system.md", "Aptos, Arial, sans-serif"),
@@ -3588,13 +3617,13 @@ def contract_marker_errors() -> tuple[list[str], int]:
         "S-78": [
             ("report/q-report-document/SKILL.md", "never produces a report source"),
             ("report/q-report-document/SKILL.md", "deliverable_kind"),
-            ("core/q-core-contract/SKILL.md", "never produces a report source"),
+            ("core/q-core-contract/references/reporting.md", "never produces a report source"),
             ("consult/q-consult-workflow/SKILL.md", "q-report-document"),
         ],
         "S-79": [
             ("consult/q-consult-session/SKILL.md", "never diagnoses"),
             ("consult/q-consult-workflow/SKILL.md", "q-consult-session"),
-            ("core/q-core-contract/SKILL.md", "restricted"),
+            ("core/q-core-contract/references/consulting-execution.md", "restricted"),
         ],
         "S-80": [
             ("consult/q-consult-intervention/SKILL.md", "never by default"),
@@ -3618,15 +3647,15 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("review/q-review-docs/SKILL.md", "q-tool-docs-compactor"),
         ],
         "S-84": [
-            ("schemas/workflow-state.schema.yaml", "next_actor"),
+            ("core/q-core-contract/references/workflow-state.schema.yaml", "next_actor"),
             ("delivery/q-delivery-workflow/SKILL.md", "Read-only status query"),
             ("delivery/q-delivery-workflow/SKILL.md", "active_front.item_ref"),
             ("delivery/q-delivery-workflow/SKILL.md", "Keep a malformed, stale, or contradictory sidecar in place"),
-            ("core/q-core-contract/SKILL.md", "may update only operational status and execution evidence"),
+            ("core/q-core-contract/references/development-records.md", "may update only operational status and execution evidence"),
             ("plan/q-plan-backlog/SKILL.md", "operational execution update"),
         ],
         "S-85": [
-            ("core/q-core-contract/SKILL.md", "transient shared review bundle"),
+            ("core/q-core-contract/references/development-records.md", "transient shared review bundle"),
             ("code/q-code-implement/SKILL.md", "Prepare one transient shared review bundle"),
             ("code/q-code-tickets/SKILL.md", "without asking a routine ticket question"),
             ("review/q-review-code/SKILL.md", "shared evidence snapshot"),
@@ -4388,7 +4417,7 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
         schema_errors(inactive_manifest_skill, manifest_schema, "manifest")
     ))
 
-    workflow_state_schema = load(SKILLS_ROOT / "schemas" / "workflow-state.schema.yaml")
+    workflow_state_schema = load(CORE_CONTRACT / "references" / "workflow-state.schema.yaml")
     legacy_workflow_state = load(SKILLS_ROOT / "fixtures" / "workflow-state.valid.yaml")
     legacy_workflow_state["stack_profile"] = "t3-core"
     check("workflow-state-rejects-retired-stack-profile", bool(
@@ -4410,15 +4439,58 @@ def behavior_errors(manifest: dict[str, Any]) -> tuple[list[str], int]:
     check("delivery-working-state-rejects-empty-continuation", bool(
         workflow_state_semantics(missing_delivery_continuation)
     ))
-    selected_delivery_front = dict(open_delivery_state)
-    selected_delivery_front["current_stage"] = "q-code-implement"
-    selected_delivery_front["active_front"] = {
-        "item_ref": "BL-042@1.0",
-        "record_ref": "PLAN-BL-042@1.1",
-    }
+    continuation_fixture = load(SKILLS_ROOT / "fixtures" / "delivery-continuation.valid.yaml")
+    selected_delivery_front = continuation_fixture["state"]
+    index_slice = continuation_fixture["artifact_index"]
+    record_slice = continuation_fixture["record_slice"]
+    indexed_refs = {"%s@%s" % (a["artifact_id"], a["version"]) for a in index_slice["artifacts"]}
+    item_refs = {"%s@%s" % (item["item_id"], item["version"]) for item in record_slice["items"]}
+    check("delivery-continuation-fixture-has-an-indexed-source", (
+        record_slice["source_ref"] in indexed_refs
+        and not schema_errors(index_slice, load(CORE_CONTRACT / "references" / "artifact-index.schema.yaml"))
+        and not artifact_semantics(index_slice, set(skills))
+        and selected_delivery_front["project_id"] == index_slice["project_id"]
+    ))
+    available_refs = indexed_refs | item_refs
     check("delivery-selected-front-resolves-item-and-record", not (
         schema_errors(selected_delivery_front, workflow_state_schema)
-        or workflow_state_semantics(selected_delivery_front)
+        or workflow_state_semantics(selected_delivery_front, available_refs)
+    ))
+    for label, replacements in (
+        ("front", {"active_front": None}),
+        ("foundation", {"technical_foundation_ref": None}),
+        ("profile", {"stack_profile": "any"}),
+        ("unversioned-ref", {"technical_foundation_ref": "ART-TECH-001"}),
+        ("stale-version", {"technical_foundation_ref": "ART-TECH-001@0.1"}),
+        ("missing-item", {"active_front": {"item_ref": "BL-404@1.0", "record_ref": "PLAN-BL-042@1.1"}}),
+        ("missing-record", {"active_front": {"item_ref": "BL-042@1.0", "record_ref": "PLAN-404@1.0"}}),
+    ):
+        check("delivery-execution-rejects-invalid-" + label, bool(
+            workflow_state_semantics({**selected_delivery_front, **replacements}, available_refs)
+        ))
+    check("delivery-missing-item-evidence-remains-a-gap", bool(
+        workflow_state_semantics(selected_delivery_front, indexed_refs)
+    ))
+    new_delivery = {
+        **selected_delivery_front, "status": "not_started", "current_stage": "q-plan-product-core",
+        "technical_foundation_ref": None, "stage_status": {}, "active_front": None,
+        "decisions": [], "next_action": "Define the first useful increment from the confirmed idea.",
+    }
+    check("delivery-new-idea-needs-no-predecessor-or-front", not (
+        schema_errors(new_delivery, workflow_state_schema) or workflow_state_semantics(new_delivery, set())
+    ))
+    check("delivery-minimal-ui-needs-no-design-reference", not (
+        workflow_state_semantics(selected_delivery_front, available_refs)
+    ))
+    init = skills.get("q-tool-init", {})
+    check("workflow-init-has-no-persistent-or-state-output", (
+        init.get("workflow") == "shared" and init.get("kind") == "tool"
+        and init.get("execution_modes") == ["standalone"]
+        and init.get("side_effects") == ["none"] and init.get("persistent_outputs") == []
+    ))
+    check("workflow-init-can-reach-every-project-root", (
+        {edge.get("skill") for edge in init.get("uses", [])}
+        == {entry["entry_skill"] for name, entry in workflows.items() if name != "maintenance"}
     ))
     completed_delivery_state = dict(open_delivery_state)
     completed_delivery_state["status"] = "completed"
@@ -4798,14 +4870,14 @@ def run() -> dict[str, Any]:
     fixtures = SKILLS_ROOT / "fixtures"
     errors.extend(manifest_use_fixture_errors(schema, fixtures))
     errors.extend(fixture_pair(
-        schemas / "artifact-index.schema.yaml",
+        CORE_CONTRACT / "references" / "artifact-index.schema.yaml",
         fixtures / "artifact-index.valid.yaml",
         fixtures / "artifact-index.invalid.yaml",
         artifact_semantics,
         active,
     ))
     errors.extend(fixture_pair(
-        schemas / "workflow-state.schema.yaml",
+        CORE_CONTRACT / "references" / "workflow-state.schema.yaml",
         fixtures / "workflow-state.valid.yaml",
         fixtures / "workflow-state.invalid.yaml",
         workflow_state_semantics,

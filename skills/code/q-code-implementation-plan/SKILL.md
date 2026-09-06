@@ -15,7 +15,7 @@ Accept a backlog item, issue, ticket, architecture document, specification, or e
 
 ## Procedure
 
-1. Inspect repository instructions, the applicable technical foundation and adopted guidance, the exact `design_system_ref` version for interface work, relevant code, tests, schemas, migrations, and docs.
+1. Inspect repository instructions, the applicable technical foundation and adopted guidance, relevant code, tests, schemas, migrations, and docs. For interface work, apply the contract's Design system reference disposition and load the exact version when a system exists.
 2. Lock objective, scope, non-goals, deferred work, and must-not-break behavior.
 3. Choose the implementation approach and strict sequence.
 4. Map the files to create, modify, and test with each file's responsibility, then break work into phases and tasks grounded in that map plus exact functions, data, and dependencies. Take module boundaries from the settled design; do not redesign them here.

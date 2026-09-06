@@ -12,7 +12,7 @@ Read the `q-core-contract` companion for shared governance and its stage-result 
 ## Procedure
 
 1. Confirm the objective, user-visible outcome, source backlog or requirement IDs, and must-not-break behavior.
-2. Map current modules, flows, data, contracts, tests, the referenced technical foundation when available, and applicable decisions. For interface work, load the exact `design_system_ref` version and plan against its tokens, components, states, and accessibility contracts; route a needed new reusable pattern to `q-plan-design-system` rather than defining it here.
+2. Map current modules, flows, data, contracts, tests, the referenced technical foundation when available, and applicable decisions. For interface work, apply the contract's Design system reference disposition and load the exact version when a system exists. Route a needed reusable pattern that changes that disposition or contract to `q-plan-design-system` rather than defining it here.
 3. Resolve only material questions about behavior, scope, integration, edge cases, authorization, failure, migration, rollout, and acceptance.
 4. Challenge fuzzy terminology and update project context only when a durable term changes.
 5. Offer an ADR only for a durable architectural decision.

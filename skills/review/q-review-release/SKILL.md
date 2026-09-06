@@ -12,16 +12,18 @@ Read the `q-core-contract` companion for shared governance, especially its Relea
 Load at their exact versions:
 
 - the release candidate and its evidence checklist;
-- the release evidence: environments, approvals, migrations and their reversibility disposition, smoke checks, rollback drill, UAT outcomes;
+- the release evidence: applicable environments, approvals, migrations and their reversibility disposition, smoke and recovery checks, and UAT outcomes;
 - the `codebase-audit` produced over this candidate's scope;
 - verification evidence and mini-review results referenced by the included execution records;
-- `technical_foundation_ref`, and `design_system_ref` when the release exposes a user interface.
+- `technical_foundation_ref`, and the recorded design-system disposition for an interface release, loading `design_system_ref` only when a system exists under the contract's Design system reference rules.
 
 When an input is missing, stale, or unreadable, name it as a gap on the checklist line it was supposed to satisfy. Never reconstruct, re-run, or fill a missing input, and never treat an absent input as a satisfied one.
 
+Apply the contract's Release engineering context rules to the candidate's declared applicability. Check each `not_applicable` reason against actual usage, criticality, delivery target and operations. A justified local or development scope does not require invented production evidence; an applicable untested claim remains a gap. Preserve the exact scope limit in the verdict and require named human acceptance evidence, including for internal releases.
+
 When `release-scope-warrants-documentation-qa-before-acceptance` and `q-review-docs` is installed, route the delivery documentation scope to it and reconcile its transient diagnostic into the documentation checklist lines. If it is absent, `continue-with-the-delivery-documentation-lens-of-the-codebase-audit-and-record-the-documentation-qa-gap`.
 
-Complete authority setup when every checklist line resolves to a loaded evidence reference or a named gap.
+Complete authority setup when every checklist line resolves to a loaded evidence reference, verified non-applicability, or a named gap.
 
 ## Coverage
 
@@ -32,7 +34,7 @@ Reconcile applicable evidence across:
 - relevant accepted NFRs;
 - migrations, deployment, and delivery documentation;
 - adopted technology guidance and the freshness of the exact reviewed `technical_foundation_ref`;
-- accessibility and design-system conformance when the release exposes a user interface, reporting an unvalidated token set or a stale referenced version as a gap rather than as conformance;
+- accessibility for interface scope and design-system conformance when the recorded disposition requires a system, reporting an unvalidated token set or a stale referenced version as a gap rather than as conformance;
 - requirement and acceptance coverage for the release candidate, including UAT.
 
 Disclose generic-only or unverified stack coverage instead of extending an approval over it.
@@ -43,16 +45,16 @@ Write `07-integral-validation.md` beside the candidate it validates, in `docs/de
 
 | Verdict | Condition |
 |---|---|
-| `ready` | Every checklist line has verified evidence and no blocker remains. |
+| `ready` | Every applicable checklist line has verified evidence, every non-applicability has a verified reason, and no blocker remains. |
 | `ready_with_accepted_risks` | Every blocker is either resolved or recorded as an accepted risk that names its impact, its mitigation, and the human decision owner who accepted it. |
-| `blocked` | At least one checklist line has no evidence, or a blocker has no accepted disposition. Name each blocker and the owner it returns to. |
+| `blocked` | At least one applicable checklist line has no evidence, a non-applicability is unjustified, or a blocker has no accepted disposition. Name each blocker and the owner it returns to. |
 
 A hotfix narrows coverage to the changed surface plus regression over the released version; it never lowers the evidence standard for the lines it does cover. Never promote `ready_with_accepted_risks` to `ready` without the named decision owner, and never widen a verdict to cover scope the evidence does not reach.
 
 ## Procedure
 
 1. Lock the candidate version, its scope, and the checklist as the validation contract.
-2. Map each checklist line to its evidence reference or gap.
+2. Map each checklist line to its evidence reference, justified non-applicability, or gap; reject an applicability exemption contradicted by actual operations or risk.
 3. Reconcile contradictions between the audit, the tests, the release evidence, and the mini-review results; keep the materially distinct evidence rather than collapsing it.
 4. Classify each unmet line as a blocker, an accepted risk with its decision owner, or a coverage gap.
 5. Write the validation with per-line coverage, the verdict, blockers with owners, accepted risks with owners, and residual gaps.

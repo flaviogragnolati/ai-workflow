@@ -63,6 +63,8 @@ Skip any step whose purpose is already met: orientation when context exists, ref
 
 `q-code-merge-conflicts`, `q-code-prototype`, `q-code-explain`, and `q-code-handoff` are standalone-only (`execution_modes: [standalone]` in the manifest): the user or implementer invokes them; the orchestrator never routes to them.
 
+For interface work, each consumer resolves the recorded design-system disposition: load an executed system at its exact version, apply project standards for `not_applicable`, and preserve an accepted omission's decision and risks. A valid null reference is not missing input.
+
 ## Boundaries
 
 - An implementation scratchpad or internal delegation is never a durable project plan; durable plans come from the grills or the implementation plan.
