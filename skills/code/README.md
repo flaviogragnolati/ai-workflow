@@ -65,6 +65,8 @@ Skip any step whose purpose is already met: orientation when context exists, ref
 
 For interface work, each consumer resolves the recorded design-system disposition: load an executed system at its exact version, apply project standards for `not_applicable`, and preserve an accepted omission's decision and risks. A valid null reference is not missing input.
 
+For browser code, look up the relevant Modern Web Guidance guide before implementation. The technical mini review checks the changed browser surface and runs Fallow for affected TypeScript packages. [Commands and evidence](../core/q-core-contract/references/web-and-typescript-checks.md)
+
 ## Boundaries
 
 - An implementation scratchpad or internal delegation is never a durable project plan; durable plans come from the grills or the implementation plan.

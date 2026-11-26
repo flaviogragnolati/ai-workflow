@@ -3662,6 +3662,13 @@ def contract_marker_errors() -> tuple[list[str], int]:
             ("review/q-review-comments/SKILL.md", "coverage is empty and verified"),
             ("review/q-review-comments/SKILL.md", "even when their lines did not change"),
         ],
+        "S-86": [
+            ("core/q-core-contract/SKILL.md", "references/web-and-typescript-checks.md"),
+            ("plan/q-plan-tech-foundation/SKILL.md", "Web and TypeScript checks"),
+            ("code/q-code-implement/SKILL.md", "Web and TypeScript checks"),
+            ("review/q-review-code/SKILL.md", "Web and TypeScript checks"),
+            ("review/q-review-codebase/SKILL.md", "Web and TypeScript checks"),
+        ],
     }
     errors: list[str] = []
     for marker, requirements in checks.items():
@@ -4648,6 +4655,8 @@ def package_doc_errors() -> list[str]:
             'Browser-rendered web capture references',
             'https://github.com/leonardocouy/web2md',
             'https://github.com/microsoft/markitdown',
+            'https://github.com/GoogleChrome/modern-web-guidance-src',
+            'https://github.com/fallow-rs/fallow',
             'K-Dense Inc. adaptations',
             'Softaworks / Leonardo Flores references and adaptations',
             'danyuchn / Dustin Yuchen Teng reference',

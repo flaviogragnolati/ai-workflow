@@ -63,6 +63,8 @@ The artifact must include:
 
 External references support the artifact; they do not choose the stack. Prefer concise paraphrases and links over copied documentation. Mark guidance unverified when its applicable version or source cannot be confirmed.
 
+For browser-facing code, record the supported browsers that determine whether a Modern Web Guidance recommendation needs a fallback. For a TypeScript package, consider Fallow for structural analysis. Record any adopted guide, tool version and command in the existing guidance and verification sections. The contract's Web and TypeScript checks supply the execution procedure.
+
 ## Reconciliation and ownership
 
 `q-plan-design-system` consumes these interface selections and turns them into reusable design contracts; it never chooses the library, tooling, format, or accessibility target itself. Record `WCAG 2.2 Level AA` as the web default unless a contract, regulation, or platform requires another target, and add the platform's own standards for a non-web product. Confirm a token-format validator only when the project will genuinely run it; an absent validator is a declared coverage gap downstream, not a reason to invent a dependency.

@@ -53,6 +53,7 @@ Rank findings by severity and likelihood. Do not bury blockers under style obser
 1. Lock scope, baseline, technical foundation version, and review criteria.
 2. Map relevant architecture, flows, data, selected technologies, and verification commands.
 3. Inspect evidence across applicable generic, project, and technology-specific lenses.
+   For a browser-facing surface or TypeScript package, run the contract's Web and TypeScript checks at the locked audit scope. Include verified findings and tool coverage gaps in the existing audit.
 4. Cross-check findings to remove duplicates, version mismatches, and unsupported claims.
 5. Produce the Markdown audit using the report template and record coverage by lens.
 6. Summarize release blockers, high-priority findings, accepted risks, and generic or technology-specific coverage gaps.

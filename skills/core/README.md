@@ -33,6 +33,7 @@ Read the core rules once and follow only the conditional reference for the activ
 | forming, executing, or validating a release | Release engineering |
 | executing an accepted non-software engagement | Consulting execution |
 | working against a project stack, or with none | Stack compatibility · Design system reference |
+| implementing or reviewing browser code or a TypeScript package | [Web and TypeScript checks](q-core-contract/references/web-and-typescript-checks.md) |
 | delegating or adopting a research baseline | Engagement research |
 | adopting an ideation snapshot | Structured ideation |
 | building or delegating a report | Reporting |

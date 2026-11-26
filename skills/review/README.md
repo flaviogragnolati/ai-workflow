@@ -35,6 +35,8 @@ flowchart TB
 | [`q-review-evidence`](q-review-evidence/SKILL.md) | Auditing a supplied business, engineering, scientific, or clinical claim for confidence, bias, reasoning, quantitative, or methodological limits — without investigating the open question itself. |
 | [`q-review-skill`](q-review-skill/SKILL.md) | Auditing an Agent Skill or a bounded package slice for activation, authority, context value, disclosure, safety, packaging, provenance, and behavior. |
 
+Use Modern Web Guidance on the reviewed browser surface and Fallow in TypeScript packages. The mini review ties findings to the fixed diff. A codebase audit can report findings across its agreed module or candidate. [Commands and evidence](../core/q-core-contract/references/web-and-typescript-checks.md)
+
 ## Evidence review as a collaborator
 
 Five skills may call `q-review-evidence` through declared `uses` triggers: Research Investigation for a material finding with non-obvious confidence, Research Synthesis for a fragile material inference, Technical Research for benchmark, vendor, compatibility, reproducibility, or ML/AI claims, Proposal Discovery for a claim that could mislead a commercial commitment, and Current-State Assessment for a diagnostic conclusion that could mislead a recommendation. Every caller keeps its own artifact, confidence, and decision; when the reviewer is absent, the caller applies its existing factors and names the gap.

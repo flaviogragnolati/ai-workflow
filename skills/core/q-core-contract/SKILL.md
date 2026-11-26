@@ -217,6 +217,8 @@ When executing or consuming an accepted consulting engagement, read [Consulting 
 
 When selecting a stack or performing stack-dependent planning, implementation, or review, read [Stack compatibility](references/technical-profile.md). This reference owns the applicable shared rules; load it only for that branch.
 
+For quality checks on browser-facing code or a TypeScript package, follow [Web and TypeScript checks](references/web-and-typescript-checks.md) for applicability, executable commands and evidence.
+
 ## Design system reference
 
 When planning, implementing, ticketing, or reviewing a product interface, including a recorded omission, read [Design system reference](references/design-system-reference.md). This reference owns the applicable shared rules; load it only for that branch.

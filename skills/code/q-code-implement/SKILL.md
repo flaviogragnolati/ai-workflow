@@ -14,6 +14,7 @@ Read the `q-core-contract` companion for shared governance and its stage-result 
 1. Read repository instructions, the original execution record, and the applicable technical foundation, application standards, and ADRs when they exist. For interface work, apply the contract's Design system reference disposition; when a system exists, read its exact version and build from its tokens and component contracts, preserving any declared token-validation gap.
 2. Resolve acceptance criteria, scope, non-goals, dependencies, must-not-break behavior, and required approvals.
 3. Inspect the real code before editing.
+   For browser-facing behavior, use the guide lookup in the contract's Web and TypeScript checks before choosing a platform feature or fallback. Carry the guide ID and relevant browser verification into the mini review.
 4. Discover the project's actual build, test, analysis, formatting, migration, and packaging commands. Select `q-code-tdd` only when explicitly requested or chosen. Testing remains required either way.
 
 ## Execute

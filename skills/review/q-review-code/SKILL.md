@@ -33,6 +33,8 @@ Keep results separate:
 1. **Standards axis:** correctness, security, data integrity, failure handling, maintainability, tests, architecture, repository conventions, applicable adopted technology guidance, and conformance to the referenced design system for interface changes.
 2. **Specification axis:** requested behavior, scope, acceptance criteria, non-goals, migration, and unintended changes.
 
+For a browser-facing change or an affected TypeScript package, run the applicable Web and TypeScript checks in `q-core-contract` against the fixed diff, or reuse matching evidence from the bundle. Reconcile verified findings into the standards axis and name any execution gap.
+
 Use independent reviewers or parallel passes when that capability is available. Otherwise run two sequential passes with separate notes and context. Do not require a particular tool or agent name.
 
 Keep exactly these two axes. Design-system conformance is a standards criterion and may be reported as its own subsection, but it never becomes a third authority axis and never justifies reviewing beyond the changed surface. Apply the contract's Design system reference disposition before classifying a missing reference as a gap; route an unexplained absence or stale executed system to `q-plan-design-system`.

@@ -209,12 +209,13 @@ Or invoke a narrow capability directly:
 Use $q-ask-project to answer how this project currently handles tenant isolation.
 Use $q-ideation-session to explore options for this decision before committing scope.
 Use $q-review-evidence to audit this vendor benchmark without changing it.
+Use $q-review-code to review this TypeScript checkout diff against its ticket, including browser guidance and Fallow findings.
 Use $q-tool-mermaid to create a sequence diagram for this authentication flow and save the source and SVG.
 Use $q-tool-web-markdown with https://example.com/page to capture this JavaScript-rendered public page as derived Markdown.
 Use $q-tool-document to inspect, redline, or validate this DOCX with the available Python or Node backend.
 ```
 
-Every group guide lists all of its skills with a when-to-use table.
+For browser-facing code and TypeScript packages, implementation and review share [executable Modern Web Guidance and Fallow checks](skills/core/q-core-contract/references/web-and-typescript-checks.md). Every group guide lists its skills with a when-to-use table.
 
 ## Skill dependencies
 

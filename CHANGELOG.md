@@ -46,6 +46,8 @@ established.
 
 ### Changed
 
+- **2026-11-25** — Integrated Google Modern Web Guidance into browser implementation and review, and Fallow into change-scoped and codebase reviews of TypeScript packages, with reproducible CLI commands and explicit coverage gaps.
+
 - **2026-09-05** — Aligned `q-maint-ai-workflow` with progressive onboarding and delivery through selective contract loading, reconciliation of supplied analyses against current sources, and maintenance-only regression scenarios for affected handoffs, approval reuse, design-system applicability, and proportional releases.
 
 - **2026-09-05** — Made idea-to-delivery planning progressive, reused existing material approvals when baselining exact outputs, preserved design-system non-applicability across code and QA, and scaled release evidence to actual use, criticality and delivery target.

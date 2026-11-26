@@ -23,6 +23,8 @@ imply endorsement by its authors.
 | [tt-a1i/archify](https://github.com/tt-a1i/archify) | `q-tool-archify` vendored local runtime |
 | [leonardocouy/web2md](https://github.com/leonardocouy/web2md) | `q-tool-web-markdown` browser-capture behavior reference; not a dependency |
 | [microsoft/markitdown](https://github.com/microsoft/markitdown) | `q-tool-web-markdown` comparative conversion-scope reference; not a dependency |
+| [GoogleChrome/modern-web-guidance-src](https://github.com/GoogleChrome/modern-web-guidance-src) | `q-core-contract`, `q-plan-tech-foundation`, `q-code-implement`, `q-review-code`, and `q-review-codebase` browser guidance and local CLI |
+| [fallow-rs/fallow](https://github.com/fallow-rs/fallow) | `q-core-contract`, `q-plan-tech-foundation`, `q-review-code`, and `q-review-codebase` TypeScript analysis |
 
 ## Original Quasar material — MIT License
 
@@ -50,6 +52,22 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Browser guidance and TypeScript analysis
+
+Quasar authored the scope selection, command examples and evidence handoff. Users
+run the upstream tools separately. Quasar distributes no upstream guides, source
+code, binaries or modified copies from either project.
+
+- Google publishes the CLI under Apache-2.0. The examples were checked against
+  npm `modern-web-guidance` 1.0.2 and its published source revision.
+  Chrome's developer documentation identifies CC BY 4.0 for page content and
+  Apache-2.0 for code samples unless otherwise noted.
+  [CLI source revision](https://github.com/GoogleChrome/modern-web-guidance-src/tree/f6d9fc30aff7e177e05a555762808b12eee2c950)
+  · [Modernization workflow and page terms](https://developer.chrome.com/docs/modern-web-guidance/modernization-workflow)
+- Fallow publishes the analyzer under MIT. The command options and JSON
+  behavior were checked against npm `fallow` 3.48.0.
+  [Release v3.48.0](https://github.com/fallow-rs/fallow/releases/tag/v3.48.0)
 
 ## Typefaces — declared, never redistributed
 
